@@ -518,9 +518,24 @@ export function buildAnimatePanel({ mountEl, state, spec, onChange, onStateChang
         placeholder: "state param key (dot-path ok)"
       });
       keyInput.setAttribute("list", dl.id);
+      keyInput.oninput = () => {
+        targets[idx].key = String(keyInput.value || "").trim();
+        ui.paramTargets = targets;
+        markDirty();
+      };
 
       const fromInput = el("input", { type: "number", step: "any", value: String(t.from ?? 0) });
       const toInput = el("input", { type: "number", step: "any", value: String(t.to ?? 0) });
+      fromInput.oninput = () => {
+        targets[idx].from = clampNum(fromInput.value, targets[idx].from ?? 0);
+        ui.paramTargets = targets;
+        markDirty();
+      };
+      toInput.oninput = () => {
+        targets[idx].to = clampNum(toInput.value, targets[idx].to ?? 0);
+        ui.paramTargets = targets;
+        markDirty();
+      };
 
       const captureFromBtn = el("button", { type: "button", textContent: "capture → from" });
       captureFromBtn.onclick = () => {
@@ -630,7 +645,8 @@ export function buildAnimatePanel({ mountEl, state, spec, onChange, onStateChang
 
   // --- SVG targeting ---
   const selInput = el("input", { type: "text", value: ui.selector || "svg", placeholder: 'CSS selector (e.g. "circle", "g#layer rect")' });
-  selInput.onblur = () => { ui.selector = selInput.value; markDirty(); refresh(); };
+  selInput.oninput = () => { ui.selector = selInput.value; markDirty(); };
+  selInput.onblur = () => refresh();
 
   const svgKind = el("select");
   ["attr", "style"].forEach(opt => svgKind.appendChild(el("option", { value: opt, textContent: opt })));
@@ -638,29 +654,58 @@ export function buildAnimatePanel({ mountEl, state, spec, onChange, onStateChang
   svgKind.onchange = () => { ui.svgKind = svgKind.value; markDirty(); refresh(); };
 
   const svgName = el("input", { type: "text", value: ui.svgName || "opacity", placeholder: "attr/style name (e.g. opacity, r, x, strokeWidth)" });
-  svgName.onblur = () => { ui.svgName = svgName.value; markDirty(); refresh(); };
+  svgName.oninput = () => { ui.svgName = svgName.value; markDirty(); };
+  svgName.onblur = () => refresh();
 
   // --- Shared timing controls ---
   const durInput = el("input", { type: "number", step: "0.01", min: "0.01", value: String(ui.durationSec ?? 3) });
   const fpsInput = el("input", { type: "number", step: "1", min: "1", value: String(ui.fps ?? 20) });
+  durInput.oninput = () => {
+    ui.durationSec = clampNum(durInput.value, ui.durationSec);
+    markDirty();
+  };
+  fpsInput.oninput = () => {
+    ui.fps = clampNum(fpsInput.value, ui.fps);
+    markDirty();
+  };
 
   const easingSel = el("select");
   ["linear", "easeInOutQuad", "easeInQuad", "easeOutQuad"].forEach(opt => {
     easingSel.appendChild(el("option", { value: opt, textContent: opt }));
   });
   easingSel.value = ui.easing || "linear";
+  easingSel.onchange = () => {
+    ui.easing = easingSel.value;
+    markDirty();
+  };
 
   const loopCb = el("input", { type: "checkbox" });
   loopCb.checked = !!ui.loop;
+  loopCb.onchange = () => {
+    ui.loop = !!loopCb.checked;
+    markDirty();
+  };
 
   const yoyoCb = el("input", { type: "checkbox" });
   yoyoCb.checked = !!ui.yoyo;
+  yoyoCb.onchange = () => {
+    ui.yoyo = !!yoyoCb.checked;
+    markDirty();
+  };
 
   const autoFromCb = el("input", { type: "checkbox" });
   autoFromCb.checked = !!ui.autoFromCurrent;
+  autoFromCb.onchange = () => {
+    ui.autoFromCurrent = !!autoFromCb.checked;
+    markDirty();
+  };
 
   const snapCb = el("input", { type: "checkbox" });
   snapCb.checked = !!ui.snapToEndOnStop;
+  snapCb.onchange = () => {
+    ui.snapToEndOnStop = !!snapCb.checked;
+    markDirty();
+  };
 
   const captureAllFromBtn = el("button", { type: "button", textContent: "capture all current → from" });
   captureAllFromBtn.onclick = () => {
@@ -721,6 +766,7 @@ export function buildAnimatePanel({ mountEl, state, spec, onChange, onStateChang
     rt.stop({ snap: false });
     const p = clampNum(progress.value, 0);
     rt.scrubTo(p);
+    markDirty();
   };
 
   const status = el("div", { className: "anim-status", textContent: "" });
@@ -807,6 +853,7 @@ export function buildAnimatePanel({ mountEl, state, spec, onChange, onStateChang
           snapCb.checked = !!ui.snapToEndOnStop;
 
           onChange?.("__anim.ui", ui, state);
+          markDirty();
           box.value = JSON.stringify(ui, null, 2);
           msg.textContent = "Applied JSON.";
           refresh();

@@ -466,24 +466,44 @@ export function buildColorPanel({ mountEl, state, onStateChange }) {
   };
 
   const selectorInput = el("input", { type: "text", value: ui.selector || "" });
+  selectorInput.oninput = () => {
+    ui.selector = selectorInput.value;
+    markDirty();
+  };
 
   const sourcePropSel = el("select");
   ["fill", "stroke"].forEach((t) => sourcePropSel.appendChild(el("option", { value: t, textContent: t })));
   sourcePropSel.value = ui.sourceProp || "fill";
+  sourcePropSel.onchange = () => {
+    ui.sourceProp = sourcePropSel.value;
+    markDirty();
+  };
 
   const targetPropSel = el("select");
   TARGET_PROPS.forEach((opt) => targetPropSel.appendChild(el("option", { value: opt.value, textContent: opt.label })));
   targetPropSel.value = ui.targetProp || "fill";
+  targetPropSel.onchange = () => {
+    ui.targetProp = targetPropSel.value;
+    markDirty();
+  };
 
   const colorSortSel = el("select");
   COLOR_SORTS.forEach((opt) => colorSortSel.appendChild(el("option", { value: opt.value, textContent: opt.label })));
   colorSortSel.value = ui.colorSort || "appearance";
+  colorSortSel.onchange = () => {
+    ui.colorSort = colorSortSel.value;
+    markDirty();
+  };
 
   const paletteInput = el("textarea", {
     rows: "3",
     value: ui.paletteText || "",
     placeholder: "#111111, #f97316, #facc15, #f8fafc",
   });
+  paletteInput.oninput = () => {
+    ui.paletteText = paletteInput.value;
+    markDirty();
+  };
 
   const paletteSteps = el("input", {
     type: "number",
@@ -491,37 +511,70 @@ export function buildColorPanel({ mountEl, state, onStateChange }) {
     step: "1",
     value: String(ui.paletteSteps ?? 0),
   });
+  paletteSteps.oninput = () => {
+    ui.paletteSteps = clampInt(paletteSteps.value, 0, 256);
+    markDirty();
+  };
 
   const reverseCb = el("input", { type: "checkbox" });
   reverseCb.checked = !!ui.reversePalette;
+  reverseCb.onchange = () => {
+    ui.reversePalette = !!reverseCb.checked;
+    markDirty();
+  };
 
   const useComputedCb = el("input", { type: "checkbox" });
   useComputedCb.checked = !!ui.useComputed;
+  useComputedCb.onchange = () => {
+    ui.useComputed = !!useComputedCb.checked;
+    markDirty();
+  };
 
   const skipNoneCb = el("input", { type: "checkbox" });
   skipNoneCb.checked = ui.skipNone !== false;
+  skipNoneCb.onchange = () => {
+    ui.skipNone = !!skipNoneCb.checked;
+    markDirty();
+  };
 
   const sizeSourceSel = el("select");
   SIZE_SOURCES.forEach((opt) => sizeSourceSel.appendChild(el("option", { value: opt.value, textContent: opt.label })));
   sizeSourceSel.value = ui.sizeSource || "attr";
+  sizeSourceSel.onchange = () => {
+    ui.sizeSource = sizeSourceSel.value;
+    markDirty();
+    refresh();
+  };
 
   const sizeAttrInput = el("input", {
     type: "text",
     value: ui.sizeAttr || "",
     placeholder: "r, stroke-width, opacity",
   });
+  sizeAttrInput.oninput = () => {
+    ui.sizeAttr = sizeAttrInput.value;
+    markDirty();
+  };
 
   const sizeMinInput = el("input", {
     type: "text",
     value: String(ui.sizeMin ?? ""),
     placeholder: "auto",
   });
+  sizeMinInput.oninput = () => {
+    ui.sizeMin = sizeMinInput.value;
+    markDirty();
+  };
 
   const sizeMaxInput = el("input", {
     type: "text",
     value: String(ui.sizeMax ?? ""),
     placeholder: "auto",
   });
+  sizeMaxInput.oninput = () => {
+    ui.sizeMax = sizeMaxInput.value;
+    markDirty();
+  };
 
   const autoRunCb = el("input", { type: "checkbox" });
   autoRunCb.checked = !!ui.autoRun;

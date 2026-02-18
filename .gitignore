@@ -9,8 +9,6 @@ Thumbs.db
 *~
 
 # Local tooling
-.codex/
-
 # Node/tooling caches
 node_modules/
 npm-debug.log*

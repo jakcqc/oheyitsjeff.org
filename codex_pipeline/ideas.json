@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "ideas": [
+    {
+      "title": "Islamic Repeating Art",
+      "summary": "Ten-fold tessellations blending pentagrams with pentagon-based hexagon motifs and decimal connections.",
+      "slug": "IslamicRepeatingArt",
+      "folder": "IslamicRepeatingArt",
+      "visualId": "islamicRepeatingArt"
+    },
+    {
+      "title": "Marbled Patterns",
+      "summary": "Flowing SVG marbling with swirled ribbons and ink-like bands.",
+      "slug": "MarbledPatterns",
+      "folder": "MarbledPatterns",
+      "visualId": "marbledPatterns"
+    }
+  ]
+}

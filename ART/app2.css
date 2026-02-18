@@ -244,7 +244,7 @@ body::after {
   gap: 18px;
   padding: 22px;
   padding-top: 4px;
-  max-width: 1200px;
+  max-width: 1540px;
   margin: 0 auto;
   width: 100%;
   position: relative;
@@ -254,8 +254,8 @@ body::after {
 .svgGallery__grid {
   contain: layout paint;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
   overflow: auto;
   padding-right: 6px;
   flex: 1;
@@ -299,12 +299,12 @@ body::after {
   border-radius: var(--radius-lg);
   border: 1px solid var(--tile-stroke);
   box-shadow: var(--shadow);
-  padding: 16px;
+  padding: 18px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   height: auto;
-  /* min-height: 250px; */
+  min-height: 340px;
   animation: tileRise 0.55s ease forwards;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -319,7 +319,8 @@ body::after {
   display: flex;
   align-items: center;
   justify-content: center;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 5 / 4;
+  min-height: 250px;
   background: linear-gradient(145deg, rgba(240, 90, 40, 0.06), rgba(15, 107, 111, 0.08));
   border-radius: 16px;
   border: 1px solid rgba(30, 23, 17, 0.08);
@@ -667,14 +668,14 @@ body::after {
 
 @media (max-width: 1024px) {
   .svgGallery__grid {
-  contain: layout paint;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    contain: layout paint;
+    grid-template-columns: repeat(2, minmax(280px, 1fr));
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 760px) {
   .svgGallery__grid {
-  contain: layout paint;
+    contain: layout paint;
     grid-template-columns: 1fr;
   }
 }

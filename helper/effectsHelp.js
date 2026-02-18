@@ -13,7 +13,7 @@ import {
   mergeRectsToPathsInSubtree,
 } from "./scriptOpsUtils.js";
 
-const EFFECT_TYPES = ["scale", "convert", "paint", "merge"];
+const EFFECT_TYPES = ["scale", "convert", "paint", "merge", "functionRects"];
 const SHAPE_TYPES = ["circle", "rect", "polygon", "path"];
 
 const ATTR_KEYWORDS = [
@@ -35,6 +35,29 @@ const ATTR_KEYWORDS = [
 ];
 
 const ATTR_KEY_SET = new Set(ATTR_KEYWORDS.map((k) => k.key));
+
+const RECT_FUNCTION_PRESETS = [
+  {
+    id: "circle",
+    label: "Circle orbit",
+    code: "({ t, bounds }) => ({\n  x: bounds.cx + Math.cos(t * Math.PI * 2) * bounds.r,\n  y: bounds.cy + Math.sin(t * Math.PI * 2) * bounds.r\n})",
+  },
+  {
+    id: "sine",
+    label: "Sine wave",
+    code: "({ t, bounds }) => ({\n  x: bounds.x + bounds.w * t,\n  y: bounds.cy + Math.sin(t * Math.PI * 2) * bounds.h * 0.25\n})",
+  },
+  {
+    id: "spiral",
+    label: "Spiral",
+    code: "({ t, bounds }) => {\n  const a = t * Math.PI * 6;\n  const r = bounds.r * t;\n  return {\n    x: bounds.cx + Math.cos(a) * r,\n    y: bounds.cy + Math.sin(a) * r,\n  };\n}",
+  },
+  {
+    id: "line",
+    label: "Horizontal line",
+    code: "({ t, bounds }) => ({\n  x: bounds.x + bounds.w * t,\n  y: bounds.cy\n})",
+  },
+];
 
 function ensureEffectsState(state) {
   if (!state.__effects || typeof state.__effects !== "object") state.__effects = {};
@@ -68,6 +91,23 @@ function ensureEffectsState(state) {
       mergeSmoothPasses: 1,
       mergeStroke: "#000000",
       mergeStrokeWidth: 1.5,
+      fnPreset: RECT_FUNCTION_PRESETS[0]?.id || "circle",
+      fnCode: RECT_FUNCTION_PRESETS[0]?.code || "",
+      fnSampleCount: 80,
+      fnSampleEvery: 1,
+      fnSampleOffset: 0,
+      fnRectLimit: 0,
+      fnOrientMode: "tangent",
+      fnTangentStep: 1,
+      fnFixedAngle: 0,
+      fnRectWidth: 18,
+      fnRectHeight: 10,
+      fnRectRx: 0,
+      fnRectRy: 0,
+      fnRectFill: "none",
+      fnRectStroke: "#000000",
+      fnRectStrokeWidth: 1,
+      fnRectOpacity: 1,
       autoRun: false,
       debug: false,
     };
@@ -207,6 +247,80 @@ function applyScaleTransform(el, scaleFactor, mode) {
   if (combined) el.setAttribute("transform", combined);
 }
 
+function getSvgBounds(svgEl) {
+  const vb = svgEl?.viewBox?.baseVal;
+  let x = 0;
+  let y = 0;
+  let w = 0;
+  let h = 0;
+  if (vb && Number.isFinite(vb.width) && vb.width > 0 && Number.isFinite(vb.height) && vb.height > 0) {
+    x = vb.x;
+    y = vb.y;
+    w = vb.width;
+    h = vb.height;
+  } else {
+    const wAttr = parseNumberLike(svgEl?.getAttribute?.("width"), NaN);
+    const hAttr = parseNumberLike(svgEl?.getAttribute?.("height"), NaN);
+    if (Number.isFinite(wAttr) && Number.isFinite(hAttr)) {
+      w = wAttr;
+      h = hAttr;
+    } else {
+      const rect = svgEl?.getBoundingClientRect?.();
+      w = Number.isFinite(rect?.width) ? rect.width : 1000;
+      h = Number.isFinite(rect?.height) ? rect.height : 1000;
+    }
+  }
+  const cx = x + w / 2;
+  const cy = y + h / 2;
+  const r = Math.min(w, h) / 2;
+  return { x, y, w, h, cx, cy, r };
+}
+
+function parseRectFunctionResult(value) {
+  if (!value) return null;
+  if (Array.isArray(value) && value.length >= 2) {
+    return { x: Number(value[0]), y: Number(value[1]) };
+  }
+  if (typeof value === "object") {
+    return {
+      x: Number(value.x),
+      y: Number(value.y),
+      angle: Number(value.angle),
+      width: Number(value.width),
+      height: Number(value.height),
+      rx: Number(value.rx),
+      ry: Number(value.ry),
+      fill: value.fill,
+      stroke: value.stroke,
+      strokeWidth: Number(value.strokeWidth),
+      opacity: Number(value.opacity),
+    };
+  }
+  return null;
+}
+
+function makeRectFunction(code) {
+  const src = String(code || "").trim();
+  if (!src) return null;
+  // eslint-disable-next-line no-new-func
+  const fn = new Function(`return (${src});`)();
+  return typeof fn === "function" ? fn : null;
+}
+
+function angleFromSamples(samples, idx, step) {
+  const s = Math.max(1, Math.trunc(step) || 1);
+  const a = samples[idx];
+  if (!a) return 0;
+  let j = idx + s;
+  if (j >= samples.length) j = idx - s;
+  const b = samples[j];
+  if (!b) return 0;
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  if (!Number.isFinite(dx) || !Number.isFinite(dy) || (dx === 0 && dy === 0)) return 0;
+  return (Math.atan2(dy, dx) * 180) / Math.PI;
+}
+
 export function registerEffectsTab() {
   registerTab("effects", ({ mountEl, state, xfRuntime, onStateChange }) =>
     buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange })
@@ -309,18 +423,50 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
   const minInput = el("input", { type: "number", step: "0.01", value: String(ui.rangeMin ?? 0.5) });
   const maxInput = el("input", { type: "number", step: "0.01", value: String(ui.rangeMax ?? 1.5) });
   const countInput = el("input", { type: "number", step: "1", min: "1", value: String(ui.count ?? 10) });
+  minInput.oninput = () => {
+    ui.rangeMin = clampNum(minInput.value, ui.rangeMin);
+    markDirty();
+  };
+  maxInput.oninput = () => {
+    ui.rangeMax = clampNum(maxInput.value, ui.rangeMax);
+    markDirty();
+  };
+  countInput.oninput = () => {
+    ui.count = Math.max(1, Math.trunc(clampNum(countInput.value, ui.count)));
+    markDirty();
+  };
 
   const spacingSel = el("select");
   ["linear", "easeInOut"].forEach((t) => spacingSel.appendChild(el("option", { value: t, textContent: t })));
   spacingSel.value = ui.spacing || "linear";
+  spacingSel.onchange = () => {
+    ui.spacing = spacingSel.value;
+    markDirty();
+  };
 
   const opacityMode = el("select");
   ["auto", "none", "fixed", "ramp"].forEach((t) => opacityMode.appendChild(el("option", { value: t, textContent: t })));
   opacityMode.value = ui.opacityMode || "auto";
+  opacityMode.onchange = () => {
+    ui.opacityMode = opacityMode.value;
+    markDirty();
+  };
 
   const opacityFixed = el("input", { type: "number", step: "0.01", min: "0", max: "1", value: String(ui.opacityFixed ?? 1) });
   const opacityMin = el("input", { type: "number", step: "0.01", min: "0", max: "1", value: String(ui.opacityMin ?? 0.25) });
   const opacityMax = el("input", { type: "number", step: "0.01", min: "0", max: "1", value: String(ui.opacityMax ?? 1) });
+  opacityFixed.oninput = () => {
+    ui.opacityFixed = clampNum(opacityFixed.value, ui.opacityFixed);
+    markDirty();
+  };
+  opacityMin.oninput = () => {
+    ui.opacityMin = clampNum(opacityMin.value, ui.opacityMin);
+    markDirty();
+  };
+  opacityMax.oninput = () => {
+    ui.opacityMax = clampNum(opacityMax.value, ui.opacityMax);
+    markDirty();
+  };
 
   const eqInput = el("input", {
     type: "text",
@@ -334,6 +480,10 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
 
   const debugCb = el("input", { type: "checkbox" });
   debugCb.checked = !!ui.debug;
+  debugCb.onchange = () => {
+    ui.debug = !!debugCb.checked;
+    markDirty();
+  };
   const autoRunCb = el("input", { type: "checkbox" });
   autoRunCb.checked = !!ui.autoRun;
   autoRunCb.onchange = () => {
@@ -344,10 +494,18 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
   const convertFrom = el("select");
   SHAPE_TYPES.forEach((t) => convertFrom.appendChild(el("option", { value: t, textContent: t })));
   convertFrom.value = ui.convertFrom || "path";
+  convertFrom.onchange = () => {
+    ui.convertFrom = convertFrom.value;
+    markDirty();
+  };
 
   const convertTo = el("select");
   SHAPE_TYPES.forEach((t) => convertTo.appendChild(el("option", { value: t, textContent: t })));
   convertTo.value = ui.convertTo || "circle";
+  convertTo.onchange = () => {
+    ui.convertTo = convertTo.value;
+    markDirty();
+  };
 
   const samplePoints = el("input", {
     type: "number",
@@ -355,19 +513,39 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
     step: "1",
     value: String(ui.pathSamplePoints ?? 64),
   });
+  samplePoints.oninput = () => {
+    ui.pathSamplePoints = Math.max(3, Math.trunc(clampNum(samplePoints.value, ui.pathSamplePoints)));
+    markDirty();
+  };
 
   const convertScaleMode = el("select");
   ["none", "center", "origin"].forEach((t) => convertScaleMode.appendChild(el("option", { value: t, textContent: t })));
   convertScaleMode.value = ui.convertScaleMode || "none";
+  convertScaleMode.onchange = () => {
+    ui.convertScaleMode = convertScaleMode.value;
+    markDirty();
+  };
 
   const convertScaleFactor = el("input", {
     type: "number",
     step: "0.01",
     value: String(ui.convertScaleFactor ?? 1),
   });
+  convertScaleFactor.oninput = () => {
+    ui.convertScaleFactor = clampNum(convertScaleFactor.value, ui.convertScaleFactor);
+    markDirty();
+  };
 
   const paintFill = el("input", { type: "text", value: ui.paintFill || "#ffffff", placeholder: "#ffffff or none" });
   const paintStroke = el("input", { type: "text", value: ui.paintStroke || "#000000", placeholder: "#000000 or none" });
+  paintFill.oninput = () => {
+    ui.paintFill = paintFill.value;
+    markDirty();
+  };
+  paintStroke.oninput = () => {
+    ui.paintStroke = paintStroke.value;
+    markDirty();
+  };
   const paintList = el("datalist", { id: `fx-paint-${Math.random().toString(16).slice(2)}` });
   ["#000000", "#ffffff", "none"].forEach((v) => paintList.appendChild(el("option", { value: v })));
   paintFill.setAttribute("list", paintList.id);
@@ -376,17 +554,29 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
   const mergeShapeSel = el("select");
   ["circle", "rect"].forEach((t) => mergeShapeSel.appendChild(el("option", { value: t, textContent: t })));
   mergeShapeSel.value = ui.mergeShape || "circle";
+  mergeShapeSel.onchange = () => {
+    ui.mergeShape = mergeShapeSel.value;
+    markDirty();
+  };
 
   const mergeSelectorInput = el("input", {
     type: "text",
     value: ui.mergeSelector || "",
     placeholder: 'CSS selector override (blank = use merge shape)'
   });
+  mergeSelectorInput.oninput = () => {
+    ui.mergeSelector = mergeSelectorInput.value;
+    markDirty();
+  };
   const mergeRuleInput = el("textarea", {
     rows: "4",
     value: ui.mergeSelectorRuleText || "",
     placeholder: 'Prop selector JSON (see PROP_OPS_RULES.md)'
   });
+  mergeRuleInput.oninput = () => {
+    ui.mergeSelectorRuleText = mergeRuleInput.value;
+    markDirty();
+  };
 
   const mergeRatioInput = el("input", { type: "number", step: "0.01", value: String(ui.mergeRatio ?? 1.02) });
   const mergePaddingInput = el("input", { type: "number", step: "0.1", value: String(ui.mergePadding ?? 1) });
@@ -394,6 +584,30 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
   const mergeSmoothInput = el("input", { type: "number", step: "1", min: "0", value: String(ui.mergeSmoothPasses ?? 1) });
   const mergeStrokeInput = el("input", { type: "text", value: ui.mergeStroke || "#000000", placeholder: "#000000" });
   const mergeStrokeWidthInput = el("input", { type: "number", step: "0.1", min: "0", value: String(ui.mergeStrokeWidth ?? 1.5) });
+  mergeRatioInput.oninput = () => {
+    ui.mergeRatio = clampNum(mergeRatioInput.value, ui.mergeRatio);
+    markDirty();
+  };
+  mergePaddingInput.oninput = () => {
+    ui.mergePadding = clampNum(mergePaddingInput.value, ui.mergePadding);
+    markDirty();
+  };
+  mergeGridStepInput.oninput = () => {
+    ui.mergeGridStep = clampNum(mergeGridStepInput.value, ui.mergeGridStep);
+    markDirty();
+  };
+  mergeSmoothInput.oninput = () => {
+    ui.mergeSmoothPasses = Math.max(0, Math.trunc(clampNum(mergeSmoothInput.value, ui.mergeSmoothPasses)));
+    markDirty();
+  };
+  mergeStrokeInput.oninput = () => {
+    ui.mergeStroke = mergeStrokeInput.value;
+    markDirty();
+  };
+  mergeStrokeWidthInput.oninput = () => {
+    ui.mergeStrokeWidth = clampNum(mergeStrokeWidthInput.value, ui.mergeStrokeWidth);
+    markDirty();
+  };
 
   const keywordsHelp = el("div", { className: "fx-keywords" },
     ATTR_KEYWORDS.map((k) =>
@@ -442,6 +656,23 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
     ui.mergeSmoothPasses = Math.max(0, Math.trunc(clampNum(mergeSmoothInput.value, ui.mergeSmoothPasses)));
     ui.mergeStroke = mergeStrokeInput.value;
     ui.mergeStrokeWidth = clampNum(mergeStrokeWidthInput.value, ui.mergeStrokeWidth);
+    ui.fnPreset = fnPresetSel.value;
+    ui.fnCode = fnCode.value;
+    ui.fnSampleCount = Math.max(2, Math.trunc(clampNum(fnSampleCount.value, ui.fnSampleCount)));
+    ui.fnSampleEvery = Math.max(1, Math.trunc(clampNum(fnSampleEvery.value, ui.fnSampleEvery)));
+    ui.fnSampleOffset = Math.max(0, Math.trunc(clampNum(fnSampleOffset.value, ui.fnSampleOffset)));
+    ui.fnRectLimit = Math.max(0, Math.trunc(clampNum(fnRectLimit.value, ui.fnRectLimit)));
+    ui.fnOrientMode = fnOrientMode.value;
+    ui.fnTangentStep = Math.max(1, Math.trunc(clampNum(fnTangentStep.value, ui.fnTangentStep)));
+    ui.fnFixedAngle = clampNum(fnFixedAngle.value, ui.fnFixedAngle);
+    ui.fnRectWidth = clampNum(fnRectWidth.value, ui.fnRectWidth);
+    ui.fnRectHeight = clampNum(fnRectHeight.value, ui.fnRectHeight);
+    ui.fnRectRx = clampNum(fnRectRx.value, ui.fnRectRx);
+    ui.fnRectRy = clampNum(fnRectRy.value, ui.fnRectRy);
+    ui.fnRectFill = fnRectFill.value;
+    ui.fnRectStroke = fnRectStroke.value;
+    ui.fnRectStrokeWidth = clampNum(fnRectStrokeWidth.value, ui.fnRectStrokeWidth);
+    ui.fnRectOpacity = clampNum(fnRectOpacity.value, ui.fnRectOpacity);
     markDirty();
 
     status.classList.remove("error");
@@ -450,6 +681,8 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
   };
 
   eqInput.oninput = () => {
+    ui.equation = eqInput.value;
+    markDirty();
     const parsed = parseEquation(eqInput.value);
     if (parsed.ok) {
       eqStatus.classList.remove("error");
@@ -491,6 +724,132 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
     row("scale factor", convertScaleFactor, "Scale applied to converted output."),
   ]);
 
+  const fnPresetSel = el("select");
+  RECT_FUNCTION_PRESETS.forEach((preset) => {
+    fnPresetSel.appendChild(el("option", { value: preset.id, textContent: preset.label }));
+  });
+  fnPresetSel.value = ui.fnPreset || RECT_FUNCTION_PRESETS[0]?.id || "circle";
+  fnPresetSel.onchange = () => {
+    ui.fnPreset = fnPresetSel.value;
+    const preset = RECT_FUNCTION_PRESETS.find((p) => p.id === fnPresetSel.value);
+    if (preset) {
+      fnCode.value = preset.code;
+      ui.fnCode = preset.code;
+    }
+    markDirty();
+  };
+
+  const fnCode = el("textarea", {
+    rows: "6",
+    value: ui.fnCode || RECT_FUNCTION_PRESETS[0]?.code || "",
+    placeholder: "({ t, i, count, bounds }) => ({ x, y, angle, width, height, ... })",
+  });
+  fnCode.oninput = () => {
+    ui.fnCode = fnCode.value;
+    markDirty();
+  };
+
+  const fnSampleCount = el("input", { type: "number", min: "2", step: "1", value: String(ui.fnSampleCount ?? 80) });
+  const fnSampleEvery = el("input", { type: "number", min: "1", step: "1", value: String(ui.fnSampleEvery ?? 1) });
+  const fnSampleOffset = el("input", { type: "number", min: "0", step: "1", value: String(ui.fnSampleOffset ?? 0) });
+  const fnRectLimit = el("input", { type: "number", min: "0", step: "1", value: String(ui.fnRectLimit ?? 0) });
+  fnSampleCount.oninput = () => {
+    ui.fnSampleCount = Math.max(2, Math.trunc(clampNum(fnSampleCount.value, ui.fnSampleCount)));
+    markDirty();
+  };
+  fnSampleEvery.oninput = () => {
+    ui.fnSampleEvery = Math.max(1, Math.trunc(clampNum(fnSampleEvery.value, ui.fnSampleEvery)));
+    markDirty();
+  };
+  fnSampleOffset.oninput = () => {
+    ui.fnSampleOffset = Math.max(0, Math.trunc(clampNum(fnSampleOffset.value, ui.fnSampleOffset)));
+    markDirty();
+  };
+  fnRectLimit.oninput = () => {
+    ui.fnRectLimit = Math.max(0, Math.trunc(clampNum(fnRectLimit.value, ui.fnRectLimit)));
+    markDirty();
+  };
+
+  const fnOrientMode = el("select");
+  ["tangent", "fixed", "function"].forEach((t) => fnOrientMode.appendChild(el("option", { value: t, textContent: t })));
+  fnOrientMode.value = ui.fnOrientMode || "tangent";
+  fnOrientMode.onchange = () => {
+    ui.fnOrientMode = fnOrientMode.value;
+    markDirty();
+  };
+
+  const fnTangentStep = el("input", { type: "number", min: "1", step: "1", value: String(ui.fnTangentStep ?? 1) });
+  const fnFixedAngle = el("input", { type: "number", step: "1", value: String(ui.fnFixedAngle ?? 0) });
+  fnTangentStep.oninput = () => {
+    ui.fnTangentStep = Math.max(1, Math.trunc(clampNum(fnTangentStep.value, ui.fnTangentStep)));
+    markDirty();
+  };
+  fnFixedAngle.oninput = () => {
+    ui.fnFixedAngle = clampNum(fnFixedAngle.value, ui.fnFixedAngle);
+    markDirty();
+  };
+
+  const fnRectWidth = el("input", { type: "number", step: "1", value: String(ui.fnRectWidth ?? 18) });
+  const fnRectHeight = el("input", { type: "number", step: "1", value: String(ui.fnRectHeight ?? 10) });
+  const fnRectRx = el("input", { type: "number", step: "0.1", value: String(ui.fnRectRx ?? 0) });
+  const fnRectRy = el("input", { type: "number", step: "0.1", value: String(ui.fnRectRy ?? 0) });
+  const fnRectFill = el("input", { type: "text", value: ui.fnRectFill || "none", placeholder: "none or #ffffff" });
+  const fnRectStroke = el("input", { type: "text", value: ui.fnRectStroke || "#000000", placeholder: "#000000 or none" });
+  const fnRectStrokeWidth = el("input", { type: "number", step: "0.1", value: String(ui.fnRectStrokeWidth ?? 1) });
+  const fnRectOpacity = el("input", { type: "number", step: "0.05", min: "0", max: "1", value: String(ui.fnRectOpacity ?? 1) });
+  fnRectWidth.oninput = () => {
+    ui.fnRectWidth = clampNum(fnRectWidth.value, ui.fnRectWidth);
+    markDirty();
+  };
+  fnRectHeight.oninput = () => {
+    ui.fnRectHeight = clampNum(fnRectHeight.value, ui.fnRectHeight);
+    markDirty();
+  };
+  fnRectRx.oninput = () => {
+    ui.fnRectRx = clampNum(fnRectRx.value, ui.fnRectRx);
+    markDirty();
+  };
+  fnRectRy.oninput = () => {
+    ui.fnRectRy = clampNum(fnRectRy.value, ui.fnRectRy);
+    markDirty();
+  };
+  fnRectFill.oninput = () => {
+    ui.fnRectFill = fnRectFill.value;
+    markDirty();
+  };
+  fnRectStroke.oninput = () => {
+    ui.fnRectStroke = fnRectStroke.value;
+    markDirty();
+  };
+  fnRectStrokeWidth.oninput = () => {
+    ui.fnRectStrokeWidth = clampNum(fnRectStrokeWidth.value, ui.fnRectStrokeWidth);
+    markDirty();
+  };
+  fnRectOpacity.oninput = () => {
+    ui.fnRectOpacity = clampNum(fnRectOpacity.value, ui.fnRectOpacity);
+    markDirty();
+  };
+
+  const functionBlock = el("div", { className: "fx-block" }, [
+    row("preset", fnPresetSel, "Choose a built-in function template."),
+    row("function", fnCode, "Function returns {x, y, angle?, width?, height?, rx?, ry?, fill?, stroke?, strokeWidth?, opacity?}."),
+    row("sample count", fnSampleCount, "Total samples along t = 0..1."),
+    row("sample every", fnSampleEvery, "Place a rect every N samples."),
+    row("sample offset", fnSampleOffset, "Skip the first N samples."),
+    row("max rects", fnRectLimit, "0 = no limit."),
+    row("orientation", fnOrientMode, "tangent uses neighboring samples."),
+    row("tangent step", fnTangentStep, "Sample spacing for tangent angle."),
+    row("fixed angle", fnFixedAngle, "Used when orientation = fixed."),
+    row("rect width", fnRectWidth, "Default width if not from function."),
+    row("rect height", fnRectHeight, "Default height if not from function."),
+    row("rect rx", fnRectRx, "Default corner radius x."),
+    row("rect ry", fnRectRy, "Default corner radius y."),
+    row("fill", fnRectFill, "Default fill."),
+    row("stroke", fnRectStroke, "Default stroke."),
+    row("stroke width", fnRectStrokeWidth, "Default stroke width."),
+    row("opacity", fnRectOpacity, "Default opacity."),
+  ]);
+
   const paintBlock = el("div", { className: "fx-block" }, [
     row("element type", elementSelPaint, "Choose circle, rect, polygon, or path."),
     row("selector", selectorPaintInput, "Optional CSS selector override."),
@@ -511,11 +870,12 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
   ]);
 
   const topGroup = group("Effect", [
-    row("type", effectSel, "Choose scale, convert, paint, or merge effects."),
+    row("type", effectSel, "Choose scale, convert, paint, merge, or function rects."),
   ]);
 
   const scaleGroup = group("Scale Effect", [scaleBlock]);
   const convertGroup = group("Convert Effect", [convertBlock]);
+  const functionGroup = group("Function Rects", [functionBlock]);
   const paintGroup = group("Paint Effect", [paintBlock]);
   const mergeGroup = group("Merge Effect", [mergeBlock]);
   const applyGroup = group("Apply", [
@@ -528,10 +888,12 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
   const refresh = () => {
     const isScale = ui.effectType === "scale";
     const isConvert = ui.effectType === "convert";
+    const isFunctionRects = ui.effectType === "functionRects";
     const isPaint = ui.effectType === "paint";
     const isMerge = ui.effectType === "merge";
     scaleGroup.style.display = isScale ? "" : "none";
     convertGroup.style.display = isConvert ? "" : "none";
+    functionGroup.style.display = isFunctionRects ? "" : "none";
     paintGroup.style.display = isPaint ? "" : "none";
     mergeGroup.style.display = isMerge ? "" : "none";
     const selVal = String(ui.selector || "");
@@ -544,11 +906,29 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
     autoRunCb.checked = !!ui.autoRun;
     elementSelScale.value = ui.elementType || "circle";
     elementSelPaint.value = ui.elementType || "circle";
+    fnPresetSel.value = ui.fnPreset || RECT_FUNCTION_PRESETS[0]?.id || "circle";
+    fnCode.value = String(ui.fnCode || "");
+    fnSampleCount.value = String(ui.fnSampleCount ?? 80);
+    fnSampleEvery.value = String(ui.fnSampleEvery ?? 1);
+    fnSampleOffset.value = String(ui.fnSampleOffset ?? 0);
+    fnRectLimit.value = String(ui.fnRectLimit ?? 0);
+    fnOrientMode.value = ui.fnOrientMode || "tangent";
+    fnTangentStep.value = String(ui.fnTangentStep ?? 1);
+    fnFixedAngle.value = String(ui.fnFixedAngle ?? 0);
+    fnRectWidth.value = String(ui.fnRectWidth ?? 18);
+    fnRectHeight.value = String(ui.fnRectHeight ?? 10);
+    fnRectRx.value = String(ui.fnRectRx ?? 0);
+    fnRectRy.value = String(ui.fnRectRy ?? 0);
+    fnRectFill.value = ui.fnRectFill || "none";
+    fnRectStroke.value = ui.fnRectStroke || "#000000";
+    fnRectStrokeWidth.value = String(ui.fnRectStrokeWidth ?? 1);
+    fnRectOpacity.value = String(ui.fnRectOpacity ?? 1);
   };
 
   root.appendChild(topGroup);
   root.appendChild(scaleGroup);
   root.appendChild(convertGroup);
+  root.appendChild(functionGroup);
   root.appendChild(paintGroup);
   root.appendChild(mergeGroup);
   root.appendChild(applyGroup);
@@ -656,6 +1036,109 @@ export function runEffectsFromUI({ mountEl, state, xfRuntime, statusEl } = {}) {
 
     if (statusEl) {
       statusEl.textContent = `convert applied: ${totalConverted} converted, ${totalSkipped} skipped.`;
+    }
+  } else if (ui.effectType === "functionRects") {
+    const preset = RECT_FUNCTION_PRESETS.find((p) => p.id === ui.fnPreset);
+    const code = String(ui.fnCode || "").trim() || preset?.code || "";
+    const fn = makeRectFunction(code);
+    if (!fn) {
+      if (statusEl) {
+        statusEl.textContent = "Function missing or invalid. Provide a function that returns {x, y}.";
+        statusEl.classList.add("error");
+      }
+      return { ok: false };
+    }
+
+    const sampleCount = Math.max(2, Math.trunc(ui.fnSampleCount || 2));
+    const sampleEvery = Math.max(1, Math.trunc(ui.fnSampleEvery || 1));
+    const sampleOffset = Math.max(0, Math.trunc(ui.fnSampleOffset || 0));
+    const rectLimit = Math.max(0, Math.trunc(ui.fnRectLimit || 0));
+    const orientMode = ui.fnOrientMode || "tangent";
+    const tangentStep = Math.max(1, Math.trunc(ui.fnTangentStep || 1));
+    const fixedAngle = Number(ui.fnFixedAngle) || 0;
+
+    let totalRects = 0;
+
+    for (const { svg, rootEl, create } of contexts) {
+      const bounds = getSvgBounds(svg);
+      const samples = [];
+      for (let i = 0; i < sampleCount; i += 1) {
+        const t = sampleCount > 1 ? i / (sampleCount - 1) : 0;
+        let result = null;
+        try {
+          result = fn({ t, i, count: sampleCount, bounds });
+        } catch (err) {
+          if (statusEl) {
+            statusEl.textContent = `Function error: ${err?.message || err}`;
+            statusEl.classList.add("error");
+          }
+          return { ok: false };
+        }
+        const parsed = parseRectFunctionResult(result);
+        if (!parsed || !Number.isFinite(parsed.x) || !Number.isFinite(parsed.y)) {
+          samples.push(null);
+        } else {
+          samples.push(parsed);
+        }
+      }
+
+      const existing = Array.from(rootEl.querySelectorAll('g[data-fx-rects="1"]'));
+      for (const node of existing) node.remove();
+
+      const group = create("g");
+      group.setAttribute("data-fx-rects", "1");
+      group.setAttribute("data-fx-run", runId);
+
+      let made = 0;
+      for (let i = sampleOffset; i < sampleCount; i += sampleEvery) {
+        if (rectLimit > 0 && made >= rectLimit) break;
+        const sample = samples[i];
+        if (!sample) continue;
+
+        const width = Number.isFinite(sample.width) ? sample.width : Number(ui.fnRectWidth) || 0;
+        const height = Number.isFinite(sample.height) ? sample.height : Number(ui.fnRectHeight) || 0;
+        if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) continue;
+
+        const rect = create("rect");
+        const x = sample.x - width / 2;
+        const y = sample.y - height / 2;
+        rect.setAttribute("x", String(x));
+        rect.setAttribute("y", String(y));
+        rect.setAttribute("width", String(width));
+        rect.setAttribute("height", String(height));
+
+        const rx = Number.isFinite(sample.rx) ? sample.rx : Number(ui.fnRectRx) || 0;
+        const ry = Number.isFinite(sample.ry) ? sample.ry : Number(ui.fnRectRy) || 0;
+        if (rx > 0) rect.setAttribute("rx", String(rx));
+        if (ry > 0) rect.setAttribute("ry", String(ry));
+
+        const fill = sample.fill ?? ui.fnRectFill;
+        const stroke = sample.stroke ?? ui.fnRectStroke;
+        const strokeWidth = Number.isFinite(sample.strokeWidth) ? sample.strokeWidth : Number(ui.fnRectStrokeWidth);
+        const opacity = Number.isFinite(sample.opacity) ? sample.opacity : Number(ui.fnRectOpacity);
+        if (fill !== undefined && fill !== null && String(fill).trim() !== "") rect.setAttribute("fill", String(fill));
+        if (stroke !== undefined && stroke !== null && String(stroke).trim() !== "") rect.setAttribute("stroke", String(stroke));
+        if (Number.isFinite(strokeWidth)) rect.setAttribute("stroke-width", String(strokeWidth));
+        if (Number.isFinite(opacity)) rect.setAttribute("opacity", String(opacity));
+
+        let angle = 0;
+        if (orientMode === "function" && Number.isFinite(sample.angle)) angle = sample.angle;
+        else if (orientMode === "fixed") angle = fixedAngle;
+        else angle = angleFromSamples(samples, i, tangentStep);
+        if (Number.isFinite(angle) && angle !== 0) {
+          rect.setAttribute("transform", `rotate(${angle} ${sample.x} ${sample.y})`);
+        }
+
+        group.appendChild(rect);
+        made += 1;
+      }
+
+      if (group.childNodes.length) rootEl.appendChild(group);
+      totalRects += made;
+    }
+
+    if (statusEl) {
+      statusEl.textContent = `function rects applied: ${totalRects} rects.`;
     }
   } else if (ui.effectType === "merge") {
     let totalMerged = 0;

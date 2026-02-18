@@ -383,6 +383,36 @@ const projects = shuffle([
     image: "/MathVisuals/assets/math5.png",
     description: "Mesh curvature studies with smooth geometric transitions.",
     link: "/PinkallSchmittGunnHoffmannCollection/"
+  },
+  // {
+  //   title: "Islamic Repeating Art",
+  //   image: "/MathVisuals/assets/math.png",
+  //   description: "Ten-fold tessellations blending pentagrams and hexagon motifs.",
+  //   link: "/IslamicRepeatingArt/"
+  // },
+  {
+    title: "Marbled Patterns",
+    image: "/assets/Images/marble.png",
+    description: "Swirled marbling with ribbon-like ink veins.",
+    link: "/MarbledPatterns/"
+  },
+  {
+    title: "Domain Coloring",
+    image: "/assets/Images/coloring.png",
+    description: "Domain coloring for popular complex functions with adjustable color guides.",
+    link: "/DomainColoring/"
+  },
+  {
+    title: "Voronoi Point Ani",
+    image: "/assets/Images/voro.png",
+    description: "Voronoi diagrams that move and grow; fractal-like patterns emerge.",
+    link: "/Voronoi/"
+  },
+  {
+    title: "Discrete Fractals",
+    image: "/assets/Images/InnerLight.png",
+    description: "Discrete fractals like Mandelbrot, Julia, and Multibrot with shape/convergence controls.",
+    link: "/Generic/"
   }
 ]);
 // document.addEventListener("DOMContentLoaded", function() {

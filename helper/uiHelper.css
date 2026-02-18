@@ -119,7 +119,7 @@
     transform: translateY(-1px);
     box-shadow: 0 2px 6px rgba(0,0,0,0.4);
   }
-    #config {
+#config {
     position: absolute; 
     top: 30px; 
     /* right: 20px;               Start at the horizontal center */
@@ -133,7 +133,7 @@
   opacity: 0;
   pointer-events: none;
   visibility: hidden;
-resize: horizontal;
+resize: none;
   transition: opacity 0.2s ease;
     overflow-y: auto;       /* Only vertical scroll shows if needed */
     /* Optional, for smooth scrolling: */
@@ -150,6 +150,41 @@ resize: horizontal;
     gap: 8px;
     padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
 
+  }
+  #config-resize-handle{
+    display: none;
+    position: absolute;
+    left: -11px;
+    top: 0;
+    bottom: 0;
+    width: 14px;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    cursor: ew-resize;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 4px;
+    z-index: 2;
+  }
+  #config-resize-handle .line{
+    width: 9px;
+    height: 2px;
+    border-radius: 2px;
+    background: rgb(233, 255, 182);
+    opacity: 0.95;
+  }
+  #config.pinned #config-resize-handle{
+    display: inline-flex;
+  }
+  body.ui-resizing-config{
+    cursor: ew-resize;
+    user-select: none;
+  }
+  body.ui-resizing-config *{
+    cursor: ew-resize !important;
   }
   .vr-paramGroupTitle
   {
@@ -482,6 +517,9 @@ bottom: 30px;
     max-width: none;
     height: calc(98vh - var(--ui-top-offset, 0px) - 16px);
     max-height: calc(98vh - var(--ui-top-offset, 0px) - 16px);
+  }
+  #config-resize-handle{
+    display: none !important;
   }
 }
 @supports (-webkit-touch-callout: none) {

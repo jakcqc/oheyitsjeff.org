@@ -231,6 +231,7 @@ export function buildTransformPanel({ mountEl, state, xfRuntime, onStateChange }
         const cur = ensureVector2(getByPath(state, key), { x: blankIsNaN ? NaN : 0, y: blankIsNaN ? NaN : 0 });
         const next = { ...cur, [axis]: Number.isFinite(n) ? n : (blankIsNaN ? NaN : 0) };
         setByPath(state, key, next);
+        markDirty();
         render();
       });
 
@@ -267,6 +268,7 @@ export function buildTransformPanel({ mountEl, state, xfRuntime, onStateChange }
       box.value = Number.isFinite(cur[axis]) ? String(cur[axis]) : "";
       box.addEventListener("change", () => {
         syncVal(axis, box.value || "");
+        markDirty();
         render();
       });
 
@@ -447,7 +449,10 @@ export function buildTransformPanel({ mountEl, state, xfRuntime, onStateChange }
       const node = buildControl({
         param: p,
         state,
-        onChange: () => render(),
+        onChange: () => {
+          markDirty();
+          render();
+        },
       });
 
       // If you re-enable activeTile, keep this sync behavior:

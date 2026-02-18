@@ -8,9 +8,10 @@ import { registerTransformTab } from "../helper/transformHelp.js";
 import { applyPropOpsToSubtree, applyScriptOpsToSubtree } from "../helper/svgEditor.js";
 import { registerPropOpsTab, registerScriptOpsTab } from "../helper/svgEditor.js";
 import { registerAnimateTab, maybeAutoplayAnimation } from "../helper/animationHelp.js";
-import { registerLLMTab } from "../helper/llmTab.js";
+//import { registerLLMTab } from "../helper/llmTab.js";
 import { registerEffectsTab, applyEffectsToSubtree } from "../helper/effectsHelp.js";
 import { registerColorTab, applyColorToSubtree } from "../helper/colorHelp.js";
+import { registerAutoExportTab } from "../helper/autoExportHelp.js";
 
 const TAB_BUILDERS = new Map();
 let ACTIVE_UNDO_CONTEXT = null;
@@ -66,11 +67,12 @@ function buildRegisteredTabs(ctx) {
 
 registerTransformTab();
 registerPropOpsTab();
-registerScriptOpsTab();
+//registerScriptOpsTab();
 registerAnimateTab();
-registerLLMTab();
+//registerLLMTab();
 registerEffectsTab();
 registerColorTab();
+registerAutoExportTab();
 
 export function exportStateToJSON(state) {
   return stringifyState(state, true);
@@ -78,6 +80,7 @@ export function exportStateToJSON(state) {
 
 const SETTINGS_CACHE_PREFIX = "visualHelp.settings.v1:";
 const UI_CACHE_PREFIX = "visualHelp.ui.v1:";
+const PERSIST_CACHE_PREFIX = "visualHelp.persist.v1:";
 
 function readCache(key) {
   if (typeof localStorage === "undefined") return null;
@@ -117,6 +120,10 @@ function getSettingsCacheKey(visualId) {
 
 function getUiCacheKey(visualId) {
   return `${UI_CACHE_PREFIX}${visualId}`;
+}
+
+function getPersistCacheKey(visualId) {
+  return `${PERSIST_CACHE_PREFIX}${visualId}`;
 }
 
 function loadSettingsCache(visualId) {
@@ -163,6 +170,20 @@ function saveUiCache(visualId, uiState) {
 function clearUiCache(visualId) {
   if (!visualId) return false;
   return removeCache(getUiCacheKey(visualId));
+}
+
+function loadPersistFlag(visualId) {
+  if (!visualId) return false;
+  const raw = readCache(getPersistCacheKey(visualId));
+  if (raw == null) return false;
+  if (raw === "1" || raw === "true") return true;
+  if (raw === "0" || raw === "false") return false;
+  return !!raw;
+}
+
+function savePersistFlag(visualId, allowed) {
+  if (!visualId) return false;
+  return writeCache(getPersistCacheKey(visualId), allowed ? "1" : "0");
 }
 
 const HISTORY_STACK_LIMIT = 100;
@@ -626,7 +647,12 @@ export function mountVisualUI({
   history.suspend += 1;
   let ioToggle = null;
   let collapseDefaultsToggle = null;
+  let persistSettingsToggle = null;
+  let resizeHandle = null;
+  let isResizingConfig = false;
+  let persistEnabled = loadPersistFlag(visualId);
   const persistUiNow = () => {
+    if (!persistEnabled) return;
     if (!state?.__ui) return;
     saveUiCache(visualId, state.__ui);
   };
@@ -634,6 +660,7 @@ export function mountVisualUI({
     let timer = null;
     const delayMs = 250;
     return () => {
+      if (!persistEnabled) return;
       if (!visualId) return;
       if (timer) clearTimeout(timer);
       timer = setTimeout(() => {
@@ -669,6 +696,9 @@ export function mountVisualUI({
     if (!state.__ui) state.__ui = {};
     if (state.__ui.ioOpen === undefined) state.__ui.ioOpen = true;
     if (state.__ui.collapseParamsByDefault == null) state.__ui.collapseParamsByDefault = true;
+    if (state.__ui.configWidth != null && !Number.isFinite(Number(state.__ui.configWidth))) {
+      state.__ui.configWidth = null;
+    }
     if (isSmallScreen()) {
       state.__ui.configPinned = false;
     } else if (state.__ui.configPinned == null) {
@@ -682,12 +712,38 @@ export function mountVisualUI({
       state.__ui.navHidden = !!infoBar?.classList.contains("hidden");
     }
   };
+  const getConfigMinWidth = () => 240;
+  const getConfigMaxWidth = () => {
+    const viewport = Math.max(320, window.innerWidth || 0);
+    return Math.max(getConfigMinWidth() + 20, Math.min(900, Math.floor(viewport * 0.9)));
+  };
+  const clampConfigWidth = (v) => {
+    const n = Number(v);
+    if (!Number.isFinite(n)) return null;
+    return Math.max(getConfigMinWidth(), Math.min(getConfigMaxWidth(), n));
+  };
+  const applyConfigWidthFromUi = () => {
+    if (!configEl || !state?.__ui) return;
+    if (!configEl.classList.contains("pinned")) {
+      configEl.style.removeProperty("width");
+      return;
+    }
+    const width = clampConfigWidth(state.__ui.configWidth);
+    if (width == null) {
+      configEl.style.removeProperty("width");
+      return;
+    }
+    configEl.style.width = `${width}px`;
+  };
   const syncPersistentUi = () => {
     ensureUiDefaults();
     ioEl.classList.toggle("hidden", !state.__ui.ioOpen);
     if (ioToggle) ioToggle.textContent = state.__ui.ioOpen ? "-" : "+";
     if (collapseDefaultsToggle) {
       collapseDefaultsToggle.checked = !!state.__ui.collapseParamsByDefault;
+    }
+    if (persistSettingsToggle) {
+      persistSettingsToggle.checked = !!persistEnabled;
     }
   };
 
@@ -814,6 +870,28 @@ export function mountVisualUI({
     document.createTextNode("Start categories collapsed")
   );
 
+  const persistSettingsWrap = document.createElement("label");
+  persistSettingsWrap.style.display = "flex";
+  persistSettingsWrap.style.alignItems = "center";
+  persistSettingsWrap.style.gap = "6px";
+  persistSettingsWrap.style.margin = "4px 2px";
+
+  persistSettingsToggle = document.createElement("input");
+  persistSettingsToggle.type = "checkbox";
+  persistSettingsToggle.checked = !!persistEnabled;
+  persistSettingsToggle.onchange = () => {
+    persistEnabled = !!persistSettingsToggle.checked;
+    savePersistFlag(visualId, persistEnabled);
+    if (persistEnabled) {
+      persistUiNow();
+      persistSettings();
+    }
+  };
+  persistSettingsWrap.appendChild(persistSettingsToggle);
+  persistSettingsWrap.appendChild(
+    document.createTextNode("Remember settings for this visual")
+  );
+
   // persistent controls
   ioEl.append(
     makeSaveSettingsButton(state, visualId),
@@ -827,7 +905,8 @@ export function mountVisualUI({
       persistSettings();
     }),
     resetDefaultsBtn,
-    collapseDefaultsWrap
+    collapseDefaultsWrap,
+    persistSettingsWrap
   );
 
   makeSaveSVG(ioEl, mountEl, visualId, state);
@@ -864,6 +943,7 @@ export function mountVisualUI({
       const pinned = !!state.__ui.configPinned;
       configEl.classList.toggle("pinned", pinned);
       if (pinned) configEl.classList.add("open");
+      applyConfigWidthFromUi();
     }
     if (infoBar) {
       infoBar.classList.toggle("hidden", !!state.__ui.navHidden);
@@ -872,6 +952,45 @@ export function mountVisualUI({
     syncPinnedLayout();
   };
   applyLayoutFromUi();
+  if (configEl && !isSmallScreen()) {
+    const priorHandle = configEl.querySelector("#config-resize-handle");
+    if (priorHandle) priorHandle.remove();
+    resizeHandle = document.createElement("button");
+    resizeHandle.type = "button";
+    resizeHandle.id = "config-resize-handle";
+    resizeHandle.setAttribute("aria-label", "Resize pinned panel");
+    resizeHandle.innerHTML = '<span class="line"></span><span class="line"></span>';
+    configEl.appendChild(resizeHandle);
+
+    const onPointerMove = (event) => {
+      if (!isResizingConfig) return;
+      const nextWidth = clampConfigWidth((window.innerWidth || 0) - event.clientX);
+      if (nextWidth == null) return;
+      state.__ui.configWidth = nextWidth;
+      applyConfigWidthFromUi();
+      syncPinnedLayout();
+    };
+    const endResize = () => {
+      if (!isResizingConfig) return;
+      isResizingConfig = false;
+      document.body?.classList?.remove("ui-resizing-config");
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", endResize);
+      window.removeEventListener("pointercancel", endResize);
+      handleUiChange();
+    };
+
+    resizeHandle.addEventListener("pointerdown", (event) => {
+      if (!configEl.classList.contains("pinned")) return;
+      if (isSmallScreen()) return;
+      event.preventDefault();
+      isResizingConfig = true;
+      document.body?.classList?.add("ui-resizing-config");
+      window.addEventListener("pointermove", onPointerMove);
+      window.addEventListener("pointerup", endResize);
+      window.addEventListener("pointercancel", endResize);
+    });
+  }
   if (configEl && !isSmallScreen()) {
     const pinBtn = document.createElement("button");
     pinBtn.type = "button";
@@ -972,12 +1091,15 @@ export function runVisualApp({
 
   //const state = providedState || makeDefaultState(spec);
   const state = makeDefaultState(spec);
-  const cachedSettings = loadSettingsCache(visualId);
-  if (cachedSettings) mergeInto(state, cachedSettings);
-  const cachedUi = loadUiCache(visualId);
-  if (cachedUi) {
-    if (!state.__ui) state.__ui = {};
-    mergeInto(state.__ui, cachedUi);
+  const persistEnabled = loadPersistFlag(visualId);
+  if (persistEnabled) {
+    const cachedSettings = loadSettingsCache(visualId);
+    if (cachedSettings) mergeInto(state, cachedSettings);
+    const cachedUi = loadUiCache(visualId);
+    if (cachedUi) {
+      if (!state.__ui) state.__ui = {};
+      mergeInto(state.__ui, cachedUi);
+    }
   }
   if (providedState && typeof providedState === "object") {
     mergeInto(state, providedState);
@@ -1491,4 +1613,14 @@ function clone(v) {
 
 function isFiniteNumber(x) {
   return typeof x === "number" && Number.isFinite(x);
+}
+
+function toNumber(value, fallback = 0) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+function clampNumber(value, min = -Infinity, max = Infinity, fallback = 0) {
+  const n = toNumber(value, fallback);
+  return Math.min(max, Math.max(min, n));
 }

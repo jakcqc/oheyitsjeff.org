@@ -389,18 +389,6 @@ const projects = shuffle([
   //   link: "/GeoSpace/"
   // },
   {
-    title: "Discrete_Fractals",
-    image: "assets/Images/InnerLight.png",
-    description: "Discrete fractals like the Mandelbrot, Julia, multibrot, etc are plotted using different shapes and convergence.",
-    link: "/Generic/"
-  },
-  {
-    title: "Domain_Coloring",
-    image: "assets/Images/coloring.png",
-    description: "Domain coloring for popular complex functions with adjustable color guides.",
-    link: "/DomainColoring/"
-  },
-  {
     title: "GameOfLife??",
     image: "assets/Images/gameOfLife0.webp",
     description: "The game of life is a cellular automata simulation. Different dense neighbourhood functions are used in this case.",
@@ -419,14 +407,8 @@ const projects = shuffle([
     link: "/kakeya/"
   },
   {
-    title: "Voronoi_Point_Ani",
-    image: "assets/Images/voro.png",
-    description: "Voronoi diagrams that move and grow. Fractal like patterns emerge. ",
-    link: "/Voronoi/"
-  },
-  {
     title: "Math Visuals",
-    image: "/MathVisuals/assets/math.png",
+    image: "/assets/Images/marble.png",
     description: "A dedicated gallery of the new math visualization set.",
     link: "/MathVisuals/"
   },

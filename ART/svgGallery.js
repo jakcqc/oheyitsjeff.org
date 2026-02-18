@@ -1,7 +1,7 @@
 import { registerVisual } from "../helper/visualHelp.js";
 
 const API_BASE = "https://contentmanager.jakerley180.workers.dev";
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 20;
 const ROTATION_CACHE_KEY = "svgGallery.rotation.v1";
 const MIN_ZOOM = 0.1;
 const MAX_ZOOM = 3;
