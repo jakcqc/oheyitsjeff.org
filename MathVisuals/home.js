@@ -409,6 +409,12 @@ const projects = shuffle([
     link: "/Voronoi/"
   },
   {
+    title: "Kakeya!!",
+    image: "/assets/Images/kakaya.png",
+    description: "The collatz conjecture about sequences leverages Kakaya sets, which are sets made from line segments!",
+    link: "/kakeya/"
+  },
+  {
     title: "Discrete Fractals",
     image: "/assets/Images/InnerLight.png",
     description: "Discrete fractals like Mandelbrot, Julia, and Multibrot with shape/convergence controls.",

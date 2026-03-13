@@ -1,7 +1,13 @@
 import { registerVisual } from "../helper/visualHelp.js";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { TransformControls } from "three/examples/jsm/controls/TransformControls.js";
 import { SVGRenderer } from "three/examples/jsm/renderers/SVGRenderer.js";
+import {
+  ensureShapePlacementState,
+  makeShapeInstanceFromTool,
+  mountShapePlacementPanel,
+} from "./shapePlacementPanel.js";
 
 function clampNum(value, fallback = 0) {
   //const n = Number(value);
@@ -610,11 +616,128 @@ function numOr(value, fallback) {
   return Number.isFinite(n) ? n : fallback;
 }
 
-function getScaleRange(state, key, fallbackMin, fallbackMax) {
-  const vec = state[key];
-  const a = Math.max(0.05, numOr(vec?.x, fallbackMin));
-  const b = Math.max(0.05, numOr(vec?.y, fallbackMax));
-  return { min: Math.min(a, b), max: Math.max(a, b) };
+const SHAPE_PALETTE = [
+  "#c9d7f8",
+  "#a6e1d2",
+  "#f4c7a1",
+  "#f2a7c4",
+  "#b2b1f5",
+  "#f7e6a3",
+];
+
+const SHAPE_KEY_ALIAS = {
+  shapeBoxTall: "boxTall",
+  shapeSlab: "slab",
+  shapeCylinder: "cylinder",
+  shapePyramid: "pyramid",
+  shapeSphere: "sphere",
+  shapeCone: "cone",
+  shapePoly: "poly",
+};
+
+function normalizeShapeKey(value) {
+  const raw = String(value || "").trim();
+  const key = SHAPE_KEY_ALIAS[raw] || raw;
+  if (["boxTall", "slab", "cylinder", "pyramid", "sphere", "cone", "poly"].includes(key)) {
+    return key;
+  }
+  return "boxTall";
+}
+
+function normalizeShapeStretch(stretch) {
+  return {
+    x: Math.max(0.25, numOr(stretch?.x, 1)),
+    y: Math.max(0.25, numOr(stretch?.y, 1)),
+    z: Math.max(0.25, numOr(stretch?.z, 1)),
+  };
+}
+
+function normalizeShapeRotation(rotation) {
+  return {
+    x: numOr(rotation?.x, 0),
+    y: numOr(rotation?.y, 0),
+    z: numOr(rotation?.z, 0),
+  };
+}
+
+function normalizeShapePosition(position, bounds) {
+  return {
+    x: Math.max(bounds.min, Math.min(bounds.max, Math.round(numOr(position?.x, 0)))),
+    y: Math.max(bounds.min, Math.min(bounds.max, Math.round(numOr(position?.y, 0)))),
+    z: Math.max(bounds.min, Math.min(bounds.max, Math.round(numOr(position?.z, 0)))),
+  };
+}
+
+function getGridBoundsFromState(state) {
+  const gridSize = Math.max(4, Math.floor(numOr(state?.gridSize, 40)));
+  const half = Math.floor(gridSize / 2);
+  return { min: -half, max: half };
+}
+
+function getGroundYBase(bounds, voxelSize) {
+  return bounds.min * voxelSize - voxelSize * 1.15;
+}
+
+function getGroundY(state, bounds, voxelSize) {
+  return getGroundYBase(bounds, voxelSize) + numOr(state?.groundYOffset, 0);
+}
+
+function estimateShapeHeightInVoxels(shapeTool) {
+  const shape = normalizeShapeKey(shapeTool?.shape);
+  const scale = Math.max(0.25, numOr(shapeTool?.scale, 1));
+  const stretch = normalizeShapeStretch(shapeTool?.stretch);
+  const rotation = normalizeShapeRotation(shapeTool?.rotation);
+
+  if (shape === "boxTall" || shape === "slab") {
+    const base = shape === "boxTall" ? { sx: 8, sy: 18, sz: 8 } : { sx: 18, sy: 4, sz: 18 };
+    let sx = Math.max(2, Math.round(base.sx * scale * stretch.x));
+    let sy = Math.max(2, Math.round(base.sy * scale * stretch.y));
+    let sz = Math.max(2, Math.round(base.sz * scale * stretch.z));
+    ({ sx, sy, sz } = applyQuarterTurnSwaps({ sx, sy, sz }, rotation));
+    return sy;
+  }
+  if (shape === "cylinder") return Math.max(4, Math.round(18 * scale * stretch.y));
+  if (shape === "pyramid") return Math.max(4, Math.round(14 * scale * stretch.y));
+  if (shape === "cone") return Math.max(4, Math.round(16 * scale * stretch.y));
+  if (shape === "sphere" || shape === "poly") {
+    const radius = Math.max(2, Math.round(8 * scale * Math.max(stretch.x, stretch.y, stretch.z)));
+    return radius * 2;
+  }
+  return 8;
+}
+
+function getDefaultShapeCursorYOnGround(state, bounds) {
+  const voxelSize = Math.max(1, numOr(state?.voxelSize, 100));
+  const groundVoxelY = getGroundY(state, bounds, voxelSize) / voxelSize;
+  const shapeHeight = estimateShapeHeightInVoxels(state?.shapeTool || {});
+  const centerY = Math.round(groundVoxelY + Math.max(1, Math.floor(shapeHeight * 0.5)));
+  return Math.max(bounds.min, Math.min(bounds.max, centerY));
+}
+
+function snapShapeToolCursorToGround(state) {
+  ensureShapePlacementState(state);
+  if (state.groundEnabled === false) return;
+  const bounds = getGridBoundsFromState(state);
+  state.shapeTool.cursor.y = getDefaultShapeCursorYOnGround(state, bounds);
+}
+
+function hasOddQuarterTurn(deg) {
+  const turns = Math.round(numOr(deg, 0) / 90);
+  return Math.abs(turns) % 2 === 1;
+}
+
+function applyQuarterTurnSwaps(size, rotation) {
+  let { sx, sy, sz } = size;
+  if (hasOddQuarterTurn(rotation?.x)) [sy, sz] = [sz, sy];
+  if (hasOddQuarterTurn(rotation?.y)) [sx, sz] = [sz, sx];
+  if (hasOddQuarterTurn(rotation?.z)) [sx, sy] = [sy, sx];
+  return { sx, sy, sz };
+}
+
+function wrapIndex(value, length) {
+  if (!length) return 0;
+  const mod = value % length;
+  return mod < 0 ? mod + length : mod;
 }
 
 function pickWeighted(items, rand) {
@@ -626,211 +749,211 @@ function pickWeighted(items, rand) {
     roll -= Math.max(0, items[i].chance);
     if (roll <= 0) return items[i];
   }
-  return items[items.length - 1];
+  return items[items.length - 1] || null;
+}
+
+function generateProceduralShapeInstances(state, bounds, seed) {
+  const count = Math.max(0, Math.floor(numOr(state.proceduralShapeCount, 12)));
+  if (count <= 0) return [];
+
+  const rand = mulberry32((seed ^ 0x6f3d4c51) >>> 0);
+  const spread = clamp01(numOr(state.proceduralSpread, 1), 1);
+  const baseRatio = clamp01(numOr(state.proceduralBaseRatio, 0.05), 0.05);
+  const scaleMult = Math.max(0.1, numOr(state.proceduralScale, 1));
+  const yawSteps = Math.max(0, Math.floor(numOr(state.proceduralYawSteps, 2)));
+  const halfSpan = Math.max(1, Math.floor((bounds.max - bounds.min) * 0.5));
+  const baseY = Math.floor(bounds.min + (bounds.max - bounds.min) * baseRatio);
+  const paletteLength = Math.max(1, SHAPE_PALETTE.length);
+
+  const specs = [
+    { shape: "boxTall", chance: 24, scaleMin: 0.8, scaleMax: 1.4, sy: [10, 22], sxz: [3, 10] },
+    { shape: "slab", chance: 22, scaleMin: 0.8, scaleMax: 1.35, sy: [2, 7], sxz: [10, 22] },
+    { shape: "cylinder", chance: 18, scaleMin: 0.75, scaleMax: 1.35, radius: [4, 10], height: [8, 22] },
+    { shape: "pyramid", chance: 12, scaleMin: 0.75, scaleMax: 1.3, base: [8, 18], height: [8, 18] },
+    { shape: "sphere", chance: 10, scaleMin: 0.7, scaleMax: 1.3, radius: [5, 12], yLift: 0.25 },
+    { shape: "cone", chance: 8, scaleMin: 0.7, scaleMax: 1.35, radius: [4, 11], height: [8, 22] },
+    { shape: "poly", chance: 6, scaleMin: 0.65, scaleMax: 1.25, radius: [6, 14], yLift: 0.3 },
+  ];
+
+  const instances = [];
+  for (let i = 0; i < count; i += 1) {
+    const spec = pickWeighted(specs, rand) || specs[0];
+    const scale = THREE.MathUtils.lerp(spec.scaleMin, spec.scaleMax, rand()) * scaleMult;
+    const x = Math.round((rand() * 2 - 1) * halfSpan * spread);
+    const z = Math.round((rand() * 2 - 1) * halfSpan * spread);
+    const yawStep = yawSteps > 1 ? Math.floor(rand() * yawSteps) : 0;
+    const rotationY = yawStep * 90;
+
+    let y = baseY;
+    if (spec.shape === "sphere" || spec.shape === "poly") {
+      y += Math.floor((bounds.max - bounds.min) * spec.yLift * rand());
+    } else if (spec.shape === "slab") {
+      y += Math.floor((bounds.max - bounds.min) * 0.5 * rand());
+    } else if (spec.shape === "boxTall") {
+      y += Math.floor((bounds.max - bounds.min) * 0.18 * rand());
+    } else if (spec.shape === "cylinder" || spec.shape === "pyramid" || spec.shape === "cone") {
+      y += Math.floor((bounds.max - bounds.min) * 0.12 * rand());
+    }
+
+    const stretch = { x: 1, y: 1, z: 1 };
+    if (spec.sxz) {
+      const sx = Math.max(2, Math.floor((spec.sxz[0] + rand() * (spec.sxz[1] - spec.sxz[0])) * scale));
+      const sz = Math.max(2, Math.floor((spec.sxz[0] + rand() * (spec.sxz[1] - spec.sxz[0])) * scale));
+      const sy = Math.max(2, Math.floor((spec.sy[0] + rand() * (spec.sy[1] - spec.sy[0])) * scale));
+      stretch.x = sx / Math.max(1, Math.round((spec.shape === "slab" ? 18 : 8) * scale));
+      stretch.y = sy / Math.max(1, Math.round((spec.shape === "slab" ? 4 : 18) * scale));
+      stretch.z = sz / Math.max(1, Math.round((spec.shape === "slab" ? 18 : 8) * scale));
+    }
+
+    instances.push({
+      shape: spec.shape,
+      position: { x, y, z },
+      rotation: { x: 0, y: rotationY, z: 0 },
+      scale,
+      stretch,
+      colorIndex: i % paletteLength,
+    });
+  }
+
+  return instances;
 }
 
 function buildVoxelSet(state) {
+  ensureShapePlacementState(state);
   const gridSize = state.gridSize;
   const half = Math.floor(gridSize / 2);
   const bounds = { min: -half, max: half };
   const seed = clampInt(state.seed, 12345, 0, 999999999);
-  const rand = mulberry32(seed);
-
-  const palette = [
-    "#c9d7f8",
-    "#a6e1d2",
-    "#f4c7a1",
-    "#f2a7c4",
-    "#b2b1f5",
-    "#f7e6a3",
-  ];
 
   let set = new Set();
   let colorMap = new Map();
   const shapeBounds = [];
   const placementMode = String(state.placementMode || "allow");
-  // visualHelp range controls can store numbers as strings; spacing math needs a real int (voxels).
-  const shapeSpacing = state.shapeSpacing;
-  const attemptLimit = placementMode === "allow" ? 1 : 24;
+  const shapeSpacing = Math.max(0, Math.floor(numOr(state.shapeSpacing, 0)));
 
-  const presetCount = Math.max(0, Math.floor(numOr(state.presetCount, 12)));
-  const presetScale = Math.max(0.05, numOr(state.presetScale, 1));
-  const spawnSpread = Math.max(0, numOr(state.spawnSpread, 1));
-  const spawnBaseRatio = numOr(state.spawnBaseRatio, 0.05);
-  const yawSteps = Math.max(0, Math.floor(numOr(state.shapeYawSteps, 2)));
+  const fallbackInstance = makeShapeInstanceFromTool(state.shapeTool || {});
+  const manualInstances = Array.isArray(state.shapeInstances) ? state.shapeInstances : [];
+  const proceduralInstances = state.autoProceduralShapes === true
+    ? generateProceduralShapeInstances(state, bounds, seed)
+    : [];
+  const rawInstances = [...proceduralInstances, ...manualInstances];
+  if (rawInstances.length === 0) rawInstances.push(fallbackInstance);
 
-  const shapeSpecs = [
-    {
-      key: "shapeBoxTall",
-      chance: Math.max(0, numOr(state.shapeBoxTallChance, 24)),
-      scale: getScaleRange(state, "shapeBoxTallScaleRange", 0.8, 1.4),
-    },
-    {
-      key: "shapeSlab",
-      chance: Math.max(0, numOr(state.shapeSlabChance, 22)),
-      scale: getScaleRange(state, "shapeSlabScaleRange", 0.8, 1.35),
-    },
-    {
-      key: "shapeCylinder",
-      chance: Math.max(0, numOr(state.shapeCylinderChance, 18)),
-      scale: getScaleRange(state, "shapeCylinderScaleRange", 0.75, 1.35),
-    },
-    {
-      key: "shapePyramid",
-      chance: Math.max(0, numOr(state.shapePyramidChance, 12)),
-      scale: getScaleRange(state, "shapePyramidScaleRange", 0.75, 1.3),
-    },
-    {
-      key: "shapeSphere",
-      chance: Math.max(0, numOr(state.shapeSphereChance, 10)),
-      scale: getScaleRange(state, "shapeSphereScaleRange", 0.7, 1.3),
-    },
-    {
-      key: "shapeCone",
-      chance: Math.max(0, numOr(state.shapeConeChance, 8)),
-      scale: getScaleRange(state, "shapeConeScaleRange", 0.7, 1.35),
-    },
-    {
-      key: "shapePoly",
-      chance: Math.max(0, numOr(state.shapePolyChance, 6)),
-      scale: getScaleRange(state, "shapePolyScaleRange", 0.65, 1.25),
-    },
-  ].filter((shape) => shape.chance > 0);
+  for (let i = 0; i < rawInstances.length; i += 1) {
+    const raw = rawInstances[i] || {};
+    const shape = normalizeShapeKey(raw.shape || fallbackInstance.shape);
+    const position = normalizeShapePosition(raw.position || raw.cursor || fallbackInstance.position, bounds);
+    const rotation = normalizeShapeRotation(raw.rotation || fallbackInstance.rotation);
+    const stretch = normalizeShapeStretch(raw.stretch || fallbackInstance.stretch);
+    const scale = Math.max(0.25, numOr(raw.scale, fallbackInstance.scale));
+    const colorIndex = wrapIndex(Math.round(numOr(raw.colorIndex, i)), SHAPE_PALETTE.length);
+    const shapeColor = SHAPE_PALETTE[colorIndex];
 
-  if (shapeSpecs.length === 0) {
-    shapeSpecs.push({
-      key: "shapeBoxTall",
-      chance: 1,
-      scale: { min: 1, max: 1 },
-    });
-  }
-
-  for (let i = 0; i < presetCount; i += 1) {
-    const shapeColor = palette[Math.floor(rand() * palette.length)];
-    let placed = false;
-
-    for (let attempt = 0; attempt < attemptLimit && !placed; attempt += 1) {
-      const cx = Math.floor((rand() - 0.5) * gridSize * spawnSpread);
-      const cz = Math.floor((rand() - 0.5) * gridSize * spawnSpread);
-      const baseY = Math.floor(bounds.min + gridSize * clamp01(spawnBaseRatio, 0.05));
-      const yawStep = yawSteps > 1 ? Math.floor(rand() * yawSteps) : 0;
-      const swapXZ = yawStep % 2 === 1;
-      const spec = pickWeighted(shapeSpecs, rand);
-      if (!spec) continue;
-      const scaleMix = THREE.MathUtils.lerp(spec.scale.min, spec.scale.max, rand()) * presetScale;
-
-      if (spec.key === "shapeBoxTall") {
-        let sx = Math.max(2, Math.floor((2 + rand() * 10) * scaleMix));
-        const sy = Math.max(2, Math.floor((6 + rand() * 18) * scaleMix));
-        let sz = Math.max(2, Math.floor((2 + rand() * 10) * scaleMix));
-        if (swapXZ) [sx, sz] = [sz, sx];
-        const boxBounds = getBoxBounds(cx, baseY + sy / 2, cz, sx, sy, sz);
-        if (placementMode !== "allow") {
-          if (
-            shapeBounds.some((b) =>
-              boundsIntersect(boxBounds, b, placementMode === "spacing" ? shapeSpacing : 0)
-            )
-          ) continue;
-          if (placementMode === "no-overlap" && !canPlaceBox(set, bounds, cx, baseY + sy / 2, cz, sx, sy, sz)) continue;
-        }
-        addBox(set, bounds, cx, baseY + sy / 2, cz, sx, sy, sz, colorMap, shapeColor);
-        shapeBounds.push(boxBounds);
-        placed = true;
-      } else if (spec.key === "shapeSlab") {
-        let sx = Math.max(3, Math.floor((10 + rand() * 20) * scaleMix));
-        const sy = Math.max(2, Math.floor((2 + rand() * 6) * scaleMix));
-        let sz = Math.max(3, Math.floor((10 + rand() * 20) * scaleMix));
-        if (swapXZ) [sx, sz] = [sz, sx];
-        const y = Math.floor(baseY + rand() * gridSize * 0.5);
-        const boxBounds = getBoxBounds(cx, y, cz, sx, sy, sz);
-        if (placementMode !== "allow") {
-          if (
-            shapeBounds.some((b) =>
-              boundsIntersect(boxBounds, b, placementMode === "spacing" ? shapeSpacing : 0)
-            )
-          ) continue;
-          if (placementMode === "no-overlap" && !canPlaceBox(set, bounds, cx, y, cz, sx, sy, sz)) continue;
-        }
-        addBox(set, bounds, cx, y, cz, sx, sy, sz, colorMap, shapeColor);
-        shapeBounds.push(boxBounds);
-        placed = true;
-      } else if (spec.key === "shapeCylinder") {
-        const radius = Math.max(3, Math.floor((4 + rand() * 10) * scaleMix));
-        const height = Math.max(6, Math.floor((8 + rand() * 22) * scaleMix));
-        const cylBounds = getCylinderBounds(cx, baseY, cz, radius, height);
-        if (placementMode !== "allow") {
-          if (
-            shapeBounds.some((b) =>
-              boundsIntersect(cylBounds, b, placementMode === "spacing" ? shapeSpacing : 0)
-            )
-          ) continue;
-          if (placementMode === "no-overlap" && !canPlaceCylinder(set, bounds, cx, baseY, cz, radius, height)) continue;
-        }
-        addCylinder(set, bounds, cx, baseY, cz, radius, height, colorMap, shapeColor);
-        shapeBounds.push(cylBounds);
-        placed = true;
-      } else if (spec.key === "shapePyramid") {
-        const baseSize = Math.max(4, Math.floor((8 + rand() * 16) * scaleMix));
-        const height = Math.max(4, Math.floor((8 + rand() * 18) * scaleMix));
-        const pyrBounds = getPyramidBounds(cx, baseY, cz, baseSize, height);
-        if (placementMode !== "allow") {
-          if (
-            shapeBounds.some((b) =>
-              boundsIntersect(pyrBounds, b, placementMode === "spacing" ? shapeSpacing : 0)
-            )
-          ) continue;
-          if (placementMode === "no-overlap" && !canPlaceBox(set, bounds, cx, baseY + height / 2, cz, baseSize, height, baseSize)) continue;
-        }
-        addPyramid(set, bounds, cx, baseY, cz, baseSize, height, colorMap, shapeColor);
-        shapeBounds.push(pyrBounds);
-        placed = true;
-      } else if (spec.key === "shapeSphere") {
-        const radius = Math.max(3, Math.floor((5 + rand() * 12) * scaleMix));
-        const cy = baseY + radius + Math.floor(rand() * gridSize * 0.25);
-        const sphereBounds = getSphereBounds(cx, cy, cz, radius);
-        if (placementMode !== "allow") {
-          if (
-            shapeBounds.some((b) =>
-              boundsIntersect(sphereBounds, b, placementMode === "spacing" ? shapeSpacing : 0)
-            )
-          ) continue;
-          if (placementMode === "no-overlap" && !canPlaceBox(set, bounds, cx, cy, cz, radius * 2, radius * 2, radius * 2)) continue;
-        }
-        addSphere(set, bounds, cx, cy, cz, radius, colorMap, shapeColor);
-        shapeBounds.push(sphereBounds);
-        placed = true;
-      } else if (spec.key === "shapeCone") {
-        const radius = Math.max(3, Math.floor((4 + rand() * 11) * scaleMix));
-        const height = Math.max(5, Math.floor((8 + rand() * 22) * scaleMix));
-        const coneBounds = getConeBounds(cx, baseY, cz, radius, height);
-        if (placementMode !== "allow") {
-          if (
-            shapeBounds.some((b) =>
-              boundsIntersect(coneBounds, b, placementMode === "spacing" ? shapeSpacing : 0)
-            )
-          ) continue;
-          if (placementMode === "no-overlap" && !canPlaceBox(set, bounds, cx, baseY + height * 0.5, cz, radius * 2, height, radius * 2)) continue;
-        }
-        addCone(set, bounds, cx, baseY, cz, radius, height, colorMap, shapeColor);
-        shapeBounds.push(coneBounds);
-        placed = true;
-      } else if (spec.key === "shapePoly") {
-        const radius = Math.max(3, Math.floor((6 + rand() * 14) * scaleMix));
-        const cy = baseY + radius + Math.floor(rand() * gridSize * 0.3);
-        const polyBounds = getSphereBounds(cx, cy, cz, radius);
-        if (placementMode !== "allow") {
-          if (
-            shapeBounds.some((b) =>
-              boundsIntersect(polyBounds, b, placementMode === "spacing" ? shapeSpacing : 0)
-            )
-          ) continue;
-          if (placementMode === "no-overlap" && !canPlaceBox(set, bounds, cx, cy, cz, radius * 2, radius * 2, radius * 2)) continue;
-        }
-        addRandomPolyhedron(set, bounds, cx, cy, cz, radius, rand, colorMap, shapeColor);
-        shapeBounds.push(polyBounds);
-        placed = true;
+    if (shape === "boxTall" || shape === "slab") {
+      const base = shape === "boxTall"
+        ? { sx: 8, sy: 18, sz: 8 }
+        : { sx: 18, sy: 4, sz: 18 };
+      let sx = Math.max(2, Math.round(base.sx * scale * stretch.x));
+      let sy = Math.max(2, Math.round(base.sy * scale * stretch.y));
+      let sz = Math.max(2, Math.round(base.sz * scale * stretch.z));
+      ({ sx, sy, sz } = applyQuarterTurnSwaps({ sx, sy, sz }, rotation));
+      const boxBounds = getBoxBounds(position.x, position.y, position.z, sx, sy, sz);
+      if (placementMode !== "allow") {
+        if (
+          shapeBounds.some((b) =>
+            boundsIntersect(boxBounds, b, placementMode === "spacing" ? shapeSpacing : 0)
+          )
+        ) continue;
+        if (placementMode === "no-overlap" && !canPlaceBox(set, bounds, position.x, position.y, position.z, sx, sy, sz)) continue;
       }
+      addBox(set, bounds, position.x, position.y, position.z, sx, sy, sz, colorMap, shapeColor);
+      shapeBounds.push(boxBounds);
+      continue;
     }
+
+    if (shape === "cylinder") {
+      const radius = Math.max(2, Math.round(7 * scale * Math.max(stretch.x, stretch.z)));
+      const height = Math.max(4, Math.round(18 * scale * stretch.y));
+      const baseY = position.y - Math.floor(height * 0.5);
+      const cylBounds = getCylinderBounds(position.x, baseY, position.z, radius, height);
+      if (placementMode !== "allow") {
+        if (
+          shapeBounds.some((b) =>
+            boundsIntersect(cylBounds, b, placementMode === "spacing" ? shapeSpacing : 0)
+          )
+        ) continue;
+        if (placementMode === "no-overlap" && !canPlaceCylinder(set, bounds, position.x, baseY, position.z, radius, height)) continue;
+      }
+      addCylinder(set, bounds, position.x, baseY, position.z, radius, height, colorMap, shapeColor);
+      shapeBounds.push(cylBounds);
+      continue;
+    }
+
+    if (shape === "pyramid") {
+      const baseSize = Math.max(4, Math.round(16 * scale * Math.max(stretch.x, stretch.z)));
+      const height = Math.max(4, Math.round(14 * scale * stretch.y));
+      const baseY = position.y - Math.floor(height * 0.5);
+      const pyrBounds = getPyramidBounds(position.x, baseY, position.z, baseSize, height);
+      if (placementMode !== "allow") {
+        if (
+          shapeBounds.some((b) =>
+            boundsIntersect(pyrBounds, b, placementMode === "spacing" ? shapeSpacing : 0)
+          )
+        ) continue;
+        if (placementMode === "no-overlap" && !canPlaceBox(set, bounds, position.x, position.y, position.z, baseSize, height, baseSize)) continue;
+      }
+      addPyramid(set, bounds, position.x, baseY, position.z, baseSize, height, colorMap, shapeColor);
+      shapeBounds.push(pyrBounds);
+      continue;
+    }
+
+    if (shape === "sphere") {
+      const radius = Math.max(2, Math.round(8 * scale * Math.max(stretch.x, stretch.y, stretch.z)));
+      const sphereBounds = getSphereBounds(position.x, position.y, position.z, radius);
+      if (placementMode !== "allow") {
+        if (
+          shapeBounds.some((b) =>
+            boundsIntersect(sphereBounds, b, placementMode === "spacing" ? shapeSpacing : 0)
+          )
+        ) continue;
+        if (placementMode === "no-overlap" && !canPlaceBox(set, bounds, position.x, position.y, position.z, radius * 2, radius * 2, radius * 2)) continue;
+      }
+      addSphere(set, bounds, position.x, position.y, position.z, radius, colorMap, shapeColor);
+      shapeBounds.push(sphereBounds);
+      continue;
+    }
+
+    if (shape === "cone") {
+      const radius = Math.max(2, Math.round(7 * scale * Math.max(stretch.x, stretch.z)));
+      const height = Math.max(4, Math.round(16 * scale * stretch.y));
+      const baseY = position.y - Math.floor(height * 0.5);
+      const coneBounds = getConeBounds(position.x, baseY, position.z, radius, height);
+      if (placementMode !== "allow") {
+        if (
+          shapeBounds.some((b) =>
+            boundsIntersect(coneBounds, b, placementMode === "spacing" ? shapeSpacing : 0)
+          )
+        ) continue;
+        if (placementMode === "no-overlap" && !canPlaceBox(set, bounds, position.x, position.y, position.z, radius * 2, height, radius * 2)) continue;
+      }
+      addCone(set, bounds, position.x, baseY, position.z, radius, height, colorMap, shapeColor);
+      shapeBounds.push(coneBounds);
+      continue;
+    }
+
+    const radius = Math.max(2, Math.round(8 * scale * Math.max(stretch.x, stretch.y, stretch.z)));
+    const polyBounds = getSphereBounds(position.x, position.y, position.z, radius);
+    if (placementMode !== "allow") {
+      if (
+        shapeBounds.some((b) =>
+          boundsIntersect(polyBounds, b, placementMode === "spacing" ? shapeSpacing : 0)
+        )
+      ) continue;
+      if (placementMode === "no-overlap" && !canPlaceBox(set, bounds, position.x, position.y, position.z, radius * 2, radius * 2, radius * 2)) continue;
+    }
+    const polyRand = mulberry32((seed + i * 0x9e3779b9) >>> 0);
+    addRandomPolyhedron(set, bounds, position.x, position.y, position.z, radius, polyRand, colorMap, shapeColor);
+    shapeBounds.push(polyBounds);
   }
 
   ({ set, colorMap } = erode(set, bounds, state.erosionSteps, state.erosionNeighbors, colorMap));
@@ -870,7 +993,7 @@ function buildVoxelSet(state) {
   const colors = [];
   forEachVoxel(set, (x, y, z) => {
     positions.push(x * voxelSize, y * voxelSize, z * voxelSize);
-    const colorPick = colorMap.get(keyFor(x, y, z)) || palette[0];
+    const colorPick = colorMap.get(keyFor(x, y, z)) || SHAPE_PALETTE[0];
     const color = new THREE.Color(colorPick);
     colors.push(color.r, color.g, color.b);
   });
@@ -913,6 +1036,30 @@ function getLightDirection(azimuthDeg, elevationDeg) {
   return new THREE.Vector3(0, 0, 0).sub(pos).normalize();
 }
 
+function readSvgPaintValue(node, attrName, cssProp = attrName) {
+  const attrValue = node.getAttribute(attrName);
+  if (attrValue != null) {
+    const raw = String(attrValue).trim();
+    if (raw !== "") return raw;
+  }
+
+  const inlineValue = node.style?.getPropertyValue?.(cssProp);
+  if (inlineValue != null) {
+    const raw = String(inlineValue).trim();
+    if (raw !== "") return raw;
+  }
+
+  if (typeof window !== "undefined" && typeof window.getComputedStyle === "function") {
+    const computedValue = window.getComputedStyle(node).getPropertyValue(cssProp);
+    if (computedValue != null) {
+      const raw = String(computedValue).trim();
+      if (raw !== "") return raw;
+    }
+  }
+
+  return "";
+}
+
 function elementHasVisiblePaint(node) {
   const toFinite = (value, fallback) => {
     const n = Number(value);
@@ -920,30 +1067,65 @@ function elementHasVisiblePaint(node) {
   };
   const toUnit = (value, fallback) => Math.max(0, Math.min(1, toFinite(value, fallback)));
 
-  const opacity = toUnit(node.getAttribute("opacity"), 1);
+  const opacity = toUnit(readSvgPaintValue(node, "opacity"), 1);
   if (opacity <= 0) return false;
 
-  const fill = String(node.getAttribute("fill") || "").toLowerCase();
-  const fillOpacity = toUnit(node.getAttribute("fill-opacity"), 1);
+  const fill = String(readSvgPaintValue(node, "fill")).toLowerCase();
+  const fillOpacity = toUnit(readSvgPaintValue(node, "fill-opacity"), 1);
   const hasFill = fill !== "" && fill !== "none" && fillOpacity > 0;
 
-  const stroke = String(node.getAttribute("stroke") || "").toLowerCase();
-  const strokeOpacity = toUnit(node.getAttribute("stroke-opacity"), 1);
-  const strokeWidth = Math.max(0, toFinite(node.getAttribute("stroke-width"), 0));
+  const stroke = String(readSvgPaintValue(node, "stroke")).toLowerCase();
+  const strokeOpacity = toUnit(readSvgPaintValue(node, "stroke-opacity"), 1);
+  const strokeWidth = Math.max(0, toFinite(readSvgPaintValue(node, "stroke-width"), 0));
   const hasStroke = stroke !== "" && stroke !== "none" && strokeOpacity > 0 && strokeWidth > 0;
 
   return hasFill || hasStroke;
 }
 
+function getSvgCullBounds(svgEl, width, height) {
+  const parseFinite = (value, fallback = 0) => {
+    const n = Number(value);
+    return Number.isFinite(n) ? n : fallback;
+  };
+
+  const viewBoxRaw = String(svgEl.getAttribute("viewBox") || "").trim();
+  if (viewBoxRaw) {
+    const parts = viewBoxRaw.split(/[\s,]+/).map(Number);
+    if (parts.length >= 4 && parts.every((n) => Number.isFinite(n))) {
+      const [, , vbWidth, vbHeight] = parts;
+      if (vbWidth > 0 && vbHeight > 0) {
+        const [vbX, vbY] = parts;
+        return {
+          minX: vbX,
+          minY: vbY,
+          maxX: vbX + vbWidth,
+          maxY: vbY + vbHeight,
+        };
+      }
+    }
+  }
+
+  const w = Math.max(0, parseFinite(width, 0));
+  const h = Math.max(0, parseFinite(height, 0));
+  return {
+    minX: 0,
+    minY: 0,
+    maxX: w,
+    maxY: h,
+  };
+}
+
 function cullSvgElements(svgEl, width, height, minSize) {
   if (!svgEl) return;
-  const sizeCutoff = Math.max(0, clampNum(minSize, 0));
+  const rawMinSize = Number(clampNum(minSize, 0));
+  const sizeCutoff = Number.isFinite(rawMinSize) ? Math.max(0, rawMinSize) : 0;
+  const bounds = getSvgCullBounds(svgEl, width, height);
   const targets = Array.from(
     svgEl.querySelectorAll("path, line, polyline, polygon, rect, circle, ellipse")
   );
   for (const node of targets) {
-    const rawDisplay = String(node.getAttribute("display") || "").toLowerCase();
-    const rawVisibility = String(node.getAttribute("visibility") || "").toLowerCase();
+    const rawDisplay = String(readSvgPaintValue(node, "display")).toLowerCase();
+    const rawVisibility = String(readSvgPaintValue(node, "visibility")).toLowerCase();
     if (rawDisplay === "none" || rawVisibility === "hidden") {
       node.remove();
       continue;
@@ -975,8 +1157,13 @@ function cullSvgElements(svgEl, width, height, minSize) {
       continue;
     }
 
+    const strokeWidth = Math.max(0, Number(readSvgPaintValue(node, "stroke-width")) || 0);
+    const strokePad = strokeWidth * 0.5;
     const outOfView =
-      bbox.x + bw < 0 || bbox.y + bh < 0 || bbox.x > width || bbox.y > height;
+      bbox.x + bw < bounds.minX - strokePad ||
+      bbox.y + bh < bounds.minY - strokePad ||
+      bbox.x > bounds.maxX + strokePad ||
+      bbox.y > bounds.maxY + strokePad;
     if (outOfView) {
       node.remove();
     }
@@ -1005,6 +1192,13 @@ function postProcessSvg(svgEl, state, width, height, mode = "main") {
     svgEl.querySelectorAll("path, line, polyline, polygon, rect, circle, ellipse")
   );
   const groundNodes = [];
+  const applyStroke = (node, color, widthPx) => {
+    node.setAttribute("stroke", color);
+    node.setAttribute("stroke-width", String(widthPx));
+    // SVGRenderer often emits inline style declarations that override attributes.
+    node.style.setProperty("stroke", color);
+    node.style.setProperty("stroke-width", String(widthPx));
+  };
 
   targets.forEach((node) => {
     const existingStroke = node.getAttribute("stroke");
@@ -1019,51 +1213,45 @@ function postProcessSvg(svgEl, state, width, height, mode = "main") {
     }
 
     if (isShadow) {
-      node.setAttribute("stroke", shadowStrokeColor);
-      node.setAttribute("stroke-width", String(wireframeMode ? Math.max(0.1, shadowStrokeWidth * 0.9) : shadowStrokeWidth));
+      const widthPx = wireframeMode ? Math.max(0.1, shadowStrokeWidth * 0.9) : shadowStrokeWidth;
+      applyStroke(node, shadowStrokeColor, widthPx);
     } else {
       const strokeColor =
         strokeColorRaw === "auto" || strokeColorRaw === ""
           ? (wireframeMode ? "#111111" : existingStroke || existingFill)
           : strokeColorRaw;
-      if (strokeColor) node.setAttribute("stroke", strokeColor);
-      node.setAttribute("stroke-width", String(wireframeMode ? Math.max(0.1, strokeWidth * 0.9) : strokeWidth));
+      const widthPx = wireframeMode ? Math.max(0.1, strokeWidth * 0.9) : strokeWidth;
+      if (strokeColor) applyStroke(node, strokeColor, widthPx);
     }
     node.removeAttribute("stroke-dasharray");
     node.removeAttribute("stroke-dashoffset");
+    node.style.removeProperty("stroke-dasharray");
+    node.style.removeProperty("stroke-dashoffset");
     node.setAttribute("stroke-linecap", "round");
     node.setAttribute("stroke-linejoin", "round");
+    node.style.setProperty("stroke-linecap", "round");
+    node.style.setProperty("stroke-linejoin", "round");
     if (isShadow) {
       // Keep shadow output as stroke-only linework.
       node.setAttribute("fill", "none");
       node.setAttribute("fill-opacity", "0");
+      node.style.setProperty("fill", "none");
+      node.style.setProperty("fill-opacity", "0");
     } else {
       // SVGRenderer fills meshes by default; force outline-only so the
       // overlay doesn't turn everything into solid black shapes.
       node.setAttribute("fill", "none");
       node.setAttribute("fill-opacity", String(fillOpacity));
+      node.style.setProperty("fill", "none");
+      node.style.setProperty("fill-opacity", String(fillOpacity));
     }
 
   });
 
   if (groundNodes.length > 0) {
+    // Keep the ground plane as an internal shadow receiver only.
+    // We remove any rendered ground primitives and do not add a visible replacement.
     groundNodes.forEach((node) => node.remove());
-    const groundStroke =
-      strokeColorRaw === "auto" || strokeColorRaw === "" ? "#111111" : strokeColorRaw;
-    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-    rect.setAttribute("x", "0");
-    rect.setAttribute("y", "0");
-    rect.setAttribute("width", String(width));
-    rect.setAttribute("height", String(height));
-    rect.setAttribute("stroke", groundStroke);
-    rect.setAttribute("stroke-width", String(strokeWidth));
-    rect.setAttribute("stroke-linecap", "round");
-    rect.setAttribute("stroke-linejoin", "round");
-    rect.removeAttribute("stroke-dasharray");
-    rect.removeAttribute("stroke-dashoffset");
-    rect.setAttribute("fill", "none");
-    rect.setAttribute("fill-opacity", String(fillOpacity));
-    svgEl.prepend(rect);
   }
 
   if (cullInvisible) {
@@ -1071,10 +1259,10 @@ function postProcessSvg(svgEl, state, width, height, mode = "main") {
   }
 }
 
-registerVisual("voxelHatching", {
-  title: "Voxel Hatching",
+registerVisual("voxelHatchingShadows", {
+  title: "Voxel Hatching Shadows",
   description:
-    "Preset voxel primitives + iterative transforms rendered in Three.js, then exported to editable SVG.",
+    "Voxel primitives exported to SVG as camera-visible closed face loops with line-hatched ground shadows.",
   params: [
     {
       key: "seed",
@@ -1128,16 +1316,6 @@ registerVisual("voxelHatching", {
       description: "Material type for voxel preview (affects lighting).",
     },
     {
-      key: "presetCount",
-      label: "preset shapes",
-      type: "number",
-      default: 6,
-      min: 1,
-      max: 24,
-      step: 1,
-      category: "Primitives",
-    },
-    {
       key: "placementMode",
       label: "placement mode",
       type: "select",
@@ -1158,194 +1336,63 @@ registerVisual("voxelHatching", {
       description: "Extra voxel padding between shapes when spacing mode is enabled.",
     },
     {
-      key: "presetScale",
-      label: "preset scale",
-      type: "number",
-      default: 1.5,
-      min: 0.25,
-      max: 4,
-      step: 0.01,
+      key: "autoProceduralShapes",
+      label: "auto procedural shapes",
+      type: "boolean",
+      default: true,
       category: "Primitives",
+      description: "Automatically seed random shape instances from the current seed.",
     },
     {
-      key: "shapeBoxTallChance",
-      label: "tall box %",
-      type: "number",
-      default: 24,
-      min: 0,
-      max: 100,
-      step: 1,
-      category: "Primitives",
-    },
-    {
-      key: "shapeBoxTallScaleRange",
-      label: "tall box scale range",
-      type: "vector2D",
-      default: { x: 0.8, y: 1.4 },
-      min: 0.1,
-      max: 4,
-      step: 0.01,
-      category: "Primitives",
-      description: "x=min, y=max",
-    },
-    {
-      key: "shapeSlabChance",
-      label: "slab %",
-      type: "number",
-      default: 22,
-      min: 0,
-      max: 100,
-      step: 1,
-      category: "Primitives",
-    },
-    {
-      key: "shapeSlabScaleRange",
-      label: "slab scale range",
-      type: "vector2D",
-      default: { x: 0.8, y: 1.35 },
-      min: 0.1,
-      max: 4,
-      step: 0.01,
-      category: "Primitives",
-      description: "x=min, y=max",
-    },
-    {
-      key: "shapeCylinderChance",
-      label: "cylinder %",
-      type: "number",
-      default: 18,
-      min: 0,
-      max: 100,
-      step: 1,
-      category: "Primitives",
-    },
-    {
-      key: "shapeCylinderScaleRange",
-      label: "cylinder scale range",
-      type: "vector2D",
-      default: { x: 0.75, y: 1.35 },
-      min: 0.1,
-      max: 4,
-      step: 0.01,
-      category: "Primitives",
-      description: "x=min, y=max",
-    },
-    {
-      key: "shapePyramidChance",
-      label: "pyramid %",
+      key: "proceduralShapeCount",
+      label: "procedural count",
       type: "number",
       default: 12,
       min: 0,
-      max: 100,
+      max: 80,
       step: 1,
       category: "Primitives",
     },
     {
-      key: "shapePyramidScaleRange",
-      label: "pyramid scale range",
-      type: "vector2D",
-      default: { x: 0.75, y: 1.3 },
-      min: 0.1,
-      max: 4,
-      step: 0.01,
-      category: "Primitives",
-      description: "x=min, y=max",
-    },
-    {
-      key: "shapeSphereChance",
-      label: "sphere %",
+      key: "proceduralScale",
+      label: "procedural scale",
       type: "number",
-      default: 10,
-      min: 0,
-      max: 100,
-      step: 1,
-      category: "Primitives",
-    },
-    {
-      key: "shapeSphereScaleRange",
-      label: "sphere scale range",
-      type: "vector2D",
-      default: { x: 0.7, y: 1.3 },
-      min: 0.1,
-      max: 4,
+      default: 1,
+      min: 0.2,
+      max: 3,
       step: 0.01,
       category: "Primitives",
-      description: "x=min, y=max",
     },
     {
-      key: "shapeConeChance",
-      label: "cone %",
-      type: "number",
-      default: 8,
-      min: 0,
-      max: 100,
-      step: 1,
-      category: "Primitives",
-    },
-    {
-      key: "shapeConeScaleRange",
-      label: "cone scale range",
-      type: "vector2D",
-      default: { x: 0.7, y: 1.35 },
-      min: 0.1,
-      max: 4,
-      step: 0.01,
-      category: "Primitives",
-      description: "x=min, y=max",
-    },
-    {
-      key: "shapePolyChance",
-      label: "polyhedron %",
-      type: "number",
-      default: 6,
-      min: 0,
-      max: 100,
-      step: 1,
-      category: "Primitives",
-    },
-    {
-      key: "shapePolyScaleRange",
-      label: "poly scale range",
-      type: "vector2D",
-      default: { x: 0.65, y: 1.25 },
-      min: 0.1,
-      max: 4,
-      step: 0.01,
-      category: "Primitives",
-      description: "x=min, y=max",
-    },
-    {
-      key: "spawnSpread",
-      label: "spawn spread",
+      key: "proceduralSpread",
+      label: "procedural spread",
       type: "number",
       default: 1,
       min: 0.2,
       max: 1,
       step: 0.01,
       category: "Primitives",
-      description: "Controls how far from center shapes can spawn (as a fraction of grid size).",
     },
     {
-      key: "spawnBaseRatio",
-      label: "spawn base height",
+      key: "proceduralBaseRatio",
+      label: "procedural base height",
       type: "number",
       default: 0.05,
       min: 0,
       max: 0.5,
       step: 0.01,
       category: "Primitives",
-      description: "Base height offset as a fraction of grid size.",
     },
     {
-      key: "shapeYawSteps",
-      label: "shape yaw steps",
+      key: "proceduralYawSteps",
+      label: "procedural yaw steps",
       type: "number",
       default: 2,
       min: 0,
       max: 4,
       step: 1,
       category: "Primitives",
-      description: "Randomly rotate shapes around Y in 90° steps (0 = disabled).",
+      description: "Rotate procedural shapes around Y in 90 degree increments.",
     },
     {
       key: "erosionSteps",
@@ -1535,7 +1582,7 @@ registerVisual("voxelHatching", {
       key: "groundYOffset",
       label: "ground Y offset",
       type: "number",
-      default: 0,
+      default: 20,
       min: -400,
       max: 400,
       step: 1,
@@ -1743,6 +1790,27 @@ registerVisual("voxelHatching", {
       category: "SVG",
     },
     {
+      key: "svgShadowHatchSpacingRatio",
+      label: "shadow hatch spacing",
+      type: "number",
+      default: 0.22,
+      min: 0.05,
+      max: 0.9,
+      step: 0.01,
+      category: "SVG",
+      description: "Line spacing as a fraction of projected voxel width.",
+    },
+    {
+      key: "svgShadowHatchAngle",
+      label: "shadow hatch angle",
+      type: "number",
+      default: 35,
+      min: -90,
+      max: 90,
+      step: 1,
+      category: "SVG",
+    },
+    {
       key: "svgMergePaths",
       label: "merge SVG paths",
       type: "boolean",
@@ -1781,6 +1849,23 @@ registerVisual("voxelHatching", {
   ],
   defaultState: {
     shouldRender: true,
+    shapeTool: {
+      mode: "translate",
+      shape: "boxTall",
+      cursor: { x: 0, y: 0, z: 0 },
+      rotation: { x: 0, y: 0, z: 0 },
+      scale: 1.2,
+      stretch: { x: 1, y: 1.2, z: 1 },
+      colorIndex: 0,
+    },
+    shapeInstances: [],
+    autoProceduralShapes: true,
+    proceduralShapeCount: 12,
+    proceduralScale: 1,
+    proceduralSpread: 1,
+    proceduralBaseRatio: 0.05,
+    proceduralYawSteps: 2,
+    shapePanelCollapsed: false,
     __xf: {
       ui: {
         splitCount: 1,
@@ -1818,7 +1903,7 @@ registerVisual("voxelHatching", {
       collapseParamsByDefault: true,
       ioOpen: true,
       configPinned: true,
-      navHidden: false,
+      navHidden: true,
     },
     __cameraPoseMeta: {
       distance: 820,
@@ -1922,6 +2007,180 @@ registerVisual("voxelHatching", {
     let lastGridExtent = 800;
     let lastVoxels = null;
     let isExportingSvg = false;
+    let shapeEditorPanel = null;
+    let transformControls = null;
+    let shapeMarker = null;
+    let shapeMarkerGeom = null;
+    let shapeMarkerMat = null;
+    let shapePreviewMesh = null;
+    let shapePreviewGeom = null;
+    let shapePreviewMat = null;
+    let syncingMarkerFromState = false;
+
+    ensureShapePlacementState(state);
+    if (
+      state.__shapeCursorSeededToGround !== true &&
+      (!Array.isArray(state.shapeInstances) || state.shapeInstances.length === 0)
+    ) {
+      snapShapeToolCursorToGround(state);
+      state.__shapeCursorSeededToGround = true;
+    }
+
+    function getGridHalf() {
+      return Math.floor(Math.max(4, numOr(state.gridSize, 40)) / 2);
+    }
+
+    function clampShapeCursorToGrid() {
+      const half = getGridHalf();
+      const cursor = state.shapeTool?.cursor || { x: 0, y: 0, z: 0 };
+      cursor.x = Math.max(-half, Math.min(half, Math.round(numOr(cursor.x, 0))));
+      cursor.y = Math.max(-half, Math.min(half, Math.round(numOr(cursor.y, 0))));
+      cursor.z = Math.max(-half, Math.min(half, Math.round(numOr(cursor.z, 0))));
+      state.shapeTool.cursor = cursor;
+    }
+
+    function applyTransformModeFromState() {
+      if (!transformControls) return;
+      const mode = state.shapeTool?.mode === "rotate" ? "rotate" : "translate";
+      transformControls.setMode(mode);
+    }
+
+    function syncMarkerFromState() {
+      if (!shapeMarker || !state.shapeTool) return;
+      clampShapeCursorToGrid();
+      const voxelSize = Math.max(1, numOr(state.voxelSize, 100));
+      syncingMarkerFromState = true;
+      shapeMarker.position.set(
+        state.shapeTool.cursor.x * voxelSize,
+        state.shapeTool.cursor.y * voxelSize,
+        state.shapeTool.cursor.z * voxelSize
+      );
+      shapeMarker.rotation.set(
+        THREE.MathUtils.degToRad(numOr(state.shapeTool.rotation?.x, 0)),
+        THREE.MathUtils.degToRad(numOr(state.shapeTool.rotation?.y, 0)),
+        THREE.MathUtils.degToRad(numOr(state.shapeTool.rotation?.z, 0))
+      );
+      shapeMarker.scale.setScalar(Math.max(8, voxelSize * 0.16));
+      if (transformControls) {
+        transformControls.setTranslationSnap(voxelSize);
+        transformControls.setRotationSnap(THREE.MathUtils.degToRad(15));
+      }
+      syncingMarkerFromState = false;
+    }
+
+    function updateStateFromMarker() {
+      if (!shapeMarker || !state.shapeTool) return;
+      const voxelSize = Math.max(1, numOr(state.voxelSize, 100));
+      const half = getGridHalf();
+      state.shapeTool.cursor = {
+        x: Math.max(-half, Math.min(half, Math.round(shapeMarker.position.x / voxelSize))),
+        y: Math.max(-half, Math.min(half, Math.round(shapeMarker.position.y / voxelSize))),
+        z: Math.max(-half, Math.min(half, Math.round(shapeMarker.position.z / voxelSize))),
+      };
+      state.shapeTool.rotation = {
+        x: THREE.MathUtils.radToDeg(shapeMarker.rotation.x),
+        y: THREE.MathUtils.radToDeg(shapeMarker.rotation.y),
+        z: THREE.MathUtils.radToDeg(shapeMarker.rotation.z),
+      };
+      syncMarkerFromState();
+      updateShapePreviewFromTool();
+      shapeEditorPanel?.sync();
+    }
+
+    function disposeShapePreview() {
+      if (shapePreviewMesh) scene.remove(shapePreviewMesh);
+      shapePreviewMesh = null;
+      if (shapePreviewGeom) shapePreviewGeom.dispose();
+      if (shapePreviewMat) shapePreviewMat.dispose();
+      shapePreviewGeom = null;
+      shapePreviewMat = null;
+    }
+
+    function updateShapePreviewFromTool() {
+      if (!state.shapeTool || !shapeMarker) return;
+      disposeShapePreview();
+
+      const shape = normalizeShapeKey(state.shapeTool.shape);
+      const scale = Math.max(0.25, numOr(state.shapeTool.scale, 1));
+      const stretch = normalizeShapeStretch(state.shapeTool.stretch);
+      const rotation = normalizeShapeRotation(state.shapeTool.rotation);
+      const voxelSize = Math.max(1, numOr(state.voxelSize, 100));
+      const colorIndex = wrapIndex(Math.round(numOr(state.shapeTool.colorIndex, 0)), SHAPE_PALETTE.length);
+      const previewColor = new THREE.Color(SHAPE_PALETTE[colorIndex]);
+
+      if (shape === "boxTall" || shape === "slab") {
+        const base = shape === "boxTall" ? { sx: 8, sy: 18, sz: 8 } : { sx: 18, sy: 4, sz: 18 };
+        let sx = Math.max(2, Math.round(base.sx * scale * stretch.x));
+        let sy = Math.max(2, Math.round(base.sy * scale * stretch.y));
+        let sz = Math.max(2, Math.round(base.sz * scale * stretch.z));
+        ({ sx, sy, sz } = applyQuarterTurnSwaps({ sx, sy, sz }, rotation));
+        shapePreviewGeom = new THREE.BoxGeometry(sx * voxelSize, sy * voxelSize, sz * voxelSize);
+      } else if (shape === "cylinder") {
+        const radius = Math.max(2, Math.round(7 * scale * Math.max(stretch.x, stretch.z)));
+        const height = Math.max(4, Math.round(18 * scale * stretch.y));
+        shapePreviewGeom = new THREE.CylinderGeometry(radius * voxelSize, radius * voxelSize, height * voxelSize, 22);
+      } else if (shape === "pyramid") {
+        const baseSize = Math.max(4, Math.round(16 * scale * Math.max(stretch.x, stretch.z)));
+        const height = Math.max(4, Math.round(14 * scale * stretch.y));
+        shapePreviewGeom = new THREE.ConeGeometry(baseSize * 0.5 * voxelSize, height * voxelSize, 4);
+      } else if (shape === "sphere") {
+        const radius = Math.max(2, Math.round(8 * scale * Math.max(stretch.x, stretch.y, stretch.z)));
+        shapePreviewGeom = new THREE.SphereGeometry(radius * voxelSize, 20, 14);
+      } else if (shape === "cone") {
+        const radius = Math.max(2, Math.round(7 * scale * Math.max(stretch.x, stretch.z)));
+        const height = Math.max(4, Math.round(16 * scale * stretch.y));
+        shapePreviewGeom = new THREE.ConeGeometry(radius * voxelSize, height * voxelSize, 20);
+      } else {
+        const radius = Math.max(2, Math.round(8 * scale * Math.max(stretch.x, stretch.y, stretch.z)));
+        shapePreviewGeom = new THREE.IcosahedronGeometry(radius * voxelSize, 0);
+      }
+
+      shapePreviewMat = new THREE.MeshBasicMaterial({
+        color: previewColor,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.55,
+      });
+      shapePreviewMesh = new THREE.Mesh(shapePreviewGeom, shapePreviewMat);
+      shapePreviewMesh.position.copy(shapeMarker.position);
+      shapePreviewMesh.rotation.set(
+        THREE.MathUtils.degToRad(Math.round(numOr(rotation.x, 0) / 5) * 5),
+        THREE.MathUtils.degToRad(Math.round(numOr(rotation.y, 0) / 5) * 5),
+        THREE.MathUtils.degToRad(Math.round(numOr(rotation.z, 0) / 5) * 5)
+      );
+      shapePreviewMesh.renderOrder = 998;
+      scene.add(shapePreviewMesh);
+    }
+
+    function createMarkerAndGizmo() {
+      shapeMarkerGeom = new THREE.SphereGeometry(1, 14, 10);
+      shapeMarkerMat = new THREE.MeshBasicMaterial({
+        color: 0xffd66a,
+        transparent: true,
+        opacity: 0.95,
+        depthTest: false,
+      });
+      shapeMarker = new THREE.Mesh(shapeMarkerGeom, shapeMarkerMat);
+      shapeMarker.renderOrder = 999;
+      scene.add(shapeMarker);
+
+      transformControls = new TransformControls(camera, renderer.domElement);
+      transformControls.addEventListener("dragging-changed", (event) => {
+        controls.enabled = !event.value;
+      });
+      transformControls.addEventListener("objectChange", () => {
+        if (syncingMarkerFromState) return;
+        updateStateFromMarker();
+        renderWebgl();
+      });
+      scene.add(transformControls);
+      transformControls.attach(shapeMarker);
+      applyTransformModeFromState();
+      syncMarkerFromState();
+      updateShapePreviewFromTool();
+    }
+
+    createMarkerAndGizmo();
 
     function updateCameraClipPlanes() {
       const dist = camera.position.distanceTo(controls.target);
@@ -2033,70 +2292,70 @@ registerVisual("voxelHatching", {
         voxelSet,
         voxelColorMap,
       };
-      if (voxelCount <= 0) return;
+      if (voxelCount > 0) {
+        const gapRatio = state.voxelGapRatio;
+        const geomSize = voxelSize * Math.max(0.02, 1 - gapRatio);
+        instancedGeom = new THREE.BoxGeometry(geomSize, geomSize, geomSize);
 
-      const gapRatio = state.voxelGapRatio;
-      const geomSize = voxelSize * Math.max(0.02, 1 - gapRatio);
-      instancedGeom = new THREE.BoxGeometry(geomSize, geomSize, geomSize);
-
-      const materialMode = String(state.materialMode || "lambert");
-      // Group voxels by their RGB so we can use a plain material color per batch.
-      // This is deterministic and works with all lighting/material modes.
-      const buckets = new Map(); // key -> { color: THREE.Color, indices: number[] }
-      for (let i = 0; i < voxelCount; i += 1) {
-        const r = colors[i * 3 + 0] ?? 0.7;
-        const g = colors[i * 3 + 1] ?? 0.7;
-        const b = colors[i * 3 + 2] ?? 0.9;
-        const key = `${Math.round(r * 255)}-${Math.round(g * 255)}-${Math.round(b * 255)}`;
-        let bucket = buckets.get(key);
-        if (!bucket) {
-          bucket = { color: new THREE.Color(r, g, b), indices: [] };
-          buckets.set(key, bucket);
+        const materialMode = String(state.materialMode || "lambert");
+        // Group voxels by their RGB so we can use a plain material color per batch.
+        // This is deterministic and works with all lighting/material modes.
+        const buckets = new Map(); // key -> { color: THREE.Color, indices: number[] }
+        for (let i = 0; i < voxelCount; i += 1) {
+          const r = colors[i * 3 + 0] ?? 0.7;
+          const g = colors[i * 3 + 1] ?? 0.7;
+          const b = colors[i * 3 + 2] ?? 0.9;
+          const key = `${Math.round(r * 255)}-${Math.round(g * 255)}-${Math.round(b * 255)}`;
+          let bucket = buckets.get(key);
+          if (!bucket) {
+            bucket = { color: new THREE.Color(r, g, b), indices: [] };
+            buckets.set(key, bucket);
+          }
+          bucket.indices.push(i);
         }
-        bucket.indices.push(i);
-      }
 
-      const makeMatForColor = (color) => {
-        if (materialMode === "basic") {
-          return new THREE.MeshBasicMaterial({ color });
+        const makeMatForColor = (color) => {
+          if (materialMode === "basic") {
+            return new THREE.MeshBasicMaterial({ color });
+          }
+          if (materialMode === "standard") {
+            return new THREE.MeshStandardMaterial({
+              color,
+              roughness: 0.82,
+              metalness: 0.05,
+            });
+          }
+          return new THREE.MeshLambertMaterial({ color });
+        };
+
+        const dummy = new THREE.Object3D();
+        for (const bucket of buckets.values()) {
+          const mat = makeMatForColor(bucket.color);
+          instancedMats.push(mat);
+
+          const mesh = new THREE.InstancedMesh(instancedGeom, mat, bucket.indices.length);
+          mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+          mesh.castShadow = true;
+          mesh.receiveShadow = true;
+          // Keep shadow casters alive even at extreme camera distances.
+          mesh.frustumCulled = false;
+
+          for (let j = 0; j < bucket.indices.length; j += 1) {
+            const i = bucket.indices[j];
+            const ix = positions[i * 3 + 0];
+            const iy = positions[i * 3 + 1];
+            const iz = positions[i * 3 + 2];
+            dummy.position.set(ix, iy, iz);
+            dummy.rotation.set(0, 0, 0);
+            dummy.scale.setScalar(1);
+            dummy.updateMatrix();
+            mesh.setMatrixAt(j, dummy.matrix);
+          }
+          mesh.instanceMatrix.needsUpdate = true;
+
+          instancedMeshes.push(mesh);
+          voxelGroup.add(mesh);
         }
-        if (materialMode === "standard") {
-          return new THREE.MeshStandardMaterial({
-            color,
-            roughness: 0.82,
-            metalness: 0.05,
-          });
-        }
-        return new THREE.MeshLambertMaterial({ color });
-      };
-
-      const dummy = new THREE.Object3D();
-      for (const bucket of buckets.values()) {
-        const mat = makeMatForColor(bucket.color);
-        instancedMats.push(mat);
-
-        const mesh = new THREE.InstancedMesh(instancedGeom, mat, bucket.indices.length);
-        mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-        mesh.castShadow = true;
-        mesh.receiveShadow = true;
-        // Keep shadow casters alive even at extreme camera distances.
-        mesh.frustumCulled = false;
-
-        for (let j = 0; j < bucket.indices.length; j += 1) {
-          const i = bucket.indices[j];
-          const ix = positions[i * 3 + 0];
-          const iy = positions[i * 3 + 1];
-          const iz = positions[i * 3 + 2];
-          dummy.position.set(ix, iy, iz);
-          dummy.rotation.set(0, 0, 0);
-          dummy.scale.setScalar(1);
-          dummy.updateMatrix();
-          mesh.setMatrixAt(j, dummy.matrix);
-        }
-        mesh.instanceMatrix.needsUpdate = true;
-
-        instancedMeshes.push(mesh);
-        voxelGroup.add(mesh);
       }
 
       const gridExtent = gridSize * voxelSize * 0.5;
@@ -2111,8 +2370,7 @@ registerVisual("voxelHatching", {
       if (state.groundEnabled) {
         const groundScale = Math.max(1, clampNum(state.groundScale, 2.8));
         const groundSize = gridExtent * 2 * groundScale;
-        const groundYBase = bounds.min * voxelSize - voxelSize * 1.15;
-        const groundY = groundYBase + clampNum(state.groundYOffset, 100);
+        const groundY = getGroundY(state, bounds, voxelSize);
         const groundColor = new THREE.Color(String(state.groundColor || "#f2f3f7"));
         const groundOpacity = clamp01(state.groundOpacity, 0.92);
 
@@ -2313,7 +2571,95 @@ registerVisual("voxelHatching", {
       return { faceDefs };
     }
 
-    function buildSvgScene() {
+    function makeVisibilityTester() {
+      const cameraPos = camera.getWorldPosition(new THREE.Vector3());
+      const viewProjection = new THREE.Matrix4().multiplyMatrices(
+        camera.projectionMatrix,
+        camera.matrixWorldInverse
+      );
+      const frustum = new THREE.Frustum().setFromProjectionMatrix(viewProjection);
+      const ndc = new THREE.Vector3();
+      const sample = new THREE.Vector3();
+
+      const depthResolution = 220;
+      const depthGrid = new Float32Array(depthResolution * depthResolution);
+      depthGrid.fill(Number.POSITIVE_INFINITY);
+
+      if (lastVoxels?.positions?.length) {
+        const arr = lastVoxels.positions;
+        for (let i = 0; i < arr.length; i += 3) {
+          sample.set(arr[i + 0], arr[i + 1], arr[i + 2]).project(camera);
+          if (!Number.isFinite(sample.x) || !Number.isFinite(sample.y) || !Number.isFinite(sample.z)) {
+            continue;
+          }
+          if (sample.x < -1 || sample.x > 1 || sample.y < -1 || sample.y > 1 || sample.z < -1 || sample.z > 1) {
+            continue;
+          }
+          const ix = Math.max(0, Math.min(depthResolution - 1, Math.floor(((sample.x + 1) * 0.5) * depthResolution)));
+          const iy = Math.max(0, Math.min(depthResolution - 1, Math.floor(((1 - (sample.y + 1) * 0.5)) * depthResolution)));
+          const idx = iy * depthResolution + ix;
+          if (sample.z < depthGrid[idx]) depthGrid[idx] = sample.z;
+        }
+      }
+
+      function minDepthNeighbor(ix, iy) {
+        let best = Number.POSITIVE_INFINITY;
+        for (let oy = -1; oy <= 1; oy += 1) {
+          for (let ox = -1; ox <= 1; ox += 1) {
+            const nx = ix + ox;
+            const ny = iy + oy;
+            if (nx < 0 || nx >= depthResolution || ny < 0 || ny >= depthResolution) continue;
+            const value = depthGrid[ny * depthResolution + nx];
+            if (value < best) best = value;
+          }
+        }
+        return best;
+      }
+
+      function isInView(worldPoint) {
+        if (!frustum.containsPoint(worldPoint)) return false;
+        ndc.copy(worldPoint).project(camera);
+        if (!Number.isFinite(ndc.x) || !Number.isFinite(ndc.y) || !Number.isFinite(ndc.z)) return false;
+        if (ndc.x < -1 || ndc.x > 1 || ndc.y < -1 || ndc.y > 1 || ndc.z < -1 || ndc.z > 1) return false;
+        return true;
+      }
+
+      function isVisible(worldPoint, depthBias = 0.03) {
+        if (!isInView(worldPoint)) return false;
+        const ix = Math.max(0, Math.min(depthResolution - 1, Math.floor(((ndc.x + 1) * 0.5) * depthResolution)));
+        const iy = Math.max(
+          0,
+          Math.min(depthResolution - 1, Math.floor(((1 - (ndc.y + 1) * 0.5)) * depthResolution))
+        );
+        const nearDepth = minDepthNeighbor(ix, iy);
+        if (!Number.isFinite(nearDepth)) return true;
+        return ndc.z <= nearDepth + depthBias;
+      }
+
+      return { cameraPos, isVisible, isInView };
+    }
+
+    function mergeIntervals(intervals, gap = 0) {
+      if (!intervals || intervals.length === 0) return [];
+      const ordered = intervals
+        .filter((iv) => Number.isFinite(iv[0]) && Number.isFinite(iv[1]))
+        .map((iv) => (iv[0] <= iv[1] ? [iv[0], iv[1]] : [iv[1], iv[0]]))
+        .sort((a, b) => a[0] - b[0]);
+      if (ordered.length === 0) return [];
+      const merged = [ordered[0].slice()];
+      for (let i = 1; i < ordered.length; i += 1) {
+        const current = ordered[i];
+        const last = merged[merged.length - 1];
+        if (current[0] <= last[1] + gap) {
+          if (current[1] > last[1]) last[1] = current[1];
+          continue;
+        }
+        merged.push(current.slice());
+      }
+      return merged;
+    }
+
+    function buildSvgScene(sharedVisibility) {
       const svgScene = new THREE.Scene();
       svgScene.background = null;
 
@@ -2345,8 +2691,53 @@ registerVisual("voxelHatching", {
       }
 
       const { faceDefs } = makeFaceDefs(geomSize);
-      const materialCache = new Map();
-      const cameraPos = camera.getWorldPosition(new THREE.Vector3());
+      const visibility = sharedVisibility || makeVisibilityTester();
+      const cullInvisibleCubes = state.svgCullInvisible !== false;
+      const toCamera = new THREE.Vector3();
+      const faceVisibilityBias = 0.05;
+      const half = geomSize * 0.5;
+      const lineBuckets = new Map();
+
+      const drawFaceLoop = (face, basePos, colorKey, color) => {
+        let bucket = lineBuckets.get(colorKey);
+        if (!bucket) {
+          bucket = { color, points: [] };
+          lineBuckets.set(colorKey, bucket);
+        }
+        const corners = face.corners.map((corner) => corner.clone().add(basePos));
+        for (let i = 0; i < corners.length; i += 1) {
+          const a = corners[i];
+          const b = corners[(i + 1) % corners.length];
+          bucket.points.push(a, b);
+        }
+      };
+
+      const isFaceVisibleFromCamera = (face, basePos) => {
+        const faceCenter = basePos.clone().add(face.offset);
+        if (visibility.isVisible(faceCenter, faceVisibilityBias)) return true;
+        for (let c = 0; c < face.corners.length; c += 1) {
+          const cornerPt = basePos.clone().add(face.corners[c]);
+          if (visibility.isVisible(cornerPt, faceVisibilityBias)) return true;
+        }
+        return false;
+      };
+
+      const isCubeVisibleFromCamera = (basePos) => {
+        if (visibility.isVisible(basePos, faceVisibilityBias)) return true;
+        for (let sx = -1; sx <= 1; sx += 2) {
+          for (let sy = -1; sy <= 1; sy += 2) {
+            for (let sz = -1; sz <= 1; sz += 2) {
+              const corner = new THREE.Vector3(
+                basePos.x + sx * half,
+                basePos.y + sy * half,
+                basePos.z + sz * half
+              );
+              if (visibility.isVisible(corner, faceVisibilityBias)) return true;
+            }
+          }
+        }
+        return false;
+      };
 
       for (const key of voxelSet) {
         const { x, y, z } = parseKey(key);
@@ -2357,53 +2748,57 @@ registerVisual("voxelHatching", {
           color.b * 255
         )}`;
         const basePos = new THREE.Vector3(x * voxelSize, y * voxelSize, z * voxelSize);
+        const exposedFaces = [];
 
         for (let i = 0; i < faceDefs.length; i += 1) {
           const face = faceDefs[i];
-          if (voxelSet.has(keyFor(x + face.dx, y + face.dy, z + face.dz))) continue;
-          const faceCenter = basePos.clone().add(face.offset);
-          const toCamera = cameraPos.clone().sub(faceCenter);
-          const isBottomFace = face.dy === -1;
-          if (!isBottomFace && face.normal.dot(toCamera) <= 0) continue;
-
-          const points = face.corners.map((corner) => corner.clone().add(basePos));
-          const faceGeom = new THREE.BufferGeometry().setFromPoints(points);
-          let mat = materialCache.get(colorKey);
-          if (!mat) {
-            mat = new THREE.LineBasicMaterial({ color });
-            materialCache.set(colorKey, mat);
+          if (!voxelSet.has(keyFor(x + face.dx, y + face.dy, z + face.dz))) {
+            exposedFaces.push(face);
           }
-          voxelGroup.add(new THREE.LineLoop(faceGeom, mat));
+        }
+        if (exposedFaces.length === 0) continue;
+        if (cullInvisibleCubes && !isCubeVisibleFromCamera(basePos)) continue;
+
+        let renderedFaceCount = 0;
+        let fallbackFace = null;
+        let fallbackFacing = -Infinity;
+
+        for (let i = 0; i < exposedFaces.length; i += 1) {
+          const face = exposedFaces[i];
+          const faceCenter = basePos.clone().add(face.offset);
+          toCamera.copy(visibility.cameraPos).sub(faceCenter);
+          const facing = face.normal.dot(toCamera);
+          if (facing <= 0) continue;
+          if (facing > fallbackFacing) {
+            fallbackFacing = facing;
+            fallbackFace = face;
+          }
+          if (cullInvisibleCubes && !isFaceVisibleFromCamera(face, basePos)) continue;
+          drawFaceLoop(face, basePos, colorKey, color);
+          renderedFaceCount += 1;
+        }
+
+        // Guarantee a closed loop for visible cubes even when visibility
+        // sampling culls all contributing faces due precision/partial occlusion.
+        if (cullInvisibleCubes && renderedFaceCount === 0 && fallbackFace && isCubeVisibleFromCamera(basePos)) {
+          drawFaceLoop(fallbackFace, basePos, colorKey, color);
         }
       }
 
-      svgScene.add(voxelGroup);
-
-      if (state.groundEnabled) {
-        const groundScale = Math.max(1, clampNum(state.groundScale, 2.8));
-        const groundSize = lastGridExtent * 2 * groundScale;
-        const groundYBase = bounds.min * voxelSize - voxelSize * 1.15;
-        const groundY = groundYBase + clampNum(state.groundYOffset, 0);
-        const groundColor = new THREE.Color("#00ff00");
-        const groundOpacity = clamp01(state.groundOpacity, 0.92);
-        const groundPlane = new THREE.PlaneGeometry(groundSize, groundSize, 1, 1);
-        const groundMaterial = new THREE.MeshBasicMaterial({
-          color: groundColor,
-          transparent: groundOpacity < 1,
-          opacity: groundOpacity,
-          side: THREE.DoubleSide,
-        });
-        const groundMeshSvg = new THREE.Mesh(groundPlane, groundMaterial);
-        groundMeshSvg.rotation.x = -Math.PI / 2;
-        groundMeshSvg.position.set(0, groundY, 0);
-        groundMeshSvg.renderOrder = -1;
-        svgScene.add(groundMeshSvg);
+      for (const bucket of lineBuckets.values()) {
+        if (!bucket.points.length) continue;
+        const geom = new THREE.BufferGeometry().setFromPoints(bucket.points);
+        const mat = new THREE.LineBasicMaterial({ color: bucket.color });
+        voxelGroup.add(new THREE.LineSegments(geom, mat));
       }
+
+      svgScene.add(voxelGroup);
+      // Ground stays implicit for projection math; do not render it in SVG.
 
       return svgScene;
     }
 
-    function buildShadowSvgScene() {
+    function buildShadowSvgScene(sharedVisibility) {
       const svgScene = new THREE.Scene();
       svgScene.background = null;
 
@@ -2414,19 +2809,34 @@ registerVisual("voxelHatching", {
       const { positions, voxelCount, voxelSize, bounds } = lastVoxels;
       const gapRatio = state.voxelGapRatio;
       const geomSize = voxelSize * Math.max(0.02, 1 - gapRatio);
-      const groundYBase = bounds.min * voxelSize - voxelSize * 1.15;
-      const groundY = groundYBase + clampNum(state.groundYOffset, 0);
+      const groundY = getGroundY(state, bounds, voxelSize);
       // Direction from point on model toward light source (used for projection).
       const lightDir = getLightDirection(state.lightAzimuth, state.lightElevation);
       if (Math.abs(lightDir.y) <= 0.0001) return svgScene;
 
-      const mergeMode = String(state.svgMergePaths || "none");
-      const shadowMat = new THREE.MeshBasicMaterial({
-        color: new THREE.Color("#000000"),
-        side: THREE.DoubleSide,
-      });
+      const visibility = sharedVisibility || makeVisibilityTester();
+      let shadowColor = new THREE.Color("#000000");
+      try {
+        shadowColor = new THREE.Color(String(state.svgShadowStroke || "#111111"));
+      } catch {
+        shadowColor = new THREE.Color("#000000");
+      }
+      const shadowMat = new THREE.LineBasicMaterial({ color: shadowColor });
       const shadowGroup = new THREE.Group();
-      const shadowGeoms = [];
+      const hatchAngle = THREE.MathUtils.degToRad(clampNum(state.svgShadowHatchAngle, 35));
+      const hatchSpacingRatio = Math.max(0.05, clampNum(state.svgShadowHatchSpacingRatio, 0.22));
+      const hatchSpacing = geomSize * hatchSpacingRatio * 1.8;
+      const dirUx = Math.cos(hatchAngle);
+      const dirUz = Math.sin(hatchAngle);
+      const dirVx = -dirUz;
+      const dirVz = dirUx;
+      const shadowHeight = groundY + voxelSize * 0.01;
+      const projectedHalf = geomSize * 0.5 * (Math.abs(dirUx) + Math.abs(dirUz));
+      const stripeMap = new Map();
+      const mergeGap = geomSize * 0.32;
+      const minSegmentLength = geomSize * 0.4;
+      const shadowCenter = new THREE.Vector3();
+      const shadowMid = new THREE.Vector3();
 
       let voxelSet = lastVoxels.voxelSet;
       if (!voxelSet || voxelSet.size === 0) {
@@ -2438,11 +2848,6 @@ registerVisual("voxelHatching", {
           voxelSet.add(keyFor(ix, iy, iz));
         }
       }
-
-      // Single shadow algorithm:
-      // project one ground quad for each surface-visible voxel.
-      const groundShadowGeom = new THREE.PlaneGeometry(geomSize, geomSize);
-      groundShadowGeom.rotateX(-Math.PI / 2);
 
       for (const key of voxelSet) {
         const { x, y, z } = parseKey(key);
@@ -2464,22 +2869,48 @@ registerVisual("voxelHatching", {
         const t = (groundY - iy) / lightDir.y;
         if (!Number.isFinite(t)) continue;
         const px = ix + lightDir.x * t;
-        const py = groundY + voxelSize * 0.01;
         const pz = iz + lightDir.z * t;
-        if (mergeMode === "none") {
-          const shadowMesh = new THREE.Mesh(groundShadowGeom, shadowMat);
-          shadowMesh.position.set(px, py, pz);
-          shadowGroup.add(shadowMesh);
-        } else {
-          const g = groundShadowGeom.clone();
-          g.translate(px, py, pz);
-          shadowGeoms.push(g);
+        shadowCenter.set(px, shadowHeight, pz);
+        if (!visibility.isInView(shadowCenter)) continue;
+
+        const u = px * dirUx + pz * dirUz;
+        const v = px * dirVx + pz * dirVz;
+        const uMin = u - projectedHalf;
+        const uMax = u + projectedHalf;
+        const stripeMin = Math.floor((v - projectedHalf) / hatchSpacing);
+        const stripeMax = Math.ceil((v + projectedHalf) / hatchSpacing);
+
+        for (let stripe = stripeMin; stripe <= stripeMax; stripe += 1) {
+          let intervals = stripeMap.get(stripe);
+          if (!intervals) {
+            intervals = [];
+            stripeMap.set(stripe, intervals);
+          }
+          intervals.push([uMin, uMax]);
         }
       }
 
-      if (mergeMode !== "none" && shadowGeoms.length > 0) {
-        const merged = mergeGeometries(shadowGeoms, false);
-        shadowGroup.add(new THREE.Mesh(merged, shadowMat));
+      const linePoints = [];
+      for (const [stripe, intervals] of stripeMap.entries()) {
+        const merged = mergeIntervals(intervals, mergeGap);
+        if (!merged.length) continue;
+        const vLine = stripe * hatchSpacing;
+        for (let i = 0; i < merged.length; i += 1) {
+          const [u0, u1] = merged[i];
+          if (u1 - u0 < minSegmentLength) continue;
+          const x0 = dirUx * u0 + dirVx * vLine;
+          const z0 = dirUz * u0 + dirVz * vLine;
+          const x1 = dirUx * u1 + dirVx * vLine;
+          const z1 = dirUz * u1 + dirVz * vLine;
+          shadowMid.set((x0 + x1) * 0.5, shadowHeight, (z0 + z1) * 0.5);
+          if (!visibility.isInView(shadowMid)) continue;
+          linePoints.push(new THREE.Vector3(x0, shadowHeight, z0), new THREE.Vector3(x1, shadowHeight, z1));
+        }
+      }
+
+      if (linePoints.length > 0) {
+        const lineGeom = new THREE.BufferGeometry().setFromPoints(linePoints);
+        shadowGroup.add(new THREE.LineSegments(lineGeom, shadowMat));
       }
 
       svgScene.add(shadowGroup);
@@ -2494,6 +2925,34 @@ registerVisual("voxelHatching", {
     function hideOverlay() {
       if (svgOverlayEl) svgOverlayEl.style.display = "none";
       previewEl.style.opacity = "1";
+    }
+
+    function firstDrawableSvgChild(svgEl) {
+      if (!svgEl) return null;
+      const nonDrawableTags = new Set(["defs", "style", "title", "desc", "metadata"]);
+      for (let i = 0; i < svgEl.childNodes.length; i += 1) {
+        const node = svgEl.childNodes[i];
+        if (!node || node.nodeType !== 1) continue;
+        const tag = String(node.nodeName || "").toLowerCase();
+        if (nonDrawableTags.has(tag)) continue;
+        return node;
+      }
+      return null;
+    }
+
+    function mergeShadowSvgBehindMain(renderedSvg, shadowSvg) {
+      if (!renderedSvg || !shadowSvg) return;
+      const fragment = document.createDocumentFragment();
+      while (shadowSvg.firstChild) {
+        fragment.appendChild(shadowSvg.firstChild);
+      }
+      if (!fragment.hasChildNodes()) return;
+      const anchor = firstDrawableSvgChild(renderedSvg);
+      if (anchor) {
+        renderedSvg.insertBefore(fragment, anchor);
+      } else {
+        renderedSvg.appendChild(fragment);
+      }
     }
 
     function exportSvgToMount() {
@@ -2513,10 +2972,11 @@ registerVisual("voxelHatching", {
 
         controls.update();
         camera.updateMatrixWorld();
+        const visibility = makeVisibilityTester();
 
         svgRenderer.setSize(width, height);
         svgRenderer.domElement.innerHTML = "";
-        const svgScene = buildSvgScene();
+        const svgScene = buildSvgScene(visibility);
         svgRenderer.render(svgScene, camera);
         disposeSvgScene(svgScene);
 
@@ -2539,14 +2999,12 @@ registerVisual("voxelHatching", {
         if (state.svgShadowEnabled) {
           shadowSvgRenderer.setSize(width, height);
           shadowSvgRenderer.domElement.innerHTML = "";
-          const shadowScene = buildShadowSvgScene();
+          const shadowScene = buildShadowSvgScene(visibility);
           shadowSvgRenderer.render(shadowScene, camera);
           disposeSvgScene(shadowScene);
           const shadowSvg = shadowSvgRenderer.domElement;
           postProcessSvg(shadowSvg, state, width, height, "shadow");
-          while (shadowSvg.firstChild) {
-            renderedSvg.appendChild(shadowSvg.firstChild);
-          }
+          mergeShadowSvgBehindMain(renderedSvg, shadowSvg);
         }
         svgOverlayEl = renderedSvg;
         container.prepend(svgOverlayEl);
@@ -2572,7 +3030,27 @@ registerVisual("voxelHatching", {
       rebuild();
     }
 
+    function onKeyDown(event) {
+      if (event.code !== "Space") return;
+      const target = event.target;
+      if (target instanceof HTMLElement) {
+        const tag = target.tagName;
+        if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || target.isContentEditable) return;
+      }
+      event.preventDefault();
+      ensureShapePlacementState(state);
+      const nextMode = state.shapeTool.mode === "rotate" ? "translate" : "rotate";
+      if (shapeEditorPanel?.setMode) {
+        shapeEditorPanel.setMode(nextMode);
+      } else {
+        state.shapeTool.mode = nextMode;
+        applyTransformModeFromState();
+        renderWebgl();
+      }
+    }
+
     window.addEventListener("resize", onResize);
+    window.addEventListener("keydown", onKeyDown);
 
     let rafId = 0;
     function animate() {
@@ -2581,9 +3059,51 @@ registerVisual("voxelHatching", {
       renderWebgl();
     }
 
+    function mountShapePanel() {
+      const configEl = document.getElementById("config");
+      if (!configEl) return;
+      shapeEditorPanel?.destroy?.();
+      shapeEditorPanel = mountShapePlacementPanel({
+        container: configEl,
+        state,
+        onToolChange: () => {
+          ensureShapePlacementState(state);
+          applyTransformModeFromState();
+          syncMarkerFromState();
+          updateShapePreviewFromTool();
+          renderWebgl();
+        },
+        onTransformSettingsChange: () => {
+          rebuild();
+        },
+        onPlaceShape: (instance) => {
+          ensureShapePlacementState(state);
+          state.shapeInstances.push(instance);
+          rebuild();
+        },
+        onUndoShape: () => {
+          ensureShapePlacementState(state);
+          state.shapeInstances.pop();
+          rebuild();
+        },
+        onClearShapes: () => {
+          ensureShapePlacementState(state);
+          state.shapeInstances.length = 0;
+          state.__shapeCursorSeededToGround = false;
+          snapShapeToolCursorToGround(state);
+          rebuild();
+        },
+      });
+    }
+
     function rebuild() {
+      ensureShapePlacementState(state);
       scene.background = new THREE.Color(String(state.backgroundColor || "#f7f7fb"));
       buildSceneFromState();
+      applyTransformModeFromState();
+      syncMarkerFromState();
+      updateShapePreviewFromTool();
+      shapeEditorPanel?.sync?.();
       updateLightsFromState();
       renderWebgl();
       if (state.showSvgOverlay) {
@@ -2593,6 +3113,7 @@ registerVisual("voxelHatching", {
       }
     }
 
+    mountShapePanel();
     rebuild();
     animate();
 
@@ -2603,27 +3124,15 @@ registerVisual("voxelHatching", {
         "voxelSize",
         "voxelGapRatio",
         "materialMode",
-        "presetCount",
         "placementMode",
         "shapeSpacing",
-        "presetScale",
-        "shapeBoxTallChance",
-        "shapeBoxTallScaleRange",
-        "shapeSlabChance",
-        "shapeSlabScaleRange",
-        "shapeCylinderChance",
-        "shapeCylinderScaleRange",
-        "shapePyramidChance",
-        "shapePyramidScaleRange",
-        "shapeSphereChance",
-        "shapeSphereScaleRange",
-        "shapeConeChance",
-        "shapeConeScaleRange",
-        "shapePolyChance",
-        "shapePolyScaleRange",
-        "spawnSpread",
-        "spawnBaseRatio",
-        "shapeYawSteps",
+        "autoProceduralShapes",
+        "proceduralShapeCount",
+        "proceduralScale",
+        "proceduralSpread",
+        "proceduralBaseRatio",
+        "proceduralYawSteps",
+        "shapeInstancesJson",
         "erosionSteps",
         "erosionNeighbors",
         "dilationSteps",
@@ -2665,6 +3174,8 @@ registerVisual("voxelHatching", {
         "svgShadowEnabled",
         "svgShadowStrokeWidth",
         "svgShadowStroke",
+        "svgShadowHatchSpacingRatio",
+        "svgShadowHatchAngle",
         "svgMergePaths",
         "showSvgOverlay",
       ]),
@@ -2677,27 +3188,15 @@ registerVisual("voxelHatching", {
         voxelSize: state.voxelSize,
         voxelGapRatio: state.voxelGapRatio,
         materialMode: state.materialMode,
-        presetCount: state.presetCount,
         placementMode: state.placementMode,
         shapeSpacing: state.shapeSpacing,
-        presetScale: state.presetScale,
-        shapeBoxTallChance: state.shapeBoxTallChance,
-        shapeBoxTallScaleRange: state.shapeBoxTallScaleRange,
-        shapeSlabChance: state.shapeSlabChance,
-        shapeSlabScaleRange: state.shapeSlabScaleRange,
-        shapeCylinderChance: state.shapeCylinderChance,
-        shapeCylinderScaleRange: state.shapeCylinderScaleRange,
-        shapePyramidChance: state.shapePyramidChance,
-        shapePyramidScaleRange: state.shapePyramidScaleRange,
-        shapeSphereChance: state.shapeSphereChance,
-        shapeSphereScaleRange: state.shapeSphereScaleRange,
-        shapeConeChance: state.shapeConeChance,
-        shapeConeScaleRange: state.shapeConeScaleRange,
-        shapePolyChance: state.shapePolyChance,
-        shapePolyScaleRange: state.shapePolyScaleRange,
-        spawnSpread: state.spawnSpread,
-        spawnBaseRatio: state.spawnBaseRatio,
-        shapeYawSteps: state.shapeYawSteps,
+        autoProceduralShapes: state.autoProceduralShapes,
+        proceduralShapeCount: state.proceduralShapeCount,
+        proceduralScale: state.proceduralScale,
+        proceduralSpread: state.proceduralSpread,
+        proceduralBaseRatio: state.proceduralBaseRatio,
+        proceduralYawSteps: state.proceduralYawSteps,
+        shapeInstancesJson: JSON.stringify(state.shapeInstances || []),
         erosionSteps: state.erosionSteps,
         erosionNeighbors: state.erosionNeighbors,
         dilationSteps: state.dilationSteps,
@@ -2739,6 +3238,8 @@ registerVisual("voxelHatching", {
         svgShadowEnabled: state.svgShadowEnabled,
         svgShadowStrokeWidth: state.svgShadowStrokeWidth,
         svgShadowStroke: state.svgShadowStroke,
+        svgShadowHatchSpacingRatio: state.svgShadowHatchSpacingRatio,
+        svgShadowHatchAngle: state.svgShadowHatchAngle,
         svgMergePaths: state.svgMergePaths,
         showSvgOverlay: state.showSvgOverlay,
         randomSliceThickness: state.randomSliceThickness,
@@ -2795,8 +3296,7 @@ registerVisual("voxelHatching", {
             const { voxelSize, bounds } = lastVoxels;
             const groundScale = Math.max(1, clampNum(state.groundScale, 2.8));
             const groundSize = lastGridExtent * 2 * groundScale;
-            const groundYBase = bounds.min * voxelSize - voxelSize * 1.15;
-            const groundY = groundYBase + clampNum(state.groundYOffset, 0);
+            const groundY = getGroundY(state, bounds, voxelSize);
             const groundColor = new THREE.Color(String(state.groundColor || "#f2f3f7"));
             const groundOpacity = clamp01(state.groundOpacity, 0.92);
 
@@ -2865,12 +3365,34 @@ registerVisual("voxelHatching", {
           }
         }
 
+        ensureShapePlacementState(state);
+        applyTransformModeFromState();
+        syncMarkerFromState();
+        updateShapePreviewFromTool();
+        shapeEditorPanel?.sync?.();
         renderWebgl();
       },
       destroy() {
         window.cancelAnimationFrame(rafId);
         window.removeEventListener("resize", onResize);
+        window.removeEventListener("keydown", onKeyDown);
         controls.dispose();
+        shapeEditorPanel?.destroy?.();
+        shapeEditorPanel = null;
+        disposeShapePreview();
+        if (transformControls) {
+          scene.remove(transformControls);
+          transformControls.dispose();
+        }
+        transformControls = null;
+        if (shapeMarker) {
+          scene.remove(shapeMarker);
+        }
+        shapeMarker = null;
+        if (shapeMarkerGeom) shapeMarkerGeom.dispose();
+        if (shapeMarkerMat) shapeMarkerMat.dispose();
+        shapeMarkerGeom = null;
+        shapeMarkerMat = null;
         disposeInstanced();
         disposeGround();
         renderer.dispose();

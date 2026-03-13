@@ -401,12 +401,6 @@ const projects = shuffle([
     link: "/BacteriaVisualizer/"
   },
   {
-    title: "Kakeya!!",
-    image: "assets/Images/kakaya.png",
-    description: "The collatz conjecture about sequences leverages Kakaya sets, which are sets made from line segments!",
-    link: "/kakeya/"
-  },
-  {
     title: "Math Visuals",
     image: "/assets/Images/marble.png",
     description: "A dedicated gallery of the new math visualization set.",

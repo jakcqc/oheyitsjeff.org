@@ -273,9 +273,83 @@ export function getVisualParamsTree(spec, state) {
   return out;
 }
 
-export function importStateFromJSON(json, state) {
+function coerceBooleanLike(value) {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "number") return value !== 0;
+  if (typeof value === "string") {
+    const raw = value.trim().toLowerCase();
+    if (["1", "true", "yes", "on"].includes(raw)) return true;
+    if (["0", "false", "no", "off"].includes(raw)) return false;
+  }
+  return !!value;
+}
+
+function coerceImportedParamValue(param, value) {
+  if (!param) return value;
+  switch (param.type) {
+    case "number":
+      return toNumber(value, toNumber(param.default, 0));
+    case "boolean":
+      return coerceBooleanLike(value);
+    case "text":
+    case "select":
+      return value == null ? "" : String(value);
+    case "vector2D":
+      return normalizeVector(value, normalizeVector(param.default, { x: 0, y: 0 }, 2), 2);
+    case "vector3D":
+      return normalizeVector(value, normalizeVector(param.default, { x: 0, y: 0, z: 0 }, 3), 3);
+    default:
+      return value;
+  }
+}
+
+function specHasParamKey(spec, key) {
+  return !!(spec?.params || []).find((p) => p?.key === key);
+}
+
+function applyStateKeyAliasesBySpec(nextState, spec) {
+  if (!nextState || typeof nextState !== "object" || !spec) return;
+  const aliasPairs = [
+    ["presetCount", "proceduralShapeCount"],
+    ["presetScale", "proceduralScale"],
+    ["spawnSpread", "proceduralSpread"],
+    ["spawnBaseRatio", "proceduralBaseRatio"],
+    ["shapeYawSteps", "proceduralYawSteps"],
+  ];
+
+  for (const [a, b] of aliasPairs) {
+    const hasA = specHasParamKey(spec, a);
+    const hasB = specHasParamKey(spec, b);
+    if (!hasA && !hasB) continue;
+
+    const aVal = getByPath(nextState, a);
+    const bVal = getByPath(nextState, b);
+
+    if (hasA && aVal === undefined && bVal !== undefined) {
+      setByPath(nextState, a, bVal);
+    }
+    if (hasB && bVal === undefined && aVal !== undefined) {
+      setByPath(nextState, b, aVal);
+    }
+  }
+}
+
+function coerceImportedStateBySpec(nextState, spec) {
+  if (!nextState || typeof nextState !== "object") return;
+  if (!spec || !Array.isArray(spec.params)) return;
+  applyStateKeyAliasesBySpec(nextState, spec);
+  for (const param of spec.params) {
+    const current = getByPath(nextState, param.key);
+    if (current === undefined) continue;
+    setByPath(nextState, param.key, coerceImportedParamValue(param, current));
+  }
+}
+
+export function importStateFromJSON(json, state, spec = null) {
   const parsed = JSON.parse(json);
+  coerceImportedStateBySpec(parsed, spec);
   mergeInto(state, parsed);
+  return parsed;
 }
 
 function mergeInto(target, source) {
@@ -329,7 +403,7 @@ export function makeSaveSettingsButton(state, visualId) {
 
   return btn;
 }
-export function makeLoadSettingsButton(state, onChange) {
+export function makeLoadSettingsButton(state, onChange, spec = null) {
   const input = document.createElement("input");
   input.type = "file";
   input.accept = "application/json";
@@ -340,7 +414,7 @@ export function makeLoadSettingsButton(state, onChange) {
     if (!file) return;
 
     const text = await file.text();
-    importStateFromJSON(text, state);
+    importStateFromJSON(text, state, spec);
     onChange?.(); // force rerender + UI sync
   };
 
@@ -893,29 +967,7 @@ export function mountVisualUI({
   );
 
   // persistent controls
-  ioEl.append(
-    makeSaveSettingsButton(state, visualId),
-    makeLoadSettingsButton(state, () => {
-      syncPersistentUi();
-      applyLayoutFromUi();
-      persistUiNow();
-      rerender();
-      rebuildAutoUI();
-      record();
-      persistSettings();
-    }),
-    resetDefaultsBtn,
-    collapseDefaultsWrap,
-    persistSettingsWrap
-  );
-
-  makeSaveSVG(ioEl, mountEl, visualId, state);
-  makeLoadSVG(ioEl, mountEl, (svgEl, rawText) => {
-    // Optional: keep your SVG textarea/editor in sync
-    // svgTa.value = rawText;
-    // runUserCode();
-  });
-  makeLoadSettingsFromSVG(ioEl, state, () => {
+  const applyImportedStateAndRefresh = () => {
     syncPersistentUi();
     applyLayoutFromUi();
     persistUiNow();
@@ -923,7 +975,28 @@ export function mountVisualUI({
     rebuildAutoUI();
     record();
     persistSettings();
+  };
+  ioEl.append(
+    makeSaveSettingsButton(state, visualId),
+    makeLoadSettingsButton(state, applyImportedStateAndRefresh, spec),
+    resetDefaultsBtn,
+    collapseDefaultsWrap,
+    persistSettingsWrap
+  );
+
+  makeSaveSVG(ioEl, mountEl, visualId, state);
+  makeLoadSVG(ioEl, mountEl, {
+    state,
+    spec,
+    onApplySettings: applyImportedStateAndRefresh,
+    onLoaded: (svgEl, rawText, { appliedSettings }) => {
+      if (appliedSettings) return;
+    // Optional: keep your SVG textarea/editor in sync
+    // svgTa.value = rawText;
+    // runUserCode();
+    },
   });
+  makeLoadSettingsFromSVG(ioEl, state, applyImportedStateAndRefresh, spec);
   const syncPinnedLayout = () => {
     const root = document.documentElement;
     const body = document.body;
@@ -1275,7 +1348,7 @@ function buildNumberControl({ param, state, onChange, value }) {
   });
 
   const sync = (next) => {
-    const val = next;
+    const val = toNumber(next, toNumber(startingValue, 0));
     setByPath(state, param.key, val);
     slider.value = String(val);
     box.value = String(val);
@@ -1359,7 +1432,11 @@ export function makeSaveSVG(uiEl, mountEl, visualId, state) {
         meta = document.createElementNS(ns, "metadata");
         meta.setAttribute("id", "ohey-settings");
         meta.setAttribute("data-format", "json");
+        meta.setAttribute("data-owner", "ohey-settings");
         clone.insertBefore(meta, clone.firstChild);
+      }
+      if (!meta.getAttribute("data-owner")) {
+        meta.setAttribute("data-owner", "ohey-settings");
       }
       meta.textContent = settingsJson;
     }
@@ -1387,8 +1464,124 @@ export function makeSaveSVG(uiEl, mountEl, visualId, state) {
   };
   uiEl.appendChild(saveBtn);
 }
-export function makeLoadSVG(uiEl, mountEl, onLoaded) {
-  // onLoaded(svgEl, rawText) is optional; lets you sync editor textareas, etc.
+
+function parseSvgDocumentFromText(text) {
+  const doc = new DOMParser().parseFromString(text, "image/svg+xml");
+  const parseErr = doc.querySelector("parsererror");
+  if (parseErr) {
+    throw new Error("SVG parse error: " + parseErr.textContent);
+  }
+  const svg = doc.documentElement;
+  const rootName = String(svg?.localName || svg?.tagName || "").toLowerCase();
+  if (!svg || rootName !== "svg") {
+    throw new Error("Selected file does not contain a single <svg> root.");
+  }
+  return svg;
+}
+
+function decodeXmlEntities(raw) {
+  const text = String(raw ?? "");
+  if (!text) return "";
+  if (
+    !text.includes("&quot;") &&
+    !text.includes("&apos;") &&
+    !text.includes("&lt;") &&
+    !text.includes("&gt;") &&
+    !text.includes("&amp;")
+  ) {
+    return text;
+  }
+  const ta = document.createElement("textarea");
+  ta.innerHTML = text;
+  return ta.value;
+}
+
+function trimJsonEnvelope(raw) {
+  const text = String(raw ?? "").trim();
+  if (!text) return "";
+  let next = text;
+  if (next.startsWith("<![CDATA[")) {
+    next = next.replace(/^<!\[CDATA\[/, "").replace(/\]\]>$/, "").trim();
+  }
+  const start = next.indexOf("{");
+  const end = next.lastIndexOf("}");
+  if (start >= 0 && end > start) {
+    return next.slice(start, end + 1).trim();
+  }
+  return next;
+}
+
+function normalizeEmbeddedSettingsJson(raw) {
+  const candidates = [];
+  const pushCandidate = (value) => {
+    const text = String(value ?? "").trim();
+    if (!text) return;
+    if (!candidates.includes(text)) candidates.push(text);
+  };
+
+  pushCandidate(raw);
+  pushCandidate(decodeXmlEntities(raw));
+
+  const snapshot = candidates.slice();
+  for (const value of snapshot) {
+    pushCandidate(trimJsonEnvelope(value));
+    pushCandidate(decodeXmlEntities(trimJsonEnvelope(value)));
+  }
+
+  let lastErr = null;
+  for (const candidate of candidates) {
+    try {
+      JSON.parse(candidate);
+      return candidate;
+    } catch (err) {
+      lastErr = err;
+    }
+  }
+  if (lastErr) throw lastErr;
+  throw new Error("Embedded settings JSON is empty.");
+}
+
+function findSettingsMetadataNode(svg) {
+  if (!svg) return null;
+  const byId = svg.querySelector('metadata#ohey-settings');
+  if (byId) return byId;
+  const byOwner = svg.querySelector('metadata[data-owner="ohey-settings"]');
+  if (byOwner) return byOwner;
+  const byFormat = svg.querySelector('metadata[data-format="json"]');
+  if (byFormat) return byFormat;
+  return null;
+}
+
+function readEmbeddedSettingsFromSvg(svg, required = false) {
+  const meta = findSettingsMetadataNode(svg);
+  if (!meta) {
+    if (required) throw new Error("No embedded settings found in SVG metadata.");
+    return null;
+  }
+  const raw = String(meta.textContent || meta.innerHTML || "").trim();
+  if (!raw) {
+    if (required) throw new Error("Embedded settings are empty.");
+    return null;
+  }
+  try {
+    return normalizeEmbeddedSettingsJson(raw);
+  } catch (err) {
+    if (required) {
+      throw new Error(`Embedded settings are not valid JSON: ${String(err?.message || err)}`);
+    }
+    return null;
+  }
+}
+
+export function makeLoadSVG(uiEl, mountEl, options = {}) {
+  const normalizedOptions =
+    typeof options === "function" ? { onLoaded: options } : (options || {});
+  const onLoaded = normalizedOptions.onLoaded;
+  const onApplySettings = normalizedOptions.onApplySettings;
+  const state = normalizedOptions.state;
+  const spec = normalizedOptions.spec;
+  // onLoaded(svgEl, rawText, { appliedSettings }) is optional.
+  // onApplySettings() is called after metadata settings are imported.
 
   const loadBtn = document.createElement("button");
   loadBtn.textContent = "Load SVG";
@@ -1415,30 +1608,31 @@ export function makeLoadSVG(uiEl, mountEl, onLoaded) {
 
     try {
       const text = await file.text();
-
-      // Parse SVG safely-ish
-      const doc = new DOMParser().parseFromString(text, "image/svg+xml");
-      const parseErr = doc.querySelector("parsererror");
-      if (parseErr) {
-        throw new Error("SVG parse error: " + parseErr.textContent);
-      }
-
-      const svg = doc.documentElement;
-      if (!svg || svg.tagName.toLowerCase() !== "svg") {
-        throw new Error("Selected file does not contain a single <svg> root.");
-      }
+      const svg = parseSvgDocumentFromText(text);
 
       // Ensure xmlns
       if (!svg.getAttribute("xmlns")) {
         svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
       }
 
-      // Import into current document before mounting
+      // Import into current document before using.
       const imported = document.importNode(svg, true);
+      const embeddedSettings = readEmbeddedSettingsFromSvg(imported, false);
+      let appliedSettings = false;
 
-      replaceMountWithSvg(imported);
+      if (embeddedSettings && state && typeof state === "object") {
+        importStateFromJSON(embeddedSettings, state, spec);
+        onApplySettings?.();
+        appliedSettings = true;
+      }
 
-      if (typeof onLoaded === "function") onLoaded(imported, text);
+      if (!appliedSettings) {
+        replaceMountWithSvg(imported);
+      }
+
+      if (typeof onLoaded === "function") {
+        onLoaded(imported, text, { appliedSettings });
+      }
     } catch (e) {
       console.error(e);
       alert(String(e?.message || e));
@@ -1451,7 +1645,7 @@ export function makeLoadSVG(uiEl, mountEl, onLoaded) {
   return { loadBtn, input };
 }
 
-export function makeLoadSettingsFromSVG(uiEl, state, onChange) {
+export function makeLoadSettingsFromSVG(uiEl, state, onChange, spec = null) {
   const loadBtn = document.createElement("button");
   loadBtn.textContent = "Load Settings from SVG";
   loadBtn.type = "button";
@@ -1472,22 +1666,9 @@ export function makeLoadSettingsFromSVG(uiEl, state, onChange) {
 
     try {
       const text = await file.text();
-      const doc = new DOMParser().parseFromString(text, "image/svg+xml");
-      const parseErr = doc.querySelector("parsererror");
-      if (parseErr) {
-        throw new Error("SVG parse error: " + parseErr.textContent);
-      }
-      const svg = doc.documentElement;
-      if (!svg || svg.tagName.toLowerCase() !== "svg") {
-        throw new Error("Selected file does not contain a single <svg> root.");
-      }
-
-      const meta = svg.querySelector('metadata#ohey-settings');
-      if (!meta) throw new Error("No embedded settings found in SVG metadata.");
-      const raw = String(meta.textContent || "").trim();
-      if (!raw) throw new Error("Embedded settings are empty.");
-
-      importStateFromJSON(raw, state);
+      const svg = parseSvgDocumentFromText(text);
+      const raw = readEmbeddedSettingsFromSvg(svg, true);
+      importStateFromJSON(raw, state, spec);
       onChange?.();
     } catch (e) {
       console.error(e);
@@ -1623,4 +1804,18 @@ function toNumber(value, fallback = 0) {
 function clampNumber(value, min = -Infinity, max = Infinity, fallback = 0) {
   const n = toNumber(value, fallback);
   return Math.min(max, Math.max(min, n));
+}
+
+function normalizeVector(value, fallback, dims = 2) {
+  const use3 = dims === 3;
+  const base = fallback && typeof fallback === "object"
+    ? fallback
+    : (use3 ? { x: 0, y: 0, z: 0 } : { x: 0, y: 0 });
+  const raw = value && typeof value === "object" ? value : {};
+  const out = {
+    x: toNumber(raw.x, toNumber(base.x, 0)),
+    y: toNumber(raw.y, toNumber(base.y, 0)),
+  };
+  if (use3) out.z = toNumber(raw.z, toNumber(base.z, 0));
+  return out;
 }
