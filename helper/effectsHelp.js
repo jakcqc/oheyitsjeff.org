@@ -12,9 +12,11 @@ import {
   mergeCirclesToPathsInSubtree,
   mergeRectsToPathsInSubtree,
 } from "./scriptOpsUtils.js";
+import { applySplineLinesInSubtree } from "./splineEffectsUtils.js";
 
-const EFFECT_TYPES = ["scale", "convert", "paint", "merge", "functionRects"];
+const EFFECT_TYPES = ["scale", "convert", "splineLines", "paint", "merge", "functionRects"];
 const SHAPE_TYPES = ["circle", "rect", "polygon", "path"];
+const SPLINE_SOURCE_TYPES = ["all", "path", "circle", "rect", "line", "polygon"];
 
 const ATTR_KEYWORDS = [
   { key: "opacity", desc: "Overall element opacity (0..1)" },
@@ -80,6 +82,17 @@ function ensureEffectsState(state) {
       pathSamplePoints: 64,
       convertScaleMode: "none",
       convertScaleFactor: 1,
+      splineSource: "all",
+      splineSelector: "",
+      splinePointCount: 16,
+      splineStepsPerSegment: 18,
+      splineTension: 0.12,
+      splineLineOrientation: "vertical",
+      splineLineHeight: 18,
+      splineLineScale: 1,
+      splineStrokeWidth: 2,
+      splineScaleMode: "none",
+      splineScaleFactor: 1,
       paintFill: "none",
       paintStroke: "#000000",
       mergeShape: "circle",
@@ -359,7 +372,10 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
   };
 
   const effectSel = el("select");
-  EFFECT_TYPES.forEach((t) => effectSel.appendChild(el("option", { value: t, textContent: t })));
+  EFFECT_TYPES.forEach((t) => {
+    const label = t === "splineLines" ? "spline lines" : t;
+    effectSel.appendChild(el("option", { value: t, textContent: label }));
+  });
   effectSel.value = ui.effectType || "scale";
   effectSel.onchange = () => {
     ui.effectType = effectSel.value;
@@ -418,6 +434,15 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
       ui.selector = selectorConvertInput.value;
       markDirty();
     }
+  };
+  const selectorSplineInput = el("input", {
+    type: "text",
+    value: ui.splineSelector || "",
+    placeholder: 'CSS selector override (blank = use source shape)'
+  });
+  selectorSplineInput.oninput = () => {
+    ui.splineSelector = selectorSplineInput.value;
+    markDirty();
   };
 
   const minInput = el("input", { type: "number", step: "0.01", value: String(ui.rangeMin ?? 0.5) });
@@ -536,6 +561,107 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
     markDirty();
   };
 
+  const splineSource = el("select");
+  SPLINE_SOURCE_TYPES.forEach((t) => splineSource.appendChild(el("option", { value: t, textContent: t })));
+  splineSource.value = ui.splineSource || "all";
+  splineSource.onchange = () => {
+    ui.splineSource = splineSource.value;
+    markDirty();
+  };
+
+  const splinePointCount = el("input", {
+    type: "number",
+    min: "2",
+    step: "1",
+    value: String(ui.splinePointCount ?? 16),
+  });
+  splinePointCount.oninput = () => {
+    ui.splinePointCount = Math.max(2, Math.trunc(clampNum(splinePointCount.value, ui.splinePointCount)));
+    markDirty();
+  };
+
+  const splineStepsPerSegment = el("input", {
+    type: "number",
+    min: "2",
+    step: "1",
+    value: String(ui.splineStepsPerSegment ?? 18),
+  });
+  splineStepsPerSegment.oninput = () => {
+    ui.splineStepsPerSegment = Math.max(2, Math.trunc(clampNum(splineStepsPerSegment.value, ui.splineStepsPerSegment)));
+    markDirty();
+  };
+
+  const splineTension = el("input", {
+    type: "number",
+    min: "0",
+    max: "1",
+    step: "0.01",
+    value: String(ui.splineTension ?? 0.12),
+  });
+  splineTension.oninput = () => {
+    ui.splineTension = clampNum(splineTension.value, ui.splineTension);
+    markDirty();
+  };
+
+  const splineLineOrientation = el("select");
+  ["vertical", "normal", "tangent"].forEach((t) => splineLineOrientation.appendChild(el("option", { value: t, textContent: t })));
+  splineLineOrientation.value = ui.splineLineOrientation || "vertical";
+  splineLineOrientation.onchange = () => {
+    ui.splineLineOrientation = splineLineOrientation.value;
+    markDirty();
+  };
+
+  const splineLineHeight = el("input", {
+    type: "number",
+    min: "0",
+    step: "0.1",
+    value: String(ui.splineLineHeight ?? 18),
+  });
+  splineLineHeight.oninput = () => {
+    ui.splineLineHeight = clampNum(splineLineHeight.value, ui.splineLineHeight);
+    markDirty();
+  };
+
+  const splineLineScale = el("input", {
+    type: "number",
+    min: "0",
+    step: "0.01",
+    value: String(ui.splineLineScale ?? 1),
+  });
+  splineLineScale.oninput = () => {
+    ui.splineLineScale = clampNum(splineLineScale.value, ui.splineLineScale);
+    markDirty();
+  };
+
+  const splineStrokeWidth = el("input", {
+    type: "number",
+    min: "0.1",
+    step: "0.1",
+    value: String(ui.splineStrokeWidth ?? 2),
+  });
+  splineStrokeWidth.oninput = () => {
+    ui.splineStrokeWidth = clampNum(splineStrokeWidth.value, ui.splineStrokeWidth);
+    markDirty();
+  };
+
+  const splineScaleMode = el("select");
+  ["none", "center", "origin"].forEach((t) => splineScaleMode.appendChild(el("option", { value: t, textContent: t })));
+  splineScaleMode.value = ui.splineScaleMode || "none";
+  splineScaleMode.onchange = () => {
+    ui.splineScaleMode = splineScaleMode.value;
+    markDirty();
+  };
+
+  const splineScaleFactor = el("input", {
+    type: "number",
+    step: "0.01",
+    value: String(ui.splineScaleFactor ?? 1),
+  });
+  splineScaleFactor.oninput = () => {
+    ui.splineScaleFactor = clampNum(splineScaleFactor.value, ui.splineScaleFactor);
+    markDirty();
+  };
+
   const paintFill = el("input", { type: "text", value: ui.paintFill || "#ffffff", placeholder: "#ffffff or none" });
   const paintStroke = el("input", { type: "text", value: ui.paintStroke || "#000000", placeholder: "#000000 or none" });
   paintFill.oninput = () => {
@@ -629,7 +755,8 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
     ui.elementType = elementSelScale.value;
     if (ui.effectType === "scale") ui.selector = selectorScaleInput.value;
     else if (ui.effectType === "paint") ui.selector = selectorPaintInput.value;
-    else ui.selector = selectorConvertInput.value;
+    else if (ui.effectType === "convert") ui.selector = selectorConvertInput.value;
+    else if (ui.effectType === "splineLines") ui.splineSelector = selectorSplineInput.value;
     ui.rangeMin = clampNum(minInput.value, ui.rangeMin);
     ui.rangeMax = clampNum(maxInput.value, ui.rangeMax);
     ui.count = Math.max(1, Math.trunc(clampNum(countInput.value, ui.count)));
@@ -645,6 +772,16 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
     ui.pathSamplePoints = Math.max(3, Math.trunc(clampNum(samplePoints.value, ui.pathSamplePoints)));
     ui.convertScaleMode = convertScaleMode.value;
     ui.convertScaleFactor = clampNum(convertScaleFactor.value, ui.convertScaleFactor);
+    ui.splineSource = splineSource.value;
+    ui.splinePointCount = Math.max(2, Math.trunc(clampNum(splinePointCount.value, ui.splinePointCount)));
+    ui.splineStepsPerSegment = Math.max(2, Math.trunc(clampNum(splineStepsPerSegment.value, ui.splineStepsPerSegment)));
+    ui.splineTension = clampNum(splineTension.value, ui.splineTension);
+    ui.splineLineOrientation = splineLineOrientation.value;
+    ui.splineLineHeight = clampNum(splineLineHeight.value, ui.splineLineHeight);
+    ui.splineLineScale = clampNum(splineLineScale.value, ui.splineLineScale);
+    ui.splineStrokeWidth = clampNum(splineStrokeWidth.value, ui.splineStrokeWidth);
+    ui.splineScaleMode = splineScaleMode.value;
+    ui.splineScaleFactor = clampNum(splineScaleFactor.value, ui.splineScaleFactor);
     ui.paintFill = paintFill.value;
     ui.paintStroke = paintStroke.value;
     ui.mergeShape = mergeShapeSel.value;
@@ -722,6 +859,20 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
     row("path samples", samplePoints, "Used when converting path -> polygon."),
     row("scale mode", convertScaleMode, "Scale converted output around center or origin."),
     row("scale factor", convertScaleFactor, "Scale applied to converted output."),
+  ]);
+
+  const splineBlock = el("div", { className: "fx-block" }, [
+    row("source shape", splineSource, "Choose one SVG shape type or scan all supported shapes."),
+    row("selector", selectorSplineInput, "Optional CSS selector override."),
+    row("control points", splinePointCount, "How many shape points become spline control points."),
+    row("steps per segment", splineStepsPerSegment, "Spline sample density; higher = more output lines."),
+    row("tension", splineTension, "Catmull-Rom tension used for the spline interpolation."),
+    row("line orientation", splineLineOrientation, "Vertical, spline normal, or spline tangent."),
+    row("line height", splineLineHeight, "Base height for each generated line."),
+    row("line scale", splineLineScale, "Multiplies the line height."),
+    row("stroke width", splineStrokeWidth, "Stroke width for generated lines."),
+    row("scale mode", splineScaleMode, "Scale the generated spline-line group around center or origin."),
+    row("scale factor", splineScaleFactor, "Scale applied after generating the spline lines."),
   ]);
 
   const fnPresetSel = el("select");
@@ -870,11 +1021,12 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
   ]);
 
   const topGroup = group("Effect", [
-    row("type", effectSel, "Choose scale, convert, paint, merge, or function rects."),
+    row("type", effectSel, "Choose scale, convert, spline lines, paint, merge, or function rects."),
   ]);
 
   const scaleGroup = group("Scale Effect", [scaleBlock]);
   const convertGroup = group("Convert Effect", [convertBlock]);
+  const splineGroup = group("Spline Lines", [splineBlock]);
   const functionGroup = group("Function Rects", [functionBlock]);
   const paintGroup = group("Paint Effect", [paintBlock]);
   const mergeGroup = group("Merge Effect", [mergeBlock]);
@@ -888,11 +1040,13 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
   const refresh = () => {
     const isScale = ui.effectType === "scale";
     const isConvert = ui.effectType === "convert";
+    const isSplineLines = ui.effectType === "splineLines";
     const isFunctionRects = ui.effectType === "functionRects";
     const isPaint = ui.effectType === "paint";
     const isMerge = ui.effectType === "merge";
     scaleGroup.style.display = isScale ? "" : "none";
     convertGroup.style.display = isConvert ? "" : "none";
+    splineGroup.style.display = isSplineLines ? "" : "none";
     functionGroup.style.display = isFunctionRects ? "" : "none";
     paintGroup.style.display = isPaint ? "" : "none";
     mergeGroup.style.display = isMerge ? "" : "none";
@@ -900,12 +1054,23 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
     selectorScaleInput.value = selVal;
     selectorPaintInput.value = selVal;
     selectorConvertInput.value = selVal;
+    selectorSplineInput.value = String(ui.splineSelector || "");
     mergeSelectorInput.value = String(ui.mergeSelector || "");
     mergeRuleInput.value = String(ui.mergeSelectorRuleText || "");
     mergeShapeSel.value = ui.mergeShape || "circle";
     autoRunCb.checked = !!ui.autoRun;
     elementSelScale.value = ui.elementType || "circle";
     elementSelPaint.value = ui.elementType || "circle";
+    splineSource.value = ui.splineSource || "all";
+    splinePointCount.value = String(ui.splinePointCount ?? 16);
+    splineStepsPerSegment.value = String(ui.splineStepsPerSegment ?? 18);
+    splineTension.value = String(ui.splineTension ?? 0.12);
+    splineLineOrientation.value = ui.splineLineOrientation || "vertical";
+    splineLineHeight.value = String(ui.splineLineHeight ?? 18);
+    splineLineScale.value = String(ui.splineLineScale ?? 1);
+    splineStrokeWidth.value = String(ui.splineStrokeWidth ?? 2);
+    splineScaleMode.value = ui.splineScaleMode || "none";
+    splineScaleFactor.value = String(ui.splineScaleFactor ?? 1);
     fnPresetSel.value = ui.fnPreset || RECT_FUNCTION_PRESETS[0]?.id || "circle";
     fnCode.value = String(ui.fnCode || "");
     fnSampleCount.value = String(ui.fnSampleCount ?? 80);
@@ -928,6 +1093,7 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
   root.appendChild(topGroup);
   root.appendChild(scaleGroup);
   root.appendChild(convertGroup);
+  root.appendChild(splineGroup);
   root.appendChild(functionGroup);
   root.appendChild(paintGroup);
   root.appendChild(mergeGroup);
@@ -1036,6 +1202,43 @@ export function runEffectsFromUI({ mountEl, state, xfRuntime, statusEl } = {}) {
 
     if (statusEl) {
       statusEl.textContent = `convert applied: ${totalConverted} converted, ${totalSkipped} skipped.`;
+    }
+  } else if (ui.effectType === "splineLines") {
+    let totalConverted = 0;
+    let totalSkipped = 0;
+    let totalLines = 0;
+    for (const { rootEl, create } of contexts) {
+      const stats = applySplineLinesInSubtree(
+        { root: rootEl, create },
+        {
+          sourceTag: ui.splineSource,
+          selector: String(ui.splineSelector || "").trim() || null,
+          pointCount: ui.splinePointCount,
+          stepsPerSegment: ui.splineStepsPerSegment,
+          tension: ui.splineTension,
+          lineOrientation: ui.splineLineOrientation,
+          lineHeight: ui.splineLineHeight,
+          lineScale: ui.splineLineScale,
+          strokeWidth: ui.splineStrokeWidth,
+          runId,
+          debug: ui.debug,
+        }
+      );
+
+      totalConverted += stats?.converted ?? 0;
+      totalSkipped += stats?.skipped ?? 0;
+      totalLines += stats?.linesCreated ?? 0;
+
+      if (ui.splineScaleMode !== "none" && ui.splineScaleFactor !== 1) {
+        const converted = Array.from(rootEl.querySelectorAll(`[data-spline-lines-run="${runId}"][data-spline-lines-group="1"]`));
+        for (const el of converted) {
+          applyScaleTransform(el, ui.splineScaleFactor, ui.splineScaleMode);
+        }
+      }
+    }
+
+    if (statusEl) {
+      statusEl.textContent = `spline lines applied: ${totalConverted} shapes, ${totalLines} lines, ${totalSkipped} skipped.`;
     }
   } else if (ui.effectType === "functionRects") {
     const preset = RECT_FUNCTION_PRESETS.find((p) => p.id === ui.fnPreset);

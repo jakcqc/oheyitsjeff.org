@@ -105,7 +105,7 @@ function renderHome() {
   // Bubbles mode:
   // On small screens we may not have enough vertical room for all bubbles to settle without being clipped.
   // Estimate a minimum required height based on a loose packing grid.
-  const baseHeight = Math.round(window.innerHeight - 68);
+  const baseHeight = Math.round(window.innerHeight - 38);
   const bubbleDiameter = (bubbleRadius * 2) + (textRadius * 2) + 16; // include label ring + padding
   const cols = Math.max(1, Math.floor((width - 16) / bubbleDiameter));
   const rows = Math.ceil(projects.length / cols);
@@ -130,7 +130,7 @@ function createD3Bubbles(svg) {
  
     // after you’ve set width, height, initStrength, dragSimStrength
 const centerX = width  / 2;
-const centerY = (height - height*0.2) / 2;
+const centerY = (height - height*0.4) / 2;
   // Patterns for image fill
   svg.append("defs")
     .selectAll("pattern")
@@ -406,6 +406,12 @@ const projects = shuffle([
     description: "A dedicated gallery of the new math visualization set.",
     link: "/MathVisuals/"
   },
+  {
+    title: "- Voxel Hatching -",
+    image: "/assets/Images/voxel.png",
+    description: "Voxel sculpture builder with SVG shadow hatching, shape placement, and remembered camera poses.",
+    link: "/voxelhatchingShadows/"
+  }
   // {
   //   title: "LSystem_Garden",
   //   image: "assets/Images/stars.jpg",

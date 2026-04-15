@@ -343,6 +343,14 @@ body{
     body {
       overflow-y:auto;
     }
+    .mainName{
+      position: fixed;
+      top: max(5px, env(safe-area-inset-top));
+      left: max(5px, env(safe-area-inset-left));
+      margin: 0;
+      background: var(--color-main);
+      z-index: 1000;
+    }
     .outter{
       min-width: 250px;
       max-width: 350px;

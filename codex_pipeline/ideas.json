@@ -14,6 +14,20 @@
       "slug": "MarbledPatterns",
       "folder": "MarbledPatterns",
       "visualId": "marbledPatterns"
+    },
+    {
+      "title": "Space Filling Curves",
+      "summary": "Randomly spawned circles and squares filled with selectable space-filling trajectories.",
+      "slug": "SpaceFillingCurves",
+      "folder": "SpaceFillingCurves",
+      "visualId": "spaceFillingCurves"
+    },
+    {
+      "title": "Step Spline Lab",
+      "summary": "Click-built splines rendered as continuous strokes, dots, or formula-sized step lines.",
+      "slug": "StepSplineLab",
+      "folder": "StepSplineLab",
+      "visualId": "stepSplineLab"
     }
   ]
 }

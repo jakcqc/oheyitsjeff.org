@@ -105,7 +105,7 @@ function renderHome() {
   // Bubbles mode:
   // On small screens we may not have enough vertical room for all bubbles to settle without being clipped.
   // Estimate a minimum required height based on a loose packing grid.
-  const baseHeight = Math.round(window.innerHeight - 68);
+  const baseHeight = Math.round(window.innerHeight - 18);
   const bubbleDiameter = (bubbleRadius * 2) + (textRadius * 2) + 16; // include label ring + padding
   const cols = Math.max(1, Math.floor((width - 16) / bubbleDiameter));
   const rows = Math.ceil(projects.length / cols);
@@ -130,7 +130,7 @@ function createD3Bubbles(svg) {
  
     // after you’ve set width, height, initStrength, dragSimStrength
 const centerX = width  / 2;
-const centerY = (height - height*0.2) / 2;
+const centerY = (height - height*0.4) / 2;
   // Patterns for image fill
   svg.append("defs")
     .selectAll("pattern")
@@ -407,6 +407,18 @@ const projects = shuffle([
     image: "/assets/Images/voro.png",
     description: "Voronoi diagrams that move and grow; fractal-like patterns emerge.",
     link: "/Voronoi/"
+  },
+  {
+    title: "Step Spline Lab",
+    image: "/MathVisuals/assets/spline.png",
+    description: "Click points into a spline, then render it as dots, a smooth stroke, or formula-sized step lines.",
+    link: "/StepSplineLab/"
+  },
+  {
+    title: "Space Filling Curves",
+    image: "/MathVisuals/assets/spaceFilling.png",
+    description: "Hilbert, Peano, static, dynamic, fun curves",
+    link: "/SpaceFillingCurves/"
   },
   {
     title: "Kakeya!!",
