@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Red Study Room</title>
+    <meta
+      name="description"
+      content="A single-page reading room for communist study, with theory, history, essays, and practical starting points."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <nav class="mobile-nav" aria-label="Primary">
+      <a class="nav-link active" href="#start-here">Start Here</a>
+      <a class="nav-link" href="#essay">Essay</a>
+      <a class="nav-link" href="#theory">Theory</a>
+      <a class="nav-link" href="#history">History</a>
+      <a class="nav-link" href="#practice">Practice</a>
+    </nav>
+
+    <div class="page-shell">
+      <div class="site-layout">
+        <aside class="page-tracker" aria-label="Section Tracker">
+          <div class="tracker-card">
+            <p class="eyebrow">Page Tracker</p>
+            <div class="tracker-mark">S</div>
+            <p class="tracker-copy">
+              Move between the five sections and keep your place while you
+              scroll.
+            </p>
+            <nav class="tracker-nav" aria-label="Section Tracker">
+              <a class="nav-link active" href="#start-here">
+                <span class="nav-number">1</span>
+                <span class="nav-text">Start Here</span>
+              </a>
+              <a class="nav-link" href="#essay">
+                <span class="nav-number">2</span>
+                <span class="nav-text">Essay</span>
+              </a>
+              <a class="nav-link" href="#theory">
+                <span class="nav-number">3</span>
+                <span class="nav-text">Theory</span>
+              </a>
+              <a class="nav-link" href="#history">
+                <span class="nav-number">4</span>
+                <span class="nav-text">History</span>
+              </a>
+              <a class="nav-link" href="#practice">
+                <span class="nav-number">5</span>
+                <span class="nav-text">Practice</span>
+              </a>
+            </nav>
+          </div>
+        </aside>
+
+        <main class="content-column">
+          <header class="hero" id="top">
+            <p class="eyebrow">A Single-Page Reading Room</p>
+            <div class="hero-mark">R</div>
+            <h1>Red Study Room</h1>
+            <p class="hero-copy">
+              A cream-paper, red-ink starting point for communist reading,
+              theory, history, and collective practice.
+            </p>
+          </header>
+
+        <section class="panel reveal" id="start-here">
+          <div class="section-heading">
+            <p class="section-tag"><span class="number-text">1.</span> Start Here</p>
+            <h2>Foundations Before the Library Swallows You Whole</h2>
+          </div>
+          <p class="lede dropcap">
+            Start with a few anchor texts, then move outward. This page uses
+            short introductions adapted from Wikipedia to keep the first step
+            clear, while sending the full reading outward to known archives and
+            reference pages.
+          </p>
+
+          <div class="reading-grid">
+            <article class="reading-card">
+              <h3>The Communist Manifesto</h3>
+              <p>
+                First published in 1848, Marx and Engels' pamphlet frames class
+                struggle as the engine of history and calls on workers to
+                organize as a political force.
+              </p>
+              <div class="card-links">
+                <a
+                  href="https://www.marxists.org/archive/marx/works/1848/communist-manifesto/"
+                  target="_blank"
+                  rel="noreferrer"
+                  >Read on Marxists.org</a
+                >
+                <a
+                  href="https://en.wikipedia.org/wiki/The_Communist_Manifesto"
+                  target="_blank"
+                  rel="noreferrer"
+                  >Wikipedia overview</a
+                >
+              </div>
+            </article>
+
+            <article class="reading-card">
+              <h3>Das Kapital</h3>
+              <p>
+                Marx's major critique of political economy studies commodities,
+                value, exploitation, and accumulation to explain how capitalist
+                production reproduces its own social order.
+              </p>
+              <div class="card-links">
+                <a
+                  href="https://www.marxists.org/archive/marx/works/1867-c1/"
+                  target="_blank"
+                  rel="noreferrer"
+                  >Read on Marxists.org</a
+                >
+                <a
+                  href="https://en.wikipedia.org/wiki/Das_Kapital"
+                  target="_blank"
+                  rel="noreferrer"
+                  >Wikipedia overview</a
+                >
+              </div>
+            </article>
+
+            <article class="reading-card">
+              <h3>Socialism: Utopian and Scientific</h3>
+              <p>
+                Engels contrasts earlier socialist visions with historical
+                materialism and lays out why socialism, in this tradition, is
+                treated as a development emerging from real social conditions.
+              </p>
+              <div class="card-links">
+                <a
+                  href="https://www.marxists.org/archive/marx/works/1880/soc-utop/"
+                  target="_blank"
+                  rel="noreferrer"
+                  >Read on Marxists.org</a
+                >
+                <a
+                  href="https://en.wikipedia.org/wiki/Socialism:_Utopian_and_Scientific"
+                  target="_blank"
+                  rel="noreferrer"
+                  >Wikipedia overview</a
+                >
+              </div>
+            </article>
+
+            <article class="reading-card">
+              <h3>Critique of the Gotha Programme</h3>
+              <p>
+                This 1875 text is Marx's sharp response to a German party draft
+                programme and remains central to debates about transition,
+                distribution, and the meaning of communism.
+              </p>
+              <div class="card-links">
+                <a
+                  href="https://www.marxists.org/archive/marx/works/1875/gotha/"
+                  target="_blank"
+                  rel="noreferrer"
+                  >Read on Marxists.org</a
+                >
+                <a
+                  href="https://en.wikipedia.org/wiki/Critique_of_the_Gotha_Programme"
+                  target="_blank"
+                  rel="noreferrer"
+                  >Wikipedia overview</a
+                >
+              </div>
+            </article>
+
+            <article class="reading-card">
+              <h3>The State and Revolution</h3>
+              <p>
+                Written in 1917, Lenin's book argues that the state is bound to
+                class power and insists that revolution means transforming, not
+                simply inheriting, the old state machinery.
+              </p>
+              <div class="card-links">
+                <a
+                  href="https://www.marxists.org/archive/lenin/works/1917/staterev/"
+                  target="_blank"
+                  rel="noreferrer"
+                  >Read on Marxists.org</a
+                >
+                <a
+                  href="https://en.wikipedia.org/wiki/The_State_and_Revolution"
+                  target="_blank"
+                  rel="noreferrer"
+                  >Wikipedia overview</a
+                >
+              </div>
+            </article>
+
+            <article class="reading-card">
+              <h3>What Is to Be Done?</h3>
+              <p>
+                Lenin's pamphlet argues for a disciplined revolutionary
+                organization and is often read as a key text on party-building,
+                strategy, and political education.
+              </p>
+              <div class="card-links">
+                <a
+                  href="https://www.marxists.org/archive/lenin/works/1901/witbd/"
+                  target="_blank"
+                  rel="noreferrer"
+                  >Read on Marxists.org</a
+                >
+                <a
+                  href="https://en.wikipedia.org/wiki/What_Is_to_Be_Done"
+                  target="_blank"
+                  rel="noreferrer"
+                  >Wikipedia overview</a
+                >
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel reveal" id="essay">
+          <div class="section-heading">
+            <p class="section-tag"><span class="number-text">2.</span> Essay</p>
+            <h2>A Small Door Into a Very Large Argument</h2>
+          </div>
+          <p class="dropcap">
+            Communism is not one book, one party, one state, or one century. It
+            is a field of arguments about exploitation, ownership, class power,
+            crisis, planning, solidarity, and what a life beyond wage
+            dependence could mean.
+          </p>
+          <p>
+            That means the beginner's task is not to memorize slogans. It is to
+            learn how the tradition explains capitalism, how different currents
+            disagree about strategy, and how theory and history keep revising
+            one another.
+          </p>
+          <p>
+            This page is designed as a first room rather than a final answer:
+            read a short foundational text, move to theory, check the history,
+            and come back to practice with better questions than you started
+            with.
+          </p>
+        </section>
+
+        <section class="panel reveal" id="theory">
+          <div class="section-heading">
+            <p class="section-tag"><span class="number-text">3.</span> Theory</p>
+            <h2>Core Ideas to Track While You Read</h2>
+          </div>
+          <div class="concept-grid">
+            <article class="concept-card">
+              <h3>Class</h3>
+              <p>
+                Classes are defined by their position in production, not by
+                taste or income alone. The key question is who owns, who works,
+                and who controls the surplus.
+              </p>
+            </article>
+            <article class="concept-card">
+              <h3>Historical Materialism</h3>
+              <p>
+                Social life changes through concrete material relations and
+                conflict, not simply because ideas appear in the abstract.
+              </p>
+            </article>
+            <article class="concept-card">
+              <h3>Value and Exploitation</h3>
+              <p>
+                Capitalist profit depends on labor producing more value than it
+                receives back as wages, which turns work itself into a site of
+                domination.
+              </p>
+            </article>
+            <article class="concept-card">
+              <h3>State Power</h3>
+              <p>
+                The state is not neutral in this tradition. It is treated as
+                part of the structure through which class rule is organized and
+                defended.
+              </p>
+            </article>
+            <article class="concept-card">
+              <h3>Internationalism</h3>
+              <p>
+                Capital crosses borders, so resistance and solidarity cannot be
+                limited to one nation without leaving the system intact.
+              </p>
+            </article>
+            <article class="concept-card">
+              <h3>Transition</h3>
+              <p>
+                A recurring dispute asks what comes between capitalism and
+                communism: party, council, commune, state, federation, or some
+                shifting combination of them.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel reveal" id="history">
+          <div class="section-heading">
+            <p class="section-tag"><span class="number-text">4.</span> History</p>
+            <h2>Moments Worth Returning To</h2>
+          </div>
+          <div class="timeline">
+            <article class="timeline-entry">
+              <span class="year"><span class="number-text">1848</span></span>
+              <div>
+                <h3>Manifestos and Revolutions</h3>
+                <p>
+                  The Communist Manifesto appears during a wider season of
+                  European upheaval, binding theory to agitation from the
+                  beginning.
+                </p>
+              </div>
+            </article>
+            <article class="timeline-entry">
+              <span class="year"><span class="number-text">1871</span></span>
+              <div>
+                <h3>The Paris Commune</h3>
+                <p>
+                  The Commune becomes a lasting reference point for debates over
+                  worker power, democratic control, and the fate of the state.
+                </p>
+              </div>
+            </article>
+            <article class="timeline-entry">
+              <span class="year"><span class="number-text">1917</span></span>
+              <div>
+                <h3>Russian Revolution</h3>
+                <p>
+                  A revolutionary break becomes state power, opening both a new
+                  political horizon and a century of arguments over strategy,
+                  authority, and bureaucracy.
+                </p>
+              </div>
+            </article>
+            <article class="timeline-entry">
+              <span class="year"><span class="number-text">1949-1979</span></span>
+              <div>
+                <h3>Global Revolutions and Anti-Colonial Struggle</h3>
+                <p>
+                  Communist movements become entangled with decolonization,
+                  peasant war, national liberation, and competing models of
+                  socialist development.
+                </p>
+              </div>
+            </article>
+            <article class="timeline-entry">
+              <span class="year">Now</span>
+              <div>
+                <h3>Afterlives and Re-readings</h3>
+                <p>
+                  Current study often returns to old texts through the lenses of
+                  logistics, care, ecology, racial capitalism, and platform
+                  labor.
+                </p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel reveal" id="practice">
+          <div class="section-heading">
+            <p class="section-tag"><span class="number-text">5.</span> Practice</p>
+            <h2>What to Do With the Reading</h2>
+          </div>
+          <div class="practice-grid">
+            <article class="practice-card">
+              <h3>Build a Reading Ladder</h3>
+              <p>
+                Begin with a pamphlet, then pair it with one historical case and
+                one disagreement from inside the tradition.
+              </p>
+            </article>
+            <article class="practice-card">
+              <h3>Keep a Terms Notebook</h3>
+              <p>
+                Track recurring words such as labor, value, ideology, state, and
+                reproduction. Definitions shift depending on the author.
+              </p>
+            </article>
+            <article class="practice-card">
+              <h3>Read Collectively</h3>
+              <p>
+                A difficult text becomes usable much faster when read in a small
+                group that can compare interpretations and examples.
+              </p>
+            </article>
+            <article class="practice-card">
+              <h3>Test Theory Against Life</h3>
+              <p>
+                Relate each concept back to housing, work, debt, logistics,
+                schooling, healthcare, and the institutions shaping daily life.
+              </p>
+            </article>
+          </div>
+        </section>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>
