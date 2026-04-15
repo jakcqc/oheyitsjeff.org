@@ -1,0 +1,108 @@
+#background{
+    background-color: rgb(0, 0, 0);
+  }
+  * {
+    font-family: 'Kosugi Maru','Scheherazade','Kumbh Sans','Courier Prime','Alata', sans-serif !important;
+  }
+  #infoBar{
+    background-color: rgb(22, 22, 22);
+    color: rgb(255, 255, 255);
+    /* border-top: 5px solid black; */
+    border-bottom: 3px solid rgb(0, 255, 55);
+    /* text-decoration: underline; */
+    font-size: 25px;
+    padding: 10px;
+    /* padding-top: 10px; */
+    text-align: center;
+    /* font-size: x-large; */
+  }
+  body{
+    padding: 0px ;
+    margin: 0px ;
+    /* background: var(--color-main); */
+    overflow: hidden;
+  }
+  #button-exit{
+    background-color: black;
+    color: white;
+    position:absolute; 
+    left: 20px;
+     border: 5px dashed rgb(255, 255, 255);
+     height: auto;
+     transition: .2s;
+     font-weight: bold;
+  }
+  #configParticle {
+    position: absolute; 
+    top: 10%; 
+    right: 20px;               /* Start at the horizontal center */
+    /* transform: translateX(-50%); Move it back by half its width */
+    background: rgba(184, 184, 184, 0.8);
+    border: 3px solid  rgb(233, 255, 182);
+     padding: 20px; 
+    border-radius: 5px; 
+    z-index: 100;
+    display:none;
+    color: white;
+
+    overflow-y: auto;       /* Only vertical scroll shows if needed */
+    /* Optional, for smooth scrolling: */
+    scroll-behavior: smooth;
+    max-height:80%;
+    max-width: 400px;
+    transition: opacity 0.2s ease;
+
+  }
+  #cameraLockStatus{display: none;}
+  /* Small screens: full width */
+  @media (max-width: 699px) {
+    #configParticle {
+      transform: translateX(0%); /* Move it back by half its width */
+      padding: 5px; 
+      margin: 5px;
+      left: 10px;
+      right: 10px;
+      margin: 0 auto;
+      /* width: 100%; */
+      /* max-width: 100%; */
+      border-radius: 0;
+    }
+  }
+  #configParticleSettings{
+    position: absolute;
+    right: 20px;
+    margin-top: 20px;
+    max-width: 300px;
+  }
+  #button-config{
+    background-color: black;
+    color: white;
+    position:absolute; 
+     right: 30px;
+     padding: 5px;
+     border: 3px dashed rgb(255, 255, 255);
+     height: auto;
+     transition: .2s;
+     font-weight: bold;
+  }
+  .button-config_g{
+    background-color: black;
+
+    position:absolute; 
+     right: 30px;
+     margin-top: 10px;
+     padding: 5px;
+     border: 3px dashed rgb(255, 255, 255);
+     height: auto;
+     transition: .2s;
+     font-weight: bold;
+  }
+  #button-exit:hover{
+    border-radius: 10px;
+  }
+  .button-config_g:hover{
+    border-radius: 10px;
+  }
+  #button-config:hover{
+    border-radius: 10px;
+  }

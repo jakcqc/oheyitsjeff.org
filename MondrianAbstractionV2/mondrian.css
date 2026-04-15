@@ -1,0 +1,36 @@
+    #background{
+      background-color: white;
+    }
+    * {
+      font-family: 'Kosugi Maru','Scheherazade','Kumbh Sans','Courier Prime','Alata', sans-serif !important;
+    }
+    #infoBar{
+      /* background-color: white; */
+      color: black;
+      /* border-top: 5px solid black; */
+      border-bottom: 3px solid black;
+      /* text-decoration: underline; */
+      font-size: 25px;
+      padding: 10px;
+      /* padding-top: 10px; */
+      text-align: center;
+      /* font-size: x-large; */
+    }
+    body{
+      padding: 0px ;
+      margin: 0px ;
+      /* background: var(--color-main); */
+      overflow: hidden;
+    }
+    #button-exit{
+      position:absolute; 
+      left: 2px;
+       border: 5px dashed black;
+       height: auto;
+       transition: .2s;
+       font-weight: bold;
+    }
+    #button-exit:hover{
+      border-radius: 10px;
+    }
+  

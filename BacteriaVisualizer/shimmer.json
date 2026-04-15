@@ -1,0 +1,124 @@
+{
+  "running": true,
+  "tickMs": "26",
+  "speed": "1.2",
+  "outlinePad": "0",
+  "outlineLag": "0.6",
+  "outlineScale": "0.2",
+  "outlineShape": "ellipse",
+  "outlineStrokeWidth": "0",
+  "lineColor": "#000000",
+  "backgroundColor": "#ffffff",
+  "dotStrokeWidth": "0",
+  "collisionPush": "1.5",
+  "showMergePaths": false,
+  "mergeContactRatio": "2",
+  "mergeMaxPairs": "459",
+  "mergeSmoothing": 0.99,
+  "mergeFalloff": "0.13",
+  "mergeEffectStyle": "ring",
+  "mergeEffectColor": "#aa0000",
+  "ringCount": "100",
+  "fitCells": true,
+  "fitFillRatio": "0.85",
+  "ringMinRadius": "0",
+  "ringMaxRadius": "0",
+  "showMultiRing": true,
+  "multiRingCount": "80",
+  "multiRingStart": ".01",
+  "multiRingGap": "2.5",
+  "multiRingStrokeWidth": 10,
+  "multiRingOpacity": "0.3",
+  "multiRingFade": "0.005",
+  "multiRingColor": "#5a4feeff",
+  "ringColorMode": "random",
+  "ringColorA": "#ffffff",
+  "ringColorB": "#000000",
+  "multiRingPalette": "#aa0000,#0088ff,#00aa44,#ffa500",
+  "showCircleRect": false,
+  "circleStrokeWidth": "0",
+  "circleRectColor": "#000000",
+  "showTrail": false,
+  "trailEveryN": 1,
+  "trailLength": 200,
+  "trailOpacity": 0.01,
+  "trailRadius": 100,
+  "trailColor": "#aa0000",
+  "trailStrokeColor": "#000000",
+  "trailStrokeWidth": 0,
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 90,
+      "preset": "kaleidoscope4",
+      "splitMode": "screen",
+      "applyToAll": false,
+      "tileTargets": "0-3",
+      "zoomFactor": "1.05",
+      "zoomCenter": {
+        "x": null,
+        "y": null
+      },
+      "translateVec": {
+        "x": 0,
+        "y": 0
+      },
+      "matrix": {
+        "a": 1,
+        "b": 0,
+        "c": 0,
+        "d": 1,
+        "e": 0,
+        "f": 0
+      },
+      "planeCount": 3,
+      "planeBaseScale": 1,
+      "planeScaleStep": -0.12,
+      "planeOpacity": 0.7,
+      "planeOpacityFalloff": 0.12,
+      "planeOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCenter": {
+        "x": null,
+        "y": null
+      }
+    },
+    "stack": []
+  },
+  "__propOps": {
+    "ui": {
+      "ruleText": "{\n        \"selector\": {\"circle\":{\"r\":{\"range\":[20,100]}}},\n        \"apply\": {\"stroke\": null}\n        }",
+      "lastPreview": "",
+      "showDocs": true
+    },
+    "stack": []
+  },
+  "__anim": {
+    "ui": {
+      "targetType": "params",
+      "paramTargets": [
+        {
+          "key": "multiRingStrokeWidth",
+          "from": 1,
+          "to": 10
+        }
+      ],
+      "paramKey": "",
+      "selector": "svg",
+      "svgKind": "attr",
+      "svgName": "opacity",
+      "durationSec": 30,
+      "fps": 20,
+      "easing": "linear",
+      "loop": false,
+      "yoyo": false,
+      "progress01": 1,
+      "autoFromCurrent": true,
+      "snapToEndOnStop": true,
+      "autoPlay": false
+    }
+  }
+}

@@ -1,0 +1,25 @@
+GEOSPACE:
+
+1. drag feature on sets of particle groups, which we will PS.
+2. When creating PS(), this shall accept a scene, a Particle group: PG which has the information to create a PS with a set of particle values.
+3. Once the PS is created, it will accept rules to interact with other PS, which we will call AR, action rules.
+4. A PS can be thought of as PS<PG,AR>, where the PG describes the generation of the PS, and the AR defines the continuous functions applied to the PS.
+5. An AR can change the PS, but the not the generation rules, which are the PG. So AR can transform the PS, not the PG, we will now use * for an AR on a property
+6. Since AR are defined with respect to a PG, which describes a PS, for an AR to apply to a PS, it must be satisfied as a subset of the PG wrt to the properties changed/used/reference in the AR process. Ex -> when applying a merge AR on a PS<PG>, the PG must contain the merged Groups array, positions, velocities, and certain fields of starting information aka they must contain a extended type (ts extends) or a type which contains the required information (duck typing).
+7. Finally, AR can apply to the PS they are attached, PS<PG,AR>, because the AR interacts with a <= subset of the PG property elements. This means that AR can describe interactions that apply to all PS, whose PG contains all of the properties of the AR. the properties of the PG must be isomorphic and completely equal, and thus be bijective under the properties on the AR, so any structure changes (such as order change, immutability, rename, abstracted, nested, etc.) will break the AR. Thus, we shall describe this process of applying AR, as an operation applied across the set of PS<PG> as PS<PG1:AR1> 
+
+PG1 = 2,3,5,7,11,13,17,19,23
+
+So we write PS<2,3,5,7,11,13,17,19,23>
+
+where this is PS<PG1> = PS<2,3,5,7,11,13,17,19,23>
+
+Thus, we can think of every PG as a polynomial with a maximum length where we say our PG can never have length greater than 1000. Thus we have properties on our PG, and any property that is included comes from this set. For instance, our PG2 could be PS<2,3,5,0,0,0,0,19,24>. Now suppose we have an AR which we can describe as it pertains to a PG property set. We care about the sub function mapping of the AR as these need to be described so that interactions between AR can occur. For instance at the highest level, with respect to PG, we have AR<2,3> which applies to a PG(2,3) short hand for a PG which contains 2,3 properties, Thus, at the highest level this is what we do for PG, PS. To get there we have AR, which is really defined as AR<(2x3)(2,3x2)> where the AR takes in param 2 and changes param 3, and takes in param 2,3, and changes param 2. This will be ordered, so it is non communitive since order does matter in operations. This idea will also rely on the cycles within the PS as well during the update execution context which must be defined.
+
+
+PS execution context with respect to cycles:
+
+1. Startup
+2. TICK -> AR1(main physics), AR2(bound calculation), AR3(update positions, and mesh), AR4(merges "which calls update positions and update mesh")
+	-- So really current pipeline is AR1(velocity physics A) AR2(Handle merges), and AR3(bounce sphere)
+3. To categorize we 3 sets of actions rules currently: BEGIN, DURING, and END. During corresponds to functions that apply to each PG element group, and to each other, or functions which take in only PG sub elements and apply to those iteratively. One is One to Many, One to Many N times, and the other is One to One N times. We will call these types of functions. We can also define them in relation to the iterations/cycles and the data being cycled

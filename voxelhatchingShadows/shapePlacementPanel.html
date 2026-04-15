@@ -1,0 +1,98 @@
+<section class="vhs-shapeEditor" aria-label="Shape placement tool">
+  <div class="vhs-shapeEditor__head">
+    <div class="vhs-shapeEditor__headRow">
+      <h3 class="vhs-shapeEditor__title">Shape Tool</h3>
+      <button
+        type="button"
+        class="vhs-shapeEditor__collapseBtn"
+        data-shape-collapse-toggle
+        aria-expanded="true"
+        aria-label="Collapse shape placement menu"
+      >
+        Collapse
+      </button>
+    </div>
+    <p class="vhs-shapeEditor__hint">Space toggles Point/Rotate gizmo mode</p>
+  </div>
+
+  <div class="vhs-shapeEditor__body" data-shape-collapsible>
+  <div class="vhs-shapeEditor__field">
+    <label for="vhs-shape-type">Shape</label>
+    <select id="vhs-shape-type" data-shape-select></select>
+  </div>
+
+  <div class="vhs-shapeEditor__mode">
+    <button type="button" data-shape-mode="translate">Point</button>
+    <button type="button" data-shape-mode="rotate">Rotate</button>
+  </div>
+
+  <div class="vhs-shapeEditor__subhead">Point</div>
+  <div class="vhs-shapeEditor__triple">
+    <label>X</label>
+    <input type="range" data-pos-x-range />
+    <input type="number" step="1" data-pos-x-number />
+  </div>
+  <div class="vhs-shapeEditor__triple">
+    <label>Y</label>
+    <input type="range" data-pos-y-range />
+    <input type="number" step="1" data-pos-y-number />
+  </div>
+  <div class="vhs-shapeEditor__triple">
+    <label>Z</label>
+    <input type="range" data-pos-z-range />
+    <input type="number" step="1" data-pos-z-number />
+  </div>
+
+  <div class="vhs-shapeEditor__subhead">Rotation + Scale</div>
+  <div class="vhs-shapeEditor__triple">
+    <label>Yaw</label>
+    <input type="range" min="-180" max="180" step="1" data-rot-y-range />
+    <input type="number" min="-180" max="180" step="1" data-rot-y-number />
+  </div>
+  <div class="vhs-shapeEditor__triple">
+    <label>Scale</label>
+    <input type="range" min="0.25" max="4" step="0.01" data-scale-range />
+    <input type="number" min="0.25" max="4" step="0.01" data-scale-number />
+  </div>
+  <div class="vhs-shapeEditor__triple">
+    <label>Stretch X</label>
+    <input type="range" min="0.25" max="3" step="0.01" data-stretch-x-range />
+    <input type="number" min="0.25" max="3" step="0.01" data-stretch-x-number />
+  </div>
+  <div class="vhs-shapeEditor__triple">
+    <label>Stretch Y</label>
+    <input type="range" min="0.25" max="3" step="0.01" data-stretch-y-range />
+    <input type="number" min="0.25" max="3" step="0.01" data-stretch-y-number />
+  </div>
+  <div class="vhs-shapeEditor__triple">
+    <label>Stretch Z</label>
+    <input type="range" min="0.25" max="3" step="0.01" data-stretch-z-range />
+    <input type="number" min="0.25" max="3" step="0.01" data-stretch-z-number />
+  </div>
+  <div class="vhs-shapeEditor__field">
+    <label for="vhs-shape-color">Color</label>
+    <select id="vhs-shape-color" data-color-select></select>
+  </div>
+
+  <div class="vhs-shapeEditor__subhead">Shape Stack Transforms</div>
+  <div class="vhs-shapeEditor__triple">
+    <label>Erode</label>
+    <input type="range" min="0" max="6" step="1" data-erosion-range />
+    <input type="number" min="0" max="6" step="1" data-erosion-number />
+  </div>
+  <div class="vhs-shapeEditor__triple">
+    <label>Dilate</label>
+    <input type="range" min="0" max="6" step="1" data-dilation-range />
+    <input type="number" min="0" max="6" step="1" data-dilation-number />
+  </div>
+
+  <div class="vhs-shapeEditor__actions">
+    <button type="button" data-shape-action="place">Place Shape</button>
+    <button type="button" data-shape-action="undo">Undo Last</button>
+    <button type="button" data-shape-action="clear">Clear All</button>
+  </div>
+  <div class="vhs-shapeEditor__meta">
+    <span data-shape-count>0</span> shapes in scene
+  </div>
+  </div>
+</section>

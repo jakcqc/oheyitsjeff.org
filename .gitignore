@@ -1,0 +1,28 @@
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor/IDE
+.idea/
+.vscode/
+*.swp
+*~
+
+# Local tooling
+# Node/tooling caches
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build/output
+dist/
+build/
+out/
+.cache/
+*.log
+*.tmp
+*.temp
+
+# Generated galleries/playgrounds
+SvgPlayground/

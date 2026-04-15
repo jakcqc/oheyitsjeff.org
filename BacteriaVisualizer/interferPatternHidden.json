@@ -1,0 +1,182 @@
+{
+  "running": true,
+  "tickMs": "20",
+  "speed": "1.3",
+  "outlinePad": 0,
+  "outlineLag": "0.05",
+  "outlineScale": "1.35",
+  "outlineShape": "ellipse",
+  "outlineStrokeWidth": "0.0",
+  "lineColor": "#000000",
+  "backgroundColor": "#ffffff",
+  "dotStrokeWidth": "0.0",
+  "collisionPush": 0,
+  "showMergePaths": false,
+  "mergeContactRatio": 0.97,
+  "mergeMaxPairs": 72,
+  "mergeSmoothing": 0.99,
+  "mergeFalloff": 0,
+  "mergeEffectStyle": "ring",
+  "mergeEffectColor": "#aa0000",
+  "ringCount": 28,
+  "fitCells": true,
+  "fitFillRatio": 0.35,
+  "ringMinRadius": 10,
+  "ringMaxRadius": 88,
+  "showMultiRing": true,
+  "multiRingCount": 20,
+  "multiRingStart": 0.7,
+  "multiRingGap": 14.5,
+  "multiRingStrokeWidth": 7.75,
+  "multiRingOpacity": 0.26,
+  "multiRingFade": 0.01,
+  "multiRingColor": "#5a4feeff",
+  "ringColorMode": "uniform",
+  "ringColorA": "#ffffff",
+  "ringColorB": "#000000",
+  "multiRingPalette": "#aa0000,#0088ff,#00aa44,#ffa500",
+  "showCircleRect": false,
+  "circleStrokeWidth": 0.2,
+  "circleRectColor": "#000000",
+  "showTrail": false,
+  "trailEveryN": 1,
+  "trailLength": 200,
+  "trailOpacity": 0.01,
+  "trailRadius": 100,
+  "trailColor": "#aa0000",
+  "trailStrokeColor": "#000000",
+  "trailStrokeWidth": 0,
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 90,
+      "preset": "kaleidoscope4",
+      "splitMode": "screen",
+      "applyToAll": false,
+      "tileTargets": "0-3",
+      "zoomFactor": "1.1",
+      "zoomCenter": {
+        "x": null,
+        "y": null
+      },
+      "translateVec": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "stack": [
+      {
+        "kind": "split",
+        "count": 4
+      },
+      {
+        "kind": "flipY",
+        "targets": [
+          0
+        ]
+      },
+      {
+        "kind": "flipX",
+        "targets": [
+          1
+        ]
+      },
+      {
+        "kind": "flipY",
+        "targets": [
+          1
+        ]
+      },
+      {
+        "kind": "flipX",
+        "targets": [
+          3
+        ]
+      },
+      {
+        "kind": "zoom",
+        "targets": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "factor": 0.8,
+        "center": {
+          "x": null,
+          "y": null
+        }
+      },
+      {
+        "kind": "zoom",
+        "targets": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "factor": 1.1,
+        "center": {
+          "x": null,
+          "y": null
+        }
+      },
+      {
+        "kind": "zoom",
+        "targets": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "factor": 1.1,
+        "center": {
+          "x": null,
+          "y": null
+        }
+      },
+      {
+        "kind": "zoom",
+        "targets": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "factor": 1.1,
+        "center": {
+          "x": null,
+          "y": null
+        }
+      }
+    ]
+  },
+  "__propOps": {
+    "ui": {
+      "ruleText": "{\n        \"selector\": {\"circle\":{\"r\":{\"range\":[20,100]}}},\n        \"apply\": {\"stroke\": null}\n        }",
+      "lastPreview": "",
+      "showDocs": true
+    },
+    "stack": []
+  },
+  "__anim": {
+    "ui": {
+      "targetType": "params",
+      "paramTargets": [],
+      "paramKey": "",
+      "selector": "svg",
+      "svgKind": "attr",
+      "svgName": "opacity",
+      "durationSec": 3,
+      "fps": 20,
+      "easing": "linear",
+      "loop": false,
+      "yoyo": false,
+      "progress01": 0,
+      "autoFromCurrent": true,
+      "snapToEndOnStop": true,
+      "autoPlay": false
+    }
+  }
+}

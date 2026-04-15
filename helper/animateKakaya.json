@@ -1,0 +1,171 @@
+{
+  "levels": 7,
+  "splitK": 2,
+  "overlap": 0,
+  "copies": 16,
+  "baseWidth": 2,
+  "height": 1,
+  "needleLen": 0,
+  "needleThickPx": 0.1,
+  "needlePadPx": 0,
+  "needleAlpha": 0.25,
+  "maxNeedles": 4000,
+  "showTriangles": false,
+  "triFillAlpha": 0.1,
+  "triStrokeAlpha": 0.18,
+  "showAllNeedles": true,
+  "colorMode": "angle",
+  "palette": "turbo",
+  "monoColor": "#111111",
+  "showBoundsCircle": false,
+  "showStats": false,
+  "fitToView": true,
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 90,
+      "applyToAll": false,
+      "tileTargets": "0",
+      "zoomFactor": 1.25,
+      "zoomCenter": {
+        "x": 200,
+        "y": 500
+      },
+      "translateVec": {
+        "x": 0,
+        "y": 100
+      }
+    },
+    "stack": [
+      {
+        "kind": "zoom",
+        "targets": [
+          0
+        ],
+        "factor": 1.25,
+        "center": {
+          "x": 500,
+          "y": 500
+        }
+      },
+      {
+        "kind": "translate",
+        "targets": [
+          0
+        ],
+        "v": {
+          "x": 100,
+          "y": 0
+        }
+      },
+      {
+        "kind": "translate",
+        "targets": [
+          0
+        ],
+        "v": {
+          "x": 100,
+          "y": 100
+        }
+      },
+      {
+        "kind": "translate",
+        "targets": [
+          0
+        ],
+        "v": {
+          "x": -100,
+          "y": 0
+        }
+      },
+      {
+        "kind": "translate",
+        "targets": [
+          0
+        ],
+        "v": {
+          "x": -100,
+          "y": 0
+        }
+      },
+      {
+        "kind": "translate",
+        "targets": [
+          0
+        ],
+        "v": {
+          "x": -100,
+          "y": 0
+        }
+      },
+      {
+        "kind": "zoom",
+        "targets": [
+          0
+        ],
+        "factor": 1.25,
+        "center": {
+          "x": 200,
+          "y": 500
+        }
+      },
+      {
+        "kind": "translate",
+        "targets": [
+          0
+        ],
+        "v": {
+          "x": 0,
+          "y": 100
+        }
+      }
+    ]
+  },
+  "__propOps": {
+    "ui": {
+      "ruleText": "{\n        \"selector\": {\"circle\":{\"r\":{\"range\":[20,100]}}},\n        \"apply\": {\"stroke\": null}\n        }",
+      "lastPreview": ""
+    },
+    "stack": []
+  },
+  "__anim": {
+    "ui": {
+      "targetType": "params",
+      "paramTargets": [
+        {
+          "key": "needleThickPx",
+          "from": 0.1,
+          "to": 2
+        },
+        {
+          "key": "needleLen",
+          "from": 0,
+          "to": 2
+        },
+        {
+          "key": "overlap",
+          "from": 0,
+          "to": 1
+        },
+        {
+          "key": "copies",
+          "from": 16,
+          "to": 16
+        }
+      ],
+      "paramKey": "",
+      "selector": "svg",
+      "svgKind": "attr",
+      "svgName": "opacity",
+      "durationSec": 6,
+      "fps": 24,
+      "easing": "linear",
+      "loop": true,
+      "yoyo": false,
+      "progress01": 0,
+      "autoFromCurrent": true,
+      "snapToEndOnStop": true
+    }
+  }
+}

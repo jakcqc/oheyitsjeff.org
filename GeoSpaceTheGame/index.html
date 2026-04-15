@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>GeoSpace</title>
+  <meta name="color-scheme" content="dark">
+  <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+
+  <link href="https://fonts.googleapis.com/css2?family=Alata&amp;family=Courier+Prime:wght@700&amp;family=Kosugi+Maru&amp;family=Kumbh+Sans&amp;family=Scheherazade:wght@700&amp;display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="/assets/Images/inner.png"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="index.css" rel="stylesheet">
+
+  <!-- Three.js import map -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+      "three/examples/jsm/controls/OrbitControls.js": "https://unpkg.com/three@0.128.0/examples/jsm/controls/OrbitControls.js",
+      "three/examples/jsm/libs/tween.module.min.js": "https://unpkg.com/three@0.128.0/examples/jsm/libs/tween.module.min.js",
+      "three/examples/jsm/controls/OrbitControls.js": "https://unpkg.com/three@0.128.0/examples/jsm/controls/OrbitControls.js",
+      "three/examples/jsm/controls/FirstPersonControls.js": "https://unpkg.com/three@0.128.0/examples/jsm/controls/FirstPersonControls.js"
+    }
+  }
+  </script>
+
+  <!-- Main JavaScript entry -->
+  <script type="module" src="index.js"></script>
+  <script src="physics.js"></script>
+</head>
+
+<body id = "bac">
+  <div id="infoBar">
+    <button id="button-exit" onclick="goTo('../')">X</button>
+    <button id="button-config" onclick="showConfig()">Particles</button>
+    
+  </div>
+  <div id="configParticle"></div>
+  <div id="configParticleSettings"></div>
+  <div id="background" slot="fixed">
+    <!-- Configuration menu omitted for brevity -->
+    <!-- <button class="button-config_g" onclick="toggleCameraLock()">Toggle Camera Lock</button>
+    <span id="cameraLockStatus">Unlocked</span> -->
+
+    <!-- Visualization container -->
+    <div id="vis"></div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,147 @@
+.vhs-shapeEditorHost {
+  border: 1px solid rgba(233, 255, 182, 0.35);
+  border-radius: 6px;
+  background: rgba(22, 22, 22, 0.7);
+  padding: 8px;
+  margin-bottom: 8px;
+}
+
+.vhs-shapeEditor {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #f4f6ff;
+}
+
+.vhs-shapeEditor__head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.vhs-shapeEditor__headRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.vhs-shapeEditor__title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.vhs-shapeEditor__collapseBtn {
+  border: 1px solid rgba(233, 255, 182, 0.55);
+  background: #151515;
+  color: #f1f6d5;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.vhs-shapeEditor__hint {
+  margin: 0;
+  font-size: 11px;
+  opacity: 0.82;
+}
+
+.vhs-shapeEditor__body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.vhs-shapeEditorHost.is-collapsed .vhs-shapeEditor__body {
+  display: none;
+}
+
+.vhs-shapeEditor__subhead {
+  margin-top: 4px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.78;
+}
+
+.vhs-shapeEditor__field {
+  display: grid;
+  grid-template-columns: 68px minmax(0, 1fr);
+  gap: 6px;
+  align-items: center;
+}
+
+.vhs-shapeEditor__field label {
+  font-size: 11px;
+  opacity: 0.92;
+}
+
+.vhs-shapeEditor__field select {
+  width: 100%;
+  min-width: 0;
+  font-size: 12px;
+}
+
+.vhs-shapeEditor__mode {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.vhs-shapeEditor__mode button {
+  border: 1px solid rgba(233, 255, 182, 0.5);
+  background: #141414;
+  color: #d5d9e9;
+  font-size: 12px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.vhs-shapeEditor__mode button.active {
+  border-color: #ecffb2;
+  color: #f7ffd5;
+  background: #263018;
+}
+
+.vhs-shapeEditor__triple {
+  display: grid;
+  grid-template-columns: 68px minmax(0, 1fr) 62px;
+  gap: 6px;
+  align-items: center;
+}
+
+.vhs-shapeEditor__triple label {
+  font-size: 11px;
+  opacity: 0.92;
+}
+
+.vhs-shapeEditor__triple input[type="number"] {
+  width: 100%;
+  min-width: 0;
+}
+
+.vhs-shapeEditor__actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.vhs-shapeEditor__actions button {
+  border: 1px solid rgba(233, 255, 182, 0.5);
+  background: #111111;
+  color: #e9ecf8;
+  font-size: 12px;
+  padding: 5px 4px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.vhs-shapeEditor__meta {
+  margin-top: 2px;
+  font-size: 11px;
+  opacity: 0.84;
+}

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Domain Coloring</title>
+  <meta name="color-scheme" content="light dark">
+  <meta name="viewport"
+        content="viewport-fit=cover,width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+
+  <link rel="icon" type="image/png" href="/assets/icon/jAsset.png"/>
+  <link href="../helper/uiHelper.css" rel="stylesheet">
+
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Alata&amp;family=Courier+Prime:wght@700&amp;family=Kosugi+Maru&amp;family=Kumbh+Sans&amp;family=Scheherazade:wght@700&amp;display=swap" rel="stylesheet">
+
+  <script type="module" src="./domainColoring.js"></script>
+</head>
+
+<body>
+  <div id="infoBar">
+    <button id="button-exit" onclick="goTo('../MathVisuals/')">X</button>
+    <button id="button-info">INFO</button>
+    <button id="button-toggle">&lt;&gt;</button>
+    Domain Coloring
+  </div>
+
+  <div id="preset-bar">
+    <span>Popular picks:</span>
+    <button id="preset-default" class="btn-inline">Default</button>
+    <button id="preset-z2" class="btn-inline">Z^2</button>
+    <button id="preset-reciprocal" class="btn-inline">1/Z</button>
+    <button id="preset-exp" class="btn-inline">exp</button>
+    <button id="preset-sin" class="btn-inline">sin</button>
+  </div>
+
+  <div id="config"></div>
+
+  <div id="background">
+    <div id="outer">
+      <div id="vis"></div>
+    </div>
+  </div>
+</body>
+</html>

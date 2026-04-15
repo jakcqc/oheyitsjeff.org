@@ -1,0 +1,203 @@
+{
+    "Player":{
+        "Upgrades":{}
+    },
+    "World":{
+        "Act":{},
+        "PG":{
+            "Cyclone": {
+            "Groups": [
+            {
+                "name": "A",
+                "amount": 120,
+                "depth": 0,
+                "order": 0,
+                "particleRadius": 4,
+                "color": 16734003,
+                "interactWeights": [0, -100, 200, -150, 50, 100],
+                "interactRadii": [120, 150, 180, 200, 90, 110]
+            },
+            {
+                "name": "B",
+                "amount": 80,
+                "depth": 0,
+                "order": 1,
+                "particleRadius": 3,
+                "color": 3391999,
+                "interactWeights": [-100, 0, -50, 250, -200, 80],
+                "interactRadii": [140, 130, 160, 190, 120, 100]
+            },
+            {
+                "name": "C",
+                "amount": 60,
+                "depth": 0,
+                "order": 2,
+                "particleRadius": 3,
+                "color": 9305907,
+                "interactWeights": [200, -50, 100, 100, 150, -120],
+                "interactRadii": [100, 100, 140, 170, 130, 95]
+            },
+            {
+                "name": "D",
+                "amount": 150,
+                "depth": 0,
+                "order": 3,
+                "particleRadius": 5,
+                "color": 15938559,
+                "interactWeights": [150, 250, 100, 0, -100, 200],
+                "interactRadii": [200, 190, 1700, 160, 150, 120]
+            },
+            {
+                "name": "E",
+                "amount": 30,
+                "depth": 0,
+                "order": 4,
+                "particleRadius": 3,
+                "color": 16765235,
+                "interactWeights": [150, -200, 150, -100, 0, -50],
+                "interactRadii": [900, 1200, 130, 150, 100, 110]
+            },
+            {
+                "name": "F",
+                "amount": 10,
+                "depth": 0,
+                "order": 5,
+                "particleRadius": 4,
+                "color": 3407834,
+                "interactWeights": [100, -80, -120, 200, -50, -100],
+                "interactRadii": [110, 100, 95, 120, 110, 100]
+            }
+            ],
+            "GlobalConfig": {
+                "SimulationBounds": 5050,
+                "velocityScale": [1.0, 1.0, 1.0],
+                "interactionScaling": 40000,
+                "baseParticleSize": 15,
+                "threeBackground": "#EDEDED"
+            },
+            "PS":{
+                "translation":[0,800,0]
+            }
+        },
+        "CycloneMini": {
+            "Groups": [
+            {
+                "name": "A",
+                "amount": 120,
+                "depth": 0,
+                "order": 0,
+                "particleRadius": 4,
+                "color": 16734003,
+                "interactWeights": [0, -100, 200, -150, 50, 100],
+                "interactRadii": [120, 150, 180, 200, 90, 110]
+            },
+            {
+                "name": "B",
+                "amount": 80,
+                "depth": 0,
+                "order": 1,
+                "particleRadius": 3,
+                "color": 3391999,
+                "interactWeights": [-100, 0, -50, 250, -200, 80],
+                "interactRadii": [140, 130, 160, 190, 120, 100]
+            },
+            {
+                "name": "C",
+                "amount": 60,
+                "depth": 0,
+                "order": 2,
+                "particleRadius": 3,
+                "color": 9305907,
+                "interactWeights": [0, -50, 100, 100, 150, -120],
+                "interactRadii": [100, 100, 140, 170, 130, 95]
+            },
+            {
+                "name": "D",
+                "amount": 150,
+                "depth": 0,
+                "order": 3,
+                "particleRadius": 5,
+                "color": 15938559,
+                "interactWeights": [150, 0, 100, 0, -100, 200],
+                "interactRadii": [200, 190, 1700, 160, 150, 120]
+            },
+            {
+                "name": "E",
+                "amount": 30,
+                "depth": 0,
+                "order": 4,
+                "particleRadius": 3,
+                "color": 16765235,
+                "interactWeights": [150, -0, 150, -100, 0, -50],
+                "interactRadii": [900, 120, 130, 150, 100, 110]
+            },
+            {
+                "name": "F",
+                "amount": 10,
+                "depth": 0,
+                "order": 5,
+                "particleRadius": 4,
+                "color": 3407834,
+                "interactWeights": [100, -80, -120, 200, -50, -100],
+                "interactRadii": [110, 100, 95, 120, 110, 100]
+            }
+            ],
+            "GlobalConfig": {
+                "SimulationBounds": 5050,
+                "velocityScale": [1.0, 1.0, 0.5],
+                "interactionScaling": 40000,
+                "baseParticleSize": 15,
+                "threeBackground": "#EDEDED"
+            },
+            "PS":{
+                "translation":[500,0,0]
+            }
+        },
+        "CycloneMiniBig": {
+            "Groups": [
+            {
+                "name": "A",
+                "amount": 120,
+                "depth": 0,
+                "order": 0,
+                "particleRadius": 4,
+                "color": 16734003,
+                "interactWeights": [0, -100, 20],
+                "interactRadii": [120, 150, 180]
+            },
+            {
+                "name": "B",
+                "amount": 80,
+                "depth": 0,
+                "order": 1,
+                "particleRadius": 3,
+                "color": 3391999,
+                "interactWeights": [-100, 0, -10],
+                "interactRadii": [140, 130, 1600]
+            },
+            {
+                "name": "F",
+                "amount": 150,
+                "depth": 0,
+                "order": 5,
+                "particleRadius": 4,
+                "color": 3407834,
+                "interactWeights": [100, -80, -120],
+                "interactRadii": [110, 100, 95]
+            }
+            ],
+            "GlobalConfig": {
+                "SimulationBounds": 2550,
+                "velocityScale": [1.0, 0.5, 1.0],
+                "interactionScaling": 500,
+                "baseParticleSize": 25,
+                "threeBackground": "#EDEDED"
+            },
+            "PS":{
+                "translation":[-250,0,0]
+            }
+        }
+
+        }
+    }
+}

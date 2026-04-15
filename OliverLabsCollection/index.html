@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Oliver Labs Collection</title>
+  <meta name="color-scheme" content="light dark">
+  <meta name="viewport"
+        content="viewport-fit=cover,width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+
+  <link rel="icon" type="image/png" href="/assets/icon/jAsset.png"/>
+
+  <link href="../helper/uiHelper.css" rel="stylesheet">
+
+  <style>
+    html, body { height: 100%; }
+    body { display: flex; flex-direction: column; height: 100vh; }
+    #background { flex: 1; min-height: 0; }
+    #outer, #vis { width: 100%; height: 100%; }
+  </style>
+
+  <!-- libs -->
+  <link href="https://fonts.googleapis.com/css2?family=Alata&family=Courier+Prime:wght@700&family=Kosugi+Maru&family=Kumbh+Sans&family=Scheherazade:wght@700&display=swap" rel="stylesheet">
+
+  <!-- app entry -->
+  <script type="module" src="index.js"></script>
+</head>
+
+<body>
+  <div id="infoBar">
+    <button id="button-exit" onclick="goTo('/MathVisuals/')">X</button>
+    <button id="button-info">INFO</button>
+    Oliver Labs Collection
+  </div>
+
+  <!-- AUTO UI GOES HERE -->
+  <div id="config"></div>
+
+  <!-- VISUAL MOUNT POINT -->
+  <div id="background">
+    <div id="outer">
+      <div id="vis"></div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,43 @@
+{
+  "levels": 3,
+  "splitK": 2,
+  "overlap": 0.59,
+  "copies": 16,
+  "baseWidth": 0.2,
+  "height": 0.61,
+  "needleLen": 2,
+  "needleThickPx": 13.75,
+  "needlePadPx": 0,
+  "needleAlpha": 0.12,
+  "maxNeedles": 3500,
+  "showTriangles": false,
+  "triFillAlpha": 0.12,
+  "triStrokeAlpha": 0.85,
+  "showAllNeedles": true,
+  "colorMode": "angle",
+  "palette": "spectral",
+  "monoColor": "#111111",
+  "animateSweep": false,
+  "sweepDegPerSec": -189,
+  "sweepStroke": "#000000",
+  "sweepFill": "#ffffff",
+  "sweepGlowPx": 3,
+  "showBoundsCircle": false,
+  "showStats": false,
+  "fitToView": true,
+  "__xf": {
+    "ui": {
+      "splitCount": 4,
+      "activeTile": "0",
+      "rotateDeg": 90
+    },
+    "stack": []
+  },
+  "__propOps": {
+    "ui": {
+      "ruleText": "{\n        \"selector\": {\"circle\":{\"r\":{\"range\":[20,100]}}},\n        \"apply\": {\"stroke\": null}\n        }",
+      "lastPreview": ""
+    },
+    "stack": []
+  }
+}

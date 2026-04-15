@@ -1,0 +1,61 @@
+{
+    "Player":{
+        "Upgrades":{}
+    },
+    "World":{
+        "Act":{},
+        "PG":{
+            "Cyclone": {
+            "Groups": [
+            {
+                "name": "STARTER",
+                "amount": 2,
+                "depth": 0,
+                "maxDepth":0,
+                "order": 0,
+                "particleRadius": 5,
+                "color": 0,
+                "interactWeights": [5, 0,0],
+                "interactRadii": [100, 100,100]
+            },
+            {
+                "name": "E1",
+                "amount": 20,
+                "depth": 0,
+                "maxDepth":5,
+                "order": 1,
+                "opacity":0.5,
+                "particleRadius": 2,
+                "color": 10549926,
+                "interactWeights": [10, 10,-10],
+                "interactRadii": [110, 100,20]
+            },
+            {
+                "name": "E2",
+                "amount": 20,
+                "depth": 0,
+                "maxDepth":6,
+                "order": 2,
+                "opacity":0.5,
+                "particleRadius": 2,
+                "color": 11264501,
+                "interactWeights": [10, 10,20],
+                "interactRadii": [110, 100,100]
+            }
+            ],
+            "GlobalConfig": {
+                "SimulationBounds": 25,
+                "velocityScale": [0.8, 0.8, 0.8],
+                "interactionScaling": 1200,
+                "baseParticleSize": 2,
+                "threeBackground": 15658734
+            },
+            "PS":{
+                "translation":[0,0,0]
+            }
+        }
+        
+
+        }
+    }
+}
