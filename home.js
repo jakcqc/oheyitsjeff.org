@@ -9,6 +9,85 @@ let needsSingleBubbleMode = false;
 const MOBILE_BREAKPOINT_PX = 600;
 const MOBILE_MODE_STORAGE_KEY = "home.mobileMode"; // "bubbles" | "cards"
 const THEME_STORAGE_KEY = "home.theme"; // "light" | "dark"
+const SUPPORT_CONFIG = {
+  paypalContactLabel: "16182104807",
+  // Replace this with your real PayPal donate URL or hosted button URL.
+  paypalDonationUrl: "https://paypal.me/oheyitsjeff?country.x=US&locale.x=en_US"
+};
+
+function syncSupportUi() {
+  const contactEl = document.getElementById("supportPayPalContact");
+  if (contactEl) contactEl.textContent = SUPPORT_CONFIG.paypalContactLabel || "Add PayPal contact";
+
+  const donateLink = document.getElementById("supportDonateLink");
+  const helper = document.getElementById("supportDonateHelper");
+  if (!donateLink || !helper) return;
+
+  if (SUPPORT_CONFIG.paypalDonationUrl) {
+    donateLink.href = SUPPORT_CONFIG.paypalDonationUrl;
+    donateLink.removeAttribute("aria-disabled");
+    donateLink.classList.remove("is-disabled");
+    helper.textContent = "This opens PayPal in a new tab.";
+    return;
+  }
+
+  donateLink.href = "#";
+  donateLink.setAttribute("aria-disabled", "true");
+  donateLink.classList.add("is-disabled");
+  helper.textContent = "Add your final PayPal donate URL in home.js to make this button live.";
+}
+
+function setSupportModalOpen(isOpen) {
+  const modal = document.getElementById("supportModal");
+  if (!modal) return;
+
+  modal.classList.toggle("is-open", Boolean(isOpen));
+  modal.setAttribute("aria-hidden", isOpen ? "false" : "true");
+  document.body.classList.toggle("support-modal-open", Boolean(isOpen));
+}
+
+function initSupportModal() {
+  syncSupportUi();
+
+  const openBtn = document.getElementById("supportTrigger");
+  const closeBtn = document.getElementById("supportClose");
+  const modal = document.getElementById("supportModal");
+  const donateLink = document.getElementById("supportDonateLink");
+
+  if (openBtn) {
+    openBtn.addEventListener("click", () => {
+      setSupportModalOpen(true);
+    });
+  }
+
+  if (closeBtn) {
+    closeBtn.addEventListener("click", () => {
+      setSupportModalOpen(false);
+    });
+  }
+
+  if (modal) {
+    modal.addEventListener("click", (event) => {
+      if (event.target instanceof HTMLElement && event.target.dataset.closeSupport === "true") {
+        setSupportModalOpen(false);
+      }
+    });
+  }
+
+  if (donateLink) {
+    donateLink.addEventListener("click", (event) => {
+      if (!SUPPORT_CONFIG.paypalDonationUrl) {
+        event.preventDefault();
+      }
+    });
+  }
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      setSupportModalOpen(false);
+    }
+  });
+}
 
 function getMobileModePref() {
   const raw = localStorage.getItem(MOBILE_MODE_STORAGE_KEY);
@@ -469,6 +548,7 @@ function initOnceStable() {
   }
 
   applyTheme(getThemePref());
+  initSupportModal();
 
   const btn = document.getElementById("mobileModeToggle");
   if (btn) {

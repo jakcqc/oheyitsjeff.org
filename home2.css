@@ -37,6 +37,9 @@ body{
   overflow-x: hidden;
   transition: background .5s ease, color .3s ease;
 }
+body.support-modal-open{
+  overflow: hidden;
+}
 #secondBar{
   position: absolute;
   left: 0;
@@ -291,6 +294,10 @@ body{
     box-shadow: -3px -3px  var(--accent-highlight);
     background: var(--color-main);
   }
+  .aboutUsButton{
+    font: inherit;
+    cursor: pointer;
+  }
   #pinkBack{
     position: absolute;
     /* left: 20%; */
@@ -302,6 +309,125 @@ body{
   .aboutUs:hover{
     box-shadow: 3px 3px var(--color-accent);
   
+  }
+  .supportModal{
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .2s ease;
+    z-index: 1200;
+  }
+  .supportModal.is-open{
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .supportModal__backdrop{
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.42);
+    backdrop-filter: blur(6px);
+  }
+  .supportModal__panel{
+    position: relative;
+    width: min(92vw, 460px);
+    border: 3px solid var(--color-accent);
+    background: var(--color-main);
+    box-shadow: -10px 10px 0 var(--accent-highlight);
+    padding: 18px;
+  }
+  .supportModal__header{
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .supportModal__eyebrow{
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 12px;
+    margin-bottom: 4px;
+    opacity: 0.7;
+  }
+  .supportModal__header h2{
+    margin: 0;
+    font-size: 28px;
+  }
+  .supportModal__close{
+    border: 2px solid var(--color-accent);
+    background: var(--color-main);
+    color: var(--color-accent);
+    font: inherit;
+    padding: 8px 12px;
+    cursor: pointer;
+    box-shadow: 2px 2px var(--accent-highlight);
+  }
+  .supportTabs{
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+    margin-bottom: 16px;
+  }
+  .supportTabs__tab{
+    border: 2px solid var(--color-accent);
+    background: var(--color-main);
+    color: var(--color-accent);
+    font: inherit;
+    padding: 8px 12px;
+    box-shadow: 2px 2px var(--accent-highlight);
+  }
+  .supportTabs__tab.active{
+    background: var(--accent-highlight);
+  }
+  .supportPanel{
+    display: none;
+    border: 2px solid var(--color-accent);
+    padding: 16px;
+    background: color-mix(in srgb, var(--color-main) 90%, var(--accent-highlight) 10%);
+  }
+  .supportPanel.active{
+    display: block;
+  }
+  .supportPanel__copy,
+  .supportPanel__helper{
+    margin: 0;
+    line-height: 1.45;
+  }
+  .supportInfoRow{
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    margin: 16px 0;
+    padding: 10px 12px;
+    border: 2px solid var(--color-accent);
+    background: var(--color-main);
+  }
+  .supportInfoRow__label{
+    opacity: 0.7;
+  }
+  .supportInfoRow__value{
+    font-weight: 700;
+    word-break: break-word;
+    text-align: right;
+  }
+  .supportDonateButton{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    padding: 12px 14px;
+    border: 2px solid var(--color-accent);
+    box-shadow: 3px 3px var(--accent-highlight);
+    text-decoration: none;
+    font-weight: 700;
+    background: var(--color-main);
+  }
+  .supportDonateButton.is-disabled{
+    opacity: 0.55;
+    cursor: not-allowed;
   }
   .styleInfo{
     /* display: none; */
@@ -363,6 +489,17 @@ body{
     }
     #pinkBack{
       background: var(--color-main);
+    }
+    .supportModal__panel{
+      width: min(94vw, 460px);
+      padding: 14px;
+      box-shadow: -6px 6px 0 var(--accent-highlight);
+    }
+    .supportInfoRow{
+      flex-direction: column;
+    }
+    .supportInfoRow__value{
+      text-align: left;
     }
   }
   .bubble-title {
