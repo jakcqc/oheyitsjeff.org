@@ -1,4 +1,14 @@
 <!DOCTYPE html>
+<!--
+Copyright (c) 2026 Jeffrey Kerley.
+SPDX-License-Identifier: LicenseRef-Jeffrey-Kerley-NC-NoAI-1.0
+Source-available for noncommercial public-source projects.
+No AI/ML training. No paid/commercial or closed-source application use.
+Personal noncommercial experimentation is permitted.
+Violating these conditions terminates permission under this license.
+See LICENSE.md at the repository root for the full terms.
+-->
+
 <html lang="en">
 
 <head>
@@ -12,24 +22,23 @@
     <link rel="stylesheet" href="/home2.css">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans+Caption&display=swap">
+    <link rel="stylesheet" href="/Apps/index.css">
+    <script type="module" src="/helper/galleryNavigation.js"></script>
 </head>
 
-<body>
+<body class="gallery-page">
     <div id="cool">
     <a class="mainName" href="/">oheyitsjeff</a>
 
         <div id="secondBar"></div>
-        <div id="headerActions">
-            <button id="themeToggle" type="button" aria-pressed="false" aria-label="Toggle dark mode">
-                dark
-            </button>
-            <button id="mobileModeToggle" type="button" aria-pressed="false" aria-label="Toggle bubbles view">
-                bubbles
-            </button>
-        </div>
+        <nav id="headerActions" aria-label="Site navigation">
+            <a href="/" data-gallery-link>Main</a>
+            <a id="appsLink" href="/Apps/">Apps</a>
+            <a href="/ART/">Art</a>
+        </nav>
     </div>
     <div>
-        <a href="/ART" id="artBar">ART</a>
+        <!-- <a href="/ART" id="artBar">ART</a> -->
 
     </div>
     <div id="background">
@@ -37,15 +46,7 @@
     </div>
     <div id="d3-container" style=""></div>
 
-    <div id="footer">
-        <div id="textMain">
-            <div class="aboutUs">Jeffrey Kerley</div>
-            <div class="aboutUs"><a href="https://www.linkedin.com/in/jeffrey-kerley-30b5451b3/" target="_blank">Linkedin</a></div>
-            <div class="aboutUs">
-            <a href="mailto:Jakcqc@umsystem.edu">Email</a>
-            </div>
-        </div>
-    </div>
+    <div id="siteFooter"></div>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.js"></script>
     <script src="./home.js"></script>

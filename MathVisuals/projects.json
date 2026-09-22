@@ -1,0 +1,110 @@
+[
+  {
+    "title": "Lissajous Figures",
+    "image": "/MathVisuals/assets/math8.png",
+    "description": "Layered parametric curves that weave into flower-like loops.",
+    "link": "/LissajousFigures/"
+  },
+  {
+    "title": "Fractal Polyhedra",
+    "image": "/MathVisuals/assets/math4.png",
+    "description": "Recursive polyhedral forms with crystalline self-similarity.",
+    "link": "/FractalPolyhedra/"
+  },
+  {
+    "title": "SURFER Gallery",
+    "image": "/MathVisuals/assets/math2.png",
+    "description": "Implicit algebraic surfaces traced as contour slices.",
+    "link": "/SurferGalleryBiancaViolet/",
+    "infoTitle": "SURFER Gallery (Bianca Violet)"
+  },
+  {
+    "title": "Boys Surface Model",
+    "image": "/MathVisuals/assets/math9.png",
+    "description": "Twisted ribbon immersions inspired by the projective plane.",
+    "link": "/BoysSurfaceModel/"
+  },
+  {
+    "title": "Quasicrystalline Wickerwork",
+    "image": "/MathVisuals/assets/math.png",
+    "description": "Aperiodic lattice strands woven with golden-angle symmetry.",
+    "link": "/QuasicrystallineWickerwork/"
+  },
+  {
+    "title": "Lorenz Attractor",
+    "image": "/MathVisuals/assets/math3.png",
+    "description": "Chaotic butterfly trajectories traced through phase space.",
+    "link": "/LorenzAttractor/"
+  },
+  {
+    "title": "Herwig Hauser Classic",
+    "image": "/MathVisuals/assets/math7.png",
+    "description": "Algebraic curves with cusps, folds, and smooth manifolds.",
+    "link": "/HerwigHauserClassicCollection/",
+    "infoTitle": "Herwig Hauser Classic Collection"
+  },
+  {
+    "title": "Oliver Labs Collection",
+    "image": "/MathVisuals/assets/math6.png",
+    "description": "Procedural flow fields and algorithmic structures.",
+    "link": "/OliverLabsCollection/"
+  },
+  {
+    "title": "P.S.G.H Collection",
+    "image": "/MathVisuals/assets/math5.png",
+    "description": "Mesh-based curvature and surface parametrization studies.",
+    "link": "/PinkallSchmittGunnHoffmannCollection/",
+    "infoTitle": "Pinkall, Schmitt, Gunn, Hoffmann Collection"
+  },
+  {
+    "title": "Marbled Patterns",
+    "image": "/assets/Images/marble.png",
+    "description": "Flowing, marbled ribbons shaped by swirls and sine-driven veins.",
+    "link": "/MarbledPatterns/"
+  },
+  {
+    "title": "Procedural Grass Field",
+    "image": "/assets/Images/proceduralGrass.svg",
+    "description": "Editable SVG blades grown through deterministic patches, layered wind, and nadir-to-oblique projection.",
+    "link": "/ProceduralGrass/"
+  },
+  {
+    "title": "Domain Coloring",
+    "image": "/assets/Images/coloring.png",
+    "description": "Domain coloring rendered with SVG dots for popular complex functions.",
+    "link": "/DomainColoring/"
+  },
+  {
+    "title": "Voronoi Point Ani",
+    "image": "/assets/Images/voro.png",
+    "description": "Interactive Voronoi diagram. Click to add points; tweak density + min spacing.",
+    "link": "/Voronoi/",
+    "infoTitle": "Voronoi (Fluid)"
+  },
+  {
+    "title": "Step Spline Lab",
+    "image": "/MathVisuals/assets/spline.png",
+    "description": "Edit a scene made of multiple splines. Click a rendered line to activate it, then tweak its own settings and shared variables.",
+    "link": "/StepSplineLab/"
+  },
+  {
+    "title": "Space Filling Curves",
+    "image": "/MathVisuals/assets/spaceFilling.png",
+    "description": "Randomly pack rectangles until full coverage, then fill each with Hilbert or Peano curves at one shared detail scale.",
+    "link": "/SpaceFillingCurves/"
+  },
+  {
+    "title": "Kakeya!!",
+    "image": "/assets/Images/kakaya.png",
+    "description": "Finite Perron-tree-style construction. Shows where a unit 'needle' can sit for many directions, using thin rectangles.",
+    "link": "/kakeya/",
+    "infoTitle": "Kakeya / Besicovitch Needle (Perron-Tree Approx, Rectangles)"
+  },
+  {
+    "title": "Discrete Fractals",
+    "image": "/assets/Images/InnerLight.png",
+    "description": "Adaptive tiled Mandelbrot renderer with animated zoom.",
+    "link": "/Generic/",
+    "infoTitle": "Mandel Tiling (Zoomable)"
+  }
+]

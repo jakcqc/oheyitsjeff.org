@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<!--
+Copyright (c) 2026 Jeffrey Kerley.
+SPDX-License-Identifier: LicenseRef-Jeffrey-Kerley-NC-NoAI-1.0
+Source-available for noncommercial public-source projects.
+No AI/ML training. No paid/commercial or closed-source application use.
+Personal noncommercial experimentation is permitted.
+Violating these conditions terminates permission under this license.
+See LICENSE.md at the repository root for the full terms.
+-->
+
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Procedural Grass Field</title>
+  <meta name="color-scheme" content="light dark">
+  <meta name="viewport" content="viewport-fit=cover,width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <link rel="icon" type="image/png" href="/assets/icon/jAsset.png"/>
+  <link href="../helper/uiHelper.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Alata&amp;family=Courier+Prime:wght@700&amp;family=Kosugi+Maru&amp;family=Kumbh+Sans&amp;family=Scheherazade:wght@700&amp;display=swap" rel="stylesheet">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script type="module" src="index.js"></script>
+  <style>
+    html, body { height: 100%; }
+    body { display: flex; flex-direction: column; height: 100vh; background: #101710; }
+    #background { flex: 1; min-height: 0; }
+    #outer, #vis { width: 100%; height: 100%; }
+  </style>
+</head>
+<body>
+  <div id="infoBar">
+    <button id="button-exit" onclick="goTo('../MathVisuals/')">X</button>
+    <button id="button-info">INFO</button>
+    <button id="button-toggle" aria-label="Toggle presets">&lt;&gt;</button>
+    Procedural Grass Field
+  </div>
+
+  <div id="preset-bar">
+    <span>Field presets:</span>
+    <button class="btn-inline" data-preset="emeraldNadir">Emerald Nadir</button>
+    <button class="btn-inline" data-preset="windAtlas">Wind Atlas</button>
+    <button class="btn-inline" data-preset="zenCut">Zen Cut</button>
+    <button class="btn-inline" data-preset="goldenHour">Golden Hour</button>
+    <button class="btn-inline" data-preset="mossMicro">Moss Micro</button>
+    <button class="btn-inline" data-preset="stormLines">Storm Lines</button>
+  </div>
+
+  <div id="config"></div>
+  <div id="background">
+    <div id="outer"><div id="vis"></div></div>
+  </div>
+
+  <script>
+    const toggleBtn = document.getElementById("button-toggle");
+    const presetBar = document.getElementById("preset-bar");
+    toggleBtn.onclick = () => {
+      const shown = presetBar.classList.toggle("show");
+      presetBar.style.display = shown ? "flex" : "none";
+      toggleBtn.setAttribute("aria-pressed", String(shown));
+    };
+  </script>
+</body>
+</html>

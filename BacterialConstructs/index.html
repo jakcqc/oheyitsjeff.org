@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<!--
+Copyright (c) 2026 Jeffrey Kerley.
+SPDX-License-Identifier: LicenseRef-Jeffrey-Kerley-NC-NoAI-1.0
+Source-available for noncommercial public-source projects.
+No AI/ML training. No paid/commercial or closed-source application use.
+Personal noncommercial experimentation is permitted.
+Violating these conditions terminates permission under this license.
+See LICENSE.md at the repository root for the full terms.
+-->
+
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Bacterial Constructs</title>
+  <meta name="color-scheme" content="light dark">
+  <meta name="viewport"
+        content="viewport-fit=cover,width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+
+  <link rel="icon" type="image/png" href="/assets/icon/jAsset.png"/>
+  <link href="../helper/uiHelper.css" rel="stylesheet">
+
+  <style>
+    html, body { height: 100%; }
+    body { display: flex; flex-direction: column; height: 100vh; background: #07100e; }
+    #background { flex: 1; min-height: 0; }
+    #outer, #vis { width: 100%; height: 100%; }
+    #equation-label { margin-left: 10px; color: #b7ffd5; font: 11px "Courier Prime", monospace; }
+  </style>
+
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Alata&amp;family=Courier+Prime:wght@700&amp;display=swap" rel="stylesheet">
+  <script type="module" src="index.js"></script>
+</head>
+
+<body>
+  <div id="infoBar">
+    <button id="button-exit" onclick="goTo('../')">X</button>
+    <button id="button-info">INFO</button>
+    <button id="button-toggle">&lt;&gt;</button>
+    Bacterial Constructs
+    <span id="equation-label">Gray-Scott: U + 2V -> 3V</span>
+  </div>
+
+  <div id="preset-bar">
+    <span>Equation presets:</span>
+    <button id="preset-coral" class="btn-inline">Coral</button>
+    <button id="preset-mitosis" class="btn-inline">Mitosis</button>
+    <button id="preset-chemotaxis" class="btn-inline">Chemotaxis</button>
+    <button id="preset-front" class="btn-inline">Expansion Front</button>
+  </div>
+
+  <div id="config"></div>
+
+  <div id="background">
+    <div id="outer">
+      <div id="vis"></div>
+    </div>
+  </div>
+</body>
+<script>
+  document.getElementById("button-info").onclick = () => {
+    const el = document.getElementById("config");
+    el.style.display = (el.style.display === "none") ? "block" : "none";
+  };
+  const toggleBtn = document.getElementById("button-toggle");
+  const presetBar = document.getElementById("preset-bar");
+  toggleBtn.onclick = () => {
+    const isShown = presetBar.classList.toggle("show");
+    presetBar.style.display = isShown ? "flex" : "none";
+    toggleBtn.setAttribute("aria-pressed", String(isShown));
+  };
+</script>
+</html>

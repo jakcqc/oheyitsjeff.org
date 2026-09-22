@@ -1,0 +1,81 @@
+[
+  {
+    "title": "Mondrian Abstraction 3D",
+    "image": "assets/Images/monder3D.jpg",
+    "description": "Ever wonder what A Mondrian Composition would like look like in 3D?",
+    "link": "/MondrianAbstractionV2/Viewer3D/",
+    "size": "small"
+  },
+  {
+    "title": "Particle_Explorer",
+    "image": "assets/Images/stars.jpg",
+    "description": "Watch Life emerge or fade using particle interactions.",
+    "link": "/ParticleExplorer/"
+  },
+  {
+    "title": "InnerLight",
+    "image": "assets/Images/idleGame.png",
+    "description": "Small shape-based visualizations that use color changes and spatial differences. Have fun...",
+    "link": "/InnerLight/"
+  },
+  {
+    "title": "Mondrian Abstraction",
+    "image": "assets/Images/monder.jpg",
+    "description": "Pointer over tiles to animate color + transform; parameters are editable in the UI.",
+    "link": "/MondrianAbstraction/"
+  },
+  {
+    "title": "Energy_Explorer",
+    "image": "assets/Images/eng.jpg",
+    "description": "Voxel space energy representations, with continuous particles under the hood.",
+    "link": "/EnergyExplorer/"
+  },
+  {
+    "title": "GameOfLife??",
+    "image": "assets/Images/gameOfLife0.webp",
+    "description": "Clickable SVG grid + 3 rule modes: classic, dense neighborhood, color replication.",
+    "link": "/GameOfLife_aug/",
+    "infoTitle": "Game of Life (SVG)"
+  },
+  {
+    "title": "Interference",
+    "image": "assets/Images/bacteria.png",
+    "description": "Multiple ring-shaped bacteria like objects, with controllable outline halos, trails, and ring sizes.",
+    "link": "/BacteriaVisualizer/",
+    "size": "small",
+    "infoTitle": "Interference"
+  },
+  {
+    "title": "Bacterial Constructs",
+    "image": "/assets/Images/bacteriaIcon.png",
+    "description": "Layered SVG colonies generated from Gray-Scott, Keller-Segel, and Fisher-KPP equations.",
+    "link": "/BacterialConstructs/"
+  },
+  {
+    "title": "Math Visuals",
+    "isApp": false,
+    "shape": "diamond",
+    "innerShape": "diamond",
+    "outerShape": "circle",
+    "image": "/assets/Images/marble.png",
+    "description": "A dedicated gallery of the new math visualization set.",
+    "link": "/MathVisuals/"
+  },
+  {
+    "title": "ART",
+    "image": "/assets/Images/artIcon.png",
+    "description": "Browse indexed CDN assets with infinite scrolling.",
+    "link": "/ART",
+    "imageFit": "cover",
+    "size": "large",
+    "infoTitle": "SVG Wall"
+  },
+  {
+    "title": "- Voxel Hatching -",
+    "image": "/assets/Images/voxel.png",
+    "description": "Voxel primitives exported to SVG as camera-visible closed face loops with line-hatched ground shadows.",
+    "link": "/voxelhatchingShadows/",
+    "size": "small",
+    "infoTitle": "Voxel Hatching Shadows"
+  }
+]

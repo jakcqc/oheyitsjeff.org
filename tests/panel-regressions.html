@@ -1,0 +1,40 @@
+<!doctype html>
+<!--
+Copyright (c) 2026 Jeffrey Kerley.
+SPDX-License-Identifier: LicenseRef-Jeffrey-Kerley-NC-NoAI-1.0
+Source-available for noncommercial public-source projects.
+No AI/ML training. No paid/commercial or closed-source application use.
+Personal noncommercial experimentation is permitted.
+Violating these conditions terminates permission under this license.
+See LICENSE.md at the repository root for the full terms.
+-->
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Panel regression checks</title>
+  <link rel="stylesheet" href="../helper/uiHelper.css">
+  <style>
+    body { background: #171717; color: #eee; overflow: auto; padding: 12px; }
+    #results { white-space: pre-wrap; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { runPanelRegressions } from './panel-regressions.js';
+    const output = document.createElement('pre');
+    output.id = 'results';
+    try {
+      const passed = await runPanelRegressions();
+      output.textContent = `${passed.length} checks passed.\n\n${passed.join('\n')}`;
+      document.body.dataset.testStatus = 'passed';
+    } catch (error) {
+      output.textContent = error.stack;
+      document.body.dataset.testStatus = 'failed';
+      console.error(error);
+    }
+    document.body.appendChild(output);
+  </script>
+</body>
+</html>

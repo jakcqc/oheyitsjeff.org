@@ -1,3 +1,13 @@
+/*!
+ * Copyright (c) 2026 Jeffrey Kerley.
+ * SPDX-License-Identifier: LicenseRef-Jeffrey-Kerley-NC-NoAI-1.0
+ * Source-available for noncommercial public-source projects.
+ * No AI/ML training. No paid/commercial or closed-source application use.
+ * Personal noncommercial experimentation is permitted.
+ * Violating these conditions terminates permission under this license.
+ * See LICENSE.md at the repository root for the full terms.
+ */
+
 // visual_registry.js
 // A tiny framework for:
 // - registering visuals in a record
@@ -10,8 +20,8 @@ import { registerPropOpsTab, registerScriptOpsTab } from "../helper/svgEditor.js
 import { registerAnimateTab, maybeAutoplayAnimation } from "../helper/animationHelp.js";
 //import { registerLLMTab } from "../helper/llmTab.js";
 import { registerEffectsTab, applyEffectsToSubtree } from "../helper/effectsHelp.js";
-import { registerColorTab, applyColorToSubtree } from "../helper/colorHelp.js";
 import { registerAutoExportTab } from "../helper/autoExportHelp.js";
+import { registerToolFlowTab, applyToolFlowToSubtree } from "../helper/toolFlowHelp.js";
 
 const TAB_BUILDERS = new Map();
 let ACTIVE_UNDO_CONTEXT = null;
@@ -71,7 +81,7 @@ registerPropOpsTab();
 registerAnimateTab();
 //registerLLMTab();
 registerEffectsTab();
-registerColorTab();
+registerToolFlowTab();
 registerAutoExportTab();
 
 export function exportStateToJSON(state) {
@@ -443,6 +453,7 @@ export function mountUserTabs({
   if (uiState.tabsOpen === undefined) uiState.tabsOpen = false;
   if (uiState.activeTab == null) uiState.activeTab = "params";
   let activeTab = tabs.includes(uiState.activeTab) ? uiState.activeTab : "params";
+  uiState.activeTab = activeTab;
 
   const tabBar = el("div", { className: "vr-tabs" });
   const body = el("div", { className: "vr-tabBody" });
@@ -461,9 +472,11 @@ export function mountUserTabs({
     onUiChange?.();
   };
 
+  const panels = new Map();
+  const scrollPositions = new Map();
+  const scroller = container.closest(".vr-autoUI") || body;
   const render = () => {
     tabBar.innerHTML = "";
-    body.innerHTML = "";
 
     if (!tabs.includes(activeTab)) {
       activeTab = "params";
@@ -476,7 +489,11 @@ export function mountUserTabs({
         className: `vr-tab ${name === activeTab ? "active" : ""}`,
         textContent: name,
       });
+      btn.type = "button";
       btn.onclick = () => {
+        if (name === activeTab) return;
+        scrollPositions.set(activeTab, scroller.scrollTop);
+        panels.get(activeTab)?._onHide?.();
         activeTab = name;
         uiState.activeTab = name;
         onUiChange?.();
@@ -485,11 +502,14 @@ export function mountUserTabs({
       tabBar.appendChild(btn);
     }
 
-    if (activeTab === "params") {
-      body.appendChild(buildParamsPanel());
-    } else {
-      body.appendChild(extraTabs[activeTab]());
+    if (!panels.has(activeTab)) {
+      const panel = activeTab === "params" ? buildParamsPanel() : extraTabs[activeTab]();
+      panels.set(activeTab, panel);
+      body.appendChild(panel);
     }
+    for (const [name, panel] of panels) panel.hidden = name !== activeTab;
+    panels.get(activeTab)?._onShow?.();
+    scroller.scrollTop = scrollPositions.get(activeTab) || 0;
   };
 
   tabBar.classList.toggle("hidden", !uiState.tabsOpen);
@@ -499,6 +519,10 @@ export function mountUserTabs({
   layout.appendChild(body);
   container.appendChild(layout);
   render();
+  container._destroyTabs = () => {
+    for (const panel of panels.values()) panel._destroy?.();
+    panels.clear();
+  };
 }
 
 /** Mount auto-UI for a spec. Returns { state, rerenderUI }. */
@@ -512,6 +536,7 @@ export function mountAutoUI({
   mountEl,
   xfRuntime,
 }) {
+  container._destroyTabs?.();
   container.innerHTML = "";
 
   const header = el("div", { className: "vr-header" }, [
@@ -579,6 +604,9 @@ function buildParamsPanel({ spec, state, onChange, onUiChange }) {
     panel.appendChild(group);
   }
 
+  panel._onShow = () => {
+    for (const control of panel.querySelectorAll(".vr-row")) control._sync?.();
+  };
   return panel;
 }
 
@@ -711,6 +739,7 @@ export function mountVisualUI({
   ensureRuntime,
   visualId,
 }) {
+  uiEl.querySelector(".vr-autoUI")?._destroyTabs?.();
   uiEl.innerHTML = "";
 
   const autoUiEl = el("div", { className: "vr-autoUI" });
@@ -865,7 +894,7 @@ export function mountVisualUI({
       applyPropOpsToSubtree(svg, state.__propOps?.stack);
       applyScriptOpsToSubtree(svg, state.__scriptOps?.stack, { svg, state, mountEl });
       applyEffectsToSubtree({ mountEl, state, xfRuntime: activeRuntime });
-      applyColorToSubtree({ mountEl, state });
+      applyToolFlowToSubtree({ mountEl, state, xfRuntime: activeRuntime });
     }
   }
 
@@ -1204,7 +1233,8 @@ export function runVisualApp({
     visualId,
   });
 
-  document.getElementById("button-info").onclick = () => {
+  const infoButton = document.getElementById("button-info");
+  if (infoButton) infoButton.onclick = () => {
     const configEl = document.getElementById("config");
     const infoBar = document.getElementById("infoBar");
     const syncPinnedLayout = () => {
@@ -1264,6 +1294,21 @@ export function buildControl({ param, state, onChange }) {
   const inputWrap = el("div", { className: "vr-input" });
   inputWrap.appendChild(input);
   wrap.appendChild(inputWrap);
+  let lastValue = JSON.stringify(value);
+  const rememberValue = () => { lastValue = JSON.stringify(getByPath(state, param.key)); };
+  input.addEventListener("input", rememberValue);
+  input.addEventListener("change", rememberValue);
+  wrap._sync = () => {
+    const next = getByPath(state, param.key);
+    if (JSON.stringify(next) === lastValue) return;
+    lastValue = JSON.stringify(next);
+    const fields = input.matches("input, select, textarea") ? [input] : [...input.querySelectorAll("input")];
+    fields.forEach((field, index) => {
+      if (field.type === "checkbox") field.checked = !!next;
+      else if (param.type?.startsWith("vector")) field.value = String(next?.[["x", "y", "z"][index]] ?? 0);
+      else field.value = String(next ?? param.default ?? "");
+    });
+  };
 
   return wrap;
 }
@@ -1383,7 +1428,7 @@ function buildVectorControl({ param, state, onChange, value, dims }) {
         typeof param.min === "number" ? param.min : -Infinity,
         typeof param.max === "number" ? param.max : Infinity
       );
-      vec = { ...vec, [axis]: nextVal };
+      vec = { ...normalizeVector(getByPath(state, param.key), def, dims), [axis]: nextVal };
       setByPath(state, param.key, vec);
       onChange?.(param.key, vec, state);
     };

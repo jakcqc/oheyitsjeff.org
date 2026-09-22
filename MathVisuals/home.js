@@ -1,3 +1,13 @@
+/*!
+ * Copyright (c) 2026 Jeffrey Kerley.
+ * SPDX-License-Identifier: LicenseRef-Jeffrey-Kerley-NC-NoAI-1.0
+ * Source-available for noncommercial public-source projects.
+ * No AI/ML training. No paid/commercial or closed-source application use.
+ * Personal noncommercial experimentation is permitted.
+ * Violating these conditions terminates permission under this license.
+ * See LICENSE.md at the repository root for the full terms.
+ */
+
 let width;
 let height;
 let bubbleRadius = 60;
@@ -7,64 +17,32 @@ let initStrength = 0.02;
 let dragSimStrength = 0.09;
 let needsSingleBubbleMode = false;
 const MOBILE_BREAKPOINT_PX = 600;
-const MOBILE_MODE_STORAGE_KEY = "home.mobileMode"; // "bubbles" | "cards"
-const THEME_STORAGE_KEY = "home.theme"; // "light" | "dark"
+const MOBILE_MODE_STORAGE_KEY = "home.mobileMode"; // "bubbles" | "apps"
 
 function getMobileModePref() {
   const raw = localStorage.getItem(MOBILE_MODE_STORAGE_KEY);
-  return raw === "bubbles" || raw === "cards" ? raw : null;
+  return raw === "bubbles" ? "bubbles" : "apps";
 }
 
 function setMobileModePref(mode) {
   localStorage.setItem(MOBILE_MODE_STORAGE_KEY, mode);
 }
-function getThemePref() {
-  const raw = localStorage.getItem(THEME_STORAGE_KEY);
-  if (raw === "light" || raw === "dark") return raw;
-  const systemDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-  return systemDark ? "dark" : "light";
-}
-
-function setThemePref(theme) {
-  localStorage.setItem(THEME_STORAGE_KEY, theme);
-}
-
-function applyTheme(theme) {
-  const normalized = theme === "dark" ? "dark" : "light";
-  document.documentElement.setAttribute("data-theme", normalized);
-  const btn = document.getElementById("themeToggle");
-  if (btn) {
-    const isDark = normalized === "dark";
-    btn.setAttribute("aria-pressed", isDark ? "true" : "false");
-    btn.textContent = isDark ? "light" : "dark";
-    btn.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
-  }
-}
-
 function isMobileLayout() {
   return Math.round(window.innerWidth) < MOBILE_BREAKPOINT_PX;
 }
 
 function getEffectiveMode() {
   if (!isMobileLayout()) return "bubbles";
-  return getMobileModePref() === "bubbles" ? "bubbles" : "cards";
+  return getMobileModePref() === "bubbles" ? "bubbles" : "apps";
 }
 
-function updateMobileToggleUi() {
-  const btn = document.getElementById("mobileModeToggle");
-  if (!btn) return;
-
-  const isMobile = isMobileLayout();
-  btn.style.display = isMobile ? "inline-flex" : "none";
-
-  const mode = getEffectiveMode();
-  const isBubbles = mode === "bubbles";
-  btn.setAttribute("aria-pressed", isBubbles ? "true" : "false");
-  btn.textContent = isBubbles ? "cards" : "bubbles";
-  btn.setAttribute("aria-label", isBubbles ? "Switch to cards view" : "Switch to bubbles view");
-}
+let appsViewer;
+let homeRenderVersion = 0;
 
 function clearHome() {
+  homeRenderVersion++;
+  appsViewer?.destroy();
+  appsViewer = null;
   const backgroundDiv = document.getElementById("background");
   if (backgroundDiv) backgroundDiv.innerHTML = "";
   d3.select("#d3-container").selectAll("*").remove();
@@ -72,7 +50,6 @@ function clearHome() {
 
 function renderHome() {
   clearHome();
-  updateMobileToggleUi();
 
   const mode = getEffectiveMode();
   const isMobile = isMobileLayout();
@@ -81,23 +58,23 @@ function renderHome() {
   bubbleRadius = Math.min(width * 0.15, 50);
 
 
-  if (mode === "cards") {
-    const backgroundDiv = document.getElementById("background");
-    projects.forEach(project => {
-      const projectHTML = `
-          <div class="outter">
-              <div class="apps">
-                  <div class="card-header">${project.title}</div>
-                  <div class="card-content" onclick="goTo('${project.link}')">
-                      <img class="thumb" src="${project.image}" alt="${project.title}">
-                  </div>
-                  <div class="overlay">
-                      <div class="styleInfo"><span class="tab1"></span>${project.description}</div>
-                  </div>
-              </div>
-          </div>
-      `;
-      backgroundDiv.innerHTML += projectHTML;
+  document.body.classList.toggle("showing-apps", mode === "apps");
+  if (mode === "apps") {
+    const version = homeRenderVersion;
+    const container = document.getElementById("background");
+    import("/Apps/viewer.js").then(({ mountAppsViewer }) => {
+      if (version !== homeRenderVersion) return;
+      appsViewer = mountAppsViewer(container, {
+        onBubbles() {
+          setMobileModePref("bubbles");
+          window.scrollTo(0, 0);
+          renderHome();
+        }
+      });
+    }).catch(error => {
+      if (version !== homeRenderVersion) return;
+      container.textContent = "Apps could not load. Please refresh to try again.";
+      console.error(error);
     });
     return;
   }
@@ -329,110 +306,8 @@ function gradientAnimation() {
   }, 400);
   console.log(blurb);
 }
-const projects = shuffle([
-  {
-    title: "Lissajous Figures",
-    image: "/MathVisuals/assets/math8.png",
-    description: "Parametric sine curves that weave into looping flower-like forms.",
-    link: "/LissajousFigures/"
-  },
-  {
-    title: "Fractal Polyhedra",
-    image: "/MathVisuals/assets/math4.png",
-    description: "Recursive polyhedral forms with crystalline self-similarity.",
-    link: "/FractalPolyhedra/"
-  },
-  {
-    title: "SURFER Gallery",
-    image: "/MathVisuals/assets/math2.png",
-    description: "Implicit algebraic surfaces rendered as sculptural contours.",
-    link: "/SurferGalleryBiancaViolet/"
-  },
-  {
-    title: "Boys Surface Model",
-    image: "/MathVisuals/assets/math9.png",
-    description: "Twisted ribbon immersions inspired by the projective plane.",
-    link: "/BoysSurfaceModel/"
-  },
-  {
-    title: "Quasicrystalline Wickerwork",
-    image: "/MathVisuals/assets/math.png",
-    description: "Aperiodic lattices woven into star-like radial patterns.",
-    link: "/QuasicrystallineWickerwork/"
-  },
-  {
-    title: "Lorenz Attractor",
-    image: "/MathVisuals/assets/math3.png",
-    description: "Chaotic butterfly trajectories drawn as glowing streams.",
-    link: "/LorenzAttractor/"
-  },
-  {
-    title: "Herwig Hauser Classic",
-    image: "/MathVisuals/assets/math7.png",
-    description: "Classic algebraic surfaces with cusps, folds, and smooth manifolds.",
-    link: "/HerwigHauserClassicCollection/"
-  },
-  {
-    title: "Oliver Labs Collection",
-    image: "/MathVisuals/assets/math6.png",
-    description: "Algorithmic structures shaped by procedural flow fields.",
-    link: "/OliverLabsCollection/"
-  },
-  {
-    title: "P.S.G.H Collection",
-    image: "/MathVisuals/assets/math5.png",
-    description: "Mesh curvature studies with smooth geometric transitions.",
-    link: "/PinkallSchmittGunnHoffmannCollection/"
-  },
-  // {
-  //   title: "Islamic Repeating Art",
-  //   image: "/MathVisuals/assets/math.png",
-  //   description: "Ten-fold tessellations blending pentagrams and hexagon motifs.",
-  //   link: "/IslamicRepeatingArt/"
-  // },
-  {
-    title: "Marbled Patterns",
-    image: "/assets/Images/marble.png",
-    description: "Swirled marbling with ribbon-like ink veins.",
-    link: "/MarbledPatterns/"
-  },
-  {
-    title: "Domain Coloring",
-    image: "/assets/Images/coloring.png",
-    description: "Domain coloring for popular complex functions with adjustable color guides.",
-    link: "/DomainColoring/"
-  },
-  {
-    title: "Voronoi Point Ani",
-    image: "/assets/Images/voro.png",
-    description: "Voronoi diagrams that move and grow; fractal-like patterns emerge.",
-    link: "/Voronoi/"
-  },
-  {
-    title: "Step Spline Lab",
-    image: "/MathVisuals/assets/spline.png",
-    description: "Click points into a spline, then render it as dots, a smooth stroke, or formula-sized step lines.",
-    link: "/StepSplineLab/"
-  },
-  {
-    title: "Space Filling Curves",
-    image: "/MathVisuals/assets/spaceFilling.png",
-    description: "Hilbert, Peano, static, dynamic, fun curves",
-    link: "/SpaceFillingCurves/"
-  },
-  {
-    title: "Kakeya!!",
-    image: "/assets/Images/kakaya.png",
-    description: "The collatz conjecture about sequences leverages Kakaya sets, which are sets made from line segments!",
-    link: "/kakeya/"
-  },
-  {
-    title: "Discrete Fractals",
-    image: "/assets/Images/InnerLight.png",
-    description: "Discrete fractals like Mandelbrot, Julia, and Multibrot with shape/convergence controls.",
-    link: "/Generic/"
-  }
-]);
+// Shared with Apps; add/remove apps in MathVisuals/projects.json.
+let projects = [];
 // document.addEventListener("DOMContentLoaded", function() {
 //   width = window.innerWidth;
 //   height = window.innerHeight - 68;
@@ -453,39 +328,16 @@ const projects = shuffle([
 
 // });
 function initOnceStable() {
-  const themeToggle = document.getElementById("themeToggle");
-  if (themeToggle) {
-    themeToggle.addEventListener("click", () => {
-      const current = document.documentElement.getAttribute("data-theme") || getThemePref();
-      const next = current === "dark" ? "light" : "dark";
-      setThemePref(next);
-      applyTheme(next);
-    });
-  }
-
-  applyTheme(getThemePref());
-
-  const btn = document.getElementById("mobileModeToggle");
-  if (btn) {
-    btn.addEventListener("click", () => {
-      const cur = getEffectiveMode();
-      const next = cur === "bubbles" ? "cards" : "bubbles";
-      setMobileModePref(next);
-      renderHome();
-    });
-  }
-
   renderHome();
 }
 
-// Paint with the saved theme before heavy assets finish loading.
-applyTheme(getThemePref());
-
 // wait for EVERYTHING that causes reflow
 Promise.all([
-  new Promise(r => window.addEventListener("load", r)),
-  document.fonts.ready
-]).then(() => {
+  new Promise(r => document.readyState === "complete" ? r() : window.addEventListener("load", r, { once: true })),
+  document.fonts.ready,
+  import("../helper/galleryRegistry.js").then(({ loadGalleryProjects }) => loadGalleryProjects("math")),
+]).then(([, , registeredProjects]) => {
+  projects = shuffle(registeredProjects);
   
   initOnceStable();
   // On mobile, scrolling can change `innerHeight` as the browser chrome shows/hides,
@@ -509,4 +361,9 @@ Promise.all([
   // requestAnimationFrame(() => {
   //   requestAnimationFrame(initOnceStable);
   // });
+}).catch((error) => {
+  console.error("Unable to load gallery:", error);
+  const message = document.createElement("p");
+  message.textContent = "The gallery could not load. Please refresh to try again.";
+  document.getElementById("background")?.replaceChildren(message);
 });

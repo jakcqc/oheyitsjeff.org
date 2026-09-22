@@ -1,7 +1,19 @@
+/*!
+ * Copyright (c) 2026 Jeffrey Kerley.
+ * SPDX-License-Identifier: LicenseRef-Jeffrey-Kerley-NC-NoAI-1.0
+ * Source-available for noncommercial public-source projects.
+ * No AI/ML training. No paid/commercial or closed-source application use.
+ * Personal noncommercial experimentation is permitted.
+ * Violating these conditions terminates permission under this license.
+ * See LICENSE.md at the repository root for the full terms.
+ */
+
 // helper/effectsHelp.js
 // Effects tab: UI-driven SVG scale/convert utilities + equation ops.
 
 import { el, registerTab } from "./visualHelp.js";
+import { createSubTabs } from "./subTabs.js";
+import { ensureColorEffect, buildColorEffectPanel, runColorEffect } from "./colorEffects.js";
 import { selectElementsByPropSelector } from "./svgEditor.js";
 import {
   scaleCirclesInSubtree,
@@ -14,7 +26,7 @@ import {
 } from "./scriptOpsUtils.js";
 import { applySplineLinesInSubtree } from "./splineEffectsUtils.js";
 
-const EFFECT_TYPES = ["scale", "convert", "splineLines", "paint", "merge", "functionRects"];
+const EFFECT_TYPES = ["scale", "convert", "splineLines", "paint", "color", "merge", "functionRects"];
 const SHAPE_TYPES = ["circle", "rect", "polygon", "path"];
 const SPLINE_SOURCE_TYPES = ["all", "path", "circle", "rect", "line", "polygon"];
 
@@ -63,68 +75,72 @@ const RECT_FUNCTION_PRESETS = [
 
 function ensureEffectsState(state) {
   if (!state.__effects || typeof state.__effects !== "object") state.__effects = {};
-  if (!state.__effects.ui || typeof state.__effects.ui !== "object") {
-    state.__effects.ui = {
-      effectType: "scale",
-      selector: "",
-      elementType: "circle",
-      rangeMin: 0.5,
-      rangeMax: 1.5,
-      count: 10,
-      spacing: "linear",
-      opacityMode: "auto",
-      opacityFixed: 1,
-      opacityMin: 0.25,
-      opacityMax: 1,
-      equation: "",
-      convertFrom: "path",
-      convertTo: "circle",
-      pathSamplePoints: 64,
-      convertScaleMode: "none",
-      convertScaleFactor: 1,
-      splineSource: "all",
-      splineSelector: "",
-      splinePointCount: 16,
-      splineStepsPerSegment: 18,
-      splineTension: 0.12,
-      splineLineOrientation: "vertical",
-      splineLineHeight: 18,
-      splineLineScale: 1,
-      splineStrokeWidth: 2,
-      splineScaleMode: "none",
-      splineScaleFactor: 1,
-      paintFill: "none",
-      paintStroke: "#000000",
-      mergeShape: "circle",
-      mergeSelector: "",
-      mergeSelectorRuleText: "",
-      mergeRatio: 1.15,
-      mergePadding: 2,
-      mergeGridStep: 4,
-      mergeSmoothPasses: 1,
-      mergeStroke: "#000000",
-      mergeStrokeWidth: 1.5,
-      fnPreset: RECT_FUNCTION_PRESETS[0]?.id || "circle",
-      fnCode: RECT_FUNCTION_PRESETS[0]?.code || "",
-      fnSampleCount: 80,
-      fnSampleEvery: 1,
-      fnSampleOffset: 0,
-      fnRectLimit: 0,
-      fnOrientMode: "tangent",
-      fnTangentStep: 1,
-      fnFixedAngle: 0,
-      fnRectWidth: 18,
-      fnRectHeight: 10,
-      fnRectRx: 0,
-      fnRectRy: 0,
-      fnRectFill: "none",
-      fnRectStroke: "#000000",
-      fnRectStrokeWidth: 1,
-      fnRectOpacity: 1,
-      autoRun: false,
-      debug: false,
-    };
+  if (!state.__effects.ui || typeof state.__effects.ui !== "object" || Array.isArray(state.__effects.ui)) state.__effects.ui = {};
+  const defaults = {
+    effectType: "scale",
+    selector: "",
+    elementType: "circle",
+    rangeMin: 0.5,
+    rangeMax: 1.5,
+    count: 10,
+    spacing: "linear",
+    opacityMode: "auto",
+    opacityFixed: 1,
+    opacityMin: 0.25,
+    opacityMax: 1,
+    equation: "",
+    convertFrom: "path",
+    convertTo: "circle",
+    pathSamplePoints: 64,
+    convertScaleMode: "none",
+    convertScaleFactor: 1,
+    splineSource: "all",
+    splineSelector: "",
+    splinePointCount: 16,
+    splineStepsPerSegment: 18,
+    splineTension: 0.12,
+    splineLineOrientation: "vertical",
+    splineLineHeight: 18,
+    splineLineScale: 1,
+    splineStrokeWidth: 2,
+    splineScaleMode: "none",
+    splineScaleFactor: 1,
+    paintFill: "none",
+    paintStroke: "#000000",
+    mergeShape: "circle",
+    mergeSelector: "",
+    mergeSelectorRuleText: "",
+    mergeRatio: 1.15,
+    mergePadding: 2,
+    mergeGridStep: 4,
+    mergeSmoothPasses: 1,
+    mergeStroke: "#000000",
+    mergeStrokeWidth: 1.5,
+    fnPreset: RECT_FUNCTION_PRESETS[0]?.id || "circle",
+    fnCode: RECT_FUNCTION_PRESETS[0]?.code || "",
+    fnSampleCount: 80,
+    fnSampleEvery: 1,
+    fnSampleOffset: 0,
+    fnRectLimit: 0,
+    fnOrientMode: "tangent",
+    fnTangentStep: 1,
+    fnFixedAngle: 0,
+    fnRectWidth: 18,
+    fnRectHeight: 10,
+    fnRectRx: 0,
+    fnRectRy: 0,
+    fnRectFill: "none",
+    fnRectStroke: "#000000",
+    fnRectStrokeWidth: 1,
+    fnRectOpacity: 1,
+    autoRun: false,
+    debug: false,
+  };
+  for (const [key, value] of Object.entries(defaults)) {
+    if (state.__effects.ui[key] == null) state.__effects.ui[key] = value;
   }
+  ensureColorEffect(state.__effects.ui);
+  if (!EFFECT_TYPES.includes(state.__effects.ui.effectType)) state.__effects.ui.effectType = "scale";
   if (!state.__effects.ui.groupsOpen || typeof state.__effects.ui.groupsOpen !== "object") {
     state.__effects.ui.groupsOpen = {};
   }
@@ -360,7 +376,7 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
 
   const group = (title, nodes) => {
     const storedOpen = ui.groupsOpen?.[title];
-    const isOpen = typeof storedOpen === "boolean" ? storedOpen : false;
+    const isOpen = typeof storedOpen === "boolean" ? storedOpen : title !== "Keyword Cheatsheet";
     const wrap = el("details", { className: "vr-paramGroup", open: isOpen });
     wrap.appendChild(el("summary", { className: "vr-paramGroupTitle", textContent: title }));
     wrap.appendChild(el("div", { className: "vr-paramGroupBody" }, nodes));
@@ -369,18 +385,6 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
       markDirty();
     });
     return wrap;
-  };
-
-  const effectSel = el("select");
-  EFFECT_TYPES.forEach((t) => {
-    const label = t === "splineLines" ? "spline lines" : t;
-    effectSel.appendChild(el("option", { value: t, textContent: label }));
-  });
-  effectSel.value = ui.effectType || "scale";
-  effectSel.onchange = () => {
-    ui.effectType = effectSel.value;
-    markDirty();
-    refresh();
   };
 
   const buildElementSelect = () => {
@@ -751,7 +755,6 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
 
   const runBtn = el("button", { type: "button", textContent: "apply effect" });
   runBtn.onclick = () => {
-    ui.effectType = effectSel.value;
     ui.elementType = elementSelScale.value;
     if (ui.effectType === "scale") ui.selector = selectorScaleInput.value;
     else if (ui.effectType === "paint") ui.selector = selectorPaintInput.value;
@@ -1020,16 +1023,27 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
     row("stroke width", mergeStrokeWidthInput, "Stroke width for merged paths."),
   ]);
 
-  const topGroup = group("Effect", [
-    row("type", effectSel, "Choose scale, convert, spline lines, paint, merge, or function rects."),
-  ]);
-
   const scaleGroup = group("Scale Effect", [scaleBlock]);
   const convertGroup = group("Convert Effect", [convertBlock]);
   const splineGroup = group("Spline Lines", [splineBlock]);
   const functionGroup = group("Function Rects", [functionBlock]);
   const paintGroup = group("Paint Effect", [paintBlock]);
   const mergeGroup = group("Merge Effect", [mergeBlock]);
+  const colorGroup = buildColorEffectPanel({ ui: ui.color, onStateChange });
+  const effectTabs = createSubTabs({
+    label: "Effect type",
+    value: ui.effectType,
+    options: [
+      { value: "scale", label: "Scale", panel: scaleGroup },
+      { value: "convert", label: "Convert", panel: convertGroup },
+      { value: "splineLines", label: "Spline lines", panel: splineGroup },
+      { value: "paint", label: "Paint", panel: paintGroup },
+      { value: "color", label: "Color", panel: colorGroup },
+      { value: "merge", label: "Merge", panel: mergeGroup },
+      { value: "functionRects", label: "Function rects", panel: functionGroup },
+    ],
+    onChange: (value) => { ui.effectType = value; markDirty(); refresh(); },
+  });
   const applyGroup = group("Apply", [
     row("debug", debugCb, "Enable console logging in effect helpers."),
     row("auto run", autoRunCb, "Run effect after every render call."),
@@ -1038,18 +1052,8 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
   ]);
 
   const refresh = () => {
-    const isScale = ui.effectType === "scale";
-    const isConvert = ui.effectType === "convert";
-    const isSplineLines = ui.effectType === "splineLines";
-    const isFunctionRects = ui.effectType === "functionRects";
-    const isPaint = ui.effectType === "paint";
-    const isMerge = ui.effectType === "merge";
-    scaleGroup.style.display = isScale ? "" : "none";
-    convertGroup.style.display = isConvert ? "" : "none";
-    splineGroup.style.display = isSplineLines ? "" : "none";
-    functionGroup.style.display = isFunctionRects ? "" : "none";
-    paintGroup.style.display = isPaint ? "" : "none";
-    mergeGroup.style.display = isMerge ? "" : "none";
+    effectTabs.setValue(ui.effectType);
+    keywordGroup.hidden = ui.effectType !== "scale";
     const selVal = String(ui.selector || "");
     selectorScaleInput.value = selVal;
     selectorPaintInput.value = selVal;
@@ -1090,7 +1094,8 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
     fnRectOpacity.value = String(ui.fnRectOpacity ?? 1);
   };
 
-  root.appendChild(topGroup);
+  root.appendChild(effectTabs.root);
+  root.appendChild(colorGroup);
   root.appendChild(scaleGroup);
   root.appendChild(convertGroup);
   root.appendChild(splineGroup);
@@ -1115,6 +1120,7 @@ function getSvgContexts(mountEl) {
 export function runEffectsFromUI({ mountEl, state, xfRuntime, statusEl } = {}) {
   ensureEffectsState(state);
   const ui = state.__effects.ui;
+  if (ui.effectType === "color") return runColorEffect({ mountEl, ui: ui.color, statusEl });
   const contexts = getSvgContexts(mountEl);
   if (!contexts.length) {
     if (statusEl) {

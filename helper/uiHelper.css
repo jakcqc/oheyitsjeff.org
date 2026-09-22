@@ -403,6 +403,51 @@ input[type="range"] {
 .fx-msg.error {
   color: #ffb3b3;
 }
+.tool-flow-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin: 4px 0 8px;
+}
+.tool-flow-stage-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.tool-flow-stage {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 7px;
+  padding: 6px;
+  border: 1px solid #444;
+  border-radius: 4px;
+  background: #202020;
+}
+.tool-flow-stage-copy {
+  min-width: 0;
+}
+.tool-flow-stage-title {
+  overflow: hidden;
+  color: #f2f2f2;
+  font-size: 12px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tool-flow-stage-meta {
+  color: #999;
+  font-size: 11px;
+}
+.tool-flow-stage-buttons {
+  display: flex;
+  gap: 2px;
+}
+.tool-flow-stage-buttons button {
+  min-width: 25px;
+  padding: 1px 4px;
+}
 .fx-keywords {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -550,5 +595,143 @@ bottom: 30px;
   }
   .vr-tab.active {
     background: #3a3a3a;
+  }
+}
+
+/* Shared panel toolbar; panels stay mounted while their tabs are hidden. */
+.vr-tabBody [hidden] {
+  display: none !important;
+}
+.vr-subTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px 0 8px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #444;
+}
+.vr-tabBody .vr-subTab {
+  margin: 0;
+  padding: 6px 9px;
+  border: 1px solid #555;
+  border-radius: 5px;
+  background: #242424;
+  color: #ccc;
+  font-size: 12px;
+  cursor: pointer;
+}
+.vr-tabBody .vr-subTab.active {
+  background: #fffeb4;
+  border-color: #fffeb4;
+  color: #171717;
+}
+.vr-subTab:focus-visible {
+  outline: 2px solid #8dc9ff;
+  outline-offset: 2px;
+}
+.anim-panel, .anim-edit, .anim-json {
+  min-width: 0;
+}
+.anim-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 10px;
+  min-width: 0;
+}
+.anim-label {
+  color: #ddd;
+  font-size: 12px;
+}
+.anim-panel input:not([type="checkbox"]), .anim-panel select, .anim-json-editor {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+}
+.anim-panel .tool-flow-actions input {
+  flex: 1 1 120px;
+  width: 120px;
+}
+.anim-targets, .anim-flow .tool-flow-stage-list {
+  margin: 8px 0;
+}
+.anim-flow-card {
+  grid-template-columns: minmax(70px, 1fr) minmax(145px, 2fr) auto;
+  gap: 6px;
+}
+.anim-svg-card {
+  grid-template-columns: minmax(70px, 1fr) minmax(145px, 2fr);
+}
+.anim-endpoints {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 6px;
+  align-items: center;
+}
+.anim-endpoints .anim-row {
+  margin-bottom: 0;
+}
+.anim-arrow {
+  color: #fffeb4;
+  padding-top: 14px;
+}
+.anim-help, .anim-status {
+  color: #b9b9b9;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.anim-checks {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin: 8px 0;
+}
+.anim-check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+.anim-transport {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid #555;
+}
+.anim-transport input[type="range"] {
+  margin: 0;
+  max-width: none;
+}
+.anim-json-editor {
+  min-height: 240px;
+  resize: vertical;
+  font-family: monospace !important;
+}
+@media (max-width: 500px) {
+  .anim-flow-card {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .anim-flow-card > .anim-endpoints {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}
+
+.anim-panel {
+  container-type: inline-size;
+}
+.fx-panel input:not([type="checkbox"]), .fx-panel select, .fx-panel textarea {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+.fx-panel textarea {
+  width: 100%;
+}
+@container (max-width: 350px) {
+  .anim-flow-card {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .anim-flow-card > .anim-endpoints {
+    grid-column: 1 / -1;
+    grid-row: 2;
   }
 }

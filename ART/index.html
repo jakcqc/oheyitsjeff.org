@@ -1,28 +1,46 @@
 <!DOCTYPE html>
+<!--
+Copyright (c) 2026 Jeffrey Kerley.
+SPDX-License-Identifier: LicenseRef-Jeffrey-Kerley-NC-NoAI-1.0
+Source-available for noncommercial public-source projects.
+No AI/ML training. No paid/commercial or closed-source application use.
+Personal noncommercial experimentation is permitted.
+Violating these conditions terminates permission under this license.
+See LICENSE.md at the repository root for the full terms.
+-->
+
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <title>SVG Gallery</title>
-  <meta name="color-scheme" content="light">
+  <meta name="color-scheme" content="light dark">
   <meta name="viewport" content="viewport-fit=cover,width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
   <link rel="icon" type="image/png" href="/assets/icon/jAsset.png" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alata&family=Courier+Prime:wght@700&family=Kosugi+Maru&family=Kumbh+Sans&family=Scheherazade:wght@700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans+Caption&display=swap">
 
   <!-- <link href="../helper/uiHelper.css" rel="stylesheet"> -->
+  <link href="/home2.css" rel="stylesheet">
   <link href="app2.css" rel="stylesheet">
+  <link href="/Apps/index.css" rel="stylesheet">
+  <script type="module" src="/helper/galleryNavigation.js"></script>
 
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script type="module" src="./index.js"></script>
 </head>
 
-<body>
-  <div id="infoBar">
-    <button id="button-exit" onclick="goTo('../')">X</button>
-    <button id="button-info" style = "display: none;"></button>
-    Pen Plots
+<body class="gallery-page art-page">
+  <div id="cool">
+    <a class="mainName" href="/">oheyitsjeff</a>
+    <div id="secondBar"></div>
+    <nav id="headerActions" aria-label="Site navigation">
+      <a href="/" data-gallery-link>Main</a>
+      <a href="/MathVisuals/" data-gallery-link>Math</a>
+      <a id="appsLink" href="/Apps/">Apps</a>
+    </nav>
   </div>
 
   <div id="config" style = "display:none;width: 0%;height:0%;"></div>
@@ -32,10 +50,6 @@
       <div id="vis"></div>
     </div>
   </div>
+  <div id="siteFooter"></div>
 </body>
-<script>
-  document.getElementById("button-info").onclick = () => {
-    document.getElementById("config").classList.toggle("open");
-  };
-</script>
 </html>

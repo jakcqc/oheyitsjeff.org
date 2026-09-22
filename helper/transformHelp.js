@@ -1,3 +1,13 @@
+/*!
+ * Copyright (c) 2026 Jeffrey Kerley.
+ * SPDX-License-Identifier: LicenseRef-Jeffrey-Kerley-NC-NoAI-1.0
+ * Source-available for noncommercial public-source projects.
+ * No AI/ML training. No paid/commercial or closed-source application use.
+ * Personal noncommercial experimentation is permitted.
+ * Violating these conditions terminates permission under this license.
+ * See LICENSE.md at the repository root for the full terms.
+ */
+
 /* --------------------------- Transforms tab --------------------------- */
 import { el, getByPath, setByPath, buildControl } from "./visualHelp.js";
 import { registerTab } from "./visualHelp.js";
@@ -177,6 +187,10 @@ function buildTransformPresetStack(presetName) {
   // Notes:
   // - This replaces the current stack when applied.
   // - Zoom ops intentionally omitted (per request).
+  if (name === "split4") {
+    return [{ kind: "split", count: 4 }];
+  }
+
   if (name === "kaleidoscope4") {
     return [
       { kind: "split", count: 4 },
@@ -298,7 +312,7 @@ export function buildTransformPanel({ mountEl, state, xfRuntime, onStateChange }
         type: "select",
         default: "",
         category: "Presets",
-        options: ["", "kaleidoscope4"],
+        options: ["", "split4", "kaleidoscope4"],
         description: "Choose a transform preset, then press Apply preset.",
       },
       {
@@ -681,6 +695,15 @@ export function buildTransformPanel({ mountEl, state, xfRuntime, onStateChange }
   };
 
   render();
+  let lastState = JSON.stringify(state.__xf);
+  root._onHide = () => { lastState = JSON.stringify(state.__xf); };
+  root._onShow = () => {
+    // A flow can change transforms while this editor is cached.
+    if (JSON.stringify(state.__xf) !== lastState) {
+      render();
+      lastState = JSON.stringify(state.__xf);
+    }
+  };
   return root;
 }
 

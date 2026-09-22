@@ -1,7 +1,17 @@
-// helper/colorHelp.js
-// Color tab: palette mapping + size-based recolors for SVG elements.
+/*!
+ * Copyright (c) 2026 Jeffrey Kerley.
+ * SPDX-License-Identifier: LicenseRef-Jeffrey-Kerley-NC-NoAI-1.0
+ * Source-available for noncommercial public-source projects.
+ * No AI/ML training. No paid/commercial or closed-source application use.
+ * Personal noncommercial experimentation is permitted.
+ * Violating these conditions terminates permission under this license.
+ * See LICENSE.md at the repository root for the full terms.
+ */
 
-import { el, registerTab } from "./visualHelp.js";
+// Palette mapping used by the Color effect and saved effect flows.
+
+import { el } from "./visualHelp.js";
+import { createSubTabs } from "./subTabs.js";
 
 const COLOR_MODES = [
   { value: "byExisting", label: "by existing color" },
@@ -35,6 +45,8 @@ const COLOR_PARSER = typeof document !== "undefined"
 
 const COLOR_CACHE = new Map();
 const RGB_CACHE = new Map();
+let colorCanvas;
+
 
 function clamp01(v) {
   const n = Number(v);
@@ -93,7 +105,7 @@ function parseRgb(value) {
   } else {
     const m = s.match(/^rgba?\(([^)]+)\)/);
     if (m) {
-      const parts = m[1].split(",").map((p) => p.trim());
+      const parts = m[1].trim().split(/[\s,/]+/);
       const toByte = (p) => {
         if (p.endsWith("%")) return Math.round(parseNumberLike(p, 0) * 2.55);
         return Math.round(parseNumberLike(p, 0));
@@ -105,6 +117,14 @@ function parseRgb(value) {
     }
   }
 
+  if (!out && typeof document !== "undefined") {
+    // Resolve named colors and modern CSS color functions through the browser.
+    colorCanvas ||= document.createElement("canvas").getContext("2d", { willReadFrequently: true });
+    colorCanvas.clearRect(0, 0, 1, 1);
+    colorCanvas.fillStyle = normalized;
+    colorCanvas.fillRect(0, 0, 1, 1);
+    out = Array.from(colorCanvas.getImageData(0, 0, 1, 1).data).slice(0, 3);
+  }
   if (!out || out.some((n) => !Number.isFinite(n))) out = null;
   RGB_CACHE.set(normalized, out);
   return out;
@@ -157,7 +177,7 @@ function expandPalette(palette, steps) {
 
 function parsePalette(text) {
   const raw = String(text ?? "")
-    .split(/[\n,]+/g)
+    .split(/,(?![^()]*\))|\n/g)
     .map((c) => c.trim())
     .filter(Boolean);
   const out = [];
@@ -168,36 +188,32 @@ function parsePalette(text) {
   return out;
 }
 
-function ensureColorState(state) {
-  if (!state.__color || typeof state.__color !== "object") state.__color = {};
-  if (!state.__color.ui || typeof state.__color.ui !== "object") {
-    state.__color.ui = {
-      selector: "circle, rect, polygon, path, line",
-      sourceProp: "fill",
-      targetProp: "fill",
-      mode: "byExisting",
-      colorSort: "appearance",
-      paletteText: "#111111, #f97316, #facc15, #f8fafc",
-      paletteSteps: 0,
-      reversePalette: false,
-      useComputed: false,
-      skipNone: true,
-      sizeSource: "attr",
-      sizeAttr: "r",
-      sizeMin: "",
-      sizeMax: "",
-      autoRun: false,
-    };
+export const COLOR_PRESETS = [
+  { value: "greyscale", label: "Greyscale", paletteText: "#000000, #ffffff", paletteSteps: 256, mode: "byLuminance" },
+  { value: "blackWhite", label: "Black and white", paletteText: "#000000, #ffffff", paletteSteps: 2, mode: "byLuminance" },
+  { value: "sepia", label: "Sepia", paletteText: "#24160c, #a67c52, #fff1d2", paletteSteps: 32, mode: "byLuminance" },
+  { value: "warm", label: "Warm", paletteText: "#111111, #f97316, #facc15, #f8fafc", paletteSteps: 0, mode: "byExisting" },
+  { value: "cool", label: "Cool", paletteText: "#0f172a, #2563eb, #22d3ee, #f0fdfa", paletteSteps: 0, mode: "byExisting" },
+];
+
+export function ensureColorEffect(ui) {
+  if (!ui.color || typeof ui.color !== "object" || Array.isArray(ui.color)) ui.color = {};
+  const defaults = {
+    selector: "*", sourceProp: "each", targetProp: "both", mode: "byExisting",
+    colorSort: "appearance", paletteText: "#111111, #f97316, #facc15, #f8fafc",
+    paletteSteps: 0, reversePalette: false, useComputed: true, skipNone: true,
+    sizeSource: "attr", sizeAttr: "r", sizeMin: "", sizeMax: "", preset: ui.color.paletteText ? "custom" : "warm",
+  };
+  for (const [key, value] of Object.entries(defaults)) {
+    if (ui.color[key] == null) ui.color[key] = value;
   }
-  if (!state.__color.ui.groupsOpen || typeof state.__color.ui.groupsOpen !== "object") {
-    state.__color.ui.groupsOpen = {};
-  }
+  if (!ui.color.groupsOpen || typeof ui.color.groupsOpen !== "object") ui.color.groupsOpen = {};
+  return ui.color;
 }
 
 function readElementColor(el, prop, useComputed) {
-  let val = el.getAttribute?.(prop);
-  if (!val && el.style) val = el.style[prop];
-  if (!val && useComputed && typeof getComputedStyle === "function") {
+  let val = el.style?.[prop] || el.getAttribute?.(prop);
+  if (useComputed && typeof getComputedStyle === "function") {
     val = getComputedStyle(el)?.[prop];
   }
   return String(val ?? "").trim();
@@ -279,6 +295,20 @@ function colorLuminance(color) {
 }
 
 function applyPaletteToElements(elements, palette, ui) {
+  if (ui.sourceProp === "each") {
+    const props = ui.targetProp === "both" ? ["fill", "stroke"] : [ui.targetProp || "fill"];
+    const changed = new Set();
+    let mapped = 0;
+    let error;
+    for (const prop of props) {
+      const painted = elements.filter((node) => !ui.skipNone || !isSkippableColor(normalizeColor(readElementColor(node, prop, ui.useComputed))));
+      const stats = applyPaletteToElements(painted, palette, { ...ui, sourceProp: prop, targetProp: prop });
+      if (stats.touched) painted.forEach((node) => changed.add(node));
+      mapped = Math.max(mapped, stats.mapped);
+      error ||= stats.error;
+    }
+    return { touched: changed.size, mapped, error };
+  }
   const sourceProp = ui.sourceProp || "fill";
   const targetProp = ui.targetProp || "fill";
   let touched = 0;
@@ -368,12 +398,11 @@ function applyPaletteToElements(elements, palette, ui) {
 }
 
 function getSvgRoots(mountEl) {
-  return Array.from(mountEl?.querySelectorAll?.("svg") || []);
+  if (mountEl?.matches?.("svg")) return [mountEl];
+  return Array.from(mountEl?.querySelectorAll?.("svg") || []).filter((svg) => !svg.parentElement?.closest("svg"));
 }
 
-export function runColorFromUI({ mountEl, state, statusEl } = {}) {
-  ensureColorState(state);
-  const ui = state.__color.ui;
+export function runColorEffect({ mountEl, ui, statusEl } = {}) {
   const palette = buildPalette(ui);
   if (!palette.length) {
     if (statusEl) {
@@ -383,7 +412,15 @@ export function runColorFromUI({ mountEl, state, statusEl } = {}) {
     return { ok: false };
   }
 
-  const selector = String(ui.selector || "").trim() || "circle, rect, polygon, path, line";
+  const selector = String(ui.selector || "").trim() || "*";
+  try { document.createDocumentFragment().querySelector(selector); }
+  catch {
+    if (statusEl) {
+      statusEl.textContent = "Invalid selector. Use * or comma-separated selectors such as rect,circle,path,line.";
+      statusEl.classList.add("error");
+    }
+    return { ok: false };
+  }
   const roots = getSvgRoots(mountEl);
   if (!roots.length) {
     if (statusEl) {
@@ -400,7 +437,7 @@ export function runColorFromUI({ mountEl, state, statusEl } = {}) {
   let errorText = "";
   for (const svg of roots) {
     const nodes = Array.from(svg.querySelectorAll(selector))
-      .filter((el) => !el.closest("defs"));
+      .filter((el) => !el.closest("defs, clipPath, mask, symbol") && !["svg", "g", "title", "desc", "metadata", "style", "script"].includes(el.localName));
     const stats = applyPaletteToElements(nodes, palette, ui);
     if (stats.error && !errorText) errorText = stats.error;
     totalTouched += stats.touched;
@@ -416,24 +453,10 @@ export function runColorFromUI({ mountEl, state, statusEl } = {}) {
   return { ok: true };
 }
 
-export function applyColorToSubtree({ mountEl, state } = {}) {
-  if (!state?.__color?.ui?.autoRun) return;
-  runColorFromUI({ mountEl, state });
-}
-
-export function registerColorTab() {
-  registerTab("color", ({ mountEl, state, onStateChange }) =>
-    buildColorPanel({ mountEl, state, onStateChange })
-  );
-}
-
-export function buildColorPanel({ mountEl, state, onStateChange }) {
-  ensureColorState(state);
-  const ui = state.__color.ui;
+export function buildColorEffectPanel({ ui, onStateChange }) {
   const markDirty = () => onStateChange?.();
 
   const root = el("div", { className: "fx-panel" });
-  const status = el("div", { className: "fx-msg", textContent: "" });
 
   const row = (label, node, help) => {
     const wrap = el("div", { className: "vr-row" });
@@ -445,7 +468,7 @@ export function buildColorPanel({ mountEl, state, onStateChange }) {
 
   const group = (title, nodes) => {
     const storedOpen = ui.groupsOpen?.[title];
-    const isOpen = typeof storedOpen === "boolean" ? storedOpen : false;
+    const isOpen = typeof storedOpen === "boolean" ? storedOpen : true;
     const wrap = el("details", { className: "vr-paramGroup", open: isOpen });
     wrap.appendChild(el("summary", { className: "vr-paramGroupTitle", textContent: title }));
     wrap.appendChild(el("div", { className: "vr-paramGroupBody" }, nodes));
@@ -456,22 +479,40 @@ export function buildColorPanel({ mountEl, state, onStateChange }) {
     return wrap;
   };
 
-  const modeSel = el("select");
-  COLOR_MODES.forEach((opt) => modeSel.appendChild(el("option", { value: opt.value, textContent: opt.label })));
-  modeSel.value = ui.mode || "byExisting";
-  modeSel.onchange = () => {
-    ui.mode = modeSel.value;
+  const mappingTabs = createSubTabs({
+    label: "Color mapping", options: COLOR_MODES, value: ui.mode,
+    onChange: (mode) => { ui.mode = mode; markDirty(); refresh(); },
+  });
+  const presetSelect = el("select", { "aria-label": "Color preset" });
+  presetSelect.appendChild(el("option", { value: "custom", textContent: "Custom" }));
+  COLOR_PRESETS.forEach((preset) => presetSelect.appendChild(el("option", { value: preset.value, textContent: preset.label })));
+  presetSelect.value = ui.preset || "custom";
+  presetSelect.onchange = () => {
+    const preset = COLOR_PRESETS.find((item) => item.value === presetSelect.value);
+    ui.preset = presetSelect.value;
+    if (preset) {
+      Object.assign(ui, { paletteText: preset.paletteText, paletteSteps: preset.paletteSteps, mode: preset.mode, reversePalette: false, sourceProp: "each", targetProp: "both", useComputed: true, skipNone: true });
+      paletteInput.value = ui.paletteText;
+      paletteSteps.value = String(ui.paletteSteps);
+      reverseCb.checked = false;
+      mappingTabs.setValue(ui.mode);
+      sourcePropSel.value = ui.sourceProp;
+      targetPropSel.value = ui.targetProp;
+      useComputedCb.checked = true;
+      skipNoneCb.checked = true;
+    }
     markDirty();
     refresh();
   };
 
-  const selectorInput = el("input", { type: "text", value: ui.selector || "" });
+  const selectorInput = el("input", { type: "text", value: ui.selector || "*", placeholder: "* or rect,circle,path,line", "aria-label": "Color selector" });
   selectorInput.oninput = () => {
     ui.selector = selectorInput.value;
     markDirty();
   };
 
   const sourcePropSel = el("select");
+  sourcePropSel.appendChild(el("option", { value: "each", textContent: "each painted color" }));
   ["fill", "stroke"].forEach((t) => sourcePropSel.appendChild(el("option", { value: t, textContent: t })));
   sourcePropSel.value = ui.sourceProp || "fill";
   sourcePropSel.onchange = () => {
@@ -501,6 +542,7 @@ export function buildColorPanel({ mountEl, state, onStateChange }) {
     placeholder: "#111111, #f97316, #facc15, #f8fafc",
   });
   paletteInput.oninput = () => {
+    ui.preset = presetSelect.value = "custom";
     ui.paletteText = paletteInput.value;
     markDirty();
   };
@@ -512,6 +554,7 @@ export function buildColorPanel({ mountEl, state, onStateChange }) {
     value: String(ui.paletteSteps ?? 0),
   });
   paletteSteps.oninput = () => {
+    ui.preset = presetSelect.value = "custom";
     ui.paletteSteps = clampInt(paletteSteps.value, 0, 256);
     markDirty();
   };
@@ -576,49 +619,23 @@ export function buildColorPanel({ mountEl, state, onStateChange }) {
     markDirty();
   };
 
-  const autoRunCb = el("input", { type: "checkbox" });
-  autoRunCb.checked = !!ui.autoRun;
-  autoRunCb.onchange = () => {
-    ui.autoRun = !!autoRunCb.checked;
-    markDirty();
-  };
-
-  const runBtn = el("button", { type: "button", textContent: "apply colors" });
-  runBtn.onclick = () => {
-    ui.mode = modeSel.value;
-    ui.selector = selectorInput.value;
-    ui.sourceProp = sourcePropSel.value;
-    ui.targetProp = targetPropSel.value;
-    ui.colorSort = colorSortSel.value;
-    ui.paletteText = paletteInput.value;
-    ui.paletteSteps = clampInt(paletteSteps.value, 0, 256);
-    ui.reversePalette = !!reverseCb.checked;
-    ui.useComputed = !!useComputedCb.checked;
-    ui.skipNone = !!skipNoneCb.checked;
-    ui.sizeSource = sizeSourceSel.value;
-    ui.sizeAttr = sizeAttrInput.value;
-    ui.sizeMin = sizeMinInput.value;
-    ui.sizeMax = sizeMaxInput.value;
-    markDirty();
-    runColorFromUI({ mountEl, state, statusEl: status });
-  };
-
   const targetGroup = group("Target", [
-    row("selector", selectorInput, "CSS selector; default matches common shapes."),
+    row("selector", selectorInput, "Use * for all elements, or comma-separated selectors: rect,circle,path,line."),
     row("source prop", sourcePropSel, "Color to sample for mapping."),
     row("apply to", targetPropSel, "Where mapped colors are applied."),
   ]);
 
   const paletteGroup = group("Palette", [
+    row("preset", presetSelect, "Choose a common color treatment, or edit a custom palette."),
     row("palette", paletteInput, "Comma or newline separated colors."),
     row("steps", paletteSteps, "0 keeps palette length; >0 interpolates."),
     row("reverse", reverseCb, "Flip the palette order."),
   ]);
 
   const mapGroup = group("Mapping", [
-    row("mode", modeSel, "Map by existing color, luminance, size, or index."),
+    mappingTabs.root,
     row("sort", colorSortSel, "Only used for existing-color mapping."),
-    row("use computed", useComputedCb, "Use computed styles if no attribute."),
+    row("use computed", useComputedCb, "Sample visible colors, including inherited styles."),
     row("skip none", skipNoneCb, "Ignore none/transparent colors."),
   ]);
 
@@ -627,12 +644,6 @@ export function buildColorPanel({ mountEl, state, onStateChange }) {
     row("size attr", sizeAttrInput, "Attribute or style name for attr mode."),
     row("min", sizeMinInput, "Optional override for min."),
     row("max", sizeMaxInput, "Optional override for max."),
-  ]);
-
-  const applyGroup = group("Apply", [
-    row("auto run", autoRunCb, "Re-apply after each render."),
-    el("div", { className: "vr-input" }, [runBtn]),
-    status,
   ]);
 
   const refresh = () => {
@@ -645,7 +656,6 @@ export function buildColorPanel({ mountEl, state, onStateChange }) {
   root.appendChild(paletteGroup);
   root.appendChild(mapGroup);
   root.appendChild(sizeGroup);
-  root.appendChild(applyGroup);
   refresh();
   return root;
 }

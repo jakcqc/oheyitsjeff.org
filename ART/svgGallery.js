@@ -1,3 +1,13 @@
+/*!
+ * Copyright (c) 2026 Jeffrey Kerley.
+ * SPDX-License-Identifier: LicenseRef-Jeffrey-Kerley-NC-NoAI-1.0
+ * Source-available for noncommercial public-source projects.
+ * No AI/ML training. No paid/commercial or closed-source application use.
+ * Personal noncommercial experimentation is permitted.
+ * Violating these conditions terminates permission under this license.
+ * See LICENSE.md at the repository root for the full terms.
+ */
+
 import { registerVisual } from "../helper/visualHelp.js";
 
 const API_BASE = "https://contentmanager.jakerley180.workers.dev";
@@ -5,6 +15,14 @@ const PAGE_SIZE = 20;
 const ROTATION_CACHE_KEY = "svgGallery.rotation.v1";
 const MIN_ZOOM = 0.1;
 const MAX_ZOOM = 3;
+const ART_BUBBLE_SIZE_SEQUENCE = ["large", "small", "medium", "small", "medium", "large"];
+const ART_BUBBLE_SIZE_SCALES = {
+  small: 0.74,
+  medium: 1,
+  large: 1.8
+};
+const PACKING_GAP = 8;
+const PACKING_PADDING = 10;
 
 function clearEl(el) {
   while (el.firstChild) el.removeChild(el.firstChild);
@@ -31,6 +49,111 @@ function saveRotationCache(cache) {
   }
 }
 
+function distance(x1, y1, x2, y2) {
+  return Math.hypot(x1 - x2, y1 - y2);
+}
+
+// Mirrors InnerLight's circle collision test. Art bubbles use fixed radii,
+// while the packing surface is allowed to grow after the first viewport fills.
+function isOverlapping(circles, x, y, radius, padding = 0) {
+  return circles.some((circle) =>
+    distance(x, y, circle.x, circle.y) < circle.r + radius + padding - 0.25
+  );
+}
+
+function getBubbleSize(index) {
+  return ART_BUBBLE_SIZE_SEQUENCE[index % ART_BUBBLE_SIZE_SEQUENCE.length];
+}
+
+function findPackedPosition(circles, radius, width, height, itemIndex) {
+  const minX = PACKING_PADDING + radius;
+  const maxX = width - PACKING_PADDING - radius;
+  const minY = PACKING_PADDING + radius;
+  const maxY = height - PACKING_PADDING - radius;
+  if (maxX < minX || maxY < minY) return null;
+
+  const centerX = width / 2;
+  if (!circles.length) return { x: centerX, y: minY };
+
+  let best = null;
+  const consider = (x, y) => {
+    if (x < minX || x > maxX || y < minY || y > maxY) return;
+    if (isOverlapping(circles, x, y, radius, PACKING_GAP)) return;
+
+    // Fill from the top down, then favor the horizontal center for a compact wall.
+    const score = y * 10000 + Math.abs(x - centerX);
+    if (!best || score < best.score) best = { x, y, score };
+  };
+
+  // InnerLight begins by attaching circles tangent to circles already placed.
+  // A stable phase keeps that organic layout from changing between page loads.
+  const angleSteps = 32;
+  const phase = ((itemIndex * 0.61803398875) % 1) * Math.PI * 2;
+  for (const parent of circles) {
+    const tangentDistance = parent.r + radius + PACKING_GAP;
+    for (let step = 0; step < angleSteps; step += 1) {
+      const angle = phase + (step / angleSteps) * Math.PI * 2;
+      consider(
+        parent.x + tangentDistance * Math.cos(angle),
+        parent.y + tangentDistance * Math.sin(angle)
+      );
+    }
+  }
+
+  if (best) return best;
+
+  // Like InnerLight's gap-filling pass, scan remaining space when no tangent
+  // candidate fits. This also guarantees progress for awkward radius mixes.
+  const step = Math.max(8, Math.round(radius * 0.18));
+  for (let y = minY; y <= maxY; y += step) {
+    for (let x = minX; x <= maxX; x += step) consider(x, y);
+    if (best && best.y <= y) break;
+  }
+
+  return best;
+}
+
+function packArtBubbles(count, width, viewportHeight, largeDiameter) {
+  if (!count || width <= 0) {
+    return { circles: [], height: Math.max(1, viewportHeight) };
+  }
+
+  const maxDiameter = Math.max(1, width - PACKING_PADDING * 2);
+  const responsiveScale = Math.min(1, maxDiameter / largeDiameter);
+  const mediumDiameter = (largeDiameter / ART_BUBBLE_SIZE_SCALES.large) * responsiveScale;
+  const radii = Object.fromEntries(
+    Object.entries(ART_BUBBLE_SIZE_SCALES).map(([size, scale]) => [
+      size,
+      (mediumDiameter * scale) / 2
+    ])
+  );
+
+  const firstScreenHeight = Math.max(viewportHeight, radii.large * 2 + PACKING_PADDING * 2);
+  const extension = Math.max(firstScreenHeight * 0.45, radii.large * 2 + PACKING_GAP * 2);
+  let packingHeight = firstScreenHeight;
+  const circles = [];
+
+  for (let index = 0; index < count; index += 1) {
+    const size = getBubbleSize(index);
+    const radius = radii[size];
+    let position = findPackedPosition(circles, radius, width, packingHeight, index);
+
+    while (!position) {
+      packingHeight += extension;
+      position = findPackedPosition(circles, radius, width, packingHeight, index);
+    }
+
+    circles.push({ ...position, r: radius, size });
+  }
+
+  const usedHeight = circles.reduce(
+    (max, circle) => Math.max(max, circle.y + circle.r + PACKING_PADDING),
+    firstScreenHeight
+  );
+
+  return { circles, height: Math.ceil(usedHeight) };
+}
+
 registerVisual("svgGallery", {
   title: "SVG Wall",
   description: "Browse indexed CDN assets with infinite scrolling.",
@@ -50,6 +173,10 @@ registerVisual("svgGallery", {
     const grid = document.createElement("div");
     grid.className = "svgGallery__grid";
 
+    const packingSurface = document.createElement("div");
+    packingSurface.className = "svgGallery__packingSurface";
+    grid.appendChild(packingSurface);
+
     const scrollHint = document.createElement("div");
     scrollHint.className = "svgGallery__scrollHint";
     scrollHint.setAttribute("aria-hidden", "true");
@@ -57,6 +184,9 @@ registerVisual("svgGallery", {
     const lightbox = document.createElement("div");
     lightbox.className = "svgGallery__lightbox";
     lightbox.setAttribute("aria-hidden", "true");
+    lightbox.setAttribute("aria-modal", "true");
+    lightbox.setAttribute("role", "dialog");
+    lightbox.setAttribute("inert", "");
 
     const lightboxInner = document.createElement("div");
     lightboxInner.className = "svgGallery__lightboxInner";
@@ -95,15 +225,23 @@ registerVisual("svgGallery", {
     lightboxZoomIn.className = "svgGallery__lightboxZoom";
     lightboxZoomIn.textContent = "+";
 
+    const lightboxRotate = document.createElement("button");
+    lightboxRotate.type = "button";
+    lightboxRotate.className = "svgGallery__lightboxRotate";
+    lightboxRotate.textContent = "Rotate 90°";
+    lightboxRotate.setAttribute("aria-label", "Rotate expanded image by 90 degrees");
+
     const lightboxClose = document.createElement("button");
     lightboxClose.type = "button";
     lightboxClose.className = "svgGallery__lightboxClose";
-    lightboxClose.textContent = "Close";
+    lightboxClose.textContent = "X";
+    lightboxClose.setAttribute("aria-label", "Close expanded artwork and return to the art bubbles");
 
     lightboxControls.appendChild(lightboxZoomOut);
     lightboxControls.appendChild(lightboxZoomLabel);
     lightboxControls.appendChild(lightboxZoomSlider);
     lightboxControls.appendChild(lightboxZoomIn);
+    lightboxControls.appendChild(lightboxRotate);
 
     lightboxPan.appendChild(lightboxImg);
     lightboxMedia.appendChild(lightboxPan);
@@ -139,8 +277,10 @@ registerVisual("svgGallery", {
     let lastTapY = 0;
     let zoomDirection = 1;
     let lastFocusedEl = null;
+    let activeLightboxItem = null;
     let hasUserScrolled = false;
     let renderedNames = new Set();
+    let resizeFrame = 0;
 
     const tileCache = new Map();
     // const emptyState = document.createElement("div");
@@ -156,6 +296,29 @@ registerVisual("svgGallery", {
       document.documentElement.style.setProperty("--svgGalleryTile", `${value}px`);
     };
 
+    const layoutBubbles = () => {
+      const width = packingSurface.clientWidth || grid.clientWidth;
+      const viewportHeight = grid.clientHeight;
+      if (!width || !viewportHeight) return;
+
+      const largeDiameter = (state.gallery?.tileSize ?? 220) + 72;
+      const layout = packArtBubbles(allItems.length, width, viewportHeight, largeDiameter);
+      packingSurface.style.height = `${layout.height}px`;
+
+      layout.circles.forEach((circle, index) => {
+        const item = allItems[index];
+        const tile = item ? tileCache.get(item.name) : null;
+        if (!tile) return;
+
+        const diameter = circle.r * 2;
+        tile.card.dataset.bubbleSize = circle.size;
+        tile.card.style.setProperty("--bubble-left", `${circle.x - circle.r}px`);
+        tile.card.style.setProperty("--bubble-top", `${circle.y - circle.r}px`);
+        tile.card.style.setProperty("--bubble-diameter", `${diameter}px`);
+        tile.card.style.setProperty("--bubble-inner-diameter", `${diameter * 0.75}px`);
+      });
+    };
+
     const updateScrollHint = () => {
       // const canScroll = grid.scrollHeight > grid.clientHeight + 2;
       // const shouldShow = !hasUserScrolled && hasMore && canScroll;
@@ -169,7 +332,8 @@ registerVisual("svgGallery", {
       const card = document.createElement("article");
       card.className = "svgGallery__tile";
 
-      const media = document.createElement("div");
+      const media = document.createElement("button");
+      media.type = "button";
       media.className = "svgGallery__thumb";
 
       const img = document.createElement("img");
@@ -181,28 +345,9 @@ registerVisual("svgGallery", {
       const name = document.createElement("span");
       name.className = "svgGallery__name";
 
-      const actions = document.createElement("div");
-      actions.className = "svgGallery__actions";
-
-      const orientation = document.createElement("span");
-      orientation.className = "svgGallery__orientation";
-
-      const rotateBtn = document.createElement("button");
-      rotateBtn.type = "button";
-      rotateBtn.className = "svgGallery__rotateBtn";
-      rotateBtn.textContent = "Rotate 90";
-      rotateBtn.setAttribute("aria-label", "Rotate image by 90 degrees");
-      rotateBtn.addEventListener("click", (event) => {
-        event.preventDefault();
-        item.rotation = (item.rotation + 90) % 360;
-        orientation.textContent = `${item.rotation}deg`;
-        img.style.setProperty("--rotation", `${item.rotation}deg`);
-        rotationCache[item.name] = item.rotation;
-        saveRotationCache(rotationCache);
-      });
-
       media.addEventListener("click", () => {
         lastFocusedEl = document.activeElement;
+        activeLightboxItem = item;
         lightboxImg.src = item.url;
         lightboxImg.alt = item.name;
         lightboxRotation = item.rotation;
@@ -229,14 +374,11 @@ registerVisual("svgGallery", {
       });
 
       media.appendChild(img);
-      actions.appendChild(orientation);
-      actions.appendChild(rotateBtn);
       meta.appendChild(name);
-      meta.appendChild(actions);
       card.appendChild(media);
       card.appendChild(meta);
 
-      const entry = { card, img, name, orientation };
+      const entry = { card, media, img, name };
       tileCache.set(item.name, entry);
       return entry;
     };
@@ -264,8 +406,8 @@ const renderGrid = ({ preserveScroll = false } = {}) => {
       tile.img.alt = item.name;
       tile.img.src = item.url;
       tile.img.style.setProperty("--rotation", `${item.rotation}deg`);
+      tile.media.setAttribute("aria-label", `Expand ${item.name}`);
       tile.name.textContent = item.name;
-      tile.orientation.textContent = `${item.rotation}deg`;
 
       if (renderedNames.has(item.name)) continue;
       renderedNames.add(item.name);
@@ -274,7 +416,8 @@ const renderGrid = ({ preserveScroll = false } = {}) => {
       fragment.appendChild(tile.card);
     }
 
-    if (fragment.childNodes.length) grid.appendChild(fragment);
+    if (fragment.childNodes.length) packingSurface.appendChild(fragment);
+    layoutBubbles();
     grid.scrollTop = scrollTop;
     return;
   }
@@ -288,14 +431,15 @@ const renderGrid = ({ preserveScroll = false } = {}) => {
     tile.img.alt = item.name;
     tile.img.src = item.url;
     tile.img.style.setProperty("--rotation", `${item.rotation}deg`);
+    tile.media.setAttribute("aria-label", `Expand ${item.name}`);
     tile.name.textContent = item.name;
-    tile.orientation.textContent = `${item.rotation}deg`;
 
     renderedNames.add(item.name);
     fragment.appendChild(tile.card);
   }
 
-  grid.replaceChildren(fragment);
+  packingSurface.replaceChildren(fragment);
+  layoutBubbles();
 };
 
 
@@ -309,10 +453,11 @@ const renderGrid = ({ preserveScroll = false } = {}) => {
         }
       }
       lightbox.classList.remove("is-open");
-      //lightbox.setAttribute("aria-hidden", "true");
+      lightbox.setAttribute("aria-hidden", "true");
       lightbox.setAttribute("inert", "");
       lightboxImg.src = "";
       lightboxImg.alt = "";
+      activeLightboxItem = null;
     };
 
     const updateLightboxFit = () => {
@@ -382,6 +527,23 @@ const renderGrid = ({ preserveScroll = false } = {}) => {
 
     lightboxZoomOut.addEventListener("click", () => {
       setLightboxZoom(lightboxZoom - 0.2);
+    });
+
+    lightboxRotate.addEventListener("click", () => {
+      if (!activeLightboxItem) return;
+
+      activeLightboxItem.rotation = (activeLightboxItem.rotation + 90) % 360;
+      lightboxRotation = activeLightboxItem.rotation;
+      lightboxPan.style.setProperty("--rotation", `${lightboxRotation}deg`);
+
+      const tile = tileCache.get(activeLightboxItem.name);
+      tile?.img.style.setProperty("--rotation", `${lightboxRotation}deg`);
+      rotationCache[activeLightboxItem.name] = lightboxRotation;
+      saveRotationCache(rotationCache);
+
+      lightboxPanX = 0;
+      lightboxPanY = 0;
+      setLightboxZoom(getFitZoom());
     });
 
     lightboxZoomSlider.addEventListener("input", () => {
@@ -468,7 +630,11 @@ const renderGrid = ({ preserveScroll = false } = {}) => {
 
     window.addEventListener("resize", () => {
       updateScrollHint();
-      requestAnimationFrame(maybeLoadMore);
+      cancelAnimationFrame(resizeFrame);
+      resizeFrame = requestAnimationFrame(() => {
+        layoutBubbles();
+        maybeLoadMore();
+      });
     });
 
     lightboxClose.addEventListener("click", closeLightbox);
@@ -554,6 +720,7 @@ const renderGrid = ({ preserveScroll = false } = {}) => {
     return {
       render: () => {
         setTileSize(state.gallery?.tileSize ?? 220);
+        layoutBubbles();
       }
     };
   }
