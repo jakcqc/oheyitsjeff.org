@@ -539,15 +539,6 @@ export function mountAutoUI({
   container._destroyTabs?.();
   container.innerHTML = "";
 
-  const header = el("div", { className: "vr-header" }, [
-    el("div", { className: "vr-title", textContent: spec.title }),
-    el("div", { className: "vr-desc", textContent: spec.description }),
-  ]);
-  container.appendChild(header);
-
-  const form = el("div", { className: "vr-form" });
-  container.appendChild(form);
-
   mountUserTabs({
     container,
     spec,

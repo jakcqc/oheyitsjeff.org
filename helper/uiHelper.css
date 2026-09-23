@@ -255,9 +255,6 @@ resize: none;
        padding-left: 5px;
        padding-right: 5px;
     }
-    .vr-desc{
-      margin-bottom: 5px;
-    }
     /* Tab bar container */
 .vr-tabs {
   display: flex;
