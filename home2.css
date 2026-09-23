@@ -1,5 +1,7 @@
 
 :root {
+  color-scheme: light;
+  background-color: var(--color-main);
   --color-accent: rgb(27, 26, 26);
   --color-main: rgb(235, 235, 235);
   --accent-highlight: #FF9FF5;
@@ -14,6 +16,7 @@
   --art-highlight: var(--bubble-glow)
 }
 :root[data-theme="dark"] {
+  color-scheme: dark;
   --color-main: #050505;
   --color-accent: rgb(235, 235, 235);
   --accent-highlight: #FF9FF5;
@@ -76,7 +79,11 @@ body.support-modal-open{
   box-shadow: 2px 2px var(--color-accent);
   transition: box-shadow .2s ease, transform .2s ease, background-color .2s ease;
 }
-#headerActions > a[aria-current="page"],
+#headerActions > a[aria-current="page"]{
+  background: var(--accent-highlight);
+  color: #ffffff;
+  border-color: #ffffff;
+}
 #themeToggle[aria-pressed="true"]{
   background: var(--accent-highlight);
   color: #1b1a1a;

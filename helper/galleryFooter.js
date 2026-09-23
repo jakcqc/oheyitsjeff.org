@@ -68,7 +68,8 @@ template.innerHTML = `
         </div>
     </div>
 `;
-document.getElementById('siteFooter')?.replaceWith(template.content);
+const footerMount = document.getElementById('siteFooter');
+footerMount?.replaceWith(template.content);
 
 const SUPPORT_CONFIG = {
   paypalContactLabel: "16182104807",
@@ -150,5 +151,5 @@ function initSupportModal() {
   });
 }
 
-initSupportModal();
+if (footerMount) initSupportModal();
 initGalleryTheme();

@@ -71,6 +71,10 @@
   box-shadow: none;
 }
 @media (max-width: 540px) {
+  /* Keep the existing compact navigation when the full set cannot fit. */
+  #headerActions > a[aria-current="page"] {
+    display: none;
+  }
   .gallery-page #cool,
   .apps-directory #cool {
     flex-wrap: wrap;

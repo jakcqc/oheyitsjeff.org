@@ -19,7 +19,12 @@ Apps combines and sorts both registrations. Duplicate app URLs appear once; if a
 
 Routing stays in the header: Main shows Math and Apps, Math shows Main and Apps, and Apps shows Main and Math. Each header also links to Art. Only the `/Apps/` header stays pinned while scrolling.
 
-Main, Math, Apps, and Art use `helper/galleryFooter.js` for LinkedIn, Support, and the rounded theme toggle. `helper/galleryTheme.js` follows the system light/dark preference until the user explicitly selects a theme, then saves that override across pages. Art links to Main, Math, and Apps in its header. Headers keep an 18px edge inset at all widths, expanding only for device safe areas.
+Main, Math, and Apps use `helper/galleryFooter.js` for LinkedIn, Support, and the rounded theme toggle. `helper/galleryTheme.js` follows the system light/dark preference until the user explicitly selects a theme, then saves that override across pages. Art shares that theme without a footer bar and links to Main, Math, and Apps in its header. Headers keep an 18px edge inset at all widths, expanding only for device safe areas.
+
+All four page heads apply the saved/system theme synchronously before styles load,
+so the initial page background and browser color scheme match the selected theme.
+Keep this small inline bootstrap in sync with `helper/galleryTheme.js`; the shared
+module handles the footer toggle and later system/storage changes.
 
 `directory.js` mounts 20 entries initially and appends the next 20 when entry 10, 30, 50, etc. enters view. Images load lazily. Scroll-position checks handle large jumps and browsers without IntersectionObserver; Load more also works from the keyboard.
 

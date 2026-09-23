@@ -9,13 +9,13 @@
  */
 
 import { registerVisual } from "../helper/visualHelp.js";
+import { loadArtCatalog } from "./localAssets.js";
 
-const API_BASE = "https://contentmanager.jakerley180.workers.dev";
 const PAGE_SIZE = 20;
 const ROTATION_CACHE_KEY = "svgGallery.rotation.v1";
 const MIN_ZOOM = 0.1;
 const MAX_ZOOM = 3;
-const ART_BUBBLE_SIZE_SEQUENCE = ["large", "small", "medium", "small", "medium", "large"];
+const ART_BUBBLE_SIZE_MIX = ["large", "small", "medium", "small", "medium", "large"];
 const ART_BUBBLE_SIZE_SCALES = {
   small: 0.74,
   medium: 1,
@@ -26,6 +26,48 @@ const PACKING_PADDING = 10;
 
 function clearEl(el) {
   while (el.firstChild) el.removeChild(el.firstChild);
+}
+
+function bindImageLoading(container, image) {
+  const indicator = document.createElement("span");
+  indicator.className = "svgGallery__imageStatus";
+  indicator.setAttribute("aria-hidden", "true");
+  container.appendChild(indicator);
+  let generation = 0;
+
+  image.addEventListener("load", async () => {
+    const currentGeneration = generation;
+    try { await image.decode(); } catch { /* A loaded image may already be decoded. */ }
+    if (currentGeneration !== generation || !image.hasAttribute("src") || !image.naturalWidth) return;
+    container.classList.remove("is-image-loading", "is-image-error");
+    container.classList.add("is-image-ready");
+    container.setAttribute("aria-busy", "false");
+  });
+  image.addEventListener("error", () => {
+    if (!image.hasAttribute("src")) return;
+    container.classList.remove("is-image-loading", "is-image-ready");
+    container.classList.add("is-image-error");
+    container.setAttribute("aria-busy", "false");
+    indicator.textContent = "Image unavailable";
+  });
+  return {
+    setSource(url) {
+      if (image.getAttribute("src") === url) return;
+      generation++;
+      container.classList.remove("is-image-ready", "is-image-error");
+      container.classList.add("is-image-loading");
+      container.setAttribute("aria-busy", "true");
+      indicator.textContent = "Loading…";
+      image.src = url;
+    },
+    clear() {
+      generation++;
+      image.removeAttribute("src");
+      container.classList.remove("is-image-ready", "is-image-loading", "is-image-error");
+      container.setAttribute("aria-busy", "false");
+      indicator.textContent = "";
+    },
+  };
 }
 
 function loadRotationCache() {
@@ -61,8 +103,20 @@ function isOverlapping(circles, x, y, radius, padding = 0) {
   );
 }
 
-function getBubbleSize(index) {
-  return ART_BUBBLE_SIZE_SEQUENCE[index % ART_BUBBLE_SIZE_SEQUENCE.length];
+function shuffled(items) {
+  const result = [...items];
+  for (let index = result.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [result[index], result[swapIndex]] = [result[swapIndex], result[index]];
+  }
+  return result;
+}
+
+function randomizeArtCatalog(items) {
+  const sizes = shuffled(items.map((_, index) =>
+    ART_BUBBLE_SIZE_MIX[index % ART_BUBBLE_SIZE_MIX.length]
+  ));
+  return shuffled(items).map((item, index) => ({ ...item, bubbleSize: sizes[index] }));
 }
 
 function findPackedPosition(circles, radius, width, height, itemIndex) {
@@ -86,7 +140,7 @@ function findPackedPosition(circles, radius, width, height, itemIndex) {
   };
 
   // InnerLight begins by attaching circles tangent to circles already placed.
-  // A stable phase keeps that organic layout from changing between page loads.
+  // A stable phase keeps existing bubbles in place when another page is appended.
   const angleSteps = 32;
   const phase = ((itemIndex * 0.61803398875) % 1) * Math.PI * 2;
   for (const parent of circles) {
@@ -113,8 +167,8 @@ function findPackedPosition(circles, radius, width, height, itemIndex) {
   return best;
 }
 
-function packArtBubbles(count, width, viewportHeight, largeDiameter) {
-  if (!count || width <= 0) {
+function packArtBubbles(items, width, viewportHeight, largeDiameter) {
+  if (!items.length || width <= 0) {
     return { circles: [], height: Math.max(1, viewportHeight) };
   }
 
@@ -133,8 +187,8 @@ function packArtBubbles(count, width, viewportHeight, largeDiameter) {
   let packingHeight = firstScreenHeight;
   const circles = [];
 
-  for (let index = 0; index < count; index += 1) {
-    const size = getBubbleSize(index);
+  for (let index = 0; index < items.length; index += 1) {
+    const size = items[index].bubbleSize;
     const radius = radii[size];
     let position = findPackedPosition(circles, radius, width, packingHeight, index);
 
@@ -156,7 +210,7 @@ function packArtBubbles(count, width, viewportHeight, largeDiameter) {
 
 registerVisual("svgGallery", {
   title: "SVG Wall",
-  description: "Browse indexed CDN assets with infinite scrolling.",
+  description: "Browse local artwork with lightweight previews and infinite scrolling.",
   params: [
     { key: "gallery.tileSize", type: "number", default: 220, min: 140, max: 360, step: 10, label: "Tile size", category: "Gallery" }
   ],
@@ -193,9 +247,11 @@ registerVisual("svgGallery", {
 
     const lightboxImg = document.createElement("img");
     lightboxImg.alt = "";
+    lightboxImg.decoding = "async";
 
     const lightboxMedia = document.createElement("div");
     lightboxMedia.className = "svgGallery__lightboxMedia";
+    const lightboxImageLoader = bindImageLoading(lightboxMedia, lightboxImg);
 
     const lightboxPan = document.createElement("div");
     lightboxPan.className = "svgGallery__lightboxPan";
@@ -257,6 +313,7 @@ registerVisual("svgGallery", {
     mountEl.appendChild(app);
 
     let allItems = [];
+    let catalog;
     const rotationCache = loadRotationCache();
 
     let offset = 0;
@@ -302,7 +359,7 @@ registerVisual("svgGallery", {
       if (!width || !viewportHeight) return;
 
       const largeDiameter = (state.gallery?.tileSize ?? 220) + 72;
-      const layout = packArtBubbles(allItems.length, width, viewportHeight, largeDiameter);
+      const layout = packArtBubbles(allItems, width, viewportHeight, largeDiameter);
       packingSurface.style.height = `${layout.height}px`;
 
       layout.circles.forEach((circle, index) => {
@@ -338,6 +395,10 @@ registerVisual("svgGallery", {
 
       const img = document.createElement("img");
       img.loading = "lazy";
+      img.decoding = "async";
+      img.width = item.previewWidth;
+      img.height = item.previewHeight;
+      const imageLoader = bindImageLoading(media, img);
 
       const meta = document.createElement("div");
       meta.className = "svgGallery__meta";
@@ -348,7 +409,7 @@ registerVisual("svgGallery", {
       media.addEventListener("click", () => {
         lastFocusedEl = document.activeElement;
         activeLightboxItem = item;
-        lightboxImg.src = item.url;
+        lightboxImageLoader.setSource(item.originalUrl);
         lightboxImg.alt = item.name;
         lightboxRotation = item.rotation;
         lightboxPan.style.setProperty("--rotation", `${item.rotation}deg`);
@@ -378,7 +439,7 @@ registerVisual("svgGallery", {
       card.appendChild(media);
       card.appendChild(meta);
 
-      const entry = { card, media, img, name };
+      const entry = { card, media, img, name, imageLoader };
       tileCache.set(item.name, entry);
       return entry;
     };
@@ -404,7 +465,7 @@ const renderGrid = ({ preserveScroll = false } = {}) => {
 
       const tile = getTile(item);
       tile.img.alt = item.name;
-      tile.img.src = item.url;
+      tile.imageLoader.setSource(item.previewUrl);
       tile.img.style.setProperty("--rotation", `${item.rotation}deg`);
       tile.media.setAttribute("aria-label", `Expand ${item.name}`);
       tile.name.textContent = item.name;
@@ -429,7 +490,7 @@ const renderGrid = ({ preserveScroll = false } = {}) => {
 
     const tile = getTile(item);
     tile.img.alt = item.name;
-    tile.img.src = item.url;
+    tile.imageLoader.setSource(item.previewUrl);
     tile.img.style.setProperty("--rotation", `${item.rotation}deg`);
     tile.media.setAttribute("aria-label", `Expand ${item.name}`);
     tile.name.textContent = item.name;
@@ -455,7 +516,7 @@ const renderGrid = ({ preserveScroll = false } = {}) => {
       lightbox.classList.remove("is-open");
       lightbox.setAttribute("aria-hidden", "true");
       lightbox.setAttribute("inert", "");
-      lightboxImg.src = "";
+      lightboxImageLoader.clear();
       lightboxImg.alt = "";
       activeLightboxItem = null;
     };
@@ -659,32 +720,26 @@ const renderGrid = ({ preserveScroll = false } = {}) => {
       setStatus("Loading...");
 
       try {
-        const res = await fetch(
-          `${API_BASE}/assets?offset=${offset}&limit=${PAGE_SIZE}`
-        );
-
-        if (!res.ok) throw new Error("Page fetch failed");
-
-        const data = await res.json();
-
-        if (!data.keys.length) {
+        catalog ??= randomizeArtCatalog(await loadArtCatalog());
+        const page = catalog.slice(offset, offset + PAGE_SIZE);
+        if (!page.length) {
           hasMore = false;
           setStatus("All assets loaded");
           updateScrollHint();
           return;
         }
 
-        const newItems = data.keys.map((name) => ({
-          name,
-          url: `${API_BASE}/cdn/${encodeURIComponent(name)}`,
-          rotation: rotationCache[name] ?? 0
+        const newItems = page.map((item) => ({
+          ...item,
+          rotation: rotationCache[item.name] ?? 0
         }));
 
-        offset += data.keys.length;
+        offset += page.length;
+        hasMore = offset < catalog.length;
         allItems.push(...newItems);
 
         renderGrid({ preserveScroll: true });
-        setStatus(`${allItems.length} loaded`);
+        setStatus(hasMore ? `${allItems.length} loaded` : "All assets loaded");
         requestAnimationFrame(maybeLoadMore);
 
       } catch (err) {

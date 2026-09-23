@@ -15,7 +15,18 @@ See LICENSE.md at the repository root for the full terms.
     <meta charset="utf-8"/>
     <title>oheyitsjeff</title>
     <base href="/"/>
-    <meta name="color scheme" content="light dark">
+    <meta name="color-scheme" content="light dark">
+    <script>
+      // Apply the theme before styles or deferred gallery code can paint.
+      (() => {
+        let saved;
+        try { saved = localStorage.getItem('home.theme'); } catch {}
+        const theme = saved === 'dark' || saved === 'light'
+          ? saved : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+      })();
+    </script>
     <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <link rel="icon" type="image/png" href="/assets/icon/jAsset.png"/>
 
@@ -33,6 +44,7 @@ See LICENSE.md at the repository root for the full terms.
 
         <div id="secondBar"></div>
         <nav id="headerActions" aria-label="Site navigation">
+            <a href="/" data-gallery-link aria-current="page">Main</a>
             <a href="/MathVisuals/" data-gallery-link>Math</a>
             <a id="appsLink" href="/Apps/">Apps</a>
             <a href="/ART/">Art</a>

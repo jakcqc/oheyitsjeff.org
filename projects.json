@@ -64,7 +64,7 @@
   {
     "title": "ART",
     "image": "/assets/Images/artIcon.png",
-    "description": "Browse indexed CDN assets with infinite scrolling.",
+    "description": "Browse local artwork with lightweight previews and infinite scrolling.",
     "link": "/ART",
     "imageFit": "cover",
     "size": "large",

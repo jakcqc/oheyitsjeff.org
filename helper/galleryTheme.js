@@ -25,12 +25,15 @@ export function initGalleryTheme() {
   function applyTheme() {
     const dark = (override || (systemTheme.matches ? 'dark' : 'light')) === 'dark';
     document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-    button.textContent = dark ? 'light' : 'dark';
-    button.setAttribute('aria-pressed', String(dark));
-    button.setAttribute('aria-label', `Switch to ${dark ? 'light' : 'dark'} mode`);
+    document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+    if (button) {
+      button.textContent = dark ? 'light' : 'dark';
+      button.setAttribute('aria-pressed', String(dark));
+      button.setAttribute('aria-label', `Switch to ${dark ? 'light' : 'dark'} mode`);
+    }
   }
   applyTheme();
-  button.addEventListener('click', () => {
+  button?.addEventListener('click', () => {
     override = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
     try { localStorage.setItem(STORAGE_KEY, override); } catch {}
     applyTheme();
