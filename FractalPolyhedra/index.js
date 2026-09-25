@@ -9,9 +9,11 @@
  */
 
 import { runVisualApp } from "../helper/visualHelp.js";
+import { preloadLinkedSettings } from "../helper/linkedSettings.js";
 import "./FractalPolyhedra_visual.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  if (!await preloadLinkedSettings("fractalPolyhedra")) return;
   runVisualApp({
     visualId: "fractalPolyhedra",
     mountEl: document.getElementById("vis"),

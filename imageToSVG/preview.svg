@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
+  <!-- Copyright (c) 2026 Jeffrey Kerley. SPDX-License-Identifier: LicenseRef-Jeffrey-Kerley-NC-NoAI-1.0 -->
+  <rect width="600" height="600" fill="#18272e"/>
+  <rect x="45" y="65" width="510" height="470" rx="32" fill="#80a49d"/>
+  <circle cx="415" cy="203" r="66" fill="#ebc582"/>
+  <path d="M45 373 150 245 246 323 369 256 555 382V503Q555 535 523 535H77Q45 535 45 503Z" fill="#527d79"/>
+  <path d="m45 392 105-76 125 85 137-91 143 82v111q0 32-32 32H77q-32 0-32-32Z" fill="#315960"/>
+  <path d="m45 474 105-98 123 60 167-52 115 106v13q0 32-32 32H77q-32 0-32-32Z" fill="#173945"/>
+  <path d="m301 397 26 63 91 18-47 57h72l37-61-130-35Z" fill="#c1d3b6"/>
+  <path d="M299 65V535" stroke="#e9f1db" stroke-width="3" stroke-dasharray="7 9"/>
+  <path d="m299 302 70-46-23 69m23-69 57 34-80 35m80-35 74 43-69 34m69-34 55 49-124-15m-85-42 85 42-59 31m-73-30 73 30-73 34" fill="none" stroke="#bcd4be" stroke-opacity=".5" stroke-width="2"/>
+  <rect x="166" y="26" width="268" height="62" rx="16" fill="#c8ed9b"/>
+  <text x="300" y="67" fill="#1a2818" text-anchor="middle" font-family="sans-serif" font-size="29" font-weight="700">image → SVG</text>
+</svg>

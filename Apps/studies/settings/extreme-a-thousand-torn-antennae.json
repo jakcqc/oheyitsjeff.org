@@ -1,0 +1,224 @@
+{
+  "growth": 1,
+  "density": 1850,
+  "bladeHeight": 180,
+  "heightVariation": 0.93,
+  "bladeWidth": 17.5,
+  "widthVariation": 0.9,
+  "taper": 0.23,
+  "seedHeads": 0.9,
+  "distribution": "clumps",
+  "clumping": 0.93,
+  "clumpCount": 127,
+  "clumpRadius": 0.018,
+  "barePatches": 0.04,
+  "patchScale": 0.04,
+  "rowSpacing": 0.052,
+  "rowJitter": 0.2,
+  "bend": 1.8,
+  "bendVariation": 0.94,
+  "directionCoherence": 0.12,
+  "twist": 1,
+  "windStrength": 1.5,
+  "windDirection": 243,
+  "gustScale": 0.035,
+  "turbulence": 1,
+  "windPhase": 0.63,
+  "viewTilt": 67,
+  "viewYaw": 121,
+  "perspective": 0.93,
+  "fieldScale": 1.55,
+  "verticalOffset": 0.19,
+  "palette": "straw",
+  "colorVariation": 1,
+  "lightAngle": 320,
+  "bladeOpacity": 0.65,
+  "outlineWidth": 0.15,
+  "shadowStrength": 0.2,
+  "groundTexture": 0.02,
+  "groundTextureScale": 0.12,
+  "seed": 924210,
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0,
+      "preset": "",
+      "splitMode": "fit",
+      "applyToAll": false,
+      "tileTargets": "0",
+      "zoomFactor": 1.25,
+      "matrix": {
+        "a": 1,
+        "b": 0,
+        "c": 0,
+        "d": 1,
+        "e": 0,
+        "f": 0
+      },
+      "zoomCenter": {
+        "x": null,
+        "y": null
+      },
+      "translateVec": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCount": 3,
+      "planeBaseScale": 1,
+      "planeScaleStep": -0.12,
+      "planeOpacity": 0.7,
+      "planeOpacityFalloff": 0.12,
+      "planeOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCenter": {
+        "x": null,
+        "y": null
+      },
+      "groupOpen": {}
+    },
+    "stack": [
+      {
+        "kind": "planes3d",
+        "count": 4,
+        "baseScale": 0.45,
+        "scaleStep": 0.17,
+        "offset": {
+          "x": 25,
+          "y": -12
+        },
+        "opacity": 0.8,
+        "opacityFalloff": 0.11
+      },
+      {
+        "kind": "rotate",
+        "deg": 19
+      }
+    ]
+  },
+  "__ui": {
+    "tabsOpen": true,
+    "activeTab": "params",
+    "collapseParamsByDefault": true,
+    "paramGroups": {
+      "Growth": true,
+      "Distribution": false,
+      "Blade Form": false,
+      "Wind": true,
+      "Camera": true,
+      "Surface": false,
+      "System": false
+    },
+    "ioOpen": true,
+    "configPinned": true,
+    "navHidden": false
+  },
+  "__anim": {
+    "ui": {
+      "targetType": "params",
+      "paramTargets": [
+        {
+          "key": "windPhase",
+          "from": 0,
+          "to": 1
+        },
+        {
+          "key": "growth",
+          "from": 0.06,
+          "to": 1
+        }
+      ],
+      "durationSec": 9,
+      "fps": 24,
+      "easing": "easeInOutQuad",
+      "loop": true,
+      "yoyo": false,
+      "progress01": 0,
+      "autoPlay": false
+    }
+  },
+  "__toolFlows": {
+    "ui": {
+      "flowName": "A Thousand Torn Antennae",
+      "selectedId": "builtin-grayscale",
+      "autoRun": true,
+      "groupsOpen": {}
+    },
+    "stages": [
+      {
+        "id": "stage-mues66gi-wt3z4zf",
+        "kind": "effect",
+        "label": "Normal spline bristles",
+        "enabled": true,
+        "config": {
+          "autoRun": false,
+          "debug": false,
+          "effectType": "splineLines",
+          "splineSource": "path",
+          "splineSelector": "path:nth-of-type(11n)",
+          "splinePointCount": 9,
+          "splineStepsPerSegment": 3,
+          "splineTension": 0.36,
+          "splineLineOrientation": "normal",
+          "splineLineHeight": 155,
+          "splineLineScale": 1.8,
+          "splineStrokeWidth": 0.7
+        }
+      },
+      {
+        "id": "stage-mues66gi-gq7pcv2",
+        "kind": "transform",
+        "label": "Four planes of synthetic wind",
+        "enabled": true,
+        "config": {
+          "stack": [
+            {
+              "kind": "planes3d",
+              "count": 4,
+              "baseScale": 0.45,
+              "scaleStep": 0.17,
+              "offset": {
+                "x": 25,
+                "y": -12
+              },
+              "opacity": 0.8,
+              "opacityFalloff": 0.11
+            },
+            {
+              "kind": "rotate",
+              "deg": 19
+            }
+          ],
+          "ui": {
+            "splitMode": "fit"
+          }
+        }
+      }
+    ]
+  },
+  "__propOps": {
+    "ui": {
+      "ruleText": "{\n        \"selector\": {\"circle\":{\"r\":{\"range\":[20,100]}}},\n        \"apply\": {\"stroke\": null}\n        }",
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": []
+  },
+  "__scriptOps": {
+    "ui": {
+      "codeText": "// ctx.root is the <g> subtree being processed\n// ctx.svg is the owning <svg>\n// ctx.create(tag) creates an SVG element\n//\n// Example: circle -> 6-gon (polygon)\n// for (const c of ctx.root.querySelectorAll(\"circle\")) {\n//   const cx = Number(c.getAttribute(\"cx\") || 0);\n//   const cy = Number(c.getAttribute(\"cy\") || 0);\n//   const r = Number(c.getAttribute(\"r\") || 0);\n//   const n = 6;\n//   const pts = Array.from({length:n}, (_,i) => {\n//     const a = (Math.PI*2*i)/n;\n//     return [cx + r*Math.cos(a), cy + r*Math.sin(a)].join(\",\");\n//   }).join(\" \");\n//   const p = ctx.create(\"polygon\");\n//   p.setAttribute(\"points\", pts);\n//   for (const {name,value} of Array.from(c.attributes)) {\n//     if (name === \"cx\" || name === \"cy\" || name === \"r\") continue;\n//     p.setAttribute(name, value);\n//   }\n//   c.replaceWith(p);\n// }",
+      "fileName": "",
+      "selectedCacheKey": "",
+      "autoRunSelected": false,
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": [],
+    "cache": {}
+  }
+}

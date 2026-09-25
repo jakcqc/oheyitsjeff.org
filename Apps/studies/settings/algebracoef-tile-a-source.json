@@ -1,0 +1,285 @@
+{
+  "grid": {
+    "cellSize": 66,
+    "snapTo5": false,
+    "strokeWidth": 0.4752,
+    "strokeOpacity": 0.6656
+  },
+  "color": {
+    "startHue": 0,
+    "hueStep": 9,
+    "saturation": 1,
+    "lightness": 0.6,
+    "fillOpacity": 0.45,
+    "burstFillOpacity": 0.1
+  },
+  "motion": {
+    "enabled": false,
+    "running": false,
+    "tickMs": 220,
+    "triggersPerTick": 1,
+    "hoverCooldownMs": 80,
+    "durationMs": 600,
+    "delayMs": 1200,
+    "rotateDeg": 180,
+    "scaleBurst": 1,
+    "scaleMin": 1,
+    "scaleMax": 3.6
+  },
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0,
+      "preset": "",
+      "splitMode": "screen",
+      "applyToAll": false,
+      "tileTargets": "0",
+      "zoomFactor": 1.25,
+      "matrix": {
+        "a": 1,
+        "b": 0,
+        "c": 0,
+        "d": 1,
+        "e": 0,
+        "f": 0
+      },
+      "zoomCenter": {
+        "x": null,
+        "y": null
+      },
+      "translateVec": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCount": 3,
+      "planeBaseScale": 1,
+      "planeScaleStep": -0.12,
+      "planeOpacity": 0.7,
+      "planeOpacityFalloff": 0.12,
+      "planeOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCenter": {
+        "x": null,
+        "y": null
+      },
+      "groupOpen": {}
+    },
+    "stack": [
+      {
+        "kind": "rotate",
+        "deg": 1.4
+      },
+      {
+        "kind": "zoom",
+        "factor": 0.98
+      },
+      {
+        "kind": "rotate",
+        "deg": 1.4
+      },
+      {
+        "kind": "zoom",
+        "factor": 0.98
+      }
+    ]
+  },
+  "__studyRandomization": {
+    "version": 1,
+    "algorithm": "mulberry32-v1",
+    "seed": 1508779261,
+    "operation": "R_seed(p): randomize starting native parameters before G renders and before any algebra flow",
+    "samples": [
+      {
+        "path": "grid.cellSize",
+        "op": "integer",
+        "min": 58,
+        "max": 165,
+        "before": 100,
+        "value": 66
+      },
+      {
+        "path": "grid.strokeWidth",
+        "op": "multiply",
+        "min": 0.6,
+        "max": 2.3,
+        "before": 0.6,
+        "value": 0.4752
+      },
+      {
+        "path": "grid.strokeOpacity",
+        "op": "uniform",
+        "min": 0.55,
+        "max": 0.98,
+        "before": 0.85,
+        "value": 0.6656
+      }
+    ]
+  },
+  "__toolFlows": {
+    "ui": {
+      "flowName": "Tile Resonance A - Source Color",
+      "selectedId": "builtin-grayscale",
+      "autoRun": true,
+      "groupsOpen": {}
+    },
+    "stages": [
+      {
+        "id": "stage-muogddyp-mko5wea",
+        "kind": "effect",
+        "label": "rect becomes circle",
+        "enabled": true,
+        "config": {
+          "effectType": "convert",
+          "selector": "rect",
+          "convertFrom": "rect",
+          "convertTo": "circle",
+          "pathSamplePoints": 24,
+          "convertScaleMode": "center",
+          "convertScaleFactor": 0.9
+        }
+      },
+      {
+        "id": "stage-muogddyp-fuit4gk",
+        "kind": "effect",
+        "label": "choose ink on circle",
+        "enabled": true,
+        "config": {
+          "effectType": "paint",
+          "selector": "circle",
+          "paintFill": "none",
+          "paintStroke": "#ef8d30"
+        }
+      },
+      {
+        "id": "stage-muogddyp-rvqk4am",
+        "kind": "effect",
+        "label": "E: 2 echoes, scale 0.62 to 1.25",
+        "enabled": true,
+        "config": {
+          "effectType": "scale",
+          "selector": "circle",
+          "elementType": "circle",
+          "rangeMin": 0.62,
+          "rangeMax": 1.25,
+          "count": 2,
+          "spacing": "linear",
+          "opacityMode": "fixed",
+          "opacityFixed": 0.72,
+          "equation": ""
+        }
+      },
+      {
+        "id": "stage-muogddyp-k1ey0c9",
+        "kind": "effect",
+        "label": "C: enumerate current marks through four colors",
+        "enabled": true,
+        "config": {
+          "effectType": "color",
+          "color": {
+            "selector": "circle,line[data-spline-lines-run]",
+            "sourceProp": "stroke",
+            "targetProp": "stroke",
+            "mode": "byIndex",
+            "colorSort": "appearance",
+            "paletteText": "#67dbd2,#7686ec,#ed85b2,#ffcd83",
+            "paletteSteps": 0,
+            "useComputed": true,
+            "skipNone": true
+          }
+        }
+      },
+      {
+        "id": "stage-muogddyp-snzoz6y",
+        "kind": "effect",
+        "label": "N1: normal vectors, coefficient 0.65",
+        "enabled": true,
+        "config": {
+          "effectType": "splineLines",
+          "splineSource": "circle",
+          "splineSelector": "circle:nth-of-type(2n)",
+          "splinePointCount": 12,
+          "splineStepsPerSegment": 2,
+          "splineTension": 0.2,
+          "splineLineOrientation": "normal",
+          "splineLineHeight": 49,
+          "splineLineScale": 0.65,
+          "splineStrokeWidth": 0.7,
+          "splineScaleMode": "none",
+          "splineScaleFactor": 1
+        }
+      },
+      {
+        "id": "stage-muogddyp-rkip7o2",
+        "kind": "effect",
+        "label": "N2: tangent vectors, coefficient 1.35",
+        "enabled": true,
+        "config": {
+          "effectType": "splineLines",
+          "splineSource": "circle",
+          "splineSelector": "circle",
+          "splinePointCount": 12,
+          "splineStepsPerSegment": 2,
+          "splineTension": 0.2,
+          "splineLineOrientation": "tangent",
+          "splineLineHeight": 49,
+          "splineLineScale": 1.35,
+          "splineStrokeWidth": 0.7,
+          "splineScaleMode": "none",
+          "splineScaleFactor": 1
+        }
+      },
+      {
+        "id": "stage-muogddyp-8oqtcch",
+        "kind": "transform",
+        "label": "A^2: repeated rotation and contraction",
+        "enabled": true,
+        "config": {
+          "stack": [
+            {
+              "kind": "rotate",
+              "deg": 1.4
+            },
+            {
+              "kind": "zoom",
+              "factor": 0.98
+            },
+            {
+              "kind": "rotate",
+              "deg": 1.4
+            },
+            {
+              "kind": "zoom",
+              "factor": 0.98
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "__propOps": {
+    "ui": {
+      "ruleText": "{\n        \"selector\": {\"circle\":{\"r\":{\"range\":[20,100]}}},\n        \"apply\": {\"stroke\": null}\n        }",
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": []
+  },
+  "__scriptOps": {
+    "ui": {
+      "codeText": "// ctx.root is the <g> subtree being processed\n// ctx.svg is the owning <svg>\n// ctx.create(tag) creates an SVG element\n//\n// Example: circle -> 6-gon (polygon)\n// for (const c of ctx.root.querySelectorAll(\"circle\")) {\n//   const cx = Number(c.getAttribute(\"cx\") || 0);\n//   const cy = Number(c.getAttribute(\"cy\") || 0);\n//   const r = Number(c.getAttribute(\"r\") || 0);\n//   const n = 6;\n//   const pts = Array.from({length:n}, (_,i) => {\n//     const a = (Math.PI*2*i)/n;\n//     return [cx + r*Math.cos(a), cy + r*Math.sin(a)].join(\",\");\n//   }).join(\" \");\n//   const p = ctx.create(\"polygon\");\n//   p.setAttribute(\"points\", pts);\n//   for (const {name,value} of Array.from(c.attributes)) {\n//     if (name === \"cx\" || name === \"cy\" || name === \"r\") continue;\n//     p.setAttribute(name, value);\n//   }\n//   c.replaceWith(p);\n// }",
+      "fileName": "",
+      "selectedCacheKey": "",
+      "autoRunSelected": false,
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": [],
+    "cache": {}
+  }
+}

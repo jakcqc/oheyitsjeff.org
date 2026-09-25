@@ -1,0 +1,224 @@
+{
+  "running": true,
+  "tickMs": 16,
+  "speed": 13,
+  "outlinePad": 0,
+  "outlineLag": 0.36,
+  "outlineScale": 1.4,
+  "outlineShape": "ellipse",
+  "outlineStrokeWidth": 0.2,
+  "lineColor": "#ad719e",
+  "backgroundColor": "#100d1b",
+  "dotStrokeWidth": 0.15,
+  "collisionPush": 2.4,
+  "showMergePaths": false,
+  "mergeContactRatio": 0.97,
+  "mergeMaxPairs": 72,
+  "mergeSmoothing": 0.99,
+  "mergeFalloff": 0,
+  "mergeEffectStyle": "ring",
+  "mergeEffectColor": "#aa0000",
+  "ringCount": 14,
+  "fitCells": false,
+  "fitFillRatio": 0.35,
+  "ringMinRadius": 18,
+  "ringMaxRadius": 115,
+  "showMultiRing": true,
+  "multiRingCount": 21,
+  "multiRingStart": 0.35,
+  "multiRingGap": 7.2,
+  "multiRingStrokeWidth": 1.05,
+  "multiRingOpacity": 0.9,
+  "multiRingFade": 0.013,
+  "multiRingColor": "#eee8da",
+  "ringColorMode": "radius",
+  "ringColorA": "#39daca",
+  "ringColorB": "#ff5b80",
+  "multiRingPalette": "#aa0000,#0088ff,#00aa44,#ffa500",
+  "showCircleRect": false,
+  "circleStrokeWidth": 0.2,
+  "circleRectColor": "#000000",
+  "showTrail": false,
+  "trailEveryN": 3,
+  "trailLength": 80,
+  "trailOpacity": 0.08,
+  "trailRadius": 2.6,
+  "trailColor": "#eee8da",
+  "trailStrokeColor": "#eee8da",
+  "trailStrokeWidth": 0.2,
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0,
+      "preset": "",
+      "splitMode": "fit",
+      "applyToAll": false,
+      "tileTargets": "0",
+      "zoomFactor": 1.25,
+      "matrix": {
+        "a": 1,
+        "b": 0,
+        "c": 0,
+        "d": 1,
+        "e": 0,
+        "f": 0
+      },
+      "zoomCenter": {
+        "x": null,
+        "y": null
+      },
+      "translateVec": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCount": 3,
+      "planeBaseScale": 1,
+      "planeScaleStep": -0.12,
+      "planeOpacity": 0.7,
+      "planeOpacityFalloff": 0.12,
+      "planeOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCenter": {
+        "x": null,
+        "y": null
+      },
+      "groupOpen": {}
+    },
+    "stack": [
+      {
+        "kind": "matrix",
+        "m": [
+          0.985,
+          -0.035,
+          0.065,
+          0.985,
+          -33,
+          38
+        ]
+      }
+    ]
+  },
+  "__toolFlows": {
+    "ui": {
+      "flowName": "Square Membranes Remember Radius",
+      "selectedId": "builtin-grayscale",
+      "autoRun": true,
+      "groupsOpen": {}
+    },
+    "stages": [
+      {
+        "id": "stage-mues67dm-9xekpwg",
+        "kind": "effect",
+        "label": "Encode radius before destroying circular type",
+        "enabled": true,
+        "config": {
+          "autoRun": false,
+          "debug": false,
+          "effectType": "color",
+          "color": {
+            "selector": "circle.multi-ring",
+            "sourceProp": "stroke",
+            "targetProp": "stroke",
+            "mode": "bySize",
+            "colorSort": "appearance",
+            "paletteText": "#39daca,#4b41a7,#ef6891,#ffd980",
+            "paletteSteps": 48,
+            "useComputed": true,
+            "skipNone": true,
+            "sizeSource": "attr",
+            "sizeAttr": "r",
+            "sizeMin": 15,
+            "sizeMax": 210
+          }
+        }
+      },
+      {
+        "id": "stage-mues67dm-v612x9u",
+        "kind": "effect",
+        "label": "Turn every third membrane into its bounding rectangle",
+        "enabled": true,
+        "config": {
+          "autoRun": false,
+          "debug": false,
+          "effectType": "convert",
+          "convertFrom": "circle",
+          "convertTo": "rect",
+          "selector": "circle.multi-ring:nth-of-type(3n)",
+          "pathSamplePoints": 64,
+          "convertScaleMode": "none",
+          "convertScaleFactor": 1
+        }
+      },
+      {
+        "id": "stage-mues67dm-w3a0kv3",
+        "kind": "effect",
+        "label": "Spline the rectangular membranes into orthogonal cilia",
+        "enabled": true,
+        "config": {
+          "autoRun": false,
+          "debug": false,
+          "effectType": "splineLines",
+          "splineSource": "rect",
+          "splineSelector": "rect[data-convert-run]",
+          "splinePointCount": 16,
+          "splineStepsPerSegment": 3,
+          "splineTension": 0.24,
+          "splineLineOrientation": "tangent",
+          "splineLineHeight": 19,
+          "splineLineScale": 1.2,
+          "splineStrokeWidth": 1.25
+        }
+      },
+      {
+        "id": "stage-mues67dm-3pqdt4b",
+        "kind": "transform",
+        "label": "Slight oblique drift",
+        "enabled": true,
+        "config": {
+          "stack": [
+            {
+              "kind": "matrix",
+              "m": [
+                0.985,
+                -0.035,
+                0.065,
+                0.985,
+                -33,
+                38
+              ]
+            }
+          ],
+          "ui": {
+            "splitMode": "fit"
+          }
+        }
+      }
+    ]
+  },
+  "__propOps": {
+    "ui": {
+      "ruleText": "{\n        \"selector\": {\"circle\":{\"r\":{\"range\":[20,100]}}},\n        \"apply\": {\"stroke\": null}\n        }",
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": []
+  },
+  "__scriptOps": {
+    "ui": {
+      "codeText": "// ctx.root is the <g> subtree being processed\n// ctx.svg is the owning <svg>\n// ctx.create(tag) creates an SVG element\n//\n// Example: circle -> 6-gon (polygon)\n// for (const c of ctx.root.querySelectorAll(\"circle\")) {\n//   const cx = Number(c.getAttribute(\"cx\") || 0);\n//   const cy = Number(c.getAttribute(\"cy\") || 0);\n//   const r = Number(c.getAttribute(\"r\") || 0);\n//   const n = 6;\n//   const pts = Array.from({length:n}, (_,i) => {\n//     const a = (Math.PI*2*i)/n;\n//     return [cx + r*Math.cos(a), cy + r*Math.sin(a)].join(\",\");\n//   }).join(\" \");\n//   const p = ctx.create(\"polygon\");\n//   p.setAttribute(\"points\", pts);\n//   for (const {name,value} of Array.from(c.attributes)) {\n//     if (name === \"cx\" || name === \"cy\" || name === \"r\") continue;\n//     p.setAttribute(name, value);\n//   }\n//   c.replaceWith(p);\n// }",
+      "fileName": "",
+      "selectedCacheKey": "",
+      "autoRunSelected": false,
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": [],
+    "cache": {}
+  }
+}

@@ -1,0 +1,177 @@
+{
+  "curveCount": 37,
+  "freqA": 37.618033989,
+  "freqB": 23.414213562,
+  "phase": 17.893,
+  "samples": 3000,
+  "amplitude": 0.44,
+  "strokeWidth": 0.58,
+  "animate": false,
+  "speed": 0.6,
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0,
+      "preset": "",
+      "splitMode": "fit",
+      "applyToAll": false,
+      "tileTargets": "0",
+      "zoomFactor": 1.25,
+      "matrix": {
+        "a": 1,
+        "b": 0,
+        "c": 0,
+        "d": 1,
+        "e": 0,
+        "f": 0
+      },
+      "zoomCenter": {
+        "x": null,
+        "y": null
+      },
+      "translateVec": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCount": 3,
+      "planeBaseScale": 1,
+      "planeScaleStep": -0.12,
+      "planeOpacity": 0.7,
+      "planeOpacityFalloff": 0.12,
+      "planeOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCenter": {
+        "x": null,
+        "y": null
+      },
+      "groupOpen": {}
+    },
+    "stack": [
+      {
+        "kind": "split",
+        "count": 4
+      },
+      {
+        "kind": "flipX",
+        "targets": [
+          1,
+          3
+        ]
+      },
+      {
+        "kind": "flipY",
+        "targets": [
+          2,
+          3
+        ]
+      }
+    ]
+  },
+  "__toolFlows": {
+    "ui": {
+      "flowName": "Incommensurate Shock Textile",
+      "selectedId": "builtin-grayscale",
+      "autoRun": true,
+      "groupsOpen": {}
+    },
+    "stages": [
+      {
+        "id": "stage-mues66gn-5bwur5y",
+        "kind": "effect",
+        "label": "Normal spline bristles",
+        "enabled": true,
+        "config": {
+          "autoRun": false,
+          "debug": false,
+          "effectType": "splineLines",
+          "splineSource": "path",
+          "splineSelector": "path:nth-of-type(3n)",
+          "splinePointCount": 32,
+          "splineStepsPerSegment": 5,
+          "splineTension": 0.36,
+          "splineLineOrientation": "normal",
+          "splineLineHeight": 105,
+          "splineLineScale": 1.8,
+          "splineStrokeWidth": 0.6
+        }
+      },
+      {
+        "id": "stage-mues66gn-blui838",
+        "kind": "effect",
+        "label": "monochrome luminance palette",
+        "enabled": true,
+        "config": {
+          "effectType": "color",
+          "color": {
+            "selector": "*",
+            "sourceProp": "each",
+            "targetProp": "both",
+            "mode": "byLuminance",
+            "colorSort": "luminance",
+            "paletteText": "#777777, #fafafa",
+            "paletteSteps": 48,
+            "useComputed": true,
+            "skipNone": true
+          }
+        }
+      },
+      {
+        "id": "stage-mues66gn-v6mv6g4",
+        "kind": "transform",
+        "label": "Reflected resonance chambers",
+        "enabled": true,
+        "config": {
+          "stack": [
+            {
+              "kind": "split",
+              "count": 4
+            },
+            {
+              "kind": "flipX",
+              "targets": [
+                1,
+                3
+              ]
+            },
+            {
+              "kind": "flipY",
+              "targets": [
+                2,
+                3
+              ]
+            }
+          ],
+          "ui": {
+            "splitMode": "fit"
+          }
+        }
+      }
+    ]
+  },
+  "__propOps": {
+    "ui": {
+      "ruleText": "{\n        \"selector\": {\"circle\":{\"r\":{\"range\":[20,100]}}},\n        \"apply\": {\"stroke\": null}\n        }",
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": []
+  },
+  "__scriptOps": {
+    "ui": {
+      "codeText": "// ctx.root is the <g> subtree being processed\n// ctx.svg is the owning <svg>\n// ctx.create(tag) creates an SVG element\n//\n// Example: circle -> 6-gon (polygon)\n// for (const c of ctx.root.querySelectorAll(\"circle\")) {\n//   const cx = Number(c.getAttribute(\"cx\") || 0);\n//   const cy = Number(c.getAttribute(\"cy\") || 0);\n//   const r = Number(c.getAttribute(\"r\") || 0);\n//   const n = 6;\n//   const pts = Array.from({length:n}, (_,i) => {\n//     const a = (Math.PI*2*i)/n;\n//     return [cx + r*Math.cos(a), cy + r*Math.sin(a)].join(\",\");\n//   }).join(\" \");\n//   const p = ctx.create(\"polygon\");\n//   p.setAttribute(\"points\", pts);\n//   for (const {name,value} of Array.from(c.attributes)) {\n//     if (name === \"cx\" || name === \"cy\" || name === \"r\") continue;\n//     p.setAttribute(name, value);\n//   }\n//   c.replaceWith(p);\n// }",
+      "fileName": "",
+      "selectedCacheKey": "",
+      "autoRunSelected": false,
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": [],
+    "cache": {}
+  }
+}

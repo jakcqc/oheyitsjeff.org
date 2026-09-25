@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "name": "Life Without Its Zeros",
+  "stages": [
+    {
+      "id": "stage-mues67b2-g2tvbg5",
+      "kind": "effect",
+      "label": "rect becomes circle",
+      "enabled": true,
+      "config": {
+        "effectType": "convert",
+        "selector": "rect",
+        "convertFrom": "rect",
+        "convertTo": "circle",
+        "pathSamplePoints": 24,
+        "convertScaleMode": "center",
+        "convertScaleFactor": 0.72
+      }
+    },
+    {
+      "id": "stage-mues67b2-rwzv16r",
+      "kind": "effect",
+      "label": "choose ink on circle",
+      "enabled": true,
+      "config": {
+        "effectType": "paint",
+        "selector": "circle",
+        "paintFill": "none",
+        "paintStroke": "#111111"
+      }
+    },
+    {
+      "id": "stage-mues67b2-3oncxnm",
+      "kind": "effect",
+      "label": "normal spline differential",
+      "enabled": true,
+      "config": {
+        "effectType": "splineLines",
+        "splineSource": "circle",
+        "splineSelector": "circle",
+        "splinePointCount": 10,
+        "splineStepsPerSegment": 3,
+        "splineTension": 0.15,
+        "splineLineOrientation": "normal",
+        "splineLineHeight": 31,
+        "splineLineScale": 1,
+        "splineStrokeWidth": 0.62,
+        "splineScaleMode": "none",
+        "splineScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues67b2-ak3d1ln",
+      "kind": "effect",
+      "label": "monochrome luminance palette",
+      "enabled": true,
+      "config": {
+        "effectType": "color",
+        "color": {
+          "selector": "*",
+          "sourceProp": "each",
+          "targetProp": "both",
+          "mode": "byLuminance",
+          "colorSort": "luminance",
+          "paletteText": "#080808, #808080",
+          "paletteSteps": 48,
+          "useComputed": true,
+          "skipNone": true
+        }
+      }
+    },
+    {
+      "id": "stage-mues67b2-mj3mnoo",
+      "kind": "transform",
+      "label": "small final affine change",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": 2.8
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.96
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "title": "Sevenfold Differential Reliquary",
+  "source": "InnerLight/index.js",
+  "visualId": "innerLight",
+  "seed": 925318,
+  "frames": 0,
+  "algebra": {
+    "expression": "A = T[-3.4deg,1.02] B_tangent[28,3,173] K_area(Q_7^146)",
+    "interpretation": "A nested seven-sided family becomes the carrier of a tangential line field. Color records enclosed area, while spline overshoot and long tangents turn the concentric construction into a luminous sevenfold instrument.",
+    "order": "Read operators right to left; tool flow arrays execute top to bottom. P changes paint, C changes shape, K maps colors, H creates concentric scale copies, N samples normal marks, B samples tangent or vertical marks, T is a small affine transform."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebra-sevenfold-differential-reliquary.flow.json",
+  "nativeSettings": "../settings/algebra-sevenfold-differential-reliquary.json",
+  "observedStages": [
+    {
+      "label": "palette as ordered spectrum",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 146,
+      "afterShapes": 146,
+      "messages": [
+        "color applied: 146 elements, 48 mapped colors."
+      ]
+    },
+    {
+      "label": "tangent spline differential",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 146,
+      "afterShapes": 12410,
+      "messages": [
+        "spline lines applied: 146 shapes, 12410 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "small final affine change",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 12410,
+      "afterShapes": 12410,
+      "messages": []
+    }
+  ]
+}

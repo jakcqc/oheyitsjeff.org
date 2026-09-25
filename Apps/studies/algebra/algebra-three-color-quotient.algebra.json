@@ -1,0 +1,70 @@
+{
+  "title": "Residues of a Three Color Quotient",
+  "source": "MondrianAbstraction/mondrian.js",
+  "visualId": "mondrianAbstraction",
+  "seed": 925316,
+  "frames": 0,
+  "algebra": {
+    "expression": "A = T[-2.4deg] N_even K_index H_[0.32,1.55]^4 P[outline](G)",
+    "interpretation": "Every tile is lifted into four nested scales. Even echoes become normal fields while odd echoes retain closed boundaries, producing a visible alternation between discrete enclosure and differential expansion.",
+    "order": "Read operators right to left; tool flow arrays execute top to bottom. P changes paint, C changes shape, K maps colors, H creates concentric scale copies, N samples normal marks, B samples tangent or vertical marks, T is a small affine transform."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebra-three-color-quotient.flow.json",
+  "nativeSettings": "../settings/algebra-three-color-quotient.json",
+  "observedStages": [
+    {
+      "label": "choose ink on rect",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 130,
+      "afterShapes": 130,
+      "messages": [
+        "paint applied: 130 elements."
+      ]
+    },
+    {
+      "label": "nested homothetic echoes",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 130,
+      "afterShapes": 520,
+      "messages": [
+        "scale applied: 130 groups, 520 clones."
+      ]
+    },
+    {
+      "label": "palette as ordered spectrum",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 520,
+      "afterShapes": 520,
+      "messages": [
+        "color applied: 520 elements, 48 mapped colors."
+      ]
+    },
+    {
+      "label": "normal spline differential",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 520,
+      "afterShapes": 6760,
+      "messages": [
+        "spline lines applied: 260 shapes, 6500 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "small final affine change",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 6760,
+      "afterShapes": 6760,
+      "messages": []
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<!-- Copyright (c) 2026 Jeffrey Kerley. SPDX-License-Identifier: LicenseRef-Jeffrey-Kerley-NC-NoAI-1.0 -->
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>imageToSVG</title>
+  <meta name="color-scheme" content="light dark">
+  <meta name="viewport"
+        content="viewport-fit=cover,width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <meta name="description" content="Turn images into editable SVG geometry with 22 conversion methods, continuous line drawings, fine controls, and limited color palettes.">
+  <link rel="icon" type="image/png" href="/assets/icon/jAsset.png"/>
+  <link href="../helper/uiHelper.css" rel="stylesheet">
+  <link href="imageToSVG.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Alata&amp;family=Courier+Prime:wght@700&amp;family=Kosugi+Maru&amp;family=Kumbh+Sans&amp;family=Scheherazade:wght@700&amp;display=swap" rel="stylesheet">
+  <script type="module" src="index.js"></script>
+</head>
+<body>
+  <div id="infoBar">
+    <button id="button-exit" onclick="goTo('../')">X</button>
+    <button id="button-info">INFO</button>
+    imageToSVG
+  </div>
+
+  <div id="config"></div>
+
+  <div id="background">
+    <div id="outer">
+      <div id="vis" aria-label="SVG conversion result"></div>
+    </div>
+  </div>
+</body>
+</html>

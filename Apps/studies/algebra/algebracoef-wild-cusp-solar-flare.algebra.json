@@ -1,0 +1,102 @@
+{
+  "title": "Cusp Solar Flare",
+  "source": "HerwigHauserClassicCollection/HerwigHauserClassicCollection_visual.js",
+  "visualId": "herwigHauserClassicCollection",
+  "seed": 926704,
+  "frames": 0,
+  "algebra": {
+    "edition": "wild",
+    "expression": "A o C o E o N (G)",
+    "convention": "Compose right to left. One composition per app in this batch; no paired variants. Coefficients are concrete native operator parameters.",
+    "coefficients": {
+      "N1": {
+        "splinePointCount": 31,
+        "splineStepsPerSegment": 3,
+        "splineTension": 2.6,
+        "splineAngleOffset": -47,
+        "splineLineHeight": 18,
+        "splineLineScale": 4.2,
+        "splineStrokeWidth": 0.65,
+        "splineScaleFactor": 1
+      },
+      "E2": {
+        "rangeMin": -0.55,
+        "rangeMax": 2.15,
+        "count": 5,
+        "opacityFixed": 0.82,
+        "spacing": "linear",
+        "recurrence": "sum(backward):opacity *0.72"
+      },
+      "C3": {
+        "mapping": "byLuminance",
+        "paletteSteps": 7
+      },
+      "A4": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": 123
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.66
+          }
+        ]
+      }
+    },
+    "interpretation": "Extreme tangent reversal tears alternate algebraic petals into solar flares; uncut paths acquire signed echoes and a luminance-based molten spectrum.",
+    "newCapabilities": [
+      "logarithmic echo spacing",
+      "unclamped spline tension when enabled",
+      "vector angle offset"
+    ],
+    "uniqueness": "This app was not used in the first algebraCOEF batch."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebracoef-wild-cusp-solar-flare.flow.json",
+  "nativeSettings": "../settings/algebracoef-wild-cusp-solar-flare.json",
+  "observedStages": [
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 9,
+      "afterShapes": 381,
+      "messages": [
+        "spline lines applied: 4 shapes, 376 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 381,
+      "afterShapes": 401,
+      "messages": [
+        "scale applied: 5 groups, 25 clones."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 401,
+      "afterShapes": 401,
+      "messages": [
+        "color applied: 401 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 401,
+      "afterShapes": 401,
+      "messages": []
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "name": "City Without Scale",
+  "stages": [
+    {
+      "id": "stage-mues68e0-ugduxlr",
+      "kind": "effect",
+      "label": "E: scale",
+      "enabled": true,
+      "config": {
+        "effectType": "scale",
+        "elementType": "path",
+        "selector": "path:nth-of-type(3n)",
+        "rangeMin": 0.125,
+        "rangeMax": 2.2,
+        "count": 5,
+        "spacing": "logarithmic",
+        "opacityMode": "fixed",
+        "opacityFixed": 0.82,
+        "equation": "sum(forward):opacity *0.76"
+      }
+    },
+    {
+      "id": "stage-mues68e0-yfc19cf",
+      "kind": "effect",
+      "label": "C: color",
+      "enabled": true,
+      "config": {
+        "effectType": "color",
+        "color": {
+          "selector": "path,polygon,circle,rect,line",
+          "sourceProp": "each",
+          "targetProp": "stroke",
+          "mode": "bySize",
+          "colorSort": "appearance",
+          "paletteText": "#50ffe0,#8485ff,#ff59c7,#fff0ac",
+          "paletteSteps": 7,
+          "useComputed": true,
+          "skipNone": true,
+          "sizeSource": "bboxArea",
+          "sizeAttr": "r"
+        }
+      }
+    },
+    {
+      "id": "stage-mues68e0-piaak3q",
+      "kind": "effect",
+      "label": "Q: convert",
+      "enabled": true,
+      "config": {
+        "effectType": "convert",
+        "selector": "path:nth-of-type(5n)",
+        "convertFrom": "path",
+        "convertTo": "polygon",
+        "pathSamplePoints": 8,
+        "convertScaleMode": "center",
+        "convertScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues68e0-yrxcsjp",
+      "kind": "effect",
+      "label": "P: paint",
+      "enabled": true,
+      "config": {
+        "effectType": "paint",
+        "selector": "polygon",
+        "paintStroke": "#ffdb92",
+        "paintFill": "#da528e"
+      }
+    },
+    {
+      "id": "stage-mues68e0-n54f6v5",
+      "kind": "transform",
+      "label": "A: folded presentation",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": -21
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.7
+          },
+          {
+            "kind": "planes3d",
+            "count": 4,
+            "baseScale": 0.5,
+            "scaleStep": 0.17,
+            "offset": {
+              "x": -23,
+              "y": 17
+            },
+            "opacity": 0.8,
+            "opacityFalloff": 0.14
+          }
+        ]
+      }
+    }
+  ]
+}

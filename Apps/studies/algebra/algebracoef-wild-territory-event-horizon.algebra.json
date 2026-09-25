@@ -1,0 +1,137 @@
+{
+  "title": "Territory at the Event Horizon",
+  "source": "Voronoi/voronoi_visual.js",
+  "visualId": "voronoiFluid",
+  "seed": 926715,
+  "frames": 0,
+  "algebra": {
+    "edition": "wild",
+    "expression": "A o C o E o N o Q o P (G)",
+    "convention": "Compose right to left. One composition per app in this batch; no paired variants. Coefficients are concrete native operator parameters.",
+    "coefficients": {
+      "P1": {},
+      "Q2": {
+        "pathSamplePoints": 9,
+        "convertScaleFactor": 1
+      },
+      "N3": {
+        "splinePointCount": 9,
+        "splineStepsPerSegment": 3,
+        "splineTension": -1.4,
+        "splineAngleOffset": 137.507,
+        "splineLineHeight": 8,
+        "splineLineScale": 7.7,
+        "splineStrokeWidth": 0.65,
+        "splineScaleFactor": 1
+      },
+      "E4": {
+        "rangeMin": 0.2,
+        "rangeMax": 1.8,
+        "count": 4,
+        "opacityFixed": 0.82,
+        "spacing": "logarithmic",
+        "recurrence": "sum(backward):opacity *0.72"
+      },
+      "C5": {
+        "mapping": "bySize",
+        "paletteSteps": 7
+      },
+      "A6": {
+        "stack": [
+          {
+            "kind": "zoom",
+            "factor": 0.72
+          },
+          {
+            "kind": "planes3d",
+            "count": 2,
+            "baseScale": 0.8,
+            "scaleStep": 0.17,
+            "offset": {
+              "x": 34,
+              "y": -29
+            },
+            "opacity": 0.8,
+            "opacityFalloff": 0.14
+          }
+        ]
+      }
+    },
+    "interpretation": "Cells gathered along two irrational spirals become coarse polygon glyphs and stretched vectors. Logarithmic ghosts and two offset planes make territory drift across its own boundary.",
+    "newCapabilities": [
+      "logarithmic echo spacing",
+      "unclamped spline tension when enabled",
+      "vector angle offset"
+    ],
+    "uniqueness": "This app was not used in the first algebraCOEF batch."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebracoef-wild-territory-event-horizon.flow.json",
+  "nativeSettings": "../settings/algebracoef-wild-territory-event-horizon.json",
+  "observedStages": [
+    {
+      "label": "P: paint",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 450,
+      "afterShapes": 450,
+      "messages": [
+        "paint applied: 450 elements."
+      ]
+    },
+    {
+      "label": "Q: convert",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 450,
+      "afterShapes": 450,
+      "messages": [
+        "convert applied: 90 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 450,
+      "afterShapes": 2880,
+      "messages": [
+        "spline lines applied: 90 shapes, 2520 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 2880,
+      "afterShapes": 3033,
+      "messages": [
+        "scale applied: 51 groups, 204 clones."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 3033,
+      "afterShapes": 3033,
+      "messages": [
+        "color applied: 3033 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 3033,
+      "afterShapes": 9099,
+      "messages": []
+    }
+  ]
+}

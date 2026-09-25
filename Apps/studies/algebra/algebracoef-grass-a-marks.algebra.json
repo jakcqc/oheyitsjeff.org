@@ -1,0 +1,241 @@
+{
+  "title": "Grass Tangent Fields A - Mark Color",
+  "source": "ProceduralGrass/ProceduralGrass_visual.js",
+  "visualId": "proceduralGrassField",
+  "seed": 378521121,
+  "frames": 0,
+  "randomization": {
+    "version": 1,
+    "algorithm": "mulberry32-v1",
+    "seed": 493244659,
+    "operation": "R_seed(p): randomize starting native parameters before G renders and before any algebra flow",
+    "samples": [
+      {
+        "path": "seed",
+        "op": "integer",
+        "min": 1,
+        "max": 999999,
+        "before": 925405,
+        "value": 796678
+      },
+      {
+        "path": "distribution",
+        "op": "choice",
+        "values": [
+          "uniform",
+          "clumps",
+          "oval",
+          "rows",
+          "radial"
+        ],
+        "before": "clumps",
+        "value": "clumps"
+      },
+      {
+        "path": "density",
+        "op": "integer",
+        "min": 105,
+        "max": 245,
+        "before": 160,
+        "value": 112
+      },
+      {
+        "path": "bladeHeight",
+        "op": "multiply",
+        "min": 0.35,
+        "max": 1.18,
+        "before": 150,
+        "value": 162.3958
+      },
+      {
+        "path": "bladeWidth",
+        "op": "uniform",
+        "min": 2.5,
+        "max": 13,
+        "before": 9,
+        "value": 6.0071
+      },
+      {
+        "path": "taper",
+        "op": "uniform",
+        "min": 0.3,
+        "max": 2.6,
+        "before": 0.3,
+        "value": 2.1566
+      },
+      {
+        "path": "clumpCount",
+        "op": "integer",
+        "min": 5,
+        "max": 45,
+        "before": 37,
+        "value": 23
+      },
+      {
+        "path": "clumpRadius",
+        "op": "uniform",
+        "min": 0.04,
+        "max": 0.18,
+        "before": 0.06,
+        "value": 0.135
+      },
+      {
+        "path": "bend",
+        "op": "uniform",
+        "min": 0.2,
+        "max": 1.65,
+        "before": 1.5,
+        "value": 0.6436
+      },
+      {
+        "path": "windStrength",
+        "op": "uniform",
+        "min": 0.2,
+        "max": 1.4,
+        "before": 1.15,
+        "value": 0.4813
+      },
+      {
+        "path": "windDirection",
+        "op": "integer",
+        "min": 0,
+        "max": 359,
+        "before": 218,
+        "value": 337
+      },
+      {
+        "path": "windPhase",
+        "op": "uniform",
+        "min": 0,
+        "max": 1,
+        "before": 0.38,
+        "value": 0.5121
+      },
+      {
+        "path": "viewTilt",
+        "op": "integer",
+        "min": 8,
+        "max": 65,
+        "before": 54,
+        "value": 54
+      },
+      {
+        "path": "viewYaw",
+        "op": "integer",
+        "min": 0,
+        "max": 359,
+        "before": 24,
+        "value": 311
+      },
+      {
+        "path": "perspective",
+        "op": "uniform",
+        "min": 0.1,
+        "max": 0.7,
+        "before": 0.64,
+        "value": 0.4784
+      }
+    ]
+  },
+  "startingStateSha256": "8f2a94007af0904097e54e6d34a9d610f0ed1bcd84fc3388390a56da7b1e24bc",
+  "startingSvgSha256": "fec29f072bbeeafe16bc4604d81d8ea0e7bca553a18bd32cccbe81f340103666",
+  "algebra": {
+    "expression": "A^2 o C o N2[beta] o N1[alpha] o E[lambda,k] o B (G(R_seed(p), s, f))",
+    "convention": "Compose right to left. B is the ordered native preparation plus the optional property prefix. Coefficients parameterize operators; they are not scalar multiplication of SVGs.",
+    "coefficients": {
+      "alpha": 0.65,
+      "beta": 1.35,
+      "lambda": 0.62,
+      "echoMax": 1.25,
+      "k": 2,
+      "affineRepeat": 2,
+      "rotationDeg": 1.4,
+      "zoom": 0.98
+    },
+    "pairId": "algebracoef-grass-a",
+    "companionSlug": "algebracoef-grass-a-source",
+    "orderLabel": "marks",
+    "controlledVariables": [
+      "Source parameters, seed, frame count, canvas, coefficients, preparation and affine stack are identical within each pair.",
+      "Only C moves across the two spline stages."
+    ],
+    "repetition": "N1 samples even siblings; N2 samples the remaining eligible sources. Native guards exclude N1-generated lines. Affine powers expand inside one stack because separate transform stages replace the stack.",
+    "startingOperation": "R_seed(p): seeded parameter randomization before the native generator G; fixed within each order pair."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebracoef-grass-a-marks.flow.json",
+  "nativeSettings": "../settings/algebracoef-grass-a-marks.json",
+  "observedStages": [
+    {
+      "label": "Suppress ground and shadow support",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 204,
+      "afterShapes": 204,
+      "messages": [
+        "paint applied: 56 elements."
+      ]
+    },
+    {
+      "label": "E: 2 echoes, scale 0.62 to 1.25",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 204,
+      "afterShapes": 316,
+      "messages": [
+        "scale applied: 112 groups, 224 clones."
+      ]
+    },
+    {
+      "label": "N1: normal vectors, coefficient 0.65",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 316,
+      "afterShapes": 3004,
+      "messages": [
+        "spline lines applied: 112 shapes, 2800 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "N2: tangent vectors, coefficient 1.35",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 3004,
+      "afterShapes": 5692,
+      "messages": [
+        "spline lines applied: 112 shapes, 2800 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "C: enumerate current marks through four colors",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 5692,
+      "afterShapes": 5692,
+      "messages": [
+        "color applied: 5600 elements, 4 mapped colors."
+      ]
+    },
+    {
+      "label": "A^2: repeated rotation and contraction",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 5692,
+      "afterShapes": 5692,
+      "messages": []
+    }
+  ],
+  "orderComparison": {
+    "pair": "algebracoef-grass-a",
+    "geometrySha256": "f0be2b80af9210bb28bd139f7177627b6e96d1863d66d7824413208fb1f5811d",
+    "lines": 5636,
+    "changedLineStrokes": 4032,
+    "changedPercent": 71.54
+  }
+}

@@ -1,0 +1,243 @@
+{
+  "bandCount": 17,
+  "bandWidth": 0.25,
+  "bandJitter": 170,
+  "amplitude": 670,
+  "frequency": 23.9,
+  "noise": 0.1,
+  "detail": 0.5,
+  "swirlCount": 13,
+  "swirlStrength": -7.2,
+  "swirlRadius": 610,
+  "strokeOpacity": 0.55,
+  "strokeMode": true,
+  "strokeColor": "#f2f2f2",
+  "seed": 926708,
+  "palette": "rose",
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0,
+      "preset": "",
+      "splitMode": "screen",
+      "applyToAll": false,
+      "tileTargets": "0",
+      "zoomFactor": 1.25,
+      "matrix": {
+        "a": 1,
+        "b": 0,
+        "c": 0,
+        "d": 1,
+        "e": 0,
+        "f": 0
+      },
+      "zoomCenter": {
+        "x": null,
+        "y": null
+      },
+      "translateVec": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCount": 3,
+      "planeBaseScale": 1,
+      "planeScaleStep": -0.12,
+      "planeOpacity": 0.7,
+      "planeOpacityFalloff": 0.12,
+      "planeOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCenter": {
+        "x": null,
+        "y": null
+      },
+      "groupOpen": {}
+    },
+    "stack": [
+      {
+        "kind": "rotate",
+        "deg": 68
+      },
+      {
+        "kind": "zoom",
+        "factor": 0.68
+      }
+    ]
+  },
+  "__ui": {
+    "tabsOpen": true,
+    "activeTab": "params",
+    "paramGroups": {
+      "System": false,
+      "Structure": false,
+      "Styling": true,
+      "Flow": true
+    },
+    "collapseParamsByDefault": true,
+    "ioOpen": true,
+    "configPinned": true,
+    "navHidden": false
+  },
+  "__propOps": {
+    "ui": {
+      "ruleText": "{\n        \"selector\": {\"circle\":{\"r\":{\"range\":[20,100]}}},\n        \"apply\": {\"stroke\": null}\n        }",
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": []
+  },
+  "__scriptOps": {
+    "ui": {
+      "codeText": "// ctx.root is the <g> subtree being processed\n// ctx.svg is the owning <svg>\n// ctx.create(tag) creates an SVG element\n//\n// Example: circle -> 6-gon (polygon)\n// for (const c of ctx.root.querySelectorAll(\"circle\")) {\n//   const cx = Number(c.getAttribute(\"cx\") || 0);\n//   const cy = Number(c.getAttribute(\"cy\") || 0);\n//   const r = Number(c.getAttribute(\"r\") || 0);\n//   const n = 6;\n//   const pts = Array.from({length:n}, (_,i) => {\n//     const a = (Math.PI*2*i)/n;\n//     return [cx + r*Math.cos(a), cy + r*Math.sin(a)].join(\",\");\n//   }).join(\" \");\n//   const p = ctx.create(\"polygon\");\n//   p.setAttribute(\"points\", pts);\n//   for (const {name,value} of Array.from(c.attributes)) {\n//     if (name === \"cx\" || name === \"cy\" || name === \"r\") continue;\n//     p.setAttribute(name, value);\n//   }\n//   c.replaceWith(p);\n// }",
+      "fileName": "",
+      "selectedCacheKey": "",
+      "autoRunSelected": false,
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": [],
+    "cache": {}
+  },
+  "__anim": {
+    "ui": {
+      "targetType": "params",
+      "paramTargets": [
+        {
+          "key": "bandCount",
+          "from": 10,
+          "to": 800
+        },
+        {
+          "key": "bandWidth",
+          "from": 1,
+          "to": 20
+        }
+      ],
+      "paramKey": "",
+      "selector": "svg",
+      "svgKind": "attr",
+      "svgName": "opacity",
+      "durationSec": 7,
+      "fps": 24,
+      "easing": "linear",
+      "loop": true,
+      "yoyo": false,
+      "progress01": 1,
+      "autoFromCurrent": false,
+      "snapToEndOnStop": true,
+      "autoPlay": true
+    }
+  },
+  "usePreset": false,
+  "presetSvg": "",
+  "__toolFlows": {
+    "ui": {
+      "flowName": "Strata With a Pulse",
+      "selectedId": "builtin-grayscale",
+      "autoRun": true,
+      "groupsOpen": {}
+    },
+    "stages": [
+      {
+        "id": "stage-mues68dw-ncxynq1",
+        "kind": "effect",
+        "label": "Q: convert",
+        "enabled": true,
+        "config": {
+          "effectType": "convert",
+          "selector": "path:nth-of-type(3n)",
+          "convertFrom": "path",
+          "convertTo": "polygon",
+          "pathSamplePoints": 13,
+          "convertScaleMode": "center",
+          "convertScaleFactor": 1
+        }
+      },
+      {
+        "id": "stage-mues68dw-h0wt6sb",
+        "kind": "effect",
+        "label": "N: splineLines",
+        "enabled": true,
+        "config": {
+          "effectType": "splineLines",
+          "splineSource": "polygon",
+          "splineSelector": "polygon",
+          "splinePointCount": 13,
+          "splineStepsPerSegment": 4,
+          "splineTension": 3.3,
+          "splineExtrapolateTension": true,
+          "splineAngleOffset": 67,
+          "splineLineOrientation": "vertical",
+          "splineLineHeight": 46,
+          "splineLineScale": 4.7,
+          "splineStrokeWidth": 0.65,
+          "splineScaleMode": "none",
+          "splineScaleFactor": 1
+        }
+      },
+      {
+        "id": "stage-mues68dw-xy1r30h",
+        "kind": "effect",
+        "label": "E: scale",
+        "enabled": true,
+        "config": {
+          "effectType": "scale",
+          "elementType": "path",
+          "selector": "path:nth-of-type(2n)",
+          "rangeMin": 0.2,
+          "rangeMax": 1.8,
+          "count": 4,
+          "spacing": "logarithmic",
+          "opacityMode": "fixed",
+          "opacityFixed": 0.82,
+          "equation": "sum(backward):opacity *0.72"
+        }
+      },
+      {
+        "id": "stage-mues68dw-wx7x2ha",
+        "kind": "effect",
+        "label": "C: color",
+        "enabled": true,
+        "config": {
+          "effectType": "color",
+          "color": {
+            "selector": "path,polygon,circle,rect,line",
+            "sourceProp": "each",
+            "targetProp": "both",
+            "mode": "bySize",
+            "colorSort": "appearance",
+            "paletteText": "#481778,#ef3b56,#ffa32d,#f6ffb4",
+            "paletteSteps": 7,
+            "useComputed": true,
+            "skipNone": true,
+            "sizeSource": "bboxArea",
+            "sizeAttr": "r"
+          }
+        }
+      },
+      {
+        "id": "stage-mues68dw-sqko2l4",
+        "kind": "transform",
+        "label": "A: folded presentation",
+        "enabled": true,
+        "config": {
+          "stack": [
+            {
+              "kind": "rotate",
+              "deg": 68
+            },
+            {
+              "kind": "zoom",
+              "factor": 0.68
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

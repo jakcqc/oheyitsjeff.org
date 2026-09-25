@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "name": "Needle Frequency Altar",
+  "stages": [
+    {
+      "id": "stage-mues68e4-17bedyp",
+      "kind": "effect",
+      "label": "E: scale",
+      "enabled": true,
+      "config": {
+        "effectType": "scale",
+        "elementType": "rect",
+        "selector": "rect:nth-of-type(13n)",
+        "rangeMin": 0.4,
+        "rangeMax": 2.4,
+        "count": 4,
+        "spacing": "linear",
+        "opacityMode": "fixed",
+        "opacityFixed": 0.82,
+        "equation": "sum(backward):opacity *0.72"
+      }
+    },
+    {
+      "id": "stage-mues68e4-uyeabqh",
+      "kind": "effect",
+      "label": "F: functionRects",
+      "enabled": true,
+      "config": {
+        "effectType": "functionRects",
+        "fnCode": "({t,bounds}) => { const a=t*2*Math.PI; const r=(0.24+0.12*Math.cos(11*a))*Math.min(bounds.w,bounds.h); return {x:bounds.cx+r*Math.cos(a),y:bounds.cy+r*Math.sin(a),width:2+18*Math.pow(Math.sin(17*a),2),height:2+5*Math.pow(Math.cos(7*a),2),angle:t*1375.07,opacity:0.78}; }",
+        "fnSampleCount": 377,
+        "fnOrientMode": "function",
+        "fnRectFill": "none",
+        "fnRectStroke": "#142b66",
+        "fnRectStrokeWidth": 0.9
+      }
+    },
+    {
+      "id": "stage-mues68e4-c98jf8j",
+      "kind": "effect",
+      "label": "C: color",
+      "enabled": true,
+      "config": {
+        "effectType": "color",
+        "color": {
+          "selector": "path,polygon,circle,rect,line",
+          "sourceProp": "each",
+          "targetProp": "stroke",
+          "mode": "byIndex",
+          "colorSort": "appearance",
+          "paletteText": "#291445,#ab2554,#117f8c,#d98117",
+          "paletteSteps": 7,
+          "useComputed": true,
+          "skipNone": true,
+          "sizeSource": "bboxArea",
+          "sizeAttr": "r"
+        }
+      }
+    },
+    {
+      "id": "stage-mues68e4-i96diho",
+      "kind": "transform",
+      "label": "A: folded presentation",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": -33
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.85
+          }
+        ]
+      }
+    }
+  ]
+}

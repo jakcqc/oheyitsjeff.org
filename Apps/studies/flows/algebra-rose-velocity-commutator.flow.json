@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "name": "Rose Velocity Commutator",
+  "stages": [
+    {
+      "id": "stage-mues67dr-nibwuf2",
+      "kind": "effect",
+      "label": "Encode band order before subdivision",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "color",
+        "color": {
+          "selector": "path",
+          "sourceProp": "stroke",
+          "targetProp": "stroke",
+          "mode": "byIndex",
+          "colorSort": "appearance",
+          "paletteText": "#ec5479,#ffa668,#ffe6bb,#824fcd",
+          "paletteSteps": 28,
+          "useComputed": true,
+          "skipNone": true
+        }
+      }
+    },
+    {
+      "id": "stage-mues67dr-y44puu3",
+      "kind": "effect",
+      "label": "Replace odd bands with normal velocity strokes",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "splineLines",
+        "splineSource": "path",
+        "splineSelector": "path:nth-of-type(2n+1)",
+        "splinePointCount": 72,
+        "splineStepsPerSegment": 4,
+        "splineTension": 0.32,
+        "splineLineOrientation": "normal",
+        "splineLineHeight": 51,
+        "splineLineScale": 1.1,
+        "splineStrokeWidth": 0.9
+      }
+    },
+    {
+      "id": "stage-mues67dr-fzpcbuz",
+      "kind": "effect",
+      "label": "Re-index one quarter of the newly emitted strokes",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "color",
+        "color": {
+          "selector": "line:nth-of-type(4n)",
+          "sourceProp": "stroke",
+          "targetProp": "stroke",
+          "mode": "byIndex",
+          "colorSort": "appearance",
+          "paletteText": "#49d8dc,#e8eac2",
+          "paletteSteps": 17,
+          "useComputed": true,
+          "skipNone": true
+        }
+      }
+    },
+    {
+      "id": "stage-mues67dr-j0brtix",
+      "kind": "transform",
+      "label": "Small differential shear",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "matrix",
+            "m": [
+              1,
+              0.018,
+              -0.052,
+              1,
+              36,
+              -14
+            ]
+          }
+        ],
+        "ui": {
+          "splitMode": "fit"
+        }
+      }
+    }
+  ]
+}

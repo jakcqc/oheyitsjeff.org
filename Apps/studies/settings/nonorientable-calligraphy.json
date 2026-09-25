@@ -1,0 +1,21 @@
+{
+  "lobes": 1,
+  "twist": 4.7,
+  "ribbonWidth": 58,
+  "detail": 2400,
+  "layers": 3,
+  "layerSpread": 0.63,
+  "fitMode": "stretch",
+  "padding": 110,
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0
+    },
+    "stack": []
+  }
+}

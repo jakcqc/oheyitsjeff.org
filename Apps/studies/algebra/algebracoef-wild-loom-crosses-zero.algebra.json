@@ -1,0 +1,131 @@
+{
+  "title": "The Loom Crosses Zero",
+  "source": "QuasicrystallineWickerwork/QuasicrystallineWickerwork_visual.js",
+  "visualId": "quasicrystallineWickerwork",
+  "seed": 926711,
+  "frames": 0,
+  "algebra": {
+    "edition": "wild",
+    "expression": "A o C o N o Q o E (G)",
+    "convention": "Compose right to left. One composition per app in this batch; no paired variants. Coefficients are concrete native operator parameters.",
+    "coefficients": {
+      "E1": {
+        "rangeMin": -2.4,
+        "rangeMax": 2,
+        "count": 6,
+        "opacityFixed": 0.82,
+        "spacing": "linear",
+        "recurrence": "sum(backward):opacity *0.72"
+      },
+      "Q2": {
+        "pathSamplePoints": 17,
+        "convertScaleFactor": 1
+      },
+      "N3": {
+        "splinePointCount": 17,
+        "splineStepsPerSegment": 3,
+        "splineTension": 1.9,
+        "splineAngleOffset": 83,
+        "splineLineHeight": 24,
+        "splineLineScale": 2.2,
+        "splineStrokeWidth": 0.65,
+        "splineScaleFactor": 1
+      },
+      "C4": {
+        "mapping": "byIndex",
+        "paletteSteps": 7
+      },
+      "A5": {
+        "stack": [
+          {
+            "kind": "split",
+            "count": 4
+          },
+          {
+            "kind": "flipX",
+            "targets": [
+              1,
+              3
+            ]
+          },
+          {
+            "kind": "flipY",
+            "targets": [
+              2,
+              3
+            ]
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.81
+          }
+        ]
+      }
+    },
+    "interpretation": "A golden-ratio weave folds through signed scale, then selected threads become low-resolution boundaries and slanted needles. Four reflections create incompatible weave directions.",
+    "newCapabilities": [
+      "logarithmic echo spacing",
+      "unclamped spline tension when enabled",
+      "vector angle offset"
+    ],
+    "uniqueness": "This app was not used in the first algebraCOEF batch."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebracoef-wild-loom-crosses-zero.flow.json",
+  "nativeSettings": "../settings/algebracoef-wild-loom-crosses-zero.json",
+  "observedStages": [
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 92,
+      "afterShapes": 207,
+      "messages": [
+        "scale applied: 23 groups, 138 clones."
+      ]
+    },
+    {
+      "label": "Q: convert",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 207,
+      "afterShapes": 207,
+      "messages": [
+        "convert applied: 9 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 207,
+      "afterShapes": 666,
+      "messages": [
+        "spline lines applied: 9 shapes, 468 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 666,
+      "afterShapes": 666,
+      "messages": [
+        "color applied: 666 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 666,
+      "afterShapes": 3330,
+      "messages": []
+    }
+  ]
+}

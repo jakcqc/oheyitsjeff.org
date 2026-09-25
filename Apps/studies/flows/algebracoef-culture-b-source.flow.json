@@ -1,0 +1,133 @@
+{
+  "schemaVersion": 1,
+  "name": "Culture Derivatives B - Source Color",
+  "stages": [
+    {
+      "id": "stage-mvheo1dx-wxoynsl",
+      "kind": "effect",
+      "label": "Extract contour boundaries from concentration bands",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "paint",
+        "elementType": "path",
+        "selector": "path",
+        "paintFill": "none",
+        "paintStroke": "#a7cee8"
+      }
+    },
+    {
+      "id": "stage-mvheo1dx-bs80rv0",
+      "kind": "effect",
+      "label": "E: 3 echoes, scale 0.83 to 1.25",
+      "enabled": true,
+      "config": {
+        "effectType": "scale",
+        "selector": "path",
+        "elementType": "path",
+        "rangeMin": 0.83,
+        "rangeMax": 1.25,
+        "count": 3,
+        "spacing": "linear",
+        "opacityMode": "fixed",
+        "opacityFixed": 0.72,
+        "equation": ""
+      }
+    },
+    {
+      "id": "stage-mvheo1dx-qvnebvr",
+      "kind": "effect",
+      "label": "C: enumerate current marks through four colors",
+      "enabled": true,
+      "config": {
+        "effectType": "color",
+        "color": {
+          "selector": "path,line[data-spline-lines-run]",
+          "sourceProp": "stroke",
+          "targetProp": "stroke",
+          "mode": "byIndex",
+          "colorSort": "appearance",
+          "paletteText": "#67dbd2,#7686ec,#ed85b2,#ffcd83",
+          "paletteSteps": 0,
+          "useComputed": true,
+          "skipNone": true
+        }
+      }
+    },
+    {
+      "id": "stage-mvheo1dx-qy40bcd",
+      "kind": "effect",
+      "label": "N1: normal vectors, coefficient 1.45",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "splineLines",
+        "splineSource": "path",
+        "splineSelector": "path:nth-of-type(2n)",
+        "splinePointCount": 32,
+        "splineStepsPerSegment": 2,
+        "splineTension": 0.2,
+        "splineLineOrientation": "normal",
+        "splineLineHeight": 5.5,
+        "splineLineScale": 1.45,
+        "splineStrokeWidth": 0.3
+      }
+    },
+    {
+      "id": "stage-mvheo1dx-kcdv1m7",
+      "kind": "effect",
+      "label": "N2: tangent vectors, coefficient 0.8",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "splineLines",
+        "splineSource": "path",
+        "splineSelector": "path",
+        "splinePointCount": 32,
+        "splineStepsPerSegment": 2,
+        "splineTension": 0.2,
+        "splineLineOrientation": "tangent",
+        "splineLineHeight": 5.5,
+        "splineLineScale": 0.8,
+        "splineStrokeWidth": 0.3
+      }
+    },
+    {
+      "id": "stage-mvheo1dx-0dh8ccq",
+      "kind": "transform",
+      "label": "A^3: repeated rotation and contraction",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": -1.7
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.98
+          },
+          {
+            "kind": "rotate",
+            "deg": -1.7
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.98
+          },
+          {
+            "kind": "rotate",
+            "deg": -1.7
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.98
+          }
+        ]
+      }
+    }
+  ]
+}

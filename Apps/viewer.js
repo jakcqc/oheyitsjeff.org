@@ -11,9 +11,10 @@
 import { mountDirectory } from './directory.js';
 import { loadVisualCatalog } from '../helper/galleryRegistry.js';
 import { createAppSearch } from './search.js';
+import { createViewSelector as defaultViewSelector } from './viewSelector.js';
 
 // Shared by /Apps/ and the mobile gallery landing pages.
-export function mountAppsViewer(container, { onBubbles } = {}) {
+export function mountAppsViewer(container, { onBubbles, createViewSelector = defaultViewSelector } = {}) {
   const root = document.createElement('section');
   root.className = 'apps-viewer';
   root.innerHTML = `
@@ -42,6 +43,7 @@ export function mountAppsViewer(container, { onBubbles } = {}) {
   const loadMore = root.querySelector('.load-more');
   const retry = root.querySelector('.retry');
   const form = root.querySelector('.directory-search');
+  form.append(createViewSelector('apps'));
   const searchInput = form.querySelector('input');
   const clearSearch = form.querySelector('button');
   let directory;

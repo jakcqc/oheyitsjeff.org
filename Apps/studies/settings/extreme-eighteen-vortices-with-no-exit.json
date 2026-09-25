@@ -1,0 +1,209 @@
+{
+  "bandCount": 12,
+  "bandWidth": 0.25,
+  "bandJitter": 170,
+  "amplitude": 540,
+  "frequency": 19.7,
+  "noise": 0.1,
+  "detail": 0.5,
+  "swirlCount": 18,
+  "swirlStrength": 5.7,
+  "swirlRadius": 610,
+  "strokeOpacity": 0.55,
+  "strokeMode": false,
+  "strokeColor": "#f2f2f2",
+  "seed": 924219,
+  "palette": "rose",
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0,
+      "preset": "",
+      "splitMode": "fit",
+      "applyToAll": false,
+      "tileTargets": "0",
+      "zoomFactor": 1.25,
+      "matrix": {
+        "a": 1,
+        "b": 0,
+        "c": 0,
+        "d": 1,
+        "e": 0,
+        "f": 0
+      },
+      "zoomCenter": {
+        "x": null,
+        "y": null
+      },
+      "translateVec": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCount": 3,
+      "planeBaseScale": 1,
+      "planeScaleStep": -0.12,
+      "planeOpacity": 0.7,
+      "planeOpacityFalloff": 0.12,
+      "planeOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCenter": {
+        "x": null,
+        "y": null
+      },
+      "groupOpen": {}
+    },
+    "stack": [
+      {
+        "kind": "split",
+        "count": 4
+      },
+      {
+        "kind": "flipX",
+        "targets": [
+          1,
+          3
+        ]
+      },
+      {
+        "kind": "flipY",
+        "targets": [
+          2,
+          3
+        ]
+      }
+    ]
+  },
+  "__ui": {
+    "tabsOpen": true,
+    "activeTab": "params",
+    "paramGroups": {
+      "System": false,
+      "Structure": false,
+      "Styling": true,
+      "Flow": true
+    },
+    "collapseParamsByDefault": true,
+    "ioOpen": true,
+    "configPinned": true,
+    "navHidden": false
+  },
+  "__propOps": {
+    "ui": {
+      "ruleText": "{\n        \"selector\": {\"circle\":{\"r\":{\"range\":[20,100]}}},\n        \"apply\": {\"stroke\": null}\n        }",
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": []
+  },
+  "__scriptOps": {
+    "ui": {
+      "codeText": "// ctx.root is the <g> subtree being processed\n// ctx.svg is the owning <svg>\n// ctx.create(tag) creates an SVG element\n//\n// Example: circle -> 6-gon (polygon)\n// for (const c of ctx.root.querySelectorAll(\"circle\")) {\n//   const cx = Number(c.getAttribute(\"cx\") || 0);\n//   const cy = Number(c.getAttribute(\"cy\") || 0);\n//   const r = Number(c.getAttribute(\"r\") || 0);\n//   const n = 6;\n//   const pts = Array.from({length:n}, (_,i) => {\n//     const a = (Math.PI*2*i)/n;\n//     return [cx + r*Math.cos(a), cy + r*Math.sin(a)].join(\",\");\n//   }).join(\" \");\n//   const p = ctx.create(\"polygon\");\n//   p.setAttribute(\"points\", pts);\n//   for (const {name,value} of Array.from(c.attributes)) {\n//     if (name === \"cx\" || name === \"cy\" || name === \"r\") continue;\n//     p.setAttribute(name, value);\n//   }\n//   c.replaceWith(p);\n// }",
+      "fileName": "",
+      "selectedCacheKey": "",
+      "autoRunSelected": false,
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": [],
+    "cache": {}
+  },
+  "__anim": {
+    "ui": {
+      "targetType": "params",
+      "paramTargets": [
+        {
+          "key": "bandCount",
+          "from": 10,
+          "to": 800
+        },
+        {
+          "key": "bandWidth",
+          "from": 1,
+          "to": 20
+        }
+      ],
+      "paramKey": "",
+      "selector": "svg",
+      "svgKind": "attr",
+      "svgName": "opacity",
+      "durationSec": 7,
+      "fps": 24,
+      "easing": "linear",
+      "loop": true,
+      "yoyo": false,
+      "progress01": 1,
+      "autoFromCurrent": false,
+      "snapToEndOnStop": true,
+      "autoPlay": true
+    }
+  },
+  "usePreset": false,
+  "presetSvg": "",
+  "__toolFlows": {
+    "ui": {
+      "flowName": "Eighteen Vortices With No Exit",
+      "selectedId": "builtin-grayscale",
+      "autoRun": true,
+      "groupsOpen": {}
+    },
+    "stages": [
+      {
+        "id": "stage-mues66gr-avctr5i",
+        "kind": "effect",
+        "label": "Normal spline bristles",
+        "enabled": true,
+        "config": {
+          "autoRun": false,
+          "debug": false,
+          "effectType": "splineLines",
+          "splineSource": "path",
+          "splineSelector": "path:nth-of-type(3n)",
+          "splinePointCount": 36,
+          "splineStepsPerSegment": 4,
+          "splineTension": 0.36,
+          "splineLineOrientation": "normal",
+          "splineLineHeight": 78,
+          "splineLineScale": 1.8,
+          "splineStrokeWidth": 0.5
+        }
+      },
+      {
+        "id": "stage-mues66gr-8opp3kz",
+        "kind": "transform",
+        "label": "Fourfold turbulence",
+        "enabled": true,
+        "config": {
+          "stack": [
+            {
+              "kind": "split",
+              "count": 4
+            },
+            {
+              "kind": "flipX",
+              "targets": [
+                1,
+                3
+              ]
+            },
+            {
+              "kind": "flipY",
+              "targets": [
+                2,
+                3
+              ]
+            }
+          ],
+          "ui": {
+            "splitMode": "fit"
+          }
+        }
+      }
+    ]
+  }
+}

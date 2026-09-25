@@ -9,6 +9,7 @@
  */
 
 import { runVisualApp } from "../helper/visualHelp.js";
+import { preloadLinkedSettings } from "../helper/linkedSettings.js";
 import "./ProceduralGrass_visual.js";
 
 const PRESETS = {
@@ -175,7 +176,8 @@ function applyPreset(name) {
   start({ ...preset, ...sharedToolState });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  if (!await preloadLinkedSettings("proceduralGrassField")) return;
   start(PRESETS.emeraldNadir);
   document.querySelectorAll("[data-preset]").forEach((button) => {
     button.addEventListener("click", () => applyPreset(button.dataset.preset));

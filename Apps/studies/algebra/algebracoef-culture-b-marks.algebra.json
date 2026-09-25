@@ -1,0 +1,188 @@
+{
+  "title": "Culture Derivatives B - Mark Color",
+  "source": "BacterialConstructs/BacterialConstructs_visual.js",
+  "visualId": "bacterialConstructs",
+  "seed": 2336423685,
+  "frames": 0,
+  "randomization": {
+    "version": 1,
+    "algorithm": "mulberry32-v1",
+    "seed": 2947145065,
+    "operation": "R_seed(p): randomize starting native parameters before G renders and before any algebra flow",
+    "samples": [
+      {
+        "path": "seed",
+        "op": "integer",
+        "min": 1,
+        "max": 999999,
+        "before": 925403,
+        "value": 254266
+      },
+      {
+        "path": "seedCount",
+        "op": "integer",
+        "min": 5,
+        "max": 38,
+        "before": 24,
+        "value": 37
+      },
+      {
+        "path": "steps",
+        "op": "integer",
+        "min": 240,
+        "max": 640,
+        "before": 360,
+        "value": 396
+      },
+      {
+        "path": "resolution",
+        "op": "integer",
+        "min": 80,
+        "max": 130,
+        "before": 100,
+        "value": 92
+      },
+      {
+        "path": "diffusionA",
+        "op": "uniform",
+        "min": 0.65,
+        "max": 1,
+        "before": 1,
+        "value": 0.8516
+      },
+      {
+        "path": "diffusionB",
+        "op": "uniform",
+        "min": 0.24,
+        "max": 0.52,
+        "before": 0.46,
+        "value": 0.3838
+      },
+      {
+        "path": "feed",
+        "op": "uniform",
+        "min": 0.027,
+        "max": 0.039,
+        "before": 0.032,
+        "value": 0.0307
+      },
+      {
+        "path": "kill",
+        "op": "uniform",
+        "min": 0.052,
+        "max": 0.063,
+        "before": 0.057,
+        "value": 0.0548
+      },
+      {
+        "path": "contourLevels",
+        "op": "integer",
+        "min": 8,
+        "max": 16,
+        "before": 12,
+        "value": 11
+      }
+    ]
+  },
+  "startingStateSha256": "597c9336147fa51f1192082cdbcfaf9dd358b075ef1e130d61f8e300547948d4",
+  "startingSvgSha256": "8410537e025efbd7af48a9719e7ef1d14ba6736de9b5094d35547f1cbd5bf011",
+  "algebra": {
+    "expression": "A^3 o C o N2[beta] o N1[alpha] o E[lambda,k] o B (G(R_seed(p), s, f))",
+    "convention": "Compose right to left. B is the ordered native preparation plus the optional property prefix. Coefficients parameterize operators; they are not scalar multiplication of SVGs.",
+    "coefficients": {
+      "alpha": 1.45,
+      "beta": 0.8,
+      "lambda": 0.83,
+      "echoMax": 1.25,
+      "k": 3,
+      "affineRepeat": 3,
+      "rotationDeg": -1.7,
+      "zoom": 0.98
+    },
+    "pairId": "algebracoef-culture-b",
+    "companionSlug": "algebracoef-culture-b-source",
+    "orderLabel": "marks",
+    "controlledVariables": [
+      "Source parameters, seed, frame count, canvas, coefficients, preparation and affine stack are identical within each pair.",
+      "Only C moves across the two spline stages."
+    ],
+    "repetition": "N1 samples even siblings; N2 samples the remaining eligible sources. Native guards exclude N1-generated lines. Affine powers expand inside one stack because separate transform stages replace the stack.",
+    "startingOperation": "R_seed(p): seeded parameter randomization before the native generator G; fixed within each order pair."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebracoef-culture-b-marks.flow.json",
+  "nativeSettings": "../settings/algebracoef-culture-b-marks.json",
+  "observedStages": [
+    {
+      "label": "Extract contour boundaries from concentration bands",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 11,
+      "afterShapes": 11,
+      "messages": [
+        "paint applied: 11 elements."
+      ]
+    },
+    {
+      "label": "E: 3 echoes, scale 0.83 to 1.25",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 11,
+      "afterShapes": 33,
+      "messages": [
+        "scale applied: 11 groups, 33 clones."
+      ]
+    },
+    {
+      "label": "N1: normal vectors, coefficient 1.45",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 33,
+      "afterShapes": 737,
+      "messages": [
+        "spline lines applied: 11 shapes, 715 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "N2: tangent vectors, coefficient 0.8",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 737,
+      "afterShapes": 2145,
+      "messages": [
+        "spline lines applied: 22 shapes, 1430 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "C: enumerate current marks through four colors",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 2145,
+      "afterShapes": 2145,
+      "messages": [
+        "color applied: 2145 elements, 4 mapped colors."
+      ]
+    },
+    {
+      "label": "A^3: repeated rotation and contraction",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 2145,
+      "afterShapes": 2145,
+      "messages": []
+    }
+  ],
+  "orderComparison": {
+    "pair": "algebracoef-culture-b",
+    "geometrySha256": "3cb388af832f858680a28339d804a0fcccc83d011bc8ab6c1deecd798d8ea4ba",
+    "lines": 2145,
+    "changedLineStrokes": 1584,
+    "changedPercent": 73.85
+  }
+}

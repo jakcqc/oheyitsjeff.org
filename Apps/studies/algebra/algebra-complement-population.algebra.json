@@ -1,0 +1,106 @@
+{
+  "title": "Complement Population",
+  "source": "GameOfLife_aug/gameOfLife.js",
+  "visualId": "gameOfLifeSVG",
+  "seed": 925311,
+  "frames": 0,
+  "algebra": {
+    "expression": "A = T[-3.2deg,0.96] B_tangent[9,4,46] P[outline] C[rect->circle,0.63] (L - L_black)",
+    "interpretation": "Take the complement of the visible live set by deleting black cells. The remaining vacancies become tangent-woven circular enclosures: absence acquires an active boundary.",
+    "order": "Read operators right to left; tool flow arrays execute top to bottom. P changes paint, C changes shape, K maps colors, H creates concentric scale copies, N samples normal marks, B samples tangent or vertical marks, T is a small affine transform."
+  },
+  "propertyPrefix": [
+    {
+      "kind": "propRule",
+      "selector": {
+        "rect": {
+          "fill": {
+            "eq": "#111111"
+          }
+        }
+      },
+      "apply": {
+        "$delete": true
+      }
+    }
+  ],
+  "nativeFlow": "../flows/algebra-complement-population.flow.json",
+  "nativeSettings": "../settings/algebra-complement-population.json",
+  "observedStages": [
+    {
+      "label": "Native property-rule prefix",
+      "kind": "property",
+      "changed": true,
+      "beforeShapes": 1850,
+      "afterShapes": 1255,
+      "rules": [
+        {
+          "kind": "propRule",
+          "selector": {
+            "rect": {
+              "fill": {
+                "eq": "#111111"
+              }
+            }
+          },
+          "apply": {
+            "$delete": true
+          }
+        }
+      ]
+    },
+    {
+      "label": "rect becomes circle",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 1255,
+      "afterShapes": 1255,
+      "messages": [
+        "convert applied: 1255 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "choose ink on circle",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 1255,
+      "afterShapes": 1255,
+      "messages": [
+        "paint applied: 1255 elements."
+      ]
+    },
+    {
+      "label": "tangent spline differential",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 1255,
+      "afterShapes": 46435,
+      "messages": [
+        "spline lines applied: 1255 shapes, 46435 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "monochrome luminance palette",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 46435,
+      "afterShapes": 46435,
+      "messages": [
+        "color applied: 46435 elements, 48 mapped colors."
+      ]
+    },
+    {
+      "label": "small final affine change",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 46435,
+      "afterShapes": 46435,
+      "messages": []
+    }
+  ]
+}

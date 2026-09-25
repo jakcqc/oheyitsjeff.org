@@ -1,0 +1,203 @@
+{
+  "title": "Cell Coefficients A - Mark Color",
+  "source": "GameOfLife_aug/gameOfLife.js",
+  "visualId": "gameOfLifeSVG",
+  "seed": 2116517188,
+  "frames": 0,
+  "randomization": {
+    "version": 1,
+    "algorithm": "mulberry32-v1",
+    "seed": 4191872845,
+    "operation": "R_seed(p): randomize starting native parameters before G renders and before any algebra flow",
+    "samples": [
+      {
+        "path": "cellPx",
+        "op": "integer",
+        "min": 28,
+        "max": 70,
+        "before": 48,
+        "value": 29
+      },
+      {
+        "path": "randomFill",
+        "op": "uniform",
+        "min": 0.08,
+        "max": 0.6,
+        "before": 0,
+        "value": 0.5118
+      },
+      {
+        "path": "protoNoise",
+        "op": "uniform",
+        "min": 1.4,
+        "max": 4.8,
+        "before": 3.25,
+        "value": 1.8557
+      },
+      {
+        "path": "protoThreshMin",
+        "op": "uniform",
+        "min": -0.9,
+        "max": -0.15,
+        "before": -0.6,
+        "value": -0.5418
+      },
+      {
+        "path": "protoThreshMax",
+        "op": "uniform",
+        "min": 0.4,
+        "max": 1.5,
+        "before": 1.1,
+        "value": 1.418
+      }
+    ]
+  },
+  "startingStateSha256": "8caa7121cff84a6300994d73069818a2053334d7dd8764eb9895ff8152eea158",
+  "startingSvgSha256": "02b2b13d77c8555e95f7df8e365352a8db9811ac447c93bae582bc3e337e3494",
+  "algebra": {
+    "expression": "A^2 o C o N2[beta] o N1[alpha] o E[lambda,k] o B (G(R_seed(p), s, f))",
+    "convention": "Compose right to left. B is the ordered native preparation plus the optional property prefix. Coefficients parameterize operators; they are not scalar multiplication of SVGs.",
+    "coefficients": {
+      "alpha": 0.65,
+      "beta": 1.35,
+      "lambda": 0.62,
+      "echoMax": 1.25,
+      "k": 2,
+      "affineRepeat": 2,
+      "rotationDeg": 1.4,
+      "zoom": 0.98
+    },
+    "pairId": "algebracoef-cell-a",
+    "companionSlug": "algebracoef-cell-a-source",
+    "orderLabel": "marks",
+    "controlledVariables": [
+      "Source parameters, seed, frame count, canvas, coefficients, preparation and affine stack are identical within each pair.",
+      "Only C moves across the two spline stages."
+    ],
+    "repetition": "N1 samples even siblings; N2 samples the remaining eligible sources. Native guards exclude N1-generated lines. Affine powers expand inside one stack because separate transform stages replace the stack.",
+    "startingOperation": "R_seed(p): seeded parameter randomization before the native generator G; fixed within each order pair."
+  },
+  "propertyPrefix": [
+    {
+      "kind": "propRule",
+      "selector": {
+        "rect": {
+          "fill": {
+            "eq": "#ffffff"
+          }
+        }
+      },
+      "apply": {
+        "$delete": true
+      }
+    }
+  ],
+  "nativeFlow": "../flows/algebracoef-cell-a-marks.flow.json",
+  "nativeSettings": "../settings/algebracoef-cell-a-marks.json",
+  "observedStages": [
+    {
+      "label": "Native property-rule prefix",
+      "kind": "property",
+      "changed": true,
+      "beforeShapes": 1394,
+      "afterShapes": 407,
+      "rules": [
+        {
+          "kind": "propRule",
+          "selector": {
+            "rect": {
+              "fill": {
+                "eq": "#ffffff"
+              }
+            }
+          },
+          "apply": {
+            "$delete": true
+          }
+        }
+      ]
+    },
+    {
+      "label": "rect becomes circle",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 407,
+      "afterShapes": 407,
+      "messages": [
+        "convert applied: 407 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "choose ink on circle",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 407,
+      "afterShapes": 407,
+      "messages": [
+        "paint applied: 407 elements."
+      ]
+    },
+    {
+      "label": "E: 2 echoes, scale 0.62 to 1.25",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 407,
+      "afterShapes": 814,
+      "messages": [
+        "scale applied: 407 groups, 814 clones."
+      ]
+    },
+    {
+      "label": "N1: normal vectors, coefficient 0.65",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 814,
+      "afterShapes": 10582,
+      "messages": [
+        "spline lines applied: 407 shapes, 10175 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "N2: tangent vectors, coefficient 1.35",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 10582,
+      "afterShapes": 20350,
+      "messages": [
+        "spline lines applied: 407 shapes, 10175 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "C: enumerate current marks through four colors",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 20350,
+      "afterShapes": 20350,
+      "messages": [
+        "color applied: 20350 elements, 4 mapped colors."
+      ]
+    },
+    {
+      "label": "A^2: repeated rotation and contraction",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 20350,
+      "afterShapes": 20350,
+      "messages": []
+    }
+  ],
+  "orderComparison": {
+    "pair": "algebracoef-cell-a",
+    "geometrySha256": "83cb264175c7aad096a2aa0c60380e09aa370ccc3ebb326af02dc947d4909ef4",
+    "lines": 20350,
+    "changedLineStrokes": 14652,
+    "changedPercent": 72
+  }
+}

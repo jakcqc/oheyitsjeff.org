@@ -1,0 +1,110 @@
+{
+  "title": "Pole Radio",
+  "source": "DomainColoring/domainColoring.js",
+  "visualId": "domainColoring",
+  "seed": 926701,
+  "frames": 0,
+  "algebra": {
+    "edition": "wild",
+    "expression": "A o C o N o Q o P (G)",
+    "convention": "Compose right to left. One composition per app in this batch; no paired variants. Coefficients are concrete native operator parameters.",
+    "coefficients": {
+      "P1": {},
+      "Q2": {
+        "pathSamplePoints": 13,
+        "convertScaleFactor": 4.3
+      },
+      "N3": {
+        "splinePointCount": 7,
+        "splineStepsPerSegment": 3,
+        "splineTension": -2.1,
+        "splineAngleOffset": 137.507,
+        "splineLineHeight": 18,
+        "splineLineScale": 2.7,
+        "splineStrokeWidth": 0.65,
+        "splineScaleFactor": 1
+      },
+      "C4": {
+        "mapping": "byIndex",
+        "paletteSteps": 7
+      },
+      "A5": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": -27
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.82
+          }
+        ]
+      }
+    },
+    "interpretation": "Sparse complex-plane dots become oversized boxes whose tangent vectors are rotated by the golden angle; the pole field turns into a radio constellation.",
+    "newCapabilities": [
+      "logarithmic echo spacing",
+      "unclamped spline tension when enabled",
+      "vector angle offset"
+    ],
+    "uniqueness": "This app was not used in the first algebraCOEF batch."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebracoef-wild-pole-radio.flow.json",
+  "nativeSettings": "../settings/algebracoef-wild-pole-radio.json",
+  "observedStages": [
+    {
+      "label": "P: paint",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 11782,
+      "afterShapes": 11782,
+      "messages": [
+        "paint applied: 11730 elements."
+      ]
+    },
+    {
+      "label": "Q: convert",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 11782,
+      "afterShapes": 11782,
+      "messages": [
+        "convert applied: 1675 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 11782,
+      "afterShapes": 46957,
+      "messages": [
+        "spline lines applied: 1675 shapes, 36850 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 46957,
+      "afterShapes": 46957,
+      "messages": [
+        "color applied: 46957 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 46957,
+      "afterShapes": 46957,
+      "messages": []
+    }
+  ]
+}

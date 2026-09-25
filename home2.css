@@ -11,7 +11,7 @@
   --bubble-stroke: #000000;
   --bubble-highlight: #ffffff;
   --bubble-glow: #f8b6f1;
-  --bubble-glow-soft: #8883;
+  --bubble-glow-soft: #f8b6f199;
   --bubble-text: #333333;
   --art-highlight: var(--bubble-glow)
 }
@@ -30,6 +30,9 @@
   --bubble-glow-soft: #ffffff;
   --bubble-text: #fff9d7;
   --art-highlight: #ffffff
+}
+:root:not([data-theme="dark"]) .bubble-title-strip {
+  stroke: var(--bubble-glow-soft);
 }
 body{
   padding: 0px ;
@@ -82,6 +85,11 @@ body.support-modal-open{
 #headerActions > a[aria-current="page"]{
   background: var(--accent-highlight);
   color: #ffffff;
+  text-shadow:
+    -0.6px -0.6px 0 #000000,
+    0.6px -0.6px 0 #000000,
+    -0.6px 0.6px 0 #000000,
+    0.6px 0.6px 0 #000000;
   border-color: #ffffff;
 }
 #themeToggle[aria-pressed="true"]{
@@ -252,6 +260,19 @@ body.support-modal-open{
   #textMain{
     padding: 0px;
     
+  }
+  .bubble{
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .bubble:focus-visible > .bubble-shape{
+    stroke: var(--accent-highlight);
+    stroke-width: 6px;
+  }
+  .bubble.bubble--dragging{
+    cursor: grabbing !important;
   }
   .aboutUs{
     display: inline-block;

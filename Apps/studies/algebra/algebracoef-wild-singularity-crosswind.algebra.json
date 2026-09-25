@@ -1,0 +1,109 @@
+{
+  "title": "Singularity Crosswind",
+  "source": "SurferGalleryBiancaViolet/SurferGalleryBiancaViolet_visual.js",
+  "visualId": "surferGalleryBiancaViolet",
+  "seed": 926714,
+  "frames": 0,
+  "algebra": {
+    "edition": "wild",
+    "expression": "A o C o N o E (G)",
+    "convention": "Compose right to left. One composition per app in this batch; no paired variants. Coefficients are concrete native operator parameters.",
+    "coefficients": {
+      "E1": {
+        "rangeMin": -0.6,
+        "rangeMax": 2.9,
+        "count": 5,
+        "opacityFixed": 0.82,
+        "spacing": "linear",
+        "recurrence": "sum(backward):opacity *0.72"
+      },
+      "N2": {
+        "splinePointCount": 12,
+        "splineStepsPerSegment": 3,
+        "splineTension": -2.4,
+        "splineAngleOffset": 109,
+        "splineLineHeight": 16,
+        "splineLineScale": 3.6,
+        "splineStrokeWidth": 0.65,
+        "splineScaleFactor": 1
+      },
+      "C3": {
+        "mapping": "bySize",
+        "paletteSteps": 7
+      },
+      "A4": {
+        "stack": [
+          {
+            "kind": "matrix",
+            "m": [
+              0.65,
+              0.08,
+              0.7,
+              0.7,
+              -140,
+              102
+            ]
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.75
+          }
+        ]
+      }
+    },
+    "interpretation": "An implicit whorl receives inverted echoes and a crosswind of angled vectors. Reversed spline tangents and a centered shear split level-set continuity into floating contours.",
+    "newCapabilities": [
+      "logarithmic echo spacing",
+      "unclamped spline tension when enabled",
+      "vector angle offset"
+    ],
+    "uniqueness": "This app was not used in the first algebraCOEF batch."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebracoef-wild-singularity-crosswind.flow.json",
+  "nativeSettings": "../settings/algebracoef-wild-singularity-crosswind.json",
+  "observedStages": [
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 7953,
+      "afterShapes": 8809,
+      "messages": [
+        "scale applied: 214 groups, 1070 clones."
+      ]
+    },
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 8809,
+      "afterShapes": 33817,
+      "messages": [
+        "spline lines applied: 702 shapes, 25710 lines, 1 skipped."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 33817,
+      "afterShapes": 33817,
+      "messages": [
+        "color applied: 33817 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 33817,
+      "afterShapes": 33817,
+      "messages": []
+    }
+  ]
+}

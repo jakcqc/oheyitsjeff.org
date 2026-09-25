@@ -1,0 +1,41 @@
+{
+  "study": "algebra-life-without-its-zeros",
+  "convention": "Ordered intermediate native operations; use final settings JSON to reopen the source app.",
+  "stages": [
+    {
+      "index": 0,
+      "label": "Source simulation",
+      "svg": "00.svg"
+    },
+    {
+      "index": 1,
+      "label": "Delete selected cell population",
+      "svg": "01.svg"
+    },
+    {
+      "index": 2,
+      "label": "rect becomes circle",
+      "svg": "02.svg"
+    },
+    {
+      "index": 3,
+      "label": "choose ink on circle",
+      "svg": "03.svg"
+    },
+    {
+      "index": 4,
+      "label": "normal spline differential",
+      "svg": "04.svg"
+    },
+    {
+      "index": 5,
+      "label": "monochrome luminance palette",
+      "svg": "05.svg"
+    },
+    {
+      "index": 6,
+      "label": "small final affine change",
+      "svg": "06.svg"
+    }
+  ]
+}

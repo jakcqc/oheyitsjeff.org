@@ -1,0 +1,28 @@
+<!doctype html>
+<!-- Copyright (c) 2026 Jeffrey Kerley. SPDX-License-Identifier: LicenseRef-Jeffrey-Kerley-NC-NoAI-1.0 -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Assistant integration checks</title>
+  <link rel="stylesheet" href="../helper/uiHelper.css">
+  <style>body { background: #171717; color: #eee; overflow: auto; padding: 12px; } #results { white-space: pre-wrap; font-size: 12px; }</style>
+</head>
+<body>
+  <script type="module">
+    const output = document.createElement('pre');
+    output.id = 'results';
+    try {
+      const { runAssistantRegressions } = await import('./assistant-regressions.js');
+      const passed = await runAssistantRegressions();
+      output.textContent = `${passed.length} checks passed.\n\n${passed.join('\n')}`;
+      document.body.dataset.testStatus = 'passed';
+    } catch (error) {
+      output.textContent = error.stack;
+      document.body.dataset.testStatus = 'failed';
+      console.error(error);
+    }
+    document.body.append(output);
+  </script>
+</body>
+</html>

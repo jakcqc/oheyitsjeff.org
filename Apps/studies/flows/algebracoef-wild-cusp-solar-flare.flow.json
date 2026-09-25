@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "name": "Cusp Solar Flare",
+  "stages": [
+    {
+      "id": "stage-mues68ds-d4c0mrj",
+      "kind": "effect",
+      "label": "N: splineLines",
+      "enabled": true,
+      "config": {
+        "effectType": "splineLines",
+        "splineSource": "path",
+        "splineSelector": "path:nth-of-type(2n)",
+        "splinePointCount": 31,
+        "splineStepsPerSegment": 3,
+        "splineTension": 2.6,
+        "splineExtrapolateTension": true,
+        "splineAngleOffset": -47,
+        "splineLineOrientation": "tangent",
+        "splineLineHeight": 18,
+        "splineLineScale": 4.2,
+        "splineStrokeWidth": 0.65,
+        "splineScaleMode": "none",
+        "splineScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues68ds-91cu4zw",
+      "kind": "effect",
+      "label": "E: scale",
+      "enabled": true,
+      "config": {
+        "effectType": "scale",
+        "elementType": "path",
+        "selector": "path",
+        "rangeMin": -0.55,
+        "rangeMax": 2.15,
+        "count": 5,
+        "spacing": "linear",
+        "opacityMode": "fixed",
+        "opacityFixed": 0.82,
+        "equation": "sum(backward):opacity *0.72"
+      }
+    },
+    {
+      "id": "stage-mues68ds-ta3235c",
+      "kind": "effect",
+      "label": "C: color",
+      "enabled": true,
+      "config": {
+        "effectType": "color",
+        "color": {
+          "selector": "path,polygon,circle,rect,line",
+          "sourceProp": "each",
+          "targetProp": "stroke",
+          "mode": "byLuminance",
+          "colorSort": "appearance",
+          "paletteText": "#481778,#ef3b56,#ffa32d,#f6ffb4",
+          "paletteSteps": 7,
+          "useComputed": true,
+          "skipNone": true,
+          "sizeSource": "bboxArea",
+          "sizeAttr": "r"
+        }
+      }
+    },
+    {
+      "id": "stage-mues68ds-3jjkjxk",
+      "kind": "transform",
+      "label": "A: folded presentation",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": 123
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.66
+          }
+        ]
+      }
+    }
+  ]
+}

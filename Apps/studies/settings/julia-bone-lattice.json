@@ -1,0 +1,37 @@
+{
+  "fractal": "julia",
+  "maxIterBase": 420,
+  "minCellPx": 1.5,
+  "startCellPx": 32,
+  "showBoundaryPixels": true,
+  "shapeType": "ngon",
+  "nSides": 3,
+  "maxCircles": 100000,
+  "view": {
+    "centerRe": 0,
+    "centerIm": 0,
+    "spanRe": 2.55
+  },
+  "julia": {
+    "Re": -0.123,
+    "Im": 0.745
+  },
+  "multibrot": {
+    "Power": 3
+  },
+  "ford": {
+    "maxDenom": 35,
+    "gaussianMaxNorm": 25
+  },
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0
+    },
+    "stack": []
+  }
+}

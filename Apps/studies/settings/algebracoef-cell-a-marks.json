@@ -1,0 +1,305 @@
+{
+  "cellPx": 29,
+  "tickMs": 16,
+  "running": true,
+  "wrapEdges": true,
+  "randomFill": 0.5118,
+  "mode": "protofield",
+  "denseRadius": 2,
+  "denseBirth": 0,
+  "denseSurviveMin": 18,
+  "denseSurviveMax": 24,
+  "protoAlpha": 0.94,
+  "protoBeta": 0.006,
+  "protoThreshMin": -0.5418,
+  "protoThreshMax": 1.418,
+  "protoNoise": 1.8557,
+  "paintColor": "#111111",
+  "shiftColorOnSurvive": false,
+  "strokeColor": "#111111",
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0,
+      "preset": "",
+      "splitMode": "screen",
+      "applyToAll": false,
+      "tileTargets": "0",
+      "zoomFactor": 1.25,
+      "matrix": {
+        "a": 1,
+        "b": 0,
+        "c": 0,
+        "d": 1,
+        "e": 0,
+        "f": 0
+      },
+      "zoomCenter": {
+        "x": null,
+        "y": null
+      },
+      "translateVec": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCount": 3,
+      "planeBaseScale": 1,
+      "planeScaleStep": -0.12,
+      "planeOpacity": 0.7,
+      "planeOpacityFalloff": 0.12,
+      "planeOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCenter": {
+        "x": null,
+        "y": null
+      },
+      "groupOpen": {}
+    },
+    "stack": [
+      {
+        "kind": "rotate",
+        "deg": 1.4
+      },
+      {
+        "kind": "zoom",
+        "factor": 0.98
+      },
+      {
+        "kind": "rotate",
+        "deg": 1.4
+      },
+      {
+        "kind": "zoom",
+        "factor": 0.98
+      }
+    ]
+  },
+  "__studyRandomization": {
+    "version": 1,
+    "algorithm": "mulberry32-v1",
+    "seed": 4191872845,
+    "operation": "R_seed(p): randomize starting native parameters before G renders and before any algebra flow",
+    "samples": [
+      {
+        "path": "cellPx",
+        "op": "integer",
+        "min": 28,
+        "max": 70,
+        "before": 48,
+        "value": 29
+      },
+      {
+        "path": "randomFill",
+        "op": "uniform",
+        "min": 0.08,
+        "max": 0.6,
+        "before": 0,
+        "value": 0.5118
+      },
+      {
+        "path": "protoNoise",
+        "op": "uniform",
+        "min": 1.4,
+        "max": 4.8,
+        "before": 3.25,
+        "value": 1.8557
+      },
+      {
+        "path": "protoThreshMin",
+        "op": "uniform",
+        "min": -0.9,
+        "max": -0.15,
+        "before": -0.6,
+        "value": -0.5418
+      },
+      {
+        "path": "protoThreshMax",
+        "op": "uniform",
+        "min": 0.4,
+        "max": 1.5,
+        "before": 1.1,
+        "value": 1.418
+      }
+    ]
+  },
+  "__propOps": {
+    "ui": {
+      "ruleText": "{\n  \"selector\": {\n    \"rect\": {\n      \"fill\": {\n        \"eq\": \"#ffffff\"\n      }\n    }\n  },\n  \"apply\": {\n    \"$delete\": true\n  }\n}",
+      "showDocs": false
+    },
+    "stack": [
+      {
+        "kind": "propRule",
+        "selector": {
+          "rect": {
+            "fill": {
+              "eq": "#ffffff"
+            }
+          }
+        },
+        "apply": {
+          "$delete": true
+        }
+      }
+    ]
+  },
+  "__toolFlows": {
+    "ui": {
+      "flowName": "Cell Coefficients A - Mark Color",
+      "selectedId": "builtin-grayscale",
+      "autoRun": true,
+      "groupsOpen": {}
+    },
+    "stages": [
+      {
+        "id": "stage-mvdrqog4-akjr68o",
+        "kind": "effect",
+        "label": "rect becomes circle",
+        "enabled": true,
+        "config": {
+          "effectType": "convert",
+          "selector": "rect",
+          "convertFrom": "rect",
+          "convertTo": "circle",
+          "pathSamplePoints": 24,
+          "convertScaleMode": "center",
+          "convertScaleFactor": 0.72
+        }
+      },
+      {
+        "id": "stage-mvdrqog4-e6czwnb",
+        "kind": "effect",
+        "label": "choose ink on circle",
+        "enabled": true,
+        "config": {
+          "effectType": "paint",
+          "selector": "circle",
+          "paintFill": "none",
+          "paintStroke": "#111111"
+        }
+      },
+      {
+        "id": "stage-mvdrqog4-byplb3t",
+        "kind": "effect",
+        "label": "E: 2 echoes, scale 0.62 to 1.25",
+        "enabled": true,
+        "config": {
+          "effectType": "scale",
+          "selector": "circle",
+          "elementType": "circle",
+          "rangeMin": 0.62,
+          "rangeMax": 1.25,
+          "count": 2,
+          "spacing": "linear",
+          "opacityMode": "fixed",
+          "opacityFixed": 0.72,
+          "equation": ""
+        }
+      },
+      {
+        "id": "stage-mvdrqog4-0ahyz38",
+        "kind": "effect",
+        "label": "N1: normal vectors, coefficient 0.65",
+        "enabled": true,
+        "config": {
+          "effectType": "splineLines",
+          "splineSource": "circle",
+          "splineSelector": "circle:nth-of-type(2n)",
+          "splinePointCount": 12,
+          "splineStepsPerSegment": 2,
+          "splineTension": 0.2,
+          "splineLineOrientation": "normal",
+          "splineLineHeight": 31,
+          "splineLineScale": 0.65,
+          "splineStrokeWidth": 0.7,
+          "splineScaleMode": "none",
+          "splineScaleFactor": 1
+        }
+      },
+      {
+        "id": "stage-mvdrqog4-b0giwvv",
+        "kind": "effect",
+        "label": "N2: tangent vectors, coefficient 1.35",
+        "enabled": true,
+        "config": {
+          "effectType": "splineLines",
+          "splineSource": "circle",
+          "splineSelector": "circle",
+          "splinePointCount": 12,
+          "splineStepsPerSegment": 2,
+          "splineTension": 0.2,
+          "splineLineOrientation": "tangent",
+          "splineLineHeight": 31,
+          "splineLineScale": 1.35,
+          "splineStrokeWidth": 0.7,
+          "splineScaleMode": "none",
+          "splineScaleFactor": 1
+        }
+      },
+      {
+        "id": "stage-mvdrqog4-ga88xsx",
+        "kind": "effect",
+        "label": "C: enumerate current marks through four colors",
+        "enabled": true,
+        "config": {
+          "effectType": "color",
+          "color": {
+            "selector": "circle,line[data-spline-lines-run]",
+            "sourceProp": "stroke",
+            "targetProp": "stroke",
+            "mode": "byIndex",
+            "colorSort": "appearance",
+            "paletteText": "#203c75,#af3368,#b97313,#3c817d",
+            "paletteSteps": 0,
+            "useComputed": true,
+            "skipNone": true
+          }
+        }
+      },
+      {
+        "id": "stage-mvdrqog4-l82kixx",
+        "kind": "transform",
+        "label": "A^2: repeated rotation and contraction",
+        "enabled": true,
+        "config": {
+          "stack": [
+            {
+              "kind": "rotate",
+              "deg": 1.4
+            },
+            {
+              "kind": "zoom",
+              "factor": 0.98
+            },
+            {
+              "kind": "rotate",
+              "deg": 1.4
+            },
+            {
+              "kind": "zoom",
+              "factor": 0.98
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "__scriptOps": {
+    "ui": {
+      "codeText": "// ctx.root is the <g> subtree being processed\n// ctx.svg is the owning <svg>\n// ctx.create(tag) creates an SVG element\n//\n// Example: circle -> 6-gon (polygon)\n// for (const c of ctx.root.querySelectorAll(\"circle\")) {\n//   const cx = Number(c.getAttribute(\"cx\") || 0);\n//   const cy = Number(c.getAttribute(\"cy\") || 0);\n//   const r = Number(c.getAttribute(\"r\") || 0);\n//   const n = 6;\n//   const pts = Array.from({length:n}, (_,i) => {\n//     const a = (Math.PI*2*i)/n;\n//     return [cx + r*Math.cos(a), cy + r*Math.sin(a)].join(\",\");\n//   }).join(\" \");\n//   const p = ctx.create(\"polygon\");\n//   p.setAttribute(\"points\", pts);\n//   for (const {name,value} of Array.from(c.attributes)) {\n//     if (name === \"cx\" || name === \"cy\" || name === \"r\") continue;\n//     p.setAttribute(name, value);\n//   }\n//   c.replaceWith(p);\n// }",
+      "fileName": "",
+      "selectedCacheKey": "",
+      "autoRunSelected": false,
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": [],
+    "cache": {}
+  }
+}

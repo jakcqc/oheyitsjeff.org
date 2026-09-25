@@ -1,0 +1,33 @@
+{
+  "curveMode": "hilbert",
+  "curveScalingMode": "stretch",
+  "hilbertOrder": 7,
+  "peanoOrder": 3,
+  "detailStepPx": 4,
+  "curveCellPx": 96,
+  "lineInsetPx": 7,
+  "minRectSize": 35,
+  "maxRectSize": 420,
+  "minRectAspect": 0.2,
+  "maxRectAspect": 7.5,
+  "maxRectangles": 160,
+  "palette": "paperInk",
+  "lineWidth": 0.75,
+  "lineOpacity": 0.95,
+  "showRectFill": false,
+  "rectFillOpacity": 0.28,
+  "showOutlines": false,
+  "outlineWidth": 1,
+  "seed": 314159,
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0
+    },
+    "stack": []
+  }
+}

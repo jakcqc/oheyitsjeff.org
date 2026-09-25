@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "name": "Singularity Crosswind",
+  "stages": [
+    {
+      "id": "stage-mues68e2-uzbnhzd",
+      "kind": "effect",
+      "label": "E: scale",
+      "enabled": true,
+      "config": {
+        "effectType": "scale",
+        "elementType": "path",
+        "selector": "path:nth-of-type(37n)",
+        "rangeMin": -0.6,
+        "rangeMax": 2.9,
+        "count": 5,
+        "spacing": "linear",
+        "opacityMode": "fixed",
+        "opacityFixed": 0.82,
+        "equation": "sum(backward):opacity *0.72"
+      }
+    },
+    {
+      "id": "stage-mues68e2-qan42bg",
+      "kind": "effect",
+      "label": "N: splineLines",
+      "enabled": true,
+      "config": {
+        "effectType": "splineLines",
+        "splineSource": "path",
+        "splineSelector": "path:nth-of-type(11n)",
+        "splinePointCount": 12,
+        "splineStepsPerSegment": 3,
+        "splineTension": -2.4,
+        "splineExtrapolateTension": true,
+        "splineAngleOffset": 109,
+        "splineLineOrientation": "vertical",
+        "splineLineHeight": 16,
+        "splineLineScale": 3.6,
+        "splineStrokeWidth": 0.65,
+        "splineScaleMode": "none",
+        "splineScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues68e2-ig2pdwg",
+      "kind": "effect",
+      "label": "C: color",
+      "enabled": true,
+      "config": {
+        "effectType": "color",
+        "color": {
+          "selector": "path,polygon,circle,rect,line",
+          "sourceProp": "each",
+          "targetProp": "stroke",
+          "mode": "bySize",
+          "colorSort": "appearance",
+          "paletteText": "#50ffe0,#8485ff,#ff59c7,#fff0ac",
+          "paletteSteps": 7,
+          "useComputed": true,
+          "skipNone": true,
+          "sizeSource": "bboxArea",
+          "sizeAttr": "r"
+        }
+      }
+    },
+    {
+      "id": "stage-mues68e2-cr5le99",
+      "kind": "transform",
+      "label": "A: folded presentation",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "matrix",
+            "m": [
+              0.65,
+              0.08,
+              0.7,
+              0.7,
+              -140,
+              102
+            ]
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.75
+          }
+        ]
+      }
+    }
+  ]
+}

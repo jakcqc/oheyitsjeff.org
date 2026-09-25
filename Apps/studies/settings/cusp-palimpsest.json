@@ -1,0 +1,22 @@
+{
+  "layers": 12,
+  "petals": 13,
+  "warp": 2.2,
+  "twist": 1.37,
+  "detail": 1200,
+  "fitMode": "contain",
+  "padding": 150,
+  "fillOpacity": 0.095,
+  "strokeWidth": 2.1,
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0
+    },
+    "stack": []
+  }
+}

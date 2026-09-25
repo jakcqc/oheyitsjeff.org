@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "name": "Complement Population",
+  "stages": [
+    {
+      "id": "stage-mues67b3-x2p2si7",
+      "kind": "effect",
+      "label": "rect becomes circle",
+      "enabled": true,
+      "config": {
+        "effectType": "convert",
+        "selector": "rect",
+        "convertFrom": "rect",
+        "convertTo": "circle",
+        "pathSamplePoints": 24,
+        "convertScaleMode": "center",
+        "convertScaleFactor": 0.63
+      }
+    },
+    {
+      "id": "stage-mues67b3-vg1z9zt",
+      "kind": "effect",
+      "label": "choose ink on circle",
+      "enabled": true,
+      "config": {
+        "effectType": "paint",
+        "selector": "circle",
+        "paintFill": "none",
+        "paintStroke": "#777777"
+      }
+    },
+    {
+      "id": "stage-mues67b3-hwfr1ep",
+      "kind": "effect",
+      "label": "tangent spline differential",
+      "enabled": true,
+      "config": {
+        "effectType": "splineLines",
+        "splineSource": "circle",
+        "splineSelector": "circle",
+        "splinePointCount": 9,
+        "splineStepsPerSegment": 4,
+        "splineTension": -0.45,
+        "splineLineOrientation": "tangent",
+        "splineLineHeight": 46,
+        "splineLineScale": 1,
+        "splineStrokeWidth": 0.42,
+        "splineScaleMode": "none",
+        "splineScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues67b3-naorkoo",
+      "kind": "effect",
+      "label": "monochrome luminance palette",
+      "enabled": true,
+      "config": {
+        "effectType": "color",
+        "color": {
+          "selector": "*",
+          "sourceProp": "each",
+          "targetProp": "both",
+          "mode": "byLuminance",
+          "colorSort": "luminance",
+          "paletteText": "#777777, #fafafa",
+          "paletteSteps": 48,
+          "useComputed": true,
+          "skipNone": true
+        }
+      }
+    },
+    {
+      "id": "stage-mues67b3-ewf19ir",
+      "kind": "transform",
+      "label": "small final affine change",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": -3.2
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.96
+          }
+        ]
+      }
+    }
+  ]
+}

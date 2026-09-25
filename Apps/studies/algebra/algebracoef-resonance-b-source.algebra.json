@@ -1,0 +1,230 @@
+{
+  "title": "Resonance Quotients B - Source Color",
+  "source": "LissajousFigures/LissajousFigures_visual.js",
+  "visualId": "lissajousFigures",
+  "seed": 469373732,
+  "frames": 0,
+  "randomization": {
+    "version": 1,
+    "algorithm": "mulberry32-v1",
+    "seed": 2977513487,
+    "operation": "R_seed(p): randomize starting native parameters before G renders and before any algebra flow",
+    "samples": [
+      {
+        "path": "curveCount",
+        "op": "integer",
+        "min": 9,
+        "max": 20,
+        "before": 15,
+        "value": 10
+      },
+      {
+        "path": "freqA",
+        "op": "uniform",
+        "min": 2.5,
+        "max": 11.9,
+        "before": 13.618033989,
+        "value": 4.0209
+      },
+      {
+        "path": "freqB",
+        "op": "uniform",
+        "min": 1.5,
+        "max": 11.6,
+        "before": 8.414213562,
+        "value": 3.6494
+      },
+      {
+        "path": "phase",
+        "op": "add",
+        "min": -2.6,
+        "max": 3.5,
+        "before": 2.739,
+        "value": 2.7572
+      },
+      {
+        "path": "samples",
+        "op": "integer",
+        "min": 600,
+        "max": 1700,
+        "before": 1200,
+        "value": 1553
+      },
+      {
+        "path": "amplitude",
+        "op": "uniform",
+        "min": 0.28,
+        "max": 0.46,
+        "before": 0.405,
+        "value": 0.4518
+      },
+      {
+        "path": "strokeWidth",
+        "op": "multiply",
+        "min": 0.8,
+        "max": 1.8,
+        "before": 0.9,
+        "value": 1.361
+      }
+    ]
+  },
+  "startingStateSha256": "0b834c4dad19cfc7aa1fadad447fd5d9c61eef0ed8044a55e361c6dd9d7ec49b",
+  "startingSvgSha256": "11a5cdda3f82675ca3e7284d08f8827b006dbb2b440cf5c72b4425e90b468c4e",
+  "algebra": {
+    "expression": "A^3 o N2[beta] o N1[alpha] o C o E[lambda,k] o B (G(R_seed(p), s, f))",
+    "convention": "Compose right to left. B is the ordered native preparation plus the optional property prefix. Coefficients parameterize operators; they are not scalar multiplication of SVGs.",
+    "coefficients": {
+      "alpha": 1.45,
+      "beta": 0.8,
+      "lambda": 0.83,
+      "echoMax": 1.25,
+      "k": 3,
+      "affineRepeat": 3,
+      "rotationDeg": -1.7,
+      "zoom": 0.98
+    },
+    "pairId": "algebracoef-resonance-b",
+    "companionSlug": "algebracoef-resonance-b-marks",
+    "orderLabel": "source",
+    "controlledVariables": [
+      "Source parameters, seed, frame count, canvas, coefficients, preparation and affine stack are identical within each pair.",
+      "Only C moves across the two spline stages."
+    ],
+    "repetition": "N1 samples even siblings; N2 samples the remaining eligible sources. Native guards exclude N1-generated lines. Affine powers expand inside one stack because separate transform stages replace the stack.",
+    "startingOperation": "R_seed(p): seeded parameter randomization before the native generator G; fixed within each order pair."
+  },
+  "propertyPrefix": [
+    {
+      "kind": "propRule",
+      "selector": {
+        "path": {
+          "stroke": {
+            "range": [
+              [
+                100,
+                0,
+                130
+              ],
+              [
+                255,
+                85,
+                255
+              ]
+            ]
+          }
+        }
+      },
+      "apply": {
+        "$delete": true
+      }
+    }
+  ],
+  "nativeFlow": "../flows/algebracoef-resonance-b-source.flow.json",
+  "nativeSettings": "../settings/algebracoef-resonance-b-source.json",
+  "observedStages": [
+    {
+      "label": "Native property-rule prefix",
+      "kind": "property",
+      "changed": true,
+      "beforeShapes": 10,
+      "afterShapes": 5,
+      "rules": [
+        {
+          "kind": "propRule",
+          "selector": {
+            "path": {
+              "stroke": {
+                "range": [
+                  [
+                    100,
+                    0,
+                    130
+                  ],
+                  [
+                    255,
+                    85,
+                    255
+                  ]
+                ]
+              }
+            }
+          },
+          "apply": {
+            "$delete": true
+          }
+        }
+      ]
+    },
+    {
+      "label": "Every third survivor becomes a polygon",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 5,
+      "afterShapes": 5,
+      "messages": [
+        "convert applied: 1 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "E: 3 echoes, scale 0.83 to 1.25",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 5,
+      "afterShapes": 7,
+      "messages": [
+        "scale applied: 1 groups, 3 clones."
+      ]
+    },
+    {
+      "label": "C: enumerate current marks through four colors",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 7,
+      "afterShapes": 7,
+      "messages": [
+        "color applied: 3 elements, 4 mapped colors."
+      ]
+    },
+    {
+      "label": "N1: normal vectors, coefficient 1.45",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 7,
+      "afterShapes": 31,
+      "messages": [
+        "spline lines applied: 1 shapes, 25 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "N2: tangent vectors, coefficient 0.8",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 31,
+      "afterShapes": 79,
+      "messages": [
+        "spline lines applied: 2 shapes, 50 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "A^3: repeated rotation and contraction",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 79,
+      "afterShapes": 79,
+      "messages": []
+    }
+  ],
+  "orderComparison": {
+    "pair": "algebracoef-resonance-b",
+    "geometrySha256": "6c18886f583c72f679ccb977835af3cfeb1fb82b78d22d6f971f4228a6e5cc35",
+    "lines": 75,
+    "changedLineStrokes": 54,
+    "changedPercent": 72
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "name": "The Diagonal Is a Boundary Condition",
+  "stages": [
+    {
+      "id": "stage-mues67b7-solye53",
+      "kind": "effect",
+      "label": "choose ink on rect",
+      "enabled": true,
+      "config": {
+        "effectType": "paint",
+        "selector": "rect",
+        "paintFill": "none",
+        "paintStroke": "#141414"
+      }
+    },
+    {
+      "id": "stage-mues67b7-t9poks1",
+      "kind": "effect",
+      "label": "rect becomes path",
+      "enabled": true,
+      "config": {
+        "effectType": "convert",
+        "selector": "rect",
+        "convertFrom": "rect",
+        "convertTo": "path",
+        "pathSamplePoints": 24,
+        "convertScaleMode": "center",
+        "convertScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues67b7-k77nah2",
+      "kind": "effect",
+      "label": "tangent spline differential",
+      "enabled": true,
+      "config": {
+        "effectType": "splineLines",
+        "splineSource": "path",
+        "splineSelector": "path",
+        "splinePointCount": 8,
+        "splineStepsPerSegment": 3,
+        "splineTension": -1.3,
+        "splineLineOrientation": "tangent",
+        "splineLineHeight": 59,
+        "splineLineScale": 1,
+        "splineStrokeWidth": 0.34,
+        "splineScaleMode": "none",
+        "splineScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues67b7-jbt14gw",
+      "kind": "effect",
+      "label": "monochrome luminance palette",
+      "enabled": true,
+      "config": {
+        "effectType": "color",
+        "color": {
+          "selector": "*",
+          "sourceProp": "each",
+          "targetProp": "both",
+          "mode": "byLuminance",
+          "colorSort": "luminance",
+          "paletteText": "#080808, #808080",
+          "paletteSteps": 48,
+          "useComputed": true,
+          "skipNone": true
+        }
+      }
+    },
+    {
+      "id": "stage-mues67b7-mwihlzv",
+      "kind": "transform",
+      "label": "small final affine change",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": 4.1
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.96
+          }
+        ]
+      }
+    }
+  ]
+}

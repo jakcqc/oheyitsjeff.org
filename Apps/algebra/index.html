@@ -1,0 +1,191 @@
+<!doctype html>
+<!-- Copyright (c) 2026 Jeffrey Kerley. SPDX-License-Identifier: LicenseRef-Jeffrey-Kerley-NC-NoAI-1.0 -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="Explore how native visual tools transform a population of cells into spline normals, and why the order of color and geometry matters.">
+  <title>Flow algebra &middot; oheyitsjeff</title>
+  <script>(()=>{let saved;try{saved=localStorage.getItem('home.theme');}catch{}const theme=saved==='dark'||saved==='light'?saved:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=theme;document.documentElement.style.colorScheme=theme;})();</script>
+  <link rel="icon" type="image/png" href="/assets/icon/jAsset.png">
+  <link rel="stylesheet" href="/home2.css">
+  <link rel="stylesheet" href="/Apps/index.css">
+  <link rel="stylesheet" href="./index.css">
+  <script type="module" src="./index.js"></script>
+  <script type="module" src="/helper/galleryNavigation.js"></script>
+</head>
+<body class="apps-directory algebra-page">
+  <a class="skip-link" href="#lab">Skip to the stage explorer</a>
+  <header id="cool">
+    <a class="mainName" href="/">oheyitsjeff</a><div id="secondBar"></div>
+    <nav id="headerActions" aria-label="Site navigation"><a href="/" data-gallery-link>Main</a><a href="/MathVisuals/" data-gallery-link>Math</a><a id="appsLink" href="/Apps/" aria-current="page">Apps</a><a href="/ART/">Art</a></nav>
+  </header>
+  <main id="lab" class="algebra-main">
+    <nav class="lab-nav" aria-label="Studies"><a href="/Apps/">SVG studies</a><a href="/Apps/?view=apps">All apps</a><a href="#wild">algebraCOEF Wild</a><a href="#coefficients">Paired coefficients</a><a href="#notes">Formal notes</a></nav>
+    <section class="lab-intro"><p class="eyebrow">An algebra of painted shapes</p><h1>One population.<br>Seven states.</h1><p>Follow <em>Life Without Its Zeros</em> from a simulation grid to a field of spline normals. Each stage is a saved result of the native tools.</p></section>
+    <section class="explorer" aria-label="Saved native operation stages">
+      <div class="stage-image" id="stage-viewport"><img id="stage-image" width="640" height="480" decoding="async" alt="Source: binary protofield grid before deletion"><span id="stage-image-status" class="image-status" role="status">Loading selected stage...</span><span class="stage-badge" id="stage-badge">0 / 6</span></div>
+      <div class="stage-info">
+        <p class="eyebrow">Game of Life &middot; Main visual</p><h2 id="stage-title">0 &middot; Source</h2><p class="formula" id="stage-formula">G</p><p id="stage-description">The native protofield simulation produces a binary grid. White cells are absent states; dark cells are occupied states.</p>
+        <p class="shape-count"><strong id="shape-count">3,300</strong> artwork shapes <span>(background excluded)</span></p>
+        <div class="step-controls"><button id="previous" type="button" disabled>&larr; Previous</button><button id="next" type="button">Next &rarr;</button></div>
+        <label for="stage-range">Stage <output id="range-value" for="stage-range">0 of 6</output></label><input id="stage-range" type="range" min="0" max="6" step="1" value="0" aria-valuetext="0: Source">
+        <ol class="stage-dots"><li><button type="button" data-stage="0" aria-current="step"><span>0</span>Source</button></li><li><button type="button" data-stage="1"><span>1</span>Delete</button></li><li><button type="button" data-stage="2"><span>2</span>Convert</button></li><li><button type="button" data-stage="3"><span>3</span>Paint</button></li><li><button type="button" data-stage="4"><span>4</span>Normal</button></li><li><button type="button" data-stage="5"><span>5</span>Mono</button></li><li><button type="button" data-stage="6"><span>6</span>Affine</button></li></ol>
+        <p class="study-links"><a id="stage-svg" href="../studies/stages/algebra-life-without-its-zeros/00.svg">Open this SVG</a><a id="stage-download" href="../studies/stages/algebra-life-without-its-zeros/00.svg" download>Save SVG</a><a href="../studies/settings/algebra-life-without-its-zeros.json" download>Final settings</a></p>
+        <p class="convention">Read composition from right to left. Use the slider's arrow keys to move one step.</p><p id="stage-announcement" class="sr-only" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+    <section class="live-study" id="simulation" aria-labelledby="simulation-title">
+      <p class="eyebrow">Continue the experiment</p><h2 id="simulation-title">Open the living version.</h2><p>Start Game of Life with this study's saved parameters, property rules, and flows. Explore the controls and let the next composition evolve.</p>
+      <div class="study-links simulation-actions"><button id="run-simulation" type="button" aria-controls="simulation-mount" aria-expanded="false">Open this simulation</button><button id="stop-simulation" type="button" hidden>Close simulation</button><a id="source-app" href="/GameOfLife_aug/?settings=%2FApps%2Fstudies%2Fsettings%2Falgebra-life-without-its-zeros.json&amp;settingsVisual=gameOfLifeSVG">Open source app</a><a href="../studies/flows/algebra-life-without-its-zeros.flow.json" download>Save flow</a></div>
+      <p class="convention">The source app opens paused with the saved settings. Use its playback controls when you want to animate or continue the simulation. The SVG preserves the exact exported frame.</p><div id="simulation-mount" hidden></div><p id="simulation-status" class="sr-only" role="status" aria-live="polite"></p>
+    </section>
+    <section class="comparison" id="order" aria-labelledby="order-title">
+      <p class="eyebrow">Order is part of the image</p><h2 id="order-title">Color, then normals.<br>Normals, then color.</h2><p>The source, parameters, and final geometry are identical. Swapping two operators changes which colors belong to whole source boundaries and which belong to individual marks. Here, <strong>7,049 of 8,811</strong> normal-line stroke assignments change.</p>
+      <div class="comparison-grid"><figure><a class="comparison-preview" href="/BacteriaVisualizer/?settings=%2FApps%2Fstudies%2Fsettings%2Falgebra-order-color-before-normals.json&amp;settingsVisual=bacteriaMinimal" aria-label="Open Color Before Normals in Bacteria Visualizer"><img data-preview-src="../studies/large/algebra-order-color-before-normals.webp" loading="lazy" decoding="async" width="640" height="560" alt="A halo of bacterial membranes whose normal vectors inherit the color of their source boundary"></a><figcaption><h3>Color before normals</h3><p class="formula">A &#8728; N &#8728; C &#8728; P (G)</p><a href="../studies/svg/algebra-order-color-before-normals.svg" download>Save SVG</a></figcaption></figure><figure><a class="comparison-preview" href="/BacteriaVisualizer/?settings=%2FApps%2Fstudies%2Fsettings%2Falgebra-order-normals-before-color.json&amp;settingsVisual=bacteriaMinimal" aria-label="Open Normals Before Color in Bacteria Visualizer"><img data-preview-src="../studies/large/algebra-order-normals-before-color.webp" loading="lazy" decoding="async" width="640" height="560" alt="The same membrane geometry with the generated normal vectors colored individually"></a><figcaption><h3>Normals before color</h3><p class="formula">A &#8728; C &#8728; N &#8728; P (G)</p><a href="../studies/svg/algebra-order-normals-before-color.svg" download>Save SVG</a></figcaption></figure></div>
+    </section>
+    <section class="comparison" id="wild" aria-labelledby="wild-title">
+      <p class="eyebrow">algebraCOEF Wild &middot; 17 new apps</p>
+      <h2 id="wild-title">One app. One experiment.<br>Seventeen different directions.</h2>
+      <p>Each app gets a new algebraic composition: signed echoes, logarithmic scale jumps, overshooting splines, tilted vectors, opacity recurrences, reflections, and transparent depth layers. None of these seventeen apps appeared in the first coefficient batch.</p>
+      <div class="notes-table"><table><thead><tr><th scope="col">New coefficient</th><th scope="col">What it changes</th><th scope="col">An example</th></tr></thead><tbody><tr><th scope="row">Logarithmic spacing</th><td>Equal scale ratios between echoes</td><td>0.125 to 2.2</td></tr><tr><th scope="row">Extrapolated tension &tau;</th><td>Overshoot or reverse spline tangents</td><td>-4.5 to 3.3</td></tr><tr><th scope="row">Vector angle &phi;</th><td>Turn normals and tangents around their sample points</td><td>137.507 degrees</td></tr><tr><th scope="row">Signed scale &lambda;</th><td>Invert a path or polygon around its own center</td><td>-1.618 to 2.618</td></tr><tr><th scope="row">Opacity recurrence &eta;</th><td>Propagate fading through ordered echoes</td><td>Backward multiplication by 0.72</td></tr><tr><th scope="row">Fourier placement &omega;</th><td>Generate rotating rectangles along a parametric register</td><td>11 lobes, 17/7 size oscillations</td></tr></tbody></table></div>
+      <p>The first three capabilities are editable in the native Effects tools and saved with each Flow. These are individual experiments across different sources; the original controlled pairs remain below.</p>
+      <div class="comparison-grid">
+        <figure><a class="comparison-preview" href="/BoysSurfaceModel/?settings=%2FApps%2Fstudies%2Fsettings%2Falgebracoef-wild-projective-anti-matter.json&amp;settingsVisual=boysSurfaceModel" aria-label="Open Projective Anti-Matter"><img data-preview-src="../studies/large/algebracoef-wild-projective-anti-matter.webp" loading="lazy" decoding="async" width="1200" height="1000" alt="Signed echoes flip ribbons through their own centers; reverse opacity recurrence makes the smallest time slices dominate a three-plane knot."></a><figcaption><h3>Projective Anti-Matter</h3><p>Boys Surface Model</p><a href="../studies/svg/algebracoef-wild-projective-anti-matter.svg" download>Save SVG</a></figcaption></figure>
+        <figure><a class="comparison-preview" href="/kakeya/?settings=%2FApps%2Fstudies%2Fsettings%2Falgebracoef-wild-needle-frequency-altar.json&amp;settingsVisual=kakeyaBesicovitchNeedle" aria-label="Open Needle Frequency Altar"><img data-preview-src="../studies/large/algebracoef-wild-needle-frequency-altar.webp" loading="lazy" decoding="async" width="1200" height="1000" alt="Needle packs acquire an eleven-lobed rotating register of Fourier rectangles. Scale echoes, seven-color indexing, and shear pull angular coverage into a ceremonial interference pattern."></a><figcaption><h3>Needle Frequency Altar</h3><p>Kakeya / Besicovitch Needle (Perron-Tree Approx, Rectangles)</p><a href="../studies/svg/algebracoef-wild-needle-frequency-altar.svg" download>Save SVG</a></figcaption></figure>
+      </div>
+      <p class="study-links"><a href="/Apps/?collection=algebraCOEF&amp;search=wild">Explore the 17 Wild studies</a><a href="../studies/ALGEBRA-COEF-WILD.md">Expanded coefficients &amp; all compositions</a></p>
+    </section>
+    <section class="comparison" id="coefficients" aria-labelledby="coefficients-title">
+      <p class="eyebrow">algebraCOEF &middot; original 24 paired compositions</p>
+      <h2 id="coefficients-title">Coefficients change the marks.<br>Order changes their color.</h2>
+      <p>Six visual apps, two coefficient profiles, and twelve controlled pairs, rerun with randomized starting settings. Grid spacing, colony growth, curve frequencies, and grass structure now vary across the batch; each pair shares its own recorded seed and sampled parameters. Each study creates scaled echoes, applies normal and tangent passes to separate source families, then repeats a small rotation and zoom. Color moves from before both spline passes to after them.</p>
+      <p class="formula">A<sup>r</sup> &#8728; N2[&beta;] &#8728; N1[&alpha;] &#8728; C &#8728; E[&lambda;,k] &#8728; B (G(R<sub>seed</sub>(p), s, f))</p>
+      <p class="formula">A<sup>r</sup> &#8728; C &#8728; N2[&beta;] &#8728; N1[&alpha;] &#8728; E[&lambda;,k] &#8728; B (G(R<sub>seed</sub>(p), s, f))</p>
+      <p>Read right to left. R randomizes starting parameters before G draws the source; s is the source seed and f is the frame count. &alpha; and &beta; multiply vector length; &lambda; sets the smallest echo; k counts echoes; r counts affine repetitions. B prepares the source. N1 samples even siblings, and N2 samples the remaining sources. Each formula preserves the same coefficients within its pair.</p>
+      <div class="notes-table"><table><thead><tr><th scope="col">Profile</th><th scope="col">&alpha;</th><th scope="col">&beta;</th><th scope="col">&lambda;</th><th scope="col">k</th><th scope="col">r</th></tr></thead><tbody><tr><th scope="row">A</th><td>0.65</td><td>1.35</td><td>0.62</td><td>2</td><td>2</td></tr><tr><th scope="row">B</th><td>1.45</td><td>0.80</td><td>0.83</td><td>3</td><td>3</td></tr></tbody></table></div>
+      <p>All twelve pairs preserve geometry and change stroke assignments. In the Halo B pair below, <strong>2,268 of 3,150 line strokes</strong> change when color moves. The native shapes, coefficients, and final transform are identical.</p>
+      <div class="comparison-grid">
+        <figure><a class="comparison-preview" href="/BacteriaVisualizer/?settings=%2FApps%2Fstudies%2Fsettings%2Falgebracoef-halo-b-source.json&amp;settingsVisual=bacteriaMinimal" aria-label="Open Halo Interference B - source color"><img data-preview-src="../studies/large/algebracoef-halo-b-source.webp" loading="lazy" decoding="async" width="1200" height="1000" alt="Halo echoes with normal and tangent vectors, colored by source family"></a><figcaption><h3>Color the source families</h3><a href="../studies/svg/algebracoef-halo-b-source.svg" download>Save SVG</a></figcaption></figure>
+        <figure><a class="comparison-preview" href="/BacteriaVisualizer/?settings=%2FApps%2Fstudies%2Fsettings%2Falgebracoef-halo-b-marks.json&amp;settingsVisual=bacteriaMinimal" aria-label="Open Halo Interference B - marks color"><img data-preview-src="../studies/large/algebracoef-halo-b-marks.webp" loading="lazy" decoding="async" width="1200" height="1000" alt="Halo echoes with normal and tangent vectors, colored by individual mark"></a><figcaption><h3>Color the resulting marks</h3><a href="../studies/svg/algebracoef-halo-b-marks.svg" download>Save SVG</a></figcaption></figure>
+      </div>
+      <p class="study-links"><a href="/Apps/?collection=algebraCOEF">Explore all 41 algebraCOEF studies</a><a href="../studies/ALGEBRA-COEF.md">Coefficient definitions &amp; measurements</a></p>
+    </section>
+    <section id="notes" class="formal-notes" aria-labelledby="notes-title"><p class="eyebrow">The rules behind the images</p><h2 id="notes-title">Flow algebra</h2><p>A cell can become a circle; a circle can become a sampled boundary; that boundary can become a family of normal vectors. The order of those operations changes what the image represents.</p><p class="study-links"><a href="../studies/FLOW-ALGEBRA.md" download>Save the formal notes</a><a href="/Apps/">Browse the studies</a></p><details><summary>Read the operator definitions, measured laws, and all 26 compositions</summary><div class="notes-content"><p>This batch treats an SVG as an ordered collection of geometric objects with attributes and ancestry. A cell can become a circle; a circle can become a sampled boundary; that boundary can become a family of normal vectors. Color can record the object before the change or enumerate the fragments afterward. Empty space can be created by deleting a whole selected family.</p>
+<p>The collection contains 26 new studies: 18 main visuals and 8 math visuals, including 13 monochrome works. The <a href="/Apps/algebra/">interactive algebra lab</a> shows saved intermediate stages and the controlled order comparison. <a href="/Apps/">Open the viewer</a> to filter the collection, or open the SVG links below. The original and extreme batches remain available.</p>
+<h3>Read a composition from right to left</h3>
+<p>Let <strong>G(p, s, k)</strong> be the native app output at parameters <strong>p</strong>, harness seed <strong>s</strong>, and recorded animation-frame count <strong>k</strong>. Here k counts simulated requestAnimationFrame time steps; it is not necessarily the number of cellular-automaton generations or solver iterations. A typical study is</p>
+<p><strong>I = A o C o N o Q o D (G(p, s, k)).</strong></p>
+<p>This means: generate the native image, delete a selected family, convert another selection, replace those shapes with sampled vectors, assign color, and finally make a small affine change. The stored flow stages list execution order from first to last; the formula writes mathematical composition in the opposite direction.</p>
+<div class="notes-table"><table><thead><tr><th scope="col">Operator</th><th scope="col">Meaning</th><th scope="col">Actual implementation</th></tr></thead><tbody>
+<tr><td><strong>D</strong></td><td>Select and delete objects by their attributes, such as one fill-color family.</td><td>Native Property Ops rule with <code>apply: { &quot;$delete&quot;: true }</code>; applied as a prefix by the export bridge.</td></tr>
+<tr><td><strong>Q</strong></td><td>Change geometric representation: rectangle to circle, path to sampled polygon, and related supported conversions.</td><td>Native <code>convert</code> effect. Sampling and closure can change the geometry.</td></tr>
+<tr><td><strong>N</strong></td><td>Sample a spline through source points, then emit short vectors in the chosen normal, tangent, or vertical direction.</td><td>Native <code>splineLines</code> effect; each selected source is replaced by a group of lines.</td></tr>
+<tr><td><strong>C</strong></td><td>Reassign color by original color, luminance, size, or element order.</td><td>Native <code>color</code> effect. The selector and mapping mode determine what color means.</td></tr>
+<tr><td><strong>A</strong></td><td>Apply a small affine change to the resulting composition.</td><td>A final native transform stage; these studies favor restrained shears, rotations, and scaling.</td></tr>
+<tr><td><strong>P</strong></td><td>Change fill or stroke without deleting the SVG object.</td><td>Native <code>paint</code> effect. A shape painted with <code>none</code> remains in the geometry and can be selected later.</td></tr>
+<tr><td><strong>E</strong></td><td>Replace selected shapes with a finite family of scaled copies.</td><td>Native <code>scale</code> effect. Its copy count is part of the recipe.</td></tr>
+</tbody></table></div>
+<p>For a normal sample at point <strong>x</strong>, the local unit tangent <strong>t = (tx, ty)</strong> gives a normal <strong>n = (-ty, tx)</strong>. The emitted segment joins <strong>x - h n / 2</strong> to <strong>x + h n / 2</strong>, where <strong>h</strong> is the configured line height times its scale. This is a finite geometric sampling operation, not an exact symbolic derivative of the original simulation.</p>
+<h3>Order changes the result</h3>
+<ul>
+<li><strong>C before N</strong> gives a source its color before subdivision, so its descendants can inherit a common identity. <strong>C after N</strong>, using element order, can color the newly emitted vectors individually.</li>
+<li><strong>D before C</strong> can remove the original white cell population. Recoloring first can destroy that selector meaning, so the same deletion afterward need not remove the same objects.</li>
+<li><strong>N after Q</strong> uses the converted boundary. A circle converted to its bounding rectangle has four corners; its sampled normal field differs from the circular one.</li>
+<li><strong>A before N</strong> changes the geometry from which normals are calculated. <strong>A after N</strong> transforms already constructed vectors; an anisotropic affine change generally does not preserve perpendicularity.</li>
+<li>Positional selectors such as <code>:nth-of-type(3n)</code> act on the current SVG tree. Deleting or replacing siblings changes what a later positional selector matches.</li>
+</ul>
+<p>In general, <strong>N o Q != Q o N</strong>, and <strong>C o N != N o C</strong> when their selection or color rules differ. These are compositional claims about concrete operations, not a claim that every pair fails to commute. A deletion based on a stable color or identifier is idempotent if nothing changes between applications; a positional deletion can expose a different set of siblings on its second pass.</p>
+<h3>A measured witness: C before N versus N before C</h3>
+<p>The <a href="/Apps/algebra/#order">interactive comparison</a> displays both saved SVGs. The following measurements were made during the export review.</p>
+<p><a href="../studies/svg/algebra-order-color-before-normals.svg">Color Before Normals: Membrane Memory</a> and <a href="../studies/svg/algebra-order-normals-before-color.svg">Normals Before Color: Discrete Spectrum</a> use the same native source version, complete parameters, seed 925490, frame count 75, canvas, background, preparatory paint, color configuration, normal-sampling configuration, and final affine. Only the positions of C and N differ.</p>
+<p>In this guide&#x27;s notation the pair is <strong>A o N o C o P (G)</strong> versus <strong>A o C o N o P (G)</strong>. The pair recipe uses local names Q for the common preparatory paint and T for the common affine; those are P and A here, so Q retains its conversion meaning in the main legend.</p>
+<div class="notes-table"><table><thead><tr><th scope="col">Measured property</th><th scope="col">Result</th></tr></thead><tbody>
+<tr><td>Ordered SVG geometry, transforms, and stroke widths</td><td>Exactly equal; SHA-256 <code>2d65558a72fb9daced6a3c759d4acd592753f1f3901cbdaa3b57ecf3ff2d720f</code></td></tr>
+<tr><td>Generated normal lines</td><td>8,811 in each SVG</td></tr>
+<tr><td>Normal-line stroke assignments changed</td><td>7,049 of 8,811 (80.0023%)</td></tr>
+<tr><td>Preview RGB RMSE</td><td>10.924699 on the 0-255 channel scale</td></tr>
+<tr><td>Preview pixels with any RGB difference</td><td>62,606 of 358,400 (17.4682%)</td></tr>
+<tr><td>Pixels with a channel difference greater than 8</td><td>12.5326%</td></tr>
+</tbody></table></div>
+<p>Geometry equality was checked on the ordered SVG tree after excluding metadata, identifiers, run-specific data, style strings, and paint attributes; geometric attributes, including coordinates, transforms, and stroke widths, were retained. The exported SVGs contain no stylesheet. Stroke assignments were resolved through inline paint, explicit attributes, and ancestor inheritance. Pixel measurements use the two saved 640 x 560 previews directly, with no alignment, resizing, or image correction.</p>
+<p>This is an observed noncommutation witness for the selected state: equal geometry and different paint. The word &quot;commutator&quot; in recipe labels refers to this order comparison, not to the invertible group expression C N C^-1 N^-1. Conversion, deletion, and spline replacement are not assumed invertible.</p>
+<h3>Native tools and the export adapter</h3>
+<p>Property Ops and Tool Flows are separate repository tools. The current Tool Flow engine recognizes effect and transform stages; it does not have a native <code>delete</code> stage. Recipes therefore place deletion rules in top-level <code>propOps</code>. The export bridge calls the real <code>applyPropOpsToSubtree</code> implementation before running the ordered <code>flow</code> stages and preserves the rules in saved state. A <code>property</code> entry in the recorded statistics describes this prefix; it is not an invented native Flow effect.</p>
+<p>A literal deletion rule used by the Game of Life studies is:</p>
+<pre><code>{
+  &quot;kind&quot;: &quot;propRule&quot;,
+  &quot;selector&quot;: { &quot;rect&quot;: { &quot;fill&quot;: { &quot;eq&quot;: &quot;#ffffff&quot; } } },
+  &quot;apply&quot;: { &quot;$delete&quot;: true }
+}</code></pre>
+<p>Property selectors match explicit attributes or inline style properties. They support exact values and scalar or RGB ranges. They do not interpret CSS selectors or inherited computed paint. The conversion, spline, paint, and color tools have their own CSS selector fields. The export harness normalizes native HSL attributes to RGB before applying the saved color predicates.</p>
+<p>Each native <strong>N</strong> operation tags its replacement groups and lines. The implementation skips geometry already inside a generated spline group, so a later <strong>N</strong> stage normally targets another eligible source family rather than recursively growing an unlimited brush. The exact selected count and generated count are retained in the export record.</p>
+<p>For these exports, property selection and geometry/color effects run before the final affine stage. This keeps the saved ancestry and transformed output consistent with the native transform runtime. A recipe that reverses the order would need its own deliberate export handling.</p>
+<h3>A second measured law: stable deletion and erased selection</h3>
+<p>The export review executed the repository&#x27;s actual <code>applyPropOpsToSubtree</code> and <code>runEffectsFromUI</code> functions on the saved <a href="../studies/stages/algebra-life-without-its-zeros/00.svg">source stage</a>. It excludes the one full-canvas presentation rectangle, leaving 3,300 simulation cells.</p>
+<p>For D, the exact white-fill predicate removes 2,421 cells. Counts are <strong>3,300 -&gt; 879 -&gt; 879</strong> for <strong>G</strong>, <strong>D(G)</strong>, and <strong>D(D(G))</strong>. The entire remaining XML serialization after the first deletion is exactly equal to that after the second: <strong>D(D(G)) = D(G)</strong> for this source and this stable predicate.</p>
+<p>A second comparison uses the native paint effect to set every remaining rectangle&#x27;s fill to black. Calling that constant recoloring C, <strong>D(C(G))</strong> retains all <strong>3,300</strong> cells, while <strong>C(D(G))</strong> retains <strong>879</strong>. Painting first leaves zero matches for the original white-fill predicate. The 2,421-cell difference is a measured selection-order effect, not a geometric approximation. In the main legend this constant paint operation is <strong>P_black</strong>, so the same comparison is <strong>D o P_black != P_black o D</strong>.</p>
+<p>The test uses native attribute selection and mutation in JSDOM; these two operations require no browser layout or rasterization. This confirms the chosen stable deletion; it does not claim that every positional selector or stateful operation is idempotent.</p>
+<h3>Ancestry and finite complexity</h3>
+<p>Conversion and spline generation replace selected source nodes, while unselected objects remain. Native run identifiers such as <code>data-convert-run</code>, <code>data-spline-lines-run</code>, <code>data-scale-run</code>, and transform tags provide ancestry clues inside the SVG. They identify operations and copies; they are not a complete reversible history. The original parameters and seed in the matching settings file are the route back to the native source image.</p>
+<p>Every exported work has finitely many shapes and samples. For <strong>m</strong> selected sources, roughly <strong>p</strong> control samples, and <strong>s</strong> steps between samples, a spline stage produces on the order of **m * p * s** line segments. Echo and plane-copy stages can multiply that count. This batch uses selective conversion and small final affine changes so structure and missing families remain visible.</p>
+<h3>The studies</h3>
+<div class="notes-table"><table><thead><tr><th scope="col">Study</th><th scope="col">Native app</th><th scope="col">Palette</th><th scope="col">Composition</th></tr></thead><tbody>
+<tr><td><a href="../studies/svg/algebra-life-without-its-zeros.svg">Life Without Its Zeros</a></td><td>GameOfLife_aug</td><td>Monochrome</td><td>A o C o N o P o Q o D o G</td></tr>
+<tr><td><a href="../studies/svg/algebra-complement-population.svg">Complement Population</a></td><td>GameOfLife_aug</td><td>Monochrome</td><td>A o C o N o P o Q o D o G</td></tr>
+<tr><td><a href="../studies/svg/algebra-cell-state-chromatic-charge.svg">Cell State Becomes Chromatic Charge</a></td><td>GameOfLife_aug</td><td>Color</td><td>A o N o C o P o Q o D o G</td></tr>
+<tr><td><a href="../studies/svg/algebra-nested-counterfactuals.svg">A Lattice of Nested Counterfactuals</a></td><td>GameOfLife_aug</td><td>Monochrome</td><td>A o C o N o E o P o Q o D o G</td></tr>
+<tr><td><a href="../studies/svg/algebra-grid-learns-to-exhale.svg">A Grid Learns to Exhale</a></td><td>MondrianAbstraction</td><td>Color</td><td>A o N o C o P o Q o G</td></tr>
+<tr><td><a href="../studies/svg/algebra-diagonal-boundary-condition.svg">The Diagonal Is a Boundary Condition</a></td><td>MondrianAbstraction</td><td>Monochrome</td><td>A o C o N o Q o P o G</td></tr>
+<tr><td><a href="../studies/svg/algebra-three-color-quotient.svg">Residues of a Three Color Quotient</a></td><td>MondrianAbstraction</td><td>Color</td><td>A o N o C o E o P o G</td></tr>
+<tr><td><a href="../studies/svg/algebra-null-tiles-residual-stars.svg">Null Tiles and Residual Stars</a></td><td>MondrianAbstraction</td><td>Monochrome</td><td>A o C o N o P o Q o P o G</td></tr>
+<tr><td><a href="../studies/svg/algebra-sevenfold-differential-reliquary.svg">Sevenfold Differential Reliquary</a></td><td>InnerLight</td><td>Color</td><td>A o N o C o G</td></tr>
+<tr><td><a href="../studies/svg/algebra-concentricity-normal-stress.svg">Concentricity Under Normal Stress</a></td><td>InnerLight</td><td>Monochrome</td><td>A o C o N o G</td></tr>
+<tr><td><a href="../studies/svg/algebra-rectangle-memory-field.svg">Rectangle Memory Becomes a Field</a></td><td>InnerLight</td><td>Color</td><td>A o N o C o Q o G</td></tr>
+<tr><td><a href="../studies/svg/algebra-two-boundary-languages.svg">Superposition of Two Boundary Languages</a></td><td>InnerLight</td><td>Monochrome</td><td>A o C o N o N o P o P o G</td></tr>
+<tr><td><a href="../studies/svg/algebra-resonance-after-colour-erasure.svg">Resonance After Colour Erasure</a></td><td>LissajousFigures</td><td>Monochrome</td><td>A o C2 o N o Q o C1 o D o G</td></tr>
+<tr><td><a href="../studies/svg/algebra-a-trajectory-loses-its-beginning.svg">A Trajectory Loses Its Beginning</a></td><td>LorenzAttractor</td><td>Color</td><td>A o C o N o Q o D o G</td></tr>
+<tr><td><a href="../studies/svg/algebra-a-loom-without-its-weft.svg">A Loom Without Its Weft</a></td><td>QuasicrystallineWickerwork</td><td>Color</td><td>A o C o N o Q o E o D o G</td></tr>
+<tr><td><a href="../studies/svg/algebra-the-missing-coordinate-family.svg">The Missing Coordinate Family</a></td><td>PinkallSchmittGunnHoffmannCollection</td><td>Monochrome</td><td>A o C o N o Q o D o G</td></tr>
+<tr><td><a href="../studies/svg/algebra-order-color-before-normals.svg">Color Before Normals: Membrane Memory</a></td><td>BacteriaVisualizer</td><td>Color</td><td>A o N o C o P o G</td></tr>
+<tr><td><a href="../studies/svg/algebra-order-normals-before-color.svg">Normals Before Color: Discrete Spectrum</a></td><td>BacteriaVisualizer</td><td>Color</td><td>A o C o N o P o G</td></tr>
+<tr><td><a href="../studies/svg/algebra-halo-tangent-quotient.svg">Halo Tangent Quotient</a></td><td>BacteriaVisualizer</td><td>Monochrome</td><td>A o C o N o P o G</td></tr>
+<tr><td><a href="../studies/svg/algebra-square-membranes-remember-radius.svg">Square Membranes Remember Radius</a></td><td>BacteriaVisualizer</td><td>Color</td><td>A o N o Q o C o G</td></tr>
+<tr><td><a href="../studies/svg/algebra-contours-become-chromatic-cilia.svg">Contours Become Chromatic Cilia</a></td><td>BacterialConstructs</td><td>Color</td><td>A o C o N o P o G</td></tr>
+<tr><td><a href="../studies/svg/algebra-negative-space-receives-colony.svg">Negative Space Receives the Colony</a></td><td>BacterialConstructs</td><td>Monochrome</td><td>A o C o N o P o Q o G</td></tr>
+<tr><td><a href="../studies/svg/algebra-root-to-normal-operator.svg">Root to Normal Operator</a></td><td>ProceduralGrass</td><td>Monochrome</td><td>A o C o N o P o G</td></tr>
+<tr><td><a href="../studies/svg/algebra-violet-grain-coordinate.svg">Violet Grain Coordinate</a></td><td>ProceduralGrass</td><td>Color</td><td>A o Q o N o C o G</td></tr>
+<tr><td><a href="../studies/svg/algebra-rose-velocity-commutator.svg">Rose Velocity Commutator</a></td><td>MarbledPatterns</td><td>Color</td><td>A o C2 o N o C1 o G</td></tr>
+<tr><td><a href="../studies/svg/algebra-lamellar-boundary-derivative.svg">Lamellar Boundary Derivative</a></td><td>MarbledPatterns</td><td>Monochrome</td><td>A o C o N o Q o G</td></tr>
+</tbody></table></div>
+<p>Four mathematical examples make the selection explicit:</p>
+<ul>
+<li><a href="../studies/svg/algebra-resonance-after-colour-erasure.svg">Resonance After Colour Erasure</a> removes a violet/magenta stroke family from Lissajous resonances before temporary colors, polygon conversion, normal vectors, and a final monochrome remap.</li>
+<li><a href="../studies/svg/algebra-a-trajectory-loses-its-beginning.svg">A Trajectory Loses Its Beginning</a> deletes cyan-colored Lorenz chunks before converting selected survivors. Native chunk color combines trajectory progression and trail index, so this is deliberately not an exact physical time cut.</li>
+<li><a href="../studies/svg/algebra-a-loom-without-its-weft.svg">A Loom Without Its Weft</a> deletes the seventeen cross-strands with native stroke <code>#1f1f1f</code>; the surviving folded spokes become the material for the next operators.</li>
+<li><a href="../studies/svg/algebra-the-missing-coordinate-family.svg">The Missing Coordinate Family</a> removes a cyan interval from a projected mesh whose row and column colors encode position differently, then turns selected surviving coordinates into bristles.</li>
+</ul>
+<h3>Follow one composition through its saved stages</h3>
+<p>The <a href="/Apps/algebra/">interactive algebra lab</a> provides a stage slider and keyboard navigation. <a href="../studies/stages/algebra-life-without-its-zeros/stages.json">Life Without Its Zeros</a> also includes direct intermediate SVGs:</p>
+<ol>
+<li><a href="../studies/stages/algebra-life-without-its-zeros/00.svg">Source cell population</a>.</li>
+<li><a href="../studies/stages/algebra-life-without-its-zeros/01.svg">Selected population deleted</a>.</li>
+<li><a href="../studies/stages/algebra-life-without-its-zeros/02.svg">Remaining rectangles converted to circles</a>.</li>
+<li><a href="../studies/stages/algebra-life-without-its-zeros/03.svg">Circle paint assigned</a>.</li>
+<li><a href="../studies/stages/algebra-life-without-its-zeros/04.svg">Boundaries replaced by normal samples</a>.</li>
+<li><a href="../studies/stages/algebra-life-without-its-zeros/05.svg">Monochrome luminance map applied</a>.</li>
+<li><a href="../studies/stages/algebra-life-without-its-zeros/06.svg">Final small affine change</a>.</li>
+</ol>
+<h3>Files and reproduction</h3>
+<p>Each SVG has matching editable settings. The complete operator description also has a separate algebra JSON: for example, <a href="../studies/settings/algebra-life-without-its-zeros.json">Life settings</a>, <a href="../studies/flows/algebra-life-without-its-zeros.flow.json">Life flow stages</a>, and <a href="../studies/algebra/algebra-life-without-its-zeros.algebra.json">Life operator definition</a>, or <a href="../studies/flows/algebra-order-color-before-normals.flow.json">C-before-N flow</a> and <a href="../studies/algebra/algebra-order-color-before-normals.algebra.json">its operator definition</a>. The effects are baked into vector geometry; viewing an SVG does not require a running app.</p>
+<p>Open a study in the <a href="/Apps/">viewer</a> to load its JSON settings in the source app. In the <a href="/Apps/algebra/#simulation">algebra lab</a>, the simulation starts only when requested. The SVG is the frozen composition; a live simulation can continue from its parameters and produce a different frame.</p>
+<p>The harness seed controls ambient seeded randomness; an app&#x27;s own <code>params.seed</code> can independently control its native generator. Both values, along with the frame count, are recorded when present. Reopening a live app can advance its simulation or initialize randomness differently. The exported SVG preserves the exact frozen composition; the settings preserve the editable parameters and operations.</p>
+<p>InnerLight uses a small registration adapter that exposes its existing <code>createInnerLight</code> factory independently of the page bootstrap. The actual source renderer still generates its geometry.</p>
+<p>The export review verified 26 completed studies, 13 monochrome outputs, and 125 operation stages that changed the artwork, including eight native property-rule prefixes. Implementation references: <a href="/helper/toolFlowHelp.js">Tool Flows</a>, <a href="/helper/svgEditor.js">Property Ops</a>, <a href="/helper/PROP_OPS_RULES.md">Property Ops rule reference</a>, <a href="/helper/colorEffects.js">color mapping</a>, and <a href="/helper/splineEffectsUtils.js">spline sampling</a>.</p></div></details></section>
+    <p class="back-link"><a href="/Apps/">Back to SVG studies</a></p>
+    <noscript><p>Enable JavaScript for the stage controls, or <a href="../studies/stages/algebra-life-without-its-zeros/stages.json">browse the saved stage list</a>. The formal notes remain available below.</p></noscript>
+  </main>
+  <div id="siteFooter"></div>
+</body>
+</html>

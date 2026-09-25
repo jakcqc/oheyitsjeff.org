@@ -9,9 +9,11 @@
  */
 
 import { runVisualApp } from "../helper/visualHelp.js";
+import { preloadLinkedSettings } from "../helper/linkedSettings.js";
 import "./PinkallSchmittGunnHoffmannCollection_visual.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  if (!await preloadLinkedSettings("pinkallSchmittGunnHoffmannCollection")) return;
   runVisualApp({
     visualId: "pinkallSchmittGunnHoffmannCollection",
     mountEl: document.getElementById("vis"),

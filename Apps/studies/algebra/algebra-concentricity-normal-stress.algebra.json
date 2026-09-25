@@ -1,0 +1,48 @@
+{
+  "title": "Concentricity Under Normal Stress",
+  "source": "InnerLight/index.js",
+  "visualId": "innerLight",
+  "seed": 925319,
+  "frames": 0,
+  "algebra": {
+    "expression": "A = T[2.1deg,1.03] N[39,3,221,tension=0.88](C^194)",
+    "interpretation": "Nearly two hundred concentric circles are replaced by long radial spline normals. Their common center persists, but the discrete 39-sample phase and neighboring radii accumulate into a dense monochrome diffraction disk.",
+    "order": "Read operators right to left; tool flow arrays execute top to bottom. P changes paint, C changes shape, K maps colors, H creates concentric scale copies, N samples normal marks, B samples tangent or vertical marks, T is a small affine transform."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebra-concentricity-normal-stress.flow.json",
+  "nativeSettings": "../settings/algebra-concentricity-normal-stress.json",
+  "observedStages": [
+    {
+      "label": "normal spline differential",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 194,
+      "afterShapes": 22892,
+      "messages": [
+        "spline lines applied: 194 shapes, 22892 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "monochrome luminance palette",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 22892,
+      "afterShapes": 22892,
+      "messages": [
+        "color applied: 22892 elements, 48 mapped colors."
+      ]
+    },
+    {
+      "label": "small final affine change",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 22892,
+      "afterShapes": 22892,
+      "messages": []
+    }
+  ]
+}

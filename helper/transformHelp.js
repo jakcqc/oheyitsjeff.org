@@ -774,28 +774,73 @@ export function initTransformRuntime({ mountEl, state }) {
     svg.appendChild(layerG);
   }
 
-  let rafPending = false;
-  const schedule = () => {
-    if (rafPending) return;
-    rafPending = true;
-    requestAnimationFrame(() => {
-      rafPending = false;
-      rebuildNow();
-    });
+  let pendingFrame = null;
+  let suspended = 0;
+  let destroyed = false;
+  let sourceChangeHandler = null;
+  const observerOptions = { childList: true, subtree: true, attributes: true };
+  const isGeneratedLayer = (node) => node === layerG || layerG.contains(node);
+  const hasSourceChanges = (records) => records.some((record) => {
+    if (isGeneratedLayer(record.target)) return false;
+    if (record.type !== "childList") return true;
+    return [...record.addedNodes, ...record.removedNodes].some((node) => !isGeneratedLayer(node));
+  });
+  const cancelPendingFrame = () => {
+    if (pendingFrame == null) return;
+    cancelAnimationFrame(pendingFrame);
+    pendingFrame = null;
   };
+  const mo = new MutationObserver((records) => {
+    if (destroyed || suspended || pendingFrame != null || !hasSourceChanges(records)) return;
+    pendingFrame = requestAnimationFrame(() => {
+      pendingFrame = null;
+      if (destroyed) return;
+      // A native ResizeObserver, simulation, or asynchronous renderer has drawn
+      // a fresh source. Process that drawing without calling its render again.
+      withSourceUpdatesSuspended(() => {
+        if (sourceChangeHandler) sourceChangeHandler();
+        else rebuildNow();
+      });
+    });
+  });
+  // Some apps use sibling groups for background and geometry. Observe the SVG,
+  // rather than only its first group; generated transform clones are excluded.
+  mo.observe(svg, observerOptions);
 
-  // Keep up with visuals that redraw internally
-  const mo = new MutationObserver(schedule);
-  mo.observe(sourceG, { childList: true, subtree: true, attributes: true });
+  function withSourceUpdatesSuspended(callback) {
+    const outermost = suspended === 0;
+    if (outermost) {
+      cancelPendingFrame();
+      // disconnect also discards queued records from the explicit tool action.
+      // A boolean guard alone is insufficient: observers run after it resets.
+      mo.disconnect();
+    }
+    suspended += 1;
+    try { return callback(); }
+    finally {
+      suspended -= 1;
+      if (outermost && !destroyed) mo.observe(svg, observerOptions);
+    }
+  }
+
+  function setSourceChangeHandler(handler) {
+    sourceChangeHandler = typeof handler === "function" ? handler : null;
+  }
 
   function resetToInitial() {
-    layerG.replaceChildren();
-    sourceG.style.display = "";
-    if (initialSourceTransform == null) sourceG.removeAttribute("transform");
-    else sourceG.setAttribute("transform", initialSourceTransform);
+    return withSourceUpdatesSuspended(() => {
+      layerG.replaceChildren();
+      sourceG.style.display = "";
+      if (initialSourceTransform == null) sourceG.removeAttribute("transform");
+      else sourceG.setAttribute("transform", initialSourceTransform);
+    });
   }
 
   function rebuildNow() {
+    return withSourceUpdatesSuspended(rebuildTransforms);
+  }
+
+  function rebuildTransforms() {
     const stack = state.__xf.stack || [];
     const propStack = state.__propOps?.stack || [];
     const hasProps = Array.isArray(propStack) && propStack.length > 0;
@@ -920,7 +965,10 @@ export function initTransformRuntime({ mountEl, state }) {
   }
 
   function destroy() {
-    try { mo.disconnect(); } catch {}
+    destroyed = true;
+    cancelPendingFrame();
+    sourceChangeHandler = null;
+    mo.disconnect();
   }
   if (!isFirst) {
     const preset = String(getByPath(state, "__xf.ui.preset") ?? "");
@@ -935,7 +983,7 @@ export function initTransformRuntime({ mountEl, state }) {
   }
         //xfRuntime?.rebuildNow?.();
 
-  return { rebuildNow, resetToInitial, destroy };
+  return { rebuildNow, resetToInitial, withSourceUpdatesSuspended, setSourceChangeHandler, destroy };
 }
 
 export function getSvgViewBox(svg) {

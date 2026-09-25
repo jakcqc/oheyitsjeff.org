@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "name": "Cell State Becomes Chromatic Charge",
+  "stages": [
+    {
+      "id": "stage-mues67b4-tp2h3xl",
+      "kind": "effect",
+      "label": "rect becomes a closed quadrilateral path",
+      "enabled": true,
+      "config": {
+        "effectType": "convert",
+        "selector": "rect",
+        "convertFrom": "rect",
+        "convertTo": "path",
+        "pathSamplePoints": 24,
+        "convertScaleMode": "center",
+        "convertScaleFactor": 0.74
+      }
+    },
+    {
+      "id": "stage-mues67b4-82zs3h8",
+      "kind": "effect",
+      "label": "choose ink on closed path",
+      "enabled": true,
+      "config": {
+        "effectType": "paint",
+        "selector": "path",
+        "paintFill": "none",
+        "paintStroke": "#ff630d"
+      }
+    },
+    {
+      "id": "stage-mues67b4-mh8ejrk",
+      "kind": "effect",
+      "label": "palette as ordered spectrum",
+      "enabled": true,
+      "config": {
+        "effectType": "color",
+        "color": {
+          "selector": "path",
+          "sourceProp": "stroke",
+          "targetProp": "stroke",
+          "mode": "byIndex",
+          "colorSort": "appearance",
+          "paletteText": "#241d79, #14b8ca, #fb38ba, #ffbc25",
+          "paletteSteps": 48,
+          "useComputed": true,
+          "skipNone": true,
+          "sizeSource": "bboxArea",
+          "sizeAttr": "r"
+        }
+      }
+    },
+    {
+      "id": "stage-mues67b4-yin3tcr",
+      "kind": "effect",
+      "label": "normal spline differential",
+      "enabled": true,
+      "config": {
+        "effectType": "splineLines",
+        "splineSource": "path",
+        "splineSelector": "path",
+        "splinePointCount": 8,
+        "splineStepsPerSegment": 3,
+        "splineTension": -0.3,
+        "splineLineOrientation": "normal",
+        "splineLineHeight": 67,
+        "splineLineScale": 1,
+        "splineStrokeWidth": 0.95,
+        "splineScaleMode": "none",
+        "splineScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues67b4-n0xpphr",
+      "kind": "transform",
+      "label": "small final affine change",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": 4.2
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.97
+          }
+        ]
+      }
+    }
+  ]
+}

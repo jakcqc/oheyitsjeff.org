@@ -1,0 +1,167 @@
+{
+  "shapes": {
+    "circle": false,
+    "square": false,
+    "rect": false,
+    "prism": false,
+    "user": true
+  },
+  "motionEnabled": false,
+  "custom": {
+    "shapeType": "circle",
+    "numElements": 194,
+    "numSides": 6,
+    "radius": 11,
+    "incrementSize": 2.65,
+    "dynamicSize": 10,
+    "strokeWidth": "0.7px",
+    "strokeColor": "#121212",
+    "fillColor": "none",
+    "fillOpacity": 1,
+    "xDivisions": 10,
+    "yDivisions": 10
+  },
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0,
+      "preset": "",
+      "splitMode": "screen",
+      "applyToAll": false,
+      "tileTargets": "0",
+      "zoomFactor": 1.25,
+      "matrix": {
+        "a": 1,
+        "b": 0,
+        "c": 0,
+        "d": 1,
+        "e": 0,
+        "f": 0
+      },
+      "zoomCenter": {
+        "x": null,
+        "y": null
+      },
+      "translateVec": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCount": 3,
+      "planeBaseScale": 1,
+      "planeScaleStep": -0.12,
+      "planeOpacity": 0.7,
+      "planeOpacityFalloff": 0.12,
+      "planeOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCenter": {
+        "x": null,
+        "y": null
+      },
+      "groupOpen": {}
+    },
+    "stack": [
+      {
+        "kind": "rotate",
+        "deg": 2.1
+      },
+      {
+        "kind": "zoom",
+        "factor": 1.03
+      }
+    ]
+  },
+  "__toolFlows": {
+    "ui": {
+      "flowName": "Concentricity Under Normal Stress",
+      "selectedId": "builtin-grayscale",
+      "autoRun": true,
+      "groupsOpen": {}
+    },
+    "stages": [
+      {
+        "id": "stage-mues67bb-wlsfymn",
+        "kind": "effect",
+        "label": "normal spline differential",
+        "enabled": true,
+        "config": {
+          "effectType": "splineLines",
+          "splineSource": "circle",
+          "splineSelector": "circle",
+          "splinePointCount": 39,
+          "splineStepsPerSegment": 3,
+          "splineTension": 0.88,
+          "splineLineOrientation": "normal",
+          "splineLineHeight": 221,
+          "splineLineScale": 1,
+          "splineStrokeWidth": 0.28,
+          "splineScaleMode": "none",
+          "splineScaleFactor": 1
+        }
+      },
+      {
+        "id": "stage-mues67bb-3soj11g",
+        "kind": "effect",
+        "label": "monochrome luminance palette",
+        "enabled": true,
+        "config": {
+          "effectType": "color",
+          "color": {
+            "selector": "*",
+            "sourceProp": "each",
+            "targetProp": "both",
+            "mode": "byLuminance",
+            "colorSort": "luminance",
+            "paletteText": "#080808, #808080",
+            "paletteSteps": 48,
+            "useComputed": true,
+            "skipNone": true
+          }
+        }
+      },
+      {
+        "id": "stage-mues67bb-332qqsu",
+        "kind": "transform",
+        "label": "small final affine change",
+        "enabled": true,
+        "config": {
+          "stack": [
+            {
+              "kind": "rotate",
+              "deg": 2.1
+            },
+            {
+              "kind": "zoom",
+              "factor": 1.03
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "__propOps": {
+    "ui": {
+      "ruleText": "{\n        \"selector\": {\"circle\":{\"r\":{\"range\":[20,100]}}},\n        \"apply\": {\"stroke\": null}\n        }",
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": []
+  },
+  "__scriptOps": {
+    "ui": {
+      "codeText": "// ctx.root is the <g> subtree being processed\n// ctx.svg is the owning <svg>\n// ctx.create(tag) creates an SVG element\n//\n// Example: circle -> 6-gon (polygon)\n// for (const c of ctx.root.querySelectorAll(\"circle\")) {\n//   const cx = Number(c.getAttribute(\"cx\") || 0);\n//   const cy = Number(c.getAttribute(\"cy\") || 0);\n//   const r = Number(c.getAttribute(\"r\") || 0);\n//   const n = 6;\n//   const pts = Array.from({length:n}, (_,i) => {\n//     const a = (Math.PI*2*i)/n;\n//     return [cx + r*Math.cos(a), cy + r*Math.sin(a)].join(\",\");\n//   }).join(\" \");\n//   const p = ctx.create(\"polygon\");\n//   p.setAttribute(\"points\", pts);\n//   for (const {name,value} of Array.from(c.attributes)) {\n//     if (name === \"cx\" || name === \"cy\" || name === \"r\") continue;\n//     p.setAttribute(name, value);\n//   }\n//   c.replaceWith(p);\n// }",
+      "fileName": "",
+      "selectedCacheKey": "",
+      "autoRunSelected": false,
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": [],
+    "cache": {}
+  }
+}

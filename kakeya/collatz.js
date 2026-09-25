@@ -20,6 +20,7 @@
 // - Works with oheyitsjeff.org visualHelp.js UI + transforms tab (first <g> is the source group).
 
 import { registerVisual, runVisualApp } from "../helper/visualHelp.js";
+import { preloadLinkedSettings } from "../helper/linkedSettings.js";
 
 registerVisual("kakeyaBesicovitchNeedle", {
   title: "Kakeya / Besicovitch Needle (Perron-Tree Approx, Rectangles)",
@@ -584,7 +585,8 @@ registerVisual("kakeyaBesicovitchNeedle", {
   },
 });
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  if (!await preloadLinkedSettings("kakeyaBesicovitchNeedle")) return;
   runVisualApp({
     visualId: "kakeyaBesicovitchNeedle",
     mountEl: document.getElementById("vis"),

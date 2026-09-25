@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "name": "Contours Become Chromatic Cilia",
+  "stages": [
+    {
+      "id": "stage-mues67dn-6ogyeua",
+      "kind": "effect",
+      "label": "Extract contour boundaries from concentration bands",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "paint",
+        "elementType": "path",
+        "selector": "path",
+        "paintFill": "none",
+        "paintStroke": "#a7cee8"
+      }
+    },
+    {
+      "id": "stage-mues67dn-gsxq9dm",
+      "kind": "effect",
+      "label": "Replace alternating concentration thresholds with cilia",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "splineLines",
+        "splineSource": "path",
+        "splineSelector": "path:nth-of-type(2n)",
+        "splinePointCount": 44,
+        "splineStepsPerSegment": 4,
+        "splineTension": 0.42,
+        "splineLineOrientation": "normal",
+        "splineLineHeight": 5.5,
+        "splineLineScale": 1.2,
+        "splineStrokeWidth": 0.28
+      }
+    },
+    {
+      "id": "stage-mues67dn-srdei8z",
+      "kind": "effect",
+      "label": "Enumerate the new cilia through a coral ion palette",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "color",
+        "color": {
+          "selector": "path,line",
+          "sourceProp": "stroke",
+          "targetProp": "stroke",
+          "mode": "byIndex",
+          "colorSort": "appearance",
+          "paletteText": "#65cbd3,#325e91,#d77091,#ffd8a1",
+          "paletteSteps": 61,
+          "useComputed": true,
+          "skipNone": true
+        }
+      }
+    },
+    {
+      "id": "stage-mues67dn-qem55gh",
+      "kind": "transform",
+      "label": "A small strain of the culture plate",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "matrix",
+            "m": [
+              1.015,
+              0.032,
+              -0.048,
+              0.965,
+              20,
+              -2
+            ]
+          }
+        ],
+        "ui": {
+          "splitMode": "fit"
+        }
+      }
+    }
+  ]
+}

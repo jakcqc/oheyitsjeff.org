@@ -1,0 +1,23 @@
+{
+  "paths": 360,
+  "steps": 400,
+  "fieldScale": 0.004,
+  "stepSize": 8,
+  "passes": 6,
+  "curl": 1,
+  "fitMode": "stretch",
+  "padding": 40,
+  "strokeWidth": 1.3,
+  "seed": 730013,
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0
+    },
+    "stack": []
+  }
+}

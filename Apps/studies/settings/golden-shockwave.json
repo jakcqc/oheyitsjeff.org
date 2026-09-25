@@ -1,0 +1,22 @@
+{
+  "strands": 120,
+  "rings": 40,
+  "twist": 0.58,
+  "radialWarp": 0.77,
+  "weftCount": 21,
+  "fitMode": "contain",
+  "padding": 190,
+  "strokeWidth": 2.3,
+  "seed": 271828,
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0
+    },
+    "stack": []
+  }
+}

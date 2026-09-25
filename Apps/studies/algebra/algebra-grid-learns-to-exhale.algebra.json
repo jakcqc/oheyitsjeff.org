@@ -1,0 +1,70 @@
+{
+  "title": "A Grid Learns to Exhale",
+  "source": "MondrianAbstraction/mondrian.js",
+  "visualId": "mondrianAbstraction",
+  "seed": 925314,
+  "frames": 0,
+  "algebra": {
+    "expression": "A = T[2.3deg] N[16,3,49] K_index C[rect->circle,0.9](G)",
+    "interpretation": "Mondrian tiles are quotiented into equal-sized inscribed circular symbols. Their normal bundles extend beyond cell ownership; ordered color makes the original grid behave like an oscillating membrane.",
+    "order": "Read operators right to left; tool flow arrays execute top to bottom. P changes paint, C changes shape, K maps colors, H creates concentric scale copies, N samples normal marks, B samples tangent or vertical marks, T is a small affine transform."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebra-grid-learns-to-exhale.flow.json",
+  "nativeSettings": "../settings/algebra-grid-learns-to-exhale.json",
+  "observedStages": [
+    {
+      "label": "rect becomes circle",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 192,
+      "afterShapes": 192,
+      "messages": [
+        "convert applied: 192 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "choose ink on circle",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 192,
+      "afterShapes": 192,
+      "messages": [
+        "paint applied: 192 elements."
+      ]
+    },
+    {
+      "label": "palette as ordered spectrum",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 192,
+      "afterShapes": 192,
+      "messages": [
+        "color applied: 192 elements, 48 mapped colors."
+      ]
+    },
+    {
+      "label": "normal spline differential",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 192,
+      "afterShapes": 9408,
+      "messages": [
+        "spline lines applied: 192 shapes, 9408 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "small final affine change",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 9408,
+      "afterShapes": 9408,
+      "messages": []
+    }
+  ]
+}

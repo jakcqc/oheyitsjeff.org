@@ -1,0 +1,81 @@
+{
+  "title": "Null Tiles and Residual Stars",
+  "source": "MondrianAbstraction/mondrian.js",
+  "visualId": "mondrianAbstraction",
+  "seed": 925317,
+  "frames": 0,
+  "algebra": {
+    "expression": "A = T[1.7deg] N[6,3,52] C[rect->circle,0.58] (G minus every-third painted tile)",
+    "interpretation": "Erase the paint of every third tile, then reinterpret the surviving lattice as sixfold spline stars. The regular erasure creates a second, larger-scale arithmetic rhythm.",
+    "order": "Read operators right to left; tool flow arrays execute top to bottom. P changes paint, C changes shape, K maps colors, H creates concentric scale copies, N samples normal marks, B samples tangent or vertical marks, T is a small affine transform."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebra-null-tiles-residual-stars.flow.json",
+  "nativeSettings": "../settings/algebra-null-tiles-residual-stars.json",
+  "observedStages": [
+    {
+      "label": "choose ink on rect:nth-of-type(3n)",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 374,
+      "afterShapes": 374,
+      "messages": [
+        "paint applied: 124 elements."
+      ]
+    },
+    {
+      "label": "rect becomes circle",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 374,
+      "afterShapes": 374,
+      "messages": [
+        "convert applied: 250 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "choose ink on circle",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 374,
+      "afterShapes": 374,
+      "messages": [
+        "paint applied: 250 elements."
+      ]
+    },
+    {
+      "label": "normal spline differential",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 374,
+      "afterShapes": 4874,
+      "messages": [
+        "spline lines applied: 250 shapes, 4750 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "monochrome luminance palette",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 4874,
+      "afterShapes": 4874,
+      "messages": [
+        "color applied: 4750 elements, 48 mapped colors."
+      ]
+    },
+    {
+      "label": "small final affine change",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 4874,
+      "afterShapes": 4874,
+      "messages": []
+    }
+  ]
+}

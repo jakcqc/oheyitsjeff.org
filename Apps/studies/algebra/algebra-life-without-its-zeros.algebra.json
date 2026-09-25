@@ -1,0 +1,106 @@
+{
+  "title": "Life Without Its Zeros",
+  "source": "GameOfLife_aug/gameOfLife.js",
+  "visualId": "gameOfLifeSVG",
+  "seed": 925310,
+  "frames": 0,
+  "algebra": {
+    "expression": "A = T[2.8deg,0.96] N[10,3,31] P[outline] C[rect->circle,0.72] (L - L_white)",
+    "interpretation": "Delete the dead white-cell set. Replace each surviving square with a smaller circle, then replace its boundary with normal spline marks. A binary population becomes a field of radial differential glyphs.",
+    "order": "Read operators right to left; tool flow arrays execute top to bottom. P changes paint, C changes shape, K maps colors, H creates concentric scale copies, N samples normal marks, B samples tangent or vertical marks, T is a small affine transform."
+  },
+  "propertyPrefix": [
+    {
+      "kind": "propRule",
+      "selector": {
+        "rect": {
+          "fill": {
+            "eq": "#ffffff"
+          }
+        }
+      },
+      "apply": {
+        "$delete": true
+      }
+    }
+  ],
+  "nativeFlow": "../flows/algebra-life-without-its-zeros.flow.json",
+  "nativeSettings": "../settings/algebra-life-without-its-zeros.json",
+  "observedStages": [
+    {
+      "label": "Native property-rule prefix",
+      "kind": "property",
+      "changed": true,
+      "beforeShapes": 3300,
+      "afterShapes": 879,
+      "rules": [
+        {
+          "kind": "propRule",
+          "selector": {
+            "rect": {
+              "fill": {
+                "eq": "#ffffff"
+              }
+            }
+          },
+          "apply": {
+            "$delete": true
+          }
+        }
+      ]
+    },
+    {
+      "label": "rect becomes circle",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 879,
+      "afterShapes": 879,
+      "messages": [
+        "convert applied: 879 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "choose ink on circle",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 879,
+      "afterShapes": 879,
+      "messages": [
+        "paint applied: 879 elements."
+      ]
+    },
+    {
+      "label": "normal spline differential",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 879,
+      "afterShapes": 27249,
+      "messages": [
+        "spline lines applied: 879 shapes, 27249 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "monochrome luminance palette",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 27249,
+      "afterShapes": 27249,
+      "messages": [
+        "color applied: 27249 elements, 48 mapped colors."
+      ]
+    },
+    {
+      "label": "small final affine change",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 27249,
+      "afterShapes": 27249,
+      "messages": []
+    }
+  ]
+}

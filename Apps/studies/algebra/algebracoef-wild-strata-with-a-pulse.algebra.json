@@ -1,0 +1,117 @@
+{
+  "title": "Strata With a Pulse",
+  "source": "MarbledPatterns/MarbledPatterns_visual.js",
+  "visualId": "marbledPatterns",
+  "seed": 926708,
+  "frames": 0,
+  "algebra": {
+    "edition": "wild",
+    "expression": "A o C o E o N o Q (G)",
+    "convention": "Compose right to left. One composition per app in this batch; no paired variants. Coefficients are concrete native operator parameters.",
+    "coefficients": {
+      "Q1": {
+        "pathSamplePoints": 13,
+        "convertScaleFactor": 1
+      },
+      "N2": {
+        "splinePointCount": 13,
+        "splineStepsPerSegment": 4,
+        "splineTension": 3.3,
+        "splineAngleOffset": 67,
+        "splineLineHeight": 46,
+        "splineLineScale": 4.7,
+        "splineStrokeWidth": 0.65,
+        "splineScaleFactor": 1
+      },
+      "E3": {
+        "rangeMin": 0.2,
+        "rangeMax": 1.8,
+        "count": 4,
+        "opacityFixed": 0.82,
+        "spacing": "logarithmic",
+        "recurrence": "sum(backward):opacity *0.72"
+      },
+      "C4": {
+        "mapping": "bySize",
+        "paletteSteps": 7
+      },
+      "A5": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": 68
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.68
+          }
+        ]
+      }
+    },
+    "interpretation": "A few viscous bands become angular polygons and tilted seismic needles while surviving paths shrink through logarithmic echoes. Color follows size rather than layer order.",
+    "newCapabilities": [
+      "logarithmic echo spacing",
+      "unclamped spline tension when enabled",
+      "vector angle offset"
+    ],
+    "uniqueness": "This app was not used in the first algebraCOEF batch."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebracoef-wild-strata-with-a-pulse.flow.json",
+  "nativeSettings": "../settings/algebracoef-wild-strata-with-a-pulse.json",
+  "observedStages": [
+    {
+      "label": "Q: convert",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 17,
+      "afterShapes": 17,
+      "messages": [
+        "convert applied: 5 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 17,
+      "afterShapes": 277,
+      "messages": [
+        "spline lines applied: 5 shapes, 265 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 277,
+      "afterShapes": 295,
+      "messages": [
+        "scale applied: 6 groups, 24 clones."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 295,
+      "afterShapes": 295,
+      "messages": [
+        "color warning: No numeric size values found."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 295,
+      "afterShapes": 295,
+      "messages": []
+    }
+  ]
+}

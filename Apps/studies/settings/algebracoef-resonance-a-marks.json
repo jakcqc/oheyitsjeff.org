@@ -1,0 +1,317 @@
+{
+  "curveCount": 15,
+  "freqA": 4.7972,
+  "freqB": 6.045,
+  "phase": 5.1778,
+  "samples": 1177,
+  "amplitude": 0.3155,
+  "strokeWidth": 1.0165,
+  "animate": false,
+  "speed": 0.6,
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0,
+      "preset": "",
+      "splitMode": "screen",
+      "applyToAll": false,
+      "tileTargets": "0",
+      "zoomFactor": 1.25,
+      "matrix": {
+        "a": 1,
+        "b": 0,
+        "c": 0,
+        "d": 1,
+        "e": 0,
+        "f": 0
+      },
+      "zoomCenter": {
+        "x": null,
+        "y": null
+      },
+      "translateVec": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCount": 3,
+      "planeBaseScale": 1,
+      "planeScaleStep": -0.12,
+      "planeOpacity": 0.7,
+      "planeOpacityFalloff": 0.12,
+      "planeOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCenter": {
+        "x": null,
+        "y": null
+      },
+      "groupOpen": {}
+    },
+    "stack": [
+      {
+        "kind": "rotate",
+        "deg": 1.4
+      },
+      {
+        "kind": "zoom",
+        "factor": 0.98
+      },
+      {
+        "kind": "rotate",
+        "deg": 1.4
+      },
+      {
+        "kind": "zoom",
+        "factor": 0.98
+      }
+    ]
+  },
+  "__studyRandomization": {
+    "version": 1,
+    "algorithm": "mulberry32-v1",
+    "seed": 2508270580,
+    "operation": "R_seed(p): randomize starting native parameters before G renders and before any algebra flow",
+    "samples": [
+      {
+        "path": "curveCount",
+        "op": "integer",
+        "min": 9,
+        "max": 20,
+        "before": 15,
+        "value": 15
+      },
+      {
+        "path": "freqA",
+        "op": "uniform",
+        "min": 2.5,
+        "max": 11.9,
+        "before": 13.618033989,
+        "value": 4.7972
+      },
+      {
+        "path": "freqB",
+        "op": "uniform",
+        "min": 1.5,
+        "max": 11.6,
+        "before": 8.414213562,
+        "value": 6.045
+      },
+      {
+        "path": "phase",
+        "op": "add",
+        "min": -2.6,
+        "max": 3.5,
+        "before": 2.739,
+        "value": 5.1778
+      },
+      {
+        "path": "samples",
+        "op": "integer",
+        "min": 600,
+        "max": 1700,
+        "before": 1200,
+        "value": 1177
+      },
+      {
+        "path": "amplitude",
+        "op": "uniform",
+        "min": 0.28,
+        "max": 0.46,
+        "before": 0.405,
+        "value": 0.3155
+      },
+      {
+        "path": "strokeWidth",
+        "op": "multiply",
+        "min": 0.8,
+        "max": 1.8,
+        "before": 0.9,
+        "value": 1.0165
+      }
+    ]
+  },
+  "__propOps": {
+    "ui": {
+      "ruleText": "{\n  \"selector\": {\n    \"path\": {\n      \"stroke\": {\n        \"range\": [\n          [\n            100,\n            0,\n            130\n          ],\n          [\n            255,\n            85,\n            255\n          ]\n        ]\n      }\n    }\n  },\n  \"apply\": {\n    \"$delete\": true\n  }\n}",
+      "showDocs": false
+    },
+    "stack": [
+      {
+        "kind": "propRule",
+        "selector": {
+          "path": {
+            "stroke": {
+              "range": [
+                [
+                  100,
+                  0,
+                  130
+                ],
+                [
+                  255,
+                  85,
+                  255
+                ]
+              ]
+            }
+          }
+        },
+        "apply": {
+          "$delete": true
+        }
+      }
+    ]
+  },
+  "__toolFlows": {
+    "ui": {
+      "flowName": "Resonance Quotients A - Mark Color",
+      "selectedId": "builtin-grayscale",
+      "autoRun": true,
+      "groupsOpen": {}
+    },
+    "stages": [
+      {
+        "id": "stage-mv9yjdju-w1lswb8",
+        "kind": "effect",
+        "label": "Every third survivor becomes a polygon",
+        "enabled": true,
+        "config": {
+          "autoRun": false,
+          "debug": false,
+          "effectType": "convert",
+          "convertFrom": "path",
+          "convertTo": "polygon",
+          "selector": "path:nth-of-type(3n)",
+          "pathSamplePoints": 28,
+          "convertScaleMode": "none",
+          "convertScaleFactor": 1
+        }
+      },
+      {
+        "id": "stage-mv9yjdju-hsd6379",
+        "kind": "effect",
+        "label": "E: 2 echoes, scale 0.62 to 1.25",
+        "enabled": true,
+        "config": {
+          "effectType": "scale",
+          "selector": "polygon",
+          "elementType": "polygon",
+          "rangeMin": 0.62,
+          "rangeMax": 1.25,
+          "count": 2,
+          "spacing": "linear",
+          "opacityMode": "fixed",
+          "opacityFixed": 0.72,
+          "equation": ""
+        }
+      },
+      {
+        "id": "stage-mv9yjdju-4iioe50",
+        "kind": "effect",
+        "label": "N1: normal vectors, coefficient 0.65",
+        "enabled": true,
+        "config": {
+          "autoRun": false,
+          "debug": false,
+          "effectType": "splineLines",
+          "splineSource": "polygon",
+          "splineSelector": "polygon:nth-of-type(2n)",
+          "splinePointCount": 12,
+          "splineStepsPerSegment": 2,
+          "splineTension": 0.2,
+          "splineLineOrientation": "normal",
+          "splineLineHeight": 31,
+          "splineLineScale": 0.65,
+          "splineStrokeWidth": 0.7,
+          "splineScaleMode": "none",
+          "splineScaleFactor": 1
+        }
+      },
+      {
+        "id": "stage-mv9yjdju-miuqspm",
+        "kind": "effect",
+        "label": "N2: tangent vectors, coefficient 1.35",
+        "enabled": true,
+        "config": {
+          "autoRun": false,
+          "debug": false,
+          "effectType": "splineLines",
+          "splineSource": "polygon",
+          "splineSelector": "polygon",
+          "splinePointCount": 12,
+          "splineStepsPerSegment": 2,
+          "splineTension": 0.2,
+          "splineLineOrientation": "tangent",
+          "splineLineHeight": 31,
+          "splineLineScale": 1.35,
+          "splineStrokeWidth": 0.7,
+          "splineScaleMode": "none",
+          "splineScaleFactor": 1
+        }
+      },
+      {
+        "id": "stage-mv9yjdju-mdza55e",
+        "kind": "effect",
+        "label": "C: enumerate current marks through four colors",
+        "enabled": true,
+        "config": {
+          "effectType": "color",
+          "color": {
+            "selector": "polygon,line[data-spline-lines-run]",
+            "sourceProp": "stroke",
+            "targetProp": "stroke",
+            "mode": "byIndex",
+            "colorSort": "appearance",
+            "paletteText": "#203c75,#af3368,#b97313,#3c817d",
+            "paletteSteps": 0,
+            "useComputed": true,
+            "skipNone": true
+          }
+        }
+      },
+      {
+        "id": "stage-mv9yjdju-a5thmvu",
+        "kind": "transform",
+        "label": "A^2: repeated rotation and contraction",
+        "enabled": true,
+        "config": {
+          "stack": [
+            {
+              "kind": "rotate",
+              "deg": 1.4
+            },
+            {
+              "kind": "zoom",
+              "factor": 0.98
+            },
+            {
+              "kind": "rotate",
+              "deg": 1.4
+            },
+            {
+              "kind": "zoom",
+              "factor": 0.98
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "__scriptOps": {
+    "ui": {
+      "codeText": "// ctx.root is the <g> subtree being processed\n// ctx.svg is the owning <svg>\n// ctx.create(tag) creates an SVG element\n//\n// Example: circle -> 6-gon (polygon)\n// for (const c of ctx.root.querySelectorAll(\"circle\")) {\n//   const cx = Number(c.getAttribute(\"cx\") || 0);\n//   const cy = Number(c.getAttribute(\"cy\") || 0);\n//   const r = Number(c.getAttribute(\"r\") || 0);\n//   const n = 6;\n//   const pts = Array.from({length:n}, (_,i) => {\n//     const a = (Math.PI*2*i)/n;\n//     return [cx + r*Math.cos(a), cy + r*Math.sin(a)].join(\",\");\n//   }).join(\" \");\n//   const p = ctx.create(\"polygon\");\n//   p.setAttribute(\"points\", pts);\n//   for (const {name,value} of Array.from(c.attributes)) {\n//     if (name === \"cx\" || name === \"cy\" || name === \"r\") continue;\n//     p.setAttribute(name, value);\n//   }\n//   c.replaceWith(p);\n// }",
+      "fileName": "",
+      "selectedCacheKey": "",
+      "autoRunSelected": false,
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": [],
+    "cache": {}
+  }
+}

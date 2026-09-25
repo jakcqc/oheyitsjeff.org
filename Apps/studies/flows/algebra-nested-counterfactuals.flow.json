@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "name": "A Lattice of Nested Counterfactuals",
+  "stages": [
+    {
+      "id": "stage-mues67b5-9c5vafb",
+      "kind": "effect",
+      "label": "rect becomes circle",
+      "enabled": true,
+      "config": {
+        "effectType": "convert",
+        "selector": "rect",
+        "convertFrom": "rect",
+        "convertTo": "circle",
+        "pathSamplePoints": 24,
+        "convertScaleMode": "center",
+        "convertScaleFactor": 0.88
+      }
+    },
+    {
+      "id": "stage-mues67b5-8aos56y",
+      "kind": "effect",
+      "label": "choose ink on circle",
+      "enabled": true,
+      "config": {
+        "effectType": "paint",
+        "selector": "circle",
+        "paintFill": "none",
+        "paintStroke": "#111111"
+      }
+    },
+    {
+      "id": "stage-mues67b5-e82tl3c",
+      "kind": "effect",
+      "label": "nested homothetic echoes",
+      "enabled": true,
+      "config": {
+        "effectType": "scale",
+        "selector": "circle",
+        "elementType": "circle",
+        "rangeMin": 0.5,
+        "rangeMax": 1.7,
+        "count": 3,
+        "spacing": "linear",
+        "opacityMode": "fixed",
+        "opacityFixed": 0.4,
+        "equation": ""
+      }
+    },
+    {
+      "id": "stage-mues67b5-qmcye7z",
+      "kind": "effect",
+      "label": "vertical spline differential",
+      "enabled": true,
+      "config": {
+        "effectType": "splineLines",
+        "splineSource": "circle",
+        "splineSelector": "circle",
+        "splinePointCount": 8,
+        "splineStepsPerSegment": 3,
+        "splineTension": 0.9,
+        "splineLineOrientation": "vertical",
+        "splineLineHeight": 35,
+        "splineLineScale": 1,
+        "splineStrokeWidth": 0.5,
+        "splineScaleMode": "none",
+        "splineScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues67b5-paurc7a",
+      "kind": "effect",
+      "label": "monochrome luminance palette",
+      "enabled": true,
+      "config": {
+        "effectType": "color",
+        "color": {
+          "selector": "*",
+          "sourceProp": "each",
+          "targetProp": "both",
+          "mode": "byLuminance",
+          "colorSort": "luminance",
+          "paletteText": "#080808, #808080",
+          "paletteSteps": 48,
+          "useComputed": true,
+          "skipNone": true
+        }
+      }
+    },
+    {
+      "id": "stage-mues67b5-izct4nq",
+      "kind": "transform",
+      "label": "small final affine change",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": -1.8
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.93
+          }
+        ]
+      }
+    }
+  ]
+}

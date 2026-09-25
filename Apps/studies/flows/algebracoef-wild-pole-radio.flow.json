@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "name": "Pole Radio",
+  "stages": [
+    {
+      "id": "stage-mues68dp-z1gnkou",
+      "kind": "effect",
+      "label": "P: paint",
+      "enabled": true,
+      "config": {
+        "effectType": "paint",
+        "selector": "circle",
+        "paintStroke": "#c4dfef",
+        "paintFill": "none"
+      }
+    },
+    {
+      "id": "stage-mues68dp-59ew0s0",
+      "kind": "effect",
+      "label": "Q: convert",
+      "enabled": true,
+      "config": {
+        "effectType": "convert",
+        "selector": "circle:nth-of-type(7n)",
+        "convertFrom": "circle",
+        "convertTo": "rect",
+        "pathSamplePoints": 13,
+        "convertScaleMode": "center",
+        "convertScaleFactor": 4.3
+      }
+    },
+    {
+      "id": "stage-mues68dp-on292qp",
+      "kind": "effect",
+      "label": "N: splineLines",
+      "enabled": true,
+      "config": {
+        "effectType": "splineLines",
+        "splineSource": "rect",
+        "splineSelector": "rect[data-convert-run]",
+        "splinePointCount": 7,
+        "splineStepsPerSegment": 3,
+        "splineTension": -2.1,
+        "splineExtrapolateTension": true,
+        "splineAngleOffset": 137.507,
+        "splineLineOrientation": "tangent",
+        "splineLineHeight": 18,
+        "splineLineScale": 2.7,
+        "splineStrokeWidth": 0.65,
+        "splineScaleMode": "none",
+        "splineScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues68dp-ydoxpcj",
+      "kind": "effect",
+      "label": "C: color",
+      "enabled": true,
+      "config": {
+        "effectType": "color",
+        "color": {
+          "selector": "path,polygon,circle,rect,line",
+          "sourceProp": "each",
+          "targetProp": "stroke",
+          "mode": "byIndex",
+          "colorSort": "appearance",
+          "paletteText": "#291445,#ab2554,#117f8c,#d98117",
+          "paletteSteps": 7,
+          "useComputed": true,
+          "skipNone": true,
+          "sizeSource": "bboxArea",
+          "sizeAttr": "r"
+        }
+      }
+    },
+    {
+      "id": "stage-mues68dp-scz7458",
+      "kind": "transform",
+      "label": "A: folded presentation",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": -27
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.82
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,151 @@
+{
+  "title": "Tile Resonance A - Source Color",
+  "source": "MondrianAbstraction/mondrian.js",
+  "visualId": "mondrianAbstraction",
+  "seed": 585766897,
+  "frames": 0,
+  "randomization": {
+    "version": 1,
+    "algorithm": "mulberry32-v1",
+    "seed": 1508779261,
+    "operation": "R_seed(p): randomize starting native parameters before G renders and before any algebra flow",
+    "samples": [
+      {
+        "path": "grid.cellSize",
+        "op": "integer",
+        "min": 58,
+        "max": 165,
+        "before": 100,
+        "value": 66
+      },
+      {
+        "path": "grid.strokeWidth",
+        "op": "multiply",
+        "min": 0.6,
+        "max": 2.3,
+        "before": 0.6,
+        "value": 0.4752
+      },
+      {
+        "path": "grid.strokeOpacity",
+        "op": "uniform",
+        "min": 0.55,
+        "max": 0.98,
+        "before": 0.85,
+        "value": 0.6656
+      }
+    ]
+  },
+  "startingStateSha256": "d374f04a985f387c4a1f0dd5dc809d8f3aaf9bcf92535d8ea376d2e5ae0238b7",
+  "startingSvgSha256": "2d8be361e1fe3325d74df7d43e7fca15f4b288f4637e2b80bf3d092879d959d5",
+  "algebra": {
+    "expression": "A^2 o N2[beta] o N1[alpha] o C o E[lambda,k] o B (G(R_seed(p), s, f))",
+    "convention": "Compose right to left. B is the ordered native preparation plus the optional property prefix. Coefficients parameterize operators; they are not scalar multiplication of SVGs.",
+    "coefficients": {
+      "alpha": 0.65,
+      "beta": 1.35,
+      "lambda": 0.62,
+      "echoMax": 1.25,
+      "k": 2,
+      "affineRepeat": 2,
+      "rotationDeg": 1.4,
+      "zoom": 0.98
+    },
+    "pairId": "algebracoef-tile-a",
+    "companionSlug": "algebracoef-tile-a-marks",
+    "orderLabel": "source",
+    "controlledVariables": [
+      "Source parameters, seed, frame count, canvas, coefficients, preparation and affine stack are identical within each pair.",
+      "Only C moves across the two spline stages."
+    ],
+    "repetition": "N1 samples even siblings; N2 samples the remaining eligible sources. Native guards exclude N1-generated lines. Affine powers expand inside one stack because separate transform stages replace the stack.",
+    "startingOperation": "R_seed(p): seeded parameter randomization before the native generator G; fixed within each order pair."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebracoef-tile-a-source.flow.json",
+  "nativeSettings": "../settings/algebracoef-tile-a-source.json",
+  "observedStages": [
+    {
+      "label": "rect becomes circle",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 165,
+      "afterShapes": 165,
+      "messages": [
+        "convert applied: 165 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "choose ink on circle",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 165,
+      "afterShapes": 165,
+      "messages": [
+        "paint applied: 165 elements."
+      ]
+    },
+    {
+      "label": "E: 2 echoes, scale 0.62 to 1.25",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 165,
+      "afterShapes": 330,
+      "messages": [
+        "scale applied: 165 groups, 330 clones."
+      ]
+    },
+    {
+      "label": "C: enumerate current marks through four colors",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 330,
+      "afterShapes": 330,
+      "messages": [
+        "color applied: 330 elements, 4 mapped colors."
+      ]
+    },
+    {
+      "label": "N1: normal vectors, coefficient 0.65",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 330,
+      "afterShapes": 4290,
+      "messages": [
+        "spline lines applied: 165 shapes, 4125 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "N2: tangent vectors, coefficient 1.35",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 4290,
+      "afterShapes": 8250,
+      "messages": [
+        "spline lines applied: 165 shapes, 4125 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "A^2: repeated rotation and contraction",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 8250,
+      "afterShapes": 8250,
+      "messages": []
+    }
+  ],
+  "orderComparison": {
+    "pair": "algebracoef-tile-a",
+    "geometrySha256": "c0a1aea4af677c3686d935df33ce8f4ab9883d5640b69c6c11c6e45ada1bd376",
+    "lines": 8250,
+    "changedLineStrokes": 5940,
+    "changedPercent": 72
+  }
+}

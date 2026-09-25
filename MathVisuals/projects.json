@@ -1,5 +1,26 @@
 [
   {
+    "title": "Main",
+    "isApp": false,
+    "shape": "diamond",
+    "innerShape": "diamond",
+    "outerShape": "circle",
+    "image": "/assets/Images/gameOfLife0.webp",
+    "description": "Return to the main visual gallery.",
+    "link": "/"
+  },
+  {
+    "title": "Apps",
+    "isApp": false,
+    "shape": "diamond",
+    "innerShape": "diamond",
+    "outerShape": "circle",
+    "size": "large",
+    "image": "/assets/Images/APPS.png",
+    "description": "Browse the app directory and SVG studies.",
+    "link": "/Apps/"
+  },
+  {
     "title": "Lissajous Figures",
     "image": "/MathVisuals/assets/math8.png",
     "description": "Layered parametric curves that weave into flower-like loops.",

@@ -1,0 +1,83 @@
+{
+  "title": "Alias Observatory",
+  "source": "StepSplineLab/StepSplineLab_visual.js",
+  "visualId": "stepSplineLab",
+  "seed": 926713,
+  "frames": 0,
+  "algebra": {
+    "edition": "wild",
+    "expression": "A o C o N (G)",
+    "convention": "Compose right to left. One composition per app in this batch; no paired variants. Coefficients are concrete native operator parameters.",
+    "coefficients": {
+      "N1": {
+        "splinePointCount": 5,
+        "splineStepsPerSegment": 3,
+        "splineTension": -2,
+        "splineAngleOffset": 151,
+        "splineLineHeight": 19,
+        "splineLineScale": 2.2,
+        "splineStrokeWidth": 1.3,
+        "splineScaleFactor": 1
+      },
+      "C2": {
+        "mapping": "byIndex",
+        "paletteSteps": 7
+      },
+      "A3": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": 37
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.83
+          }
+        ]
+      }
+    },
+    "interpretation": "Discontinuous signed magnitudes and modulo wrapping generate a nervous field; a sparse second spline pass rotates the observation axis by 151 degrees and reverses its tension.",
+    "newCapabilities": [
+      "logarithmic echo spacing",
+      "unclamped spline tension when enabled",
+      "vector angle offset"
+    ],
+    "uniqueness": "This app was not used in the first algebraCOEF batch."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebracoef-wild-alias-observatory.flow.json",
+  "nativeSettings": "../settings/algebracoef-wild-alias-observatory.json",
+  "observedStages": [
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 2163,
+      "afterShapes": 2859,
+      "messages": [
+        "spline lines applied: 58 shapes, 754 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 2859,
+      "afterShapes": 2859,
+      "messages": [
+        "color applied: 2859 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 2859,
+      "afterShapes": 2859,
+      "messages": []
+    }
+  ]
+}

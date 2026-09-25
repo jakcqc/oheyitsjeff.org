@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "name": "Lamellar Boundary Derivative",
+  "stages": [
+    {
+      "id": "stage-mues67ds-63jsewt",
+      "kind": "effect",
+      "label": "Approximate every third lamella by a polygon",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "convert",
+        "convertFrom": "path",
+        "convertTo": "polygon",
+        "selector": "path:nth-of-type(3n)",
+        "pathSamplePoints": 92,
+        "convertScaleMode": "none",
+        "convertScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues67ds-n7swnim",
+      "kind": "effect",
+      "label": "Take normal-line samples of projected lamellae",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "splineLines",
+        "splineSource": "polygon",
+        "splineSelector": "polygon[data-convert-run]",
+        "splinePointCount": 60,
+        "splineStepsPerSegment": 4,
+        "splineTension": 0.62,
+        "splineLineOrientation": "normal",
+        "splineLineHeight": 42,
+        "splineLineScale": 1.25,
+        "splineStrokeWidth": 0.55
+      }
+    },
+    {
+      "id": "stage-mues67ds-zcxop5m",
+      "kind": "effect",
+      "label": "Map surviving curves and derivatives to neutral light",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "color",
+        "color": {
+          "selector": "path,line,polygon",
+          "sourceProp": "each",
+          "targetProp": "both",
+          "mode": "byIndex",
+          "colorSort": "appearance",
+          "paletteText": "#6d6d6d,#f5f5f5",
+          "paletteSteps": 53,
+          "useComputed": true,
+          "skipNone": true
+        }
+      }
+    },
+    {
+      "id": "stage-mues67ds-xj49e02",
+      "kind": "transform",
+      "label": "Slight lamellar compression",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "matrix",
+            "m": [
+              0.97,
+              0.027,
+              -0.027,
+              1.02,
+              44,
+              -36
+            ]
+          }
+        ],
+        "ui": {
+          "splitMode": "fit"
+        }
+      }
+    }
+  ]
+}

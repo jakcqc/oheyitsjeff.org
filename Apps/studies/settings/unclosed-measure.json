@@ -1,0 +1,22 @@
+{
+  "curveCount": 5,
+  "freqA": 2.718281828,
+  "freqB": 3.141592654,
+  "phase": 0.618033989,
+  "samples": 3000,
+  "amplitude": 0.44,
+  "strokeWidth": 2.1,
+  "animate": false,
+  "speed": 0.6,
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0
+    },
+    "stack": []
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "title": "Normals Before Color: Discrete Spectrum",
+  "source": "BacteriaVisualizer/bacteriaVisualizer.js",
+  "visualId": "bacteriaMinimal",
+  "seed": 925490,
+  "frames": 75,
+  "algebra": {
+    "pairId": "halo-color-normal-commutator",
+    "convention": "Operators compose right to left. Q and T are fixed common preparation/presentation; only C and N swap positions.",
+    "operators": {
+      "Q": "Paint dot and outline scaffolding with fill/stroke none in both runs.",
+      "C": "Use native byIndex color mapping on circle.multi-ring,line[data-spline-lines-run], assigning exactly five cyclic stroke colors to the current selected element order. Identical config in both runs.",
+      "N": "Replace every circle.multi-ring with the identical 22-point, four-step-per-segment normal-line spline operator. Generated segments inherit the parent membrane color until a later color operator overwrites each segment.",
+      "T": "The identical mild affine transform completes both experiments."
+    },
+    "controlledVariables": [
+      "Native app, source, seed, frame count, canvas size, background, complete params, Q, C, N, T are identical.",
+      "Only the positions of C and N differ."
+    ],
+    "prediction": "N after C produces uniformly colored normal bundles per original halo. C after N cycles the five-color palette through individual new normal segments. The geometric line coordinates and counts should match; stroke assignment should differ.",
+    "verification": "Compare geometry signatures excluding styling and run-specific data attributes, then compare computed stroke colors or preview hashes. Different PNG hashes alone establish visual difference, not equal geometry.",
+    "expression": "T o C o N o Q (Halo(seed=925490,t=75))",
+    "orderLabel": "C after N",
+    "companionSlug": "algebra-order-color-before-normals"
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebra-order-normals-before-color.flow.json",
+  "nativeSettings": "../settings/algebra-order-normals-before-color.json",
+  "observedStages": [
+    {
+      "label": "Q: suppress cellular scaffolding",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 216,
+      "afterShapes": 216,
+      "messages": [
+        "paint applied: 108 elements."
+      ]
+    },
+    {
+      "label": "N: replace each halo with normal-line spline samples",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 216,
+      "afterShapes": 8928,
+      "messages": [
+        "spline lines applied: 99 shapes, 8811 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "C: enumerate current marks through the same five colors",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 8928,
+      "afterShapes": 8928,
+      "messages": [
+        "color applied: 8811 elements, 5 mapped colors."
+      ]
+    },
+    {
+      "label": "T: common small centered shear",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 8928,
+      "afterShapes": 8928,
+      "messages": []
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "name": "Sevenfold Differential Reliquary",
+  "stages": [
+    {
+      "id": "stage-mues67ba-58lx5dh",
+      "kind": "effect",
+      "label": "palette as ordered spectrum",
+      "enabled": true,
+      "config": {
+        "effectType": "color",
+        "color": {
+          "selector": "polygon",
+          "sourceProp": "stroke",
+          "targetProp": "stroke",
+          "mode": "bySize",
+          "colorSort": "appearance",
+          "paletteText": "#7a351d, #fcd58c, #eb4fbb, #5ce8ee",
+          "paletteSteps": 48,
+          "useComputed": true,
+          "skipNone": true,
+          "sizeSource": "bboxArea",
+          "sizeAttr": "r"
+        }
+      }
+    },
+    {
+      "id": "stage-mues67ba-f8raf0q",
+      "kind": "effect",
+      "label": "tangent spline differential",
+      "enabled": true,
+      "config": {
+        "effectType": "splineLines",
+        "splineSource": "polygon",
+        "splineSelector": "polygon",
+        "splinePointCount": 28,
+        "splineStepsPerSegment": 3,
+        "splineTension": -0.65,
+        "splineLineOrientation": "tangent",
+        "splineLineHeight": 173,
+        "splineLineScale": 1,
+        "splineStrokeWidth": 0.44,
+        "splineScaleMode": "none",
+        "splineScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues67ba-f4pbeew",
+      "kind": "transform",
+      "label": "small final affine change",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": -3.4
+          },
+          {
+            "kind": "zoom",
+            "factor": 1.02
+          }
+        ]
+      }
+    }
+  ]
+}

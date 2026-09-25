@@ -1,0 +1,812 @@
+{
+  "backgroundColor": "#080b12",
+  "showGuides": false,
+  "controlPointRadius": 7,
+  "scene": {
+    "generator": {
+      "minLines": 3,
+      "maxLines": 8,
+      "minPointsPerLine": 3,
+      "maxPointsPerLine": 8,
+      "seed": 1803,
+      "edgePadding": 0.04,
+      "jitter": 0.12,
+      "minPointStep": 0.05,
+      "maxPointStep": 0.14,
+      "closedChance": 0.45,
+      "pointSampler": "mixed",
+      "allowLine": true,
+      "allowDot": true,
+      "allowContinuous": true
+    },
+    "editorPanelVisible": false,
+    "items": [
+      {
+        "id": "extreme-nerve-0",
+        "name": "Torn normal family 1",
+        "visible": true,
+        "renderMode": "line",
+        "closed": true,
+        "tension": 0.11,
+        "stepsPerSegment": 18,
+        "magnitudeMode": "function",
+        "magnitudeExpr": "18 + 91 * sign(sin(43*pi*t)) * cos(13*pi*t + 0.0)",
+        "magnitudeValue": 12,
+        "negativeMode": "modulo",
+        "moduloBase": 53,
+        "strokeColor": "#eee8da",
+        "accentColor": "#eee8da",
+        "lineOrientation": "normal",
+        "lineMinLength": 0,
+        "lineScale": 1.7,
+        "lineStrokeWidth": 0.9,
+        "lineOpacity": 0.82,
+        "points": [
+          [
+            0.72,
+            0.5
+          ],
+          [
+            0.6259294060183901,
+            0.6685872149037217
+          ],
+          [
+            0.38804138657506976,
+            0.7943398613712386
+          ],
+          [
+            0.32679052324966346,
+            0.7260219345519282
+          ],
+          [
+            0.42387089309466713,
+            0.5475741811537409
+          ],
+          [
+            0.6714084763816387,
+            0.3354180763551462
+          ],
+          [
+            0.6447917500968021,
+            0.26377952559548734
+          ],
+          [
+            0.5224655655160038,
+            0.22620060050678298
+          ],
+          [
+            0.26885051525881387,
+            0.4023123800753561
+          ],
+          [
+            0.3570539450201559,
+            0.5976876199246438
+          ],
+          [
+            0.5181325126478494,
+            0.7737993994932171
+          ],
+          [
+            0.7654960308411145,
+            0.7362204744045127
+          ],
+          [
+            0.6537554471954514,
+            0.6645819236448539
+          ],
+          [
+            0.4557173912736167,
+            0.4524258188462594
+          ],
+          [
+            0.24070131288941998,
+            0.27397806544807224
+          ],
+          [
+            0.346799373418057,
+            0.20566013862876115
+          ],
+          [
+            0.5701954705232866,
+            0.33141278509627825
+          ]
+        ]
+      },
+      {
+        "id": "extreme-nerve-1",
+        "name": "Torn normal family 2",
+        "visible": true,
+        "renderMode": "line",
+        "closed": true,
+        "tension": 0.11,
+        "stepsPerSegment": 18,
+        "magnitudeMode": "function",
+        "magnitudeExpr": "18 + 91 * sign(sin(46*pi*t)) * cos(13*pi*t + 0.73)",
+        "magnitudeValue": 12,
+        "negativeMode": "modulo",
+        "moduloBase": 53,
+        "strokeColor": "#eee8da",
+        "accentColor": "#eee8da",
+        "lineOrientation": "normal",
+        "lineMinLength": 0,
+        "lineScale": 1.7,
+        "lineStrokeWidth": 0.9,
+        "lineOpacity": 0.82,
+        "points": [
+          [
+            0.7735838475221705,
+            0.5417109134317468
+          ],
+          [
+            0.5868025622050669,
+            0.6913382142882495
+          ],
+          [
+            0.3958464906660663,
+            0.8144365002553442
+          ],
+          [
+            0.2721227595443718,
+            0.6782370708065056
+          ],
+          [
+            0.4486681343196118,
+            0.5130818734771544
+          ],
+          [
+            0.6375585803027444,
+            0.31634548393227535
+          ],
+          [
+            0.6703526391911692,
+            0.24640593709526365
+          ],
+          [
+            0.5006807912224045,
+            0.24135084221417463
+          ],
+          [
+            0.30771265566669515,
+            0.4439002836896429
+          ],
+          [
+            0.3728757341436096,
+            0.6478858711458563
+          ],
+          [
+            0.5468558588908623,
+            0.7600445725098903
+          ],
+          [
+            0.7499190660375996,
+            0.7439369796154619
+          ],
+          [
+            0.6079278077947399,
+            0.6241227948918734
+          ],
+          [
+            0.42355316516802904,
+            0.42178364141240765
+          ],
+          [
+            0.2171950524494593,
+            0.22802997495653282
+          ],
+          [
+            0.3985415169428719,
+            0.24497994995649575
+          ],
+          [
+            0.5898033379325285,
+            0.34240909632112415
+          ]
+        ]
+      },
+      {
+        "id": "extreme-nerve-2",
+        "name": "Torn normal family 3",
+        "visible": true,
+        "renderMode": "line",
+        "closed": true,
+        "tension": 0.11,
+        "stepsPerSegment": 18,
+        "magnitudeMode": "function",
+        "magnitudeExpr": "18 + 91 * sign(sin(49*pi*t)) * cos(13*pi*t + 1.46)",
+        "magnitudeValue": 12,
+        "negativeMode": "modulo",
+        "moduloBase": 53,
+        "strokeColor": "#eee8da",
+        "accentColor": "#eee8da",
+        "lineOrientation": "normal",
+        "lineMinLength": 0,
+        "lineScale": 1.7,
+        "lineStrokeWidth": 0.9,
+        "lineOpacity": 0.82,
+        "points": [
+          [
+            0.7745950373996962,
+            0.5733544230860357
+          ],
+          [
+            0.5494798362970023,
+            0.7347504741926336
+          ],
+          [
+            0.3646275348360476,
+            0.7966980529433266
+          ],
+          [
+            0.2366486773143977,
+            0.6482779924146658
+          ],
+          [
+            0.47844296233365674,
+            0.4701355929681274
+          ],
+          [
+            0.6330279658316303,
+            0.31113031209489284
+          ],
+          [
+            0.715219496009682,
+            0.21153189494833163
+          ],
+          [
+            0.4767857243101668,
+            0.28573648575142013
+          ],
+          [
+            0.34848155291903893,
+            0.4773281425898834
+          ],
+          [
+            0.3471238145519362,
+            0.69028907592462
+          ],
+          [
+            0.5766463445586089,
+            0.7437029658971119
+          ],
+          [
+            0.6949618109062182,
+            0.7547619148047771
+          ],
+          [
+            0.601201054419708,
+            0.5753061438064664
+          ],
+          [
+            0.3805653658937933,
+            0.38194148560453245
+          ],
+          [
+            0.2545473583969452,
+            0.210298364741061
+          ],
+          [
+            0.43001646657859277,
+            0.2717755385141719
+          ],
+          [
+            0.6376289974428793,
+            0.36298113971794266
+          ]
+        ]
+      },
+      {
+        "id": "extreme-nerve-3",
+        "name": "Torn normal family 4",
+        "visible": true,
+        "renderMode": "line",
+        "closed": true,
+        "tension": 0.11,
+        "stepsPerSegment": 18,
+        "magnitudeMode": "function",
+        "magnitudeExpr": "18 + 91 * sign(sin(52*pi*t)) * cos(13*pi*t + 2.19)",
+        "magnitudeValue": 12,
+        "negativeMode": "modulo",
+        "moduloBase": 53,
+        "strokeColor": "#eee8da",
+        "accentColor": "#eee8da",
+        "lineOrientation": "normal",
+        "lineMinLength": 0,
+        "lineScale": 1.7,
+        "lineStrokeWidth": 0.9,
+        "lineOpacity": 0.82,
+        "points": [
+          [
+            0.7208700753835922,
+            0.6000441342438017
+          ],
+          [
+            0.529691196361421,
+            0.781231542768783
+          ],
+          [
+            0.3046991930662323,
+            0.7546717551311155
+          ],
+          [
+            0.25732827017931126,
+            0.6313013599763394
+          ],
+          [
+            0.49880142376754255,
+            0.42896475718993876
+          ],
+          [
+            0.6776362758847971,
+            0.2965462866307736
+          ],
+          [
+            0.7286024106854693,
+            0.19003529738983832
+          ],
+          [
+            0.4637286970688635,
+            0.33619012078756405
+          ],
+          [
+            0.3434323146497027,
+            0.5143446488726978
+          ],
+          [
+            0.3195057795602282,
+            0.7089263409762541
+          ],
+          [
+            0.5892676095671806,
+            0.7508446210939943
+          ],
+          [
+            0.655994408296421,
+            0.74146763284902
+          ],
+          [
+            0.6186538304199192,
+            0.5334281780606526
+          ],
+          [
+            0.35343634455950396,
+            0.33116099212097744
+          ],
+          [
+            0.31723856004871076,
+            0.22549346045392715
+          ],
+          [
+            0.4343859542977311,
+            0.27327497975738935
+          ],
+          [
+            0.6867276562033737,
+            0.40207389169693314
+          ]
+        ]
+      },
+      {
+        "id": "extreme-nerve-4",
+        "name": "Torn normal family 5",
+        "visible": true,
+        "renderMode": "line",
+        "closed": true,
+        "tension": 0.11,
+        "stepsPerSegment": 18,
+        "magnitudeMode": "function",
+        "magnitudeExpr": "18 + 91 * sign(sin(55*pi*t)) * cos(13*pi*t + 2.92)",
+        "magnitudeValue": 12,
+        "negativeMode": "modulo",
+        "moduloBase": 53,
+        "strokeColor": "#eee8da",
+        "accentColor": "#eee8da",
+        "lineOrientation": "normal",
+        "lineMinLength": 0,
+        "lineScale": 1.7,
+        "lineStrokeWidth": 0.9,
+        "lineOpacity": 0.82,
+        "points": [
+          [
+            0.6598585128609811,
+            0.636579908976185
+          ],
+          [
+            0.5196106553900752,
+            0.8019070539858403
+          ],
+          [
+            0.25982361233954676,
+            0.7196741560637889
+          ],
+          [
+            0.3184602915003854,
+            0.6083220103172267
+          ],
+          [
+            0.5132363213684364,
+            0.40008537183059534
+          ],
+          [
+            0.7420387792765748,
+            0.2592190930620087
+          ],
+          [
+            0.6921500488272484,
+            0.20485368894448452
+          ],
+          [
+            0.45801529827689436,
+            0.37206332724943136
+          ],
+          [
+            0.288323997558366,
+            0.5589971397847404
+          ],
+          [
+            0.32695870588040055,
+            0.7089869892319051
+          ],
+          [
+            0.5828254652069583,
+            0.7795901971507415
+          ],
+          [
+            0.673147548380341,
+            0.6992707370085488
+          ],
+          [
+            0.6254630676480786,
+            0.49860473140936745
+          ],
+          [
+            0.3595296170768789,
+            0.28653630765678306
+          ],
+          [
+            0.34734979852795944,
+            0.24943282152431762
+          ],
+          [
+            0.43226153618810037,
+            0.2667653885687312
+          ],
+          [
+            0.7009467436927744,
+            0.4491110772353037
+          ]
+        ]
+      },
+      {
+        "id": "extreme-nerve-5",
+        "name": "Torn normal family 6",
+        "visible": true,
+        "renderMode": "line",
+        "closed": true,
+        "tension": 0.11,
+        "stepsPerSegment": 18,
+        "magnitudeMode": "function",
+        "magnitudeExpr": "18 + 91 * sign(sin(58*pi*t)) * cos(13*pi*t + 3.65)",
+        "magnitudeValue": 12,
+        "negativeMode": "modulo",
+        "moduloBase": 53,
+        "strokeColor": "#eee8da",
+        "accentColor": "#eee8da",
+        "lineOrientation": "normal",
+        "lineMinLength": 0,
+        "lineScale": 1.7,
+        "lineStrokeWidth": 0.9,
+        "lineOpacity": 0.82,
+        "points": [
+          [
+            0.6419734245253447,
+            0.6867768593242103
+          ],
+          [
+            0.5030571507807268,
+            0.7867263815019467
+          ],
+          [
+            0.26573959104249323,
+            0.7088524749462166
+          ],
+          [
+            0.369948929694665,
+            0.5698230814262353
+          ],
+          [
+            0.5358880955280148,
+            0.3781857106231471
+          ],
+          [
+            0.7728357792156819,
+            0.213577991464116
+          ],
+          [
+            0.6336973855920472,
+            0.24793161689318483
+          ],
+          [
+            0.4410065709417856,
+            0.39476971526460614
+          ],
+          [
+            0.2292062948123127,
+            0.6004294953281986
+          ],
+          [
+            0.369688596654548,
+            0.7148686161530304
+          ],
+          [
+            0.5801225956023502,
+            0.8012107571316938
+          ],
+          [
+            0.7318568747234921,
+            0.6477087026091565
+          ],
+          [
+            0.6034839392386562,
+            0.45979140499810894
+          ],
+          [
+            0.38319014429193515,
+            0.2672443485250615
+          ],
+          [
+            0.32015597297624115,
+            0.2528532970800605
+          ],
+          [
+            0.44472339940288985,
+            0.2791990707743325
+          ],
+          [
+            0.6734252549768153,
+            0.49005047595669443
+          ]
+        ]
+      },
+      {
+        "id": "extreme-nerve-6",
+        "name": "Torn normal family 7",
+        "visible": true,
+        "renderMode": "line",
+        "closed": true,
+        "tension": 0.11,
+        "stepsPerSegment": 18,
+        "magnitudeMode": "function",
+        "magnitudeExpr": "18 + 91 * sign(sin(61*pi*t)) * cos(13*pi*t + 4.38)",
+        "magnitudeValue": 12,
+        "negativeMode": "modulo",
+        "moduloBase": 53,
+        "strokeColor": "#eee8da",
+        "accentColor": "#eee8da",
+        "lineOrientation": "normal",
+        "lineMinLength": 0,
+        "lineScale": 1.7,
+        "lineStrokeWidth": 0.9,
+        "lineOpacity": 0.82,
+        "points": [
+          [
+            0.6731181984967083,
+            0.7335245205202532
+          ],
+          [
+            0.47779231814128065,
+            0.7565668464583308
+          ],
+          [
+            0.31216703676240676,
+            0.7098953762871816
+          ],
+          [
+            0.37682598994445976,
+            0.5245688936089806
+          ],
+          [
+            0.569563586848177,
+            0.3464861582549457
+          ],
+          [
+            0.7443905853280112,
+            0.19001666525471522
+          ],
+          [
+            0.5959038556998201,
+            0.28960498329589646
+          ],
+          [
+            0.4023552623070849,
+            0.42079396997607854
+          ],
+          [
+            0.21927893977645074,
+            0.6270031789239173
+          ],
+          [
+            0.4169326808599746,
+            0.7445302780483222
+          ],
+          [
+            0.6067015316786821,
+            0.7894383515990099
+          ],
+          [
+            0.776406985197053,
+            0.6074335613622139
+          ],
+          [
+            0.5650818123525367,
+            0.4132810552631989
+          ],
+          [
+            0.38621321731710456,
+            0.27134724172936364
+          ],
+          [
+            0.2668957368246158,
+            0.23172309307447087
+          ],
+          [
+            0.4714007421119016,
+            0.31900246040164126
+          ],
+          [
+            0.6389715203537321,
+            0.5247833659414795
+          ]
+        ]
+      }
+    ],
+    "variables": [],
+    "activeItemId": "extreme-nerve-0"
+  },
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0,
+      "preset": "",
+      "splitMode": "screen",
+      "applyToAll": false,
+      "tileTargets": "0",
+      "zoomFactor": 1.25,
+      "matrix": {
+        "a": 1,
+        "b": 0,
+        "c": 0,
+        "d": 1,
+        "e": 0,
+        "f": 0
+      },
+      "zoomCenter": {
+        "x": null,
+        "y": null
+      },
+      "translateVec": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCount": 3,
+      "planeBaseScale": 1,
+      "planeScaleStep": -0.12,
+      "planeOpacity": 0.7,
+      "planeOpacityFalloff": 0.12,
+      "planeOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCenter": {
+        "x": null,
+        "y": null
+      },
+      "groupOpen": {}
+    },
+    "stack": [
+      {
+        "kind": "rotate",
+        "deg": 37
+      },
+      {
+        "kind": "zoom",
+        "factor": 0.83
+      }
+    ]
+  },
+  "__toolFlows": {
+    "ui": {
+      "flowName": "Alias Observatory",
+      "selectedId": "builtin-grayscale",
+      "autoRun": true,
+      "groupsOpen": {}
+    },
+    "stages": [
+      {
+        "id": "stage-mues68e1-858c8gb",
+        "kind": "effect",
+        "label": "N: splineLines",
+        "enabled": true,
+        "config": {
+          "effectType": "splineLines",
+          "splineSource": "line",
+          "splineSelector": "line:nth-of-type(37n)",
+          "splinePointCount": 5,
+          "splineStepsPerSegment": 3,
+          "splineTension": -2,
+          "splineExtrapolateTension": true,
+          "splineAngleOffset": 151,
+          "splineLineOrientation": "normal",
+          "splineLineHeight": 19,
+          "splineLineScale": 2.2,
+          "splineStrokeWidth": 1.3,
+          "splineScaleMode": "none",
+          "splineScaleFactor": 1
+        }
+      },
+      {
+        "id": "stage-mues68e1-eb5gkux",
+        "kind": "effect",
+        "label": "C: color",
+        "enabled": true,
+        "config": {
+          "effectType": "color",
+          "color": {
+            "selector": "path,polygon,circle,rect,line",
+            "sourceProp": "each",
+            "targetProp": "stroke",
+            "mode": "byIndex",
+            "colorSort": "appearance",
+            "paletteText": "#50ffe0,#8485ff,#ff59c7,#fff0ac",
+            "paletteSteps": 7,
+            "useComputed": true,
+            "skipNone": true,
+            "sizeSource": "bboxArea",
+            "sizeAttr": "r"
+          }
+        }
+      },
+      {
+        "id": "stage-mues68e1-1g60ccg",
+        "kind": "transform",
+        "label": "A: folded presentation",
+        "enabled": true,
+        "config": {
+          "stack": [
+            {
+              "kind": "rotate",
+              "deg": 37
+            },
+            {
+              "kind": "zoom",
+              "factor": 0.83
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "__propOps": {
+    "ui": {
+      "ruleText": "{\n        \"selector\": {\"circle\":{\"r\":{\"range\":[20,100]}}},\n        \"apply\": {\"stroke\": null}\n        }",
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": []
+  },
+  "__scriptOps": {
+    "ui": {
+      "codeText": "// ctx.root is the <g> subtree being processed\n// ctx.svg is the owning <svg>\n// ctx.create(tag) creates an SVG element\n//\n// Example: circle -> 6-gon (polygon)\n// for (const c of ctx.root.querySelectorAll(\"circle\")) {\n//   const cx = Number(c.getAttribute(\"cx\") || 0);\n//   const cy = Number(c.getAttribute(\"cy\") || 0);\n//   const r = Number(c.getAttribute(\"r\") || 0);\n//   const n = 6;\n//   const pts = Array.from({length:n}, (_,i) => {\n//     const a = (Math.PI*2*i)/n;\n//     return [cx + r*Math.cos(a), cy + r*Math.sin(a)].join(\",\");\n//   }).join(\" \");\n//   const p = ctx.create(\"polygon\");\n//   p.setAttribute(\"points\", pts);\n//   for (const {name,value} of Array.from(c.attributes)) {\n//     if (name === \"cx\" || name === \"cy\" || name === \"r\") continue;\n//     p.setAttribute(name, value);\n//   }\n//   c.replaceWith(p);\n// }",
+      "fileName": "",
+      "selectedCacheKey": "",
+      "autoRunSelected": false,
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": [],
+    "cache": {}
+  }
+}

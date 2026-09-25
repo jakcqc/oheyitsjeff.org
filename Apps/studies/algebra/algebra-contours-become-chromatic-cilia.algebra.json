@@ -1,0 +1,65 @@
+{
+  "title": "Contours Become Chromatic Cilia",
+  "source": "BacterialConstructs/BacterialConstructs_visual.js",
+  "visualId": "bacterialConstructs",
+  "seed": 925403,
+  "frames": 0,
+  "algebra": {
+    "expression": "T_strain o C_index o N_even o B_boundary (GrayScott_590)",
+    "convention": "Operators compose right to left; each selection acts on the current SVG result. These are discrete geometric operators, not identities in a vector space.",
+    "operators": {
+      "B_boundary": "Remove path fills while retaining contour strokes.",
+      "N_even": "Spline-sample even isocontours and replace them with short normal lines in the native concentration-grid coordinates.",
+      "C_index": "Color the resulting marks by order, making each contour a chromatic sequence.",
+      "T_strain": "A mild affine strain."
+    },
+    "orderMatters": "Selection, conversion and spline replacement change the domain available to subsequent operators. Color before geometry is inherited by new marks; color after geometry enumerates the newly created marks."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebra-contours-become-chromatic-cilia.flow.json",
+  "nativeSettings": "../settings/algebra-contours-become-chromatic-cilia.json",
+  "observedStages": [
+    {
+      "label": "Extract contour boundaries from concentration bands",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 17,
+      "afterShapes": 17,
+      "messages": [
+        "paint applied: 17 elements."
+      ]
+    },
+    {
+      "label": "Replace alternating concentration thresholds with cilia",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 17,
+      "afterShapes": 1425,
+      "messages": [
+        "spline lines applied: 8 shapes, 1416 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "Enumerate the new cilia through a coral ion palette",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 1425,
+      "afterShapes": 1425,
+      "messages": [
+        "color applied: 1425 elements, 61 mapped colors."
+      ]
+    },
+    {
+      "label": "A small strain of the culture plate",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 1425,
+      "afterShapes": 1425,
+      "messages": []
+    }
+  ]
+}

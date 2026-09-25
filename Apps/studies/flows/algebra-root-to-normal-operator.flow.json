@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "name": "Root to Normal Operator",
+  "stages": [
+    {
+      "id": "stage-mues67dp-grtbhzq",
+      "kind": "effect",
+      "label": "Suppress ground and shadow support",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "paint",
+        "elementType": "path",
+        "selector": ".grass-ground,.grass-shadow",
+        "paintFill": "none",
+        "paintStroke": "none"
+      }
+    },
+    {
+      "id": "stage-mues67dp-4untwf3",
+      "kind": "effect",
+      "label": "Replace living blades by a normal field",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "splineLines",
+        "splineSource": "path",
+        "splineSelector": "path.grass-blade",
+        "splinePointCount": 7,
+        "splineStepsPerSegment": 3,
+        "splineTension": 0.18,
+        "splineLineOrientation": "normal",
+        "splineLineHeight": 31,
+        "splineLineScale": 1.2,
+        "splineStrokeWidth": 0.75
+      }
+    },
+    {
+      "id": "stage-mues67dp-b8y0xmc",
+      "kind": "effect",
+      "label": "Enumerate white to graphite normal segments",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "color",
+        "color": {
+          "selector": "line,path,ellipse",
+          "sourceProp": "each",
+          "targetProp": "both",
+          "mode": "byIndex",
+          "colorSort": "appearance",
+          "paletteText": "#777777,#fafafa",
+          "paletteSteps": 47,
+          "useComputed": true,
+          "skipNone": true
+        }
+      }
+    },
+    {
+      "id": "stage-mues67dp-k6qtx0m",
+      "kind": "transform",
+      "label": "Slight camera shear",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "matrix",
+            "m": [
+              1,
+              0.035,
+              -0.055,
+              1,
+              39,
+              -28
+            ]
+          }
+        ],
+        "ui": {
+          "splitMode": "fit"
+        }
+      }
+    }
+  ]
+}

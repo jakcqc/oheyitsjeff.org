@@ -11,7 +11,7 @@
 // Run in a browser served from the repository:
 // await (await import('/tests/panel-regressions.js')).runPanelRegressions()
 export async function runPanelRegressions() {
-  const { mountAutoUI } = await import('../helper/visualHelp.js');
+  const { mountAutoUI, registerVisual, runVisualApp } = await import('../helper/visualHelp.js');
   const { runEffectsFromUI } = await import('../helper/effectsHelp.js');
   const { applyToolFlow, setToolFlowStages } = await import('../helper/toolFlowHelp.js');
   const passed = [];
@@ -44,6 +44,7 @@ export async function runPanelRegressions() {
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   const mainTabs = [...container.querySelectorAll('.vr-tab')].map((node) => node.textContent);
   assert(!mainTabs.includes('color'), 'Standalone Color tab removed');
+  assert(mainTabs.at(-1) === 'developer' && !mainTabs.includes('propOps') && !mainTabs.includes('autoExport'), 'Developer is last and contains the advanced editors');
   tab('effects');
   const effects = container.querySelector('.fx-panel');
   clickText(effects, 'Color');
@@ -84,13 +85,25 @@ export async function runPanelRegressions() {
   activeEffect.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true }));
   assert(state.__effects.ui.effectType === 'paint', 'Subtabs support arrow-key navigation');
 
-  for (const name of ['transforms', 'propOps', 'flows', 'autoExport']) {
+  for (const name of ['transforms', 'flows']) {
     tab(name);
     const panel = [...container.querySelector('.vr-tabBody').children].find((node) => !node.hidden);
     const draft = panel.querySelector('textarea');
     if (draft) draft.value = 'unsaved draft';
     tab('effects'); tab(name);
     assert([...container.querySelector('.vr-tabBody').children].find((node) => !node.hidden) === panel && (!draft || draft.value === 'unsaved draft'), `${name} retains its panel and drafts across tabs`);
+  }
+  for (const name of ['propOps', 'autoExport']) {
+    tab('developer');
+    const developer = container.querySelector('.vr-developerPanel');
+    clickText(developer, name, '.vr-subTab');
+    const panel = developer.querySelector(`[data-developer-section="${name}"]`).firstElementChild;
+    const draft = panel.querySelector('textarea');
+    if (draft) draft.value = 'unsaved developer draft';
+    clickText(developer, 'Settings', '.vr-subTab');
+    clickText(developer, name, '.vr-subTab');
+    tab('effects'); tab('developer');
+    assert(developer.querySelector(`[data-developer-section="${name}"]`).firstElementChild === panel && (!draft || draft.value === 'unsaved developer draft'), `${name} retains its panel and drafts across Developer and main tabs`);
   }
   tab('animate');
   const animate = container.querySelector('.anim-panel');
@@ -101,10 +114,11 @@ export async function runPanelRegressions() {
   const progress = animate.querySelector('[aria-label="Animation progress"]');
   input(progress, '.5');
   assert(state.amount === 50, 'Compact start/end values drive the scrubber');
-  clickText(animate, 'Edit');
-  assert(animate.querySelector('.anim-targets [aria-label="amount start"]').value === '20', 'Compact edits synchronize with expanded properties');
+  assert(![...animate.querySelectorAll('button')].some(button => button.textContent === 'Edit'), 'Animate has no Edit area');
+  assert(animate.querySelector('.anim-flow [aria-label="Duration in seconds"]') && animate.querySelector('.anim-flow [aria-label="Frames per second"]'), 'Timing controls live in Flow');
+  assert(animate.querySelectorAll('.anim-flow input[type="checkbox"]').length === 2, 'Flow exposes only Loop and Yoyo option flags');
   input(animate.querySelector('[aria-label="Add animation parameter"]'), 'second'); clickText(animate, 'Add');
-  assert(state.__anim.ui.paramTargets.length === 2, 'Edit adds simultaneous animation properties');
+  assert(state.__anim.ui.paramTargets.length === 2, 'Flow adds simultaneous animation properties');
   clickText(animate, 'JSON');
   const json = animate.querySelector('[aria-label="Animation JSON"]');
   assert(JSON.parse(json.value).paramTargets[0].to === 80, 'JSON reflects property edits');
@@ -128,15 +142,15 @@ export async function runPanelRegressions() {
   tab('params');
   const paramField = container.querySelector('.vr-tabBody > :not([hidden]) input[type="number"]');
   assert(paramField.value === '30', 'Cached Params refreshes values changed by animation');
-  tab('animate'); clickText(animate, 'Edit'); clickText(animate, 'SVG');
-  input(animate.querySelector('[aria-label="SVG selector"]'), 'rect,circle');
-  input(animate.querySelector('[aria-label="SVG property"]'), 'opacity');
-  input(animate.querySelector('.anim-edit [aria-label="SVG start"]'), '.2');
-  input(animate.querySelector('.anim-edit [aria-label="SVG end"]'), '.8');
+  tab('animate'); clickText(animate, 'JSON');
+  input(json, JSON.stringify({ targetType: 'svg', selector: 'rect,circle', svgKind: 'attr', svgName: 'opacity', from: .2, to: .8 }));
+  clickText(animate, 'Apply JSON');
   clickText(animate, 'Flow'); input(progress, '.5');
   assert([...mountEl.querySelectorAll('rect,circle')].every((node) => Math.abs(+node.getAttribute('opacity') - .5) < .001), 'SVG start/end scrubbing survives visual rerenders');
   clickText(animate, 'Resume'); await sleep(40); clickText(animate, 'Stop');
-  assert(+mountEl.querySelector('rect').getAttribute('opacity') === .8, 'Stop snaps to the SVG endpoint');
+  const stoppedOpacity = +mountEl.querySelector('rect').getAttribute('opacity');
+  await sleep(60);
+  assert(stoppedOpacity > .5 && stoppedOpacity < .8 && +mountEl.querySelector('rect').getAttribute('opacity') === stoppedOpacity, 'Stop holds the current SVG values');
   mount(); tab('animate');
   assert(container.querySelector('.anim-flow').hidden === false, 'Animation view survives a full UI rebuild');
   const finished = container.querySelector('.anim-panel');
@@ -148,5 +162,52 @@ export async function runPanelRegressions() {
   await sleep(20);
   assert(finished.scrollWidth <= finished.clientWidth + 1, 'Compact animation fits a narrow panel');
   fixture.style.width = width;
+
+  state.__ui.activeTab = 'propOps';
+  mount();
+  assert(state.__ui.activeTab === 'developer' && state.__ui.developerTab === 'propOps' && !container.querySelector('[data-developer-section="propOps"]').hidden, 'Saved propOps tabs migrate into Developer');
+  container._destroyTabs?.();
+
+  const settingsFixture = document.createElement('div');
+  settingsFixture.innerHTML = '<div id="infoBar">Navigation</div><div id="config" class="open"><div class="test-ui"></div></div><div class="test-visual"></div>';
+  fixture.appendChild(settingsFixture);
+  const settingsUi = settingsFixture.querySelector('.test-ui');
+  const settingsMount = settingsFixture.querySelector('.test-visual');
+  const visualId = `toolbarRegression-${Date.now()}`;
+  registerVisual(visualId, {
+    title: 'Toolbar regression fixture',
+    params: [{ key: 'amount', type: 'number', default: 10, category: 'General' }],
+    create({ mountEl }, state) {
+      const render = () => { mountEl.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg"><rect width="${state.amount}" height="10"/></svg>`; };
+      render();
+      return { render };
+    },
+  });
+  let app = runVisualApp({ visualId, mountEl: settingsMount, uiEl: settingsUi, state: { __ui: { tabsOpen: true } } });
+  const settingsTab = (name) => clickText(settingsUi, name, '.vr-tab');
+  const checkedFlag = (label) => [...settingsUi.querySelectorAll('label')].find(node => node.textContent === label)?.querySelector('input');
+  const footer = settingsUi.querySelector('.vr-settingsWrap');
+  assert([...footer.querySelectorAll('button')].map(button => button.textContent).join(',') === 'Save,Load' && !footer.querySelector('label'), 'Footer contains only Save and Load SVG buttons');
+  assert(footer.getBoundingClientRect().height <= 30, 'Save/Load footer uses a single compact row');
+  assert([...settingsUi.querySelectorAll('.vr-paramGroup')].every(group => !group.open), 'Parameter categories start collapsed');
+  settingsTab('developer');
+  assert(checkedFlag('Start categories collapsed')?.checked && checkedFlag('Remember settings for this visual')?.checked, 'Developer settings default to collapsed categories and remembered settings');
+  assert(['Save Settings', 'Load Settings', 'Reset Defaults', 'Load Settings from SVG', 'Unpin UI', 'Hide Nav'].every(text => [...settingsUi.querySelectorAll('.vr-developerSettings button')].some(button => button.textContent === text)), 'Developer groups settings import/export and layout controls');
+  clickText(settingsUi.querySelector('.vr-developerSettings'), 'Hide Nav');
+  assert(document.getElementById('infoBar').classList.contains('hidden'), 'Developer Hide Nav still controls the navigation');
+  clickText(settingsUi.querySelector('.vr-developerSettings'), 'Show Nav');
+  settingsTab('params');
+  input(settingsUi.querySelector('input[type="number"]'), '42', 'change');
+  await sleep(300);
+  app = app.setVisual(visualId);
+  assert(app.state.amount === 42, 'Settings are remembered automatically without enabling a flag');
+  settingsTab('developer');
+  const remember = checkedFlag('Remember settings for this visual');
+  remember.checked = false;
+  remember.dispatchEvent(new Event('change', { bubbles: true }));
+  app = app.setVisual(visualId);
+  settingsTab('developer');
+  assert(app.state.amount === 10 && checkedFlag('Remember settings for this visual')?.checked === false, 'Explicitly disabling remembered settings survives a reload and ignores cached values');
+  for (const prefix of ['visualHelp.settings.v1:', 'visualHelp.ui.v1:', 'visualHelp.persist.v1:']) localStorage.removeItem(prefix + visualId);
   return passed;
 }

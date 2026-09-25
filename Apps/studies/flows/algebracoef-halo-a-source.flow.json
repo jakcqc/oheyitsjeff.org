@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "name": "Halo Interference A - Source Color",
+  "stages": [
+    {
+      "id": "stage-muwy38lb-knh841p",
+      "kind": "effect",
+      "label": "Q: suppress cellular scaffolding",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "paint",
+        "elementType": "circle",
+        "selector": "g.dots circle,.outline",
+        "paintFill": "none",
+        "paintStroke": "none"
+      }
+    },
+    {
+      "id": "stage-muwy38lb-s7nph1r",
+      "kind": "effect",
+      "label": "E: 2 echoes, scale 0.62 to 1.25",
+      "enabled": true,
+      "config": {
+        "effectType": "scale",
+        "selector": "circle.multi-ring",
+        "elementType": "circle",
+        "rangeMin": 0.62,
+        "rangeMax": 1.25,
+        "count": 2,
+        "spacing": "linear",
+        "opacityMode": "fixed",
+        "opacityFixed": 0.72,
+        "equation": ""
+      }
+    },
+    {
+      "id": "stage-muwy38lb-slzow1e",
+      "kind": "effect",
+      "label": "C: enumerate current marks through four colors",
+      "enabled": true,
+      "config": {
+        "effectType": "color",
+        "color": {
+          "selector": "circle.multi-ring,line[data-spline-lines-run]",
+          "sourceProp": "stroke",
+          "targetProp": "stroke",
+          "mode": "byIndex",
+          "colorSort": "appearance",
+          "paletteText": "#67dbd2,#7686ec,#ed85b2,#ffcd83",
+          "paletteSteps": 0,
+          "useComputed": true,
+          "skipNone": true
+        }
+      }
+    },
+    {
+      "id": "stage-muwy38lb-u0orb2i",
+      "kind": "effect",
+      "label": "N1: normal vectors, coefficient 0.65",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "splineLines",
+        "splineSource": "circle",
+        "splineSelector": "circle.multi-ring:nth-of-type(2n)",
+        "splinePointCount": 12,
+        "splineStepsPerSegment": 2,
+        "splineTension": 0.2,
+        "splineLineOrientation": "normal",
+        "splineLineHeight": 48,
+        "splineLineScale": 0.65,
+        "splineStrokeWidth": 0.7
+      }
+    },
+    {
+      "id": "stage-muwy38lb-vks695u",
+      "kind": "effect",
+      "label": "N2: tangent vectors, coefficient 1.35",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "splineLines",
+        "splineSource": "circle",
+        "splineSelector": "circle.multi-ring",
+        "splinePointCount": 12,
+        "splineStepsPerSegment": 2,
+        "splineTension": 0.2,
+        "splineLineOrientation": "tangent",
+        "splineLineHeight": 48,
+        "splineLineScale": 1.35,
+        "splineStrokeWidth": 0.7
+      }
+    },
+    {
+      "id": "stage-muwy38lb-wawkph6",
+      "kind": "transform",
+      "label": "A^2: repeated rotation and contraction",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": 1.4
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.98
+          },
+          {
+            "kind": "rotate",
+            "deg": 1.4
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.98
+          }
+        ]
+      }
+    }
+  ]
+}

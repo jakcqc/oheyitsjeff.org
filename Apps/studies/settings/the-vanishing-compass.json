@@ -1,0 +1,33 @@
+{
+  "levels": 5,
+  "splitK": 3,
+  "overlap": 0.93,
+  "copies": 13,
+  "baseWidth": 3.2,
+  "height": 1.2,
+  "needleLen": 1.5,
+  "needleThickPx": 0.8,
+  "needlePadPx": 0,
+  "needleAlpha": 0.38,
+  "maxNeedles": 10000,
+  "showTriangles": false,
+  "triFillAlpha": 0.1,
+  "triStrokeAlpha": 0.18,
+  "showAllNeedles": true,
+  "colorMode": "angle",
+  "palette": "spectral",
+  "monoColor": "#111111",
+  "showBoundsCircle": false,
+  "showStats": false,
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0
+    },
+    "stack": []
+  }
+}

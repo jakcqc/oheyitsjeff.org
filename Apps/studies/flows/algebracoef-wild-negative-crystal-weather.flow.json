@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "name": "Negative Crystal Weather",
+  "stages": [
+    {
+      "id": "stage-mues68dq-7na8335",
+      "kind": "effect",
+      "label": "E: scale",
+      "enabled": true,
+      "config": {
+        "effectType": "scale",
+        "elementType": "polygon",
+        "selector": "polygon:nth-of-type(17n)",
+        "rangeMin": -2.2,
+        "rangeMax": 1.6,
+        "count": 4,
+        "spacing": "linear",
+        "opacityMode": "fixed",
+        "opacityFixed": 0.82,
+        "equation": "sum(backward):opacity *0.72"
+      }
+    },
+    {
+      "id": "stage-mues68dq-2940gqh",
+      "kind": "effect",
+      "label": "N: splineLines",
+      "enabled": true,
+      "config": {
+        "effectType": "splineLines",
+        "splineSource": "polygon",
+        "splineSelector": "polygon:nth-of-type(31n)",
+        "splinePointCount": 6,
+        "splineStepsPerSegment": 2,
+        "splineTension": 1.9,
+        "splineExtrapolateTension": true,
+        "splineAngleOffset": 61,
+        "splineLineOrientation": "vertical",
+        "splineLineHeight": 10,
+        "splineLineScale": 3.6,
+        "splineStrokeWidth": 0.65,
+        "splineScaleMode": "none",
+        "splineScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues68dq-tzdsc07",
+      "kind": "effect",
+      "label": "C: color",
+      "enabled": true,
+      "config": {
+        "effectType": "color",
+        "color": {
+          "selector": "path,polygon,circle,rect,line",
+          "sourceProp": "each",
+          "targetProp": "stroke",
+          "mode": "bySize",
+          "colorSort": "appearance",
+          "paletteText": "#481778,#ef3b56,#ffa32d,#f6ffb4",
+          "paletteSteps": 7,
+          "useComputed": true,
+          "skipNone": true,
+          "sizeSource": "bboxArea",
+          "sizeAttr": "r"
+        }
+      }
+    },
+    {
+      "id": "stage-mues68dq-6z3b62u",
+      "kind": "transform",
+      "label": "A: folded presentation",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "split",
+            "count": 4
+          },
+          {
+            "kind": "flipX",
+            "targets": [
+              1,
+              3
+            ]
+          },
+          {
+            "kind": "flipY",
+            "targets": [
+              2,
+              3
+            ]
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.83
+          }
+        ]
+      }
+    }
+  ]
+}

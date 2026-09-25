@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "name": "Resonance Quotients B - Mark Color",
+  "stages": [
+    {
+      "id": "stage-mumj2of8-ixzlt4d",
+      "kind": "effect",
+      "label": "Every third survivor becomes a polygon",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "convert",
+        "convertFrom": "path",
+        "convertTo": "polygon",
+        "selector": "path:nth-of-type(3n)",
+        "pathSamplePoints": 28,
+        "convertScaleMode": "none",
+        "convertScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mumj2of8-ftnb3s3",
+      "kind": "effect",
+      "label": "E: 3 echoes, scale 0.83 to 1.25",
+      "enabled": true,
+      "config": {
+        "effectType": "scale",
+        "selector": "polygon",
+        "elementType": "polygon",
+        "rangeMin": 0.83,
+        "rangeMax": 1.25,
+        "count": 3,
+        "spacing": "linear",
+        "opacityMode": "fixed",
+        "opacityFixed": 0.72,
+        "equation": ""
+      }
+    },
+    {
+      "id": "stage-mumj2of8-0v4qe0l",
+      "kind": "effect",
+      "label": "N1: normal vectors, coefficient 1.45",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "splineLines",
+        "splineSource": "polygon",
+        "splineSelector": "polygon:nth-of-type(2n)",
+        "splinePointCount": 12,
+        "splineStepsPerSegment": 2,
+        "splineTension": 0.2,
+        "splineLineOrientation": "normal",
+        "splineLineHeight": 31,
+        "splineLineScale": 1.45,
+        "splineStrokeWidth": 0.7,
+        "splineScaleMode": "none",
+        "splineScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mumj2of8-iqtbeew",
+      "kind": "effect",
+      "label": "N2: tangent vectors, coefficient 0.8",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "splineLines",
+        "splineSource": "polygon",
+        "splineSelector": "polygon",
+        "splinePointCount": 12,
+        "splineStepsPerSegment": 2,
+        "splineTension": 0.2,
+        "splineLineOrientation": "tangent",
+        "splineLineHeight": 31,
+        "splineLineScale": 0.8,
+        "splineStrokeWidth": 0.7,
+        "splineScaleMode": "none",
+        "splineScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mumj2of8-xnkqvtc",
+      "kind": "effect",
+      "label": "C: enumerate current marks through four colors",
+      "enabled": true,
+      "config": {
+        "effectType": "color",
+        "color": {
+          "selector": "polygon,line[data-spline-lines-run]",
+          "sourceProp": "stroke",
+          "targetProp": "stroke",
+          "mode": "byIndex",
+          "colorSort": "appearance",
+          "paletteText": "#203c75,#af3368,#b97313,#3c817d",
+          "paletteSteps": 0,
+          "useComputed": true,
+          "skipNone": true
+        }
+      }
+    },
+    {
+      "id": "stage-mumj2of8-lq8fyqf",
+      "kind": "transform",
+      "label": "A^3: repeated rotation and contraction",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": -1.7
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.98
+          },
+          {
+            "kind": "rotate",
+            "deg": -1.7
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.98
+          },
+          {
+            "kind": "rotate",
+            "deg": -1.7
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.98
+          }
+        ]
+      }
+    }
+  ]
+}

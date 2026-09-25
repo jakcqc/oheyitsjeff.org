@@ -1,0 +1,77 @@
+{
+  "title": "Negative Space Receives the Colony",
+  "source": "BacterialConstructs/BacterialConstructs_visual.js",
+  "visualId": "bacterialConstructs",
+  "seed": 925404,
+  "frames": 0,
+  "algebra": {
+    "expression": "T_small o C_gray o N o B_boundary o P_72 (KellerSegel_480)",
+    "convention": "Operators compose right to left; each selection acts on the current SVG result. These are discrete geometric operators, not identities in a vector space.",
+    "operators": {
+      "P_72": "Convert alternating contour paths into 72-sample polygons, deliberately coarsening their geometry.",
+      "B_boundary": "Set all contour and polygon fills to none.",
+      "N": "Spline and differentiate the sampled polygon boundaries into line bundles.",
+      "C_gray": "Map all resulting contour marks to neutral grays.",
+      "T_small": "Mild anisotropic stretch."
+    },
+    "orderMatters": "Selection, conversion and spline replacement change the domain available to subsequent operators. Color before geometry is inherited by new marks; color after geometry enumerates the newly created marks."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebra-negative-space-receives-colony.flow.json",
+  "nativeSettings": "../settings/algebra-negative-space-receives-colony.json",
+  "observedStages": [
+    {
+      "label": "Project alternating thresholds to sampled polygons",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 19,
+      "afterShapes": 19,
+      "messages": [
+        "convert applied: 9 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "Remove concentration interiors",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 19,
+      "afterShapes": 19,
+      "messages": [
+        "paint applied: 19 elements."
+      ]
+    },
+    {
+      "label": "Differentiate the projected polygon boundary",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 19,
+      "afterShapes": 991,
+      "messages": [
+        "spline lines applied: 9 shapes, 981 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "Neutral contour spectrum",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 991,
+      "afterShapes": 991,
+      "messages": [
+        "color applied: 991 elements, 33 mapped colors."
+      ]
+    },
+    {
+      "label": "Small anisotropic colony stretch",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 991,
+      "afterShapes": 991,
+      "messages": []
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "name": "Violet Grain Coordinate",
+  "stages": [
+    {
+      "id": "stage-mues67dq-ltb7e5c",
+      "kind": "effect",
+      "label": "Store blade height in color before basis change",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "color",
+        "color": {
+          "selector": "path.grass-blade",
+          "sourceProp": "fill",
+          "targetProp": "both",
+          "mode": "bySize",
+          "colorSort": "appearance",
+          "paletteText": "#29235f,#8a54cf,#e9b6f1,#c8fdad",
+          "paletteSteps": 64,
+          "useComputed": true,
+          "skipNone": true,
+          "sizeSource": "attr",
+          "sizeAttr": "data-height",
+          "sizeMin": 10,
+          "sizeMax": 210
+        }
+      }
+    },
+    {
+      "id": "stage-mues67dq-0zvprgz",
+      "kind": "effect",
+      "label": "Replace one third of the blades by tangent grain",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "splineLines",
+        "splineSource": "path",
+        "splineSelector": "path.grass-blade:nth-of-type(3n)",
+        "splinePointCount": 8,
+        "splineStepsPerSegment": 3,
+        "splineTension": 0.24,
+        "splineLineOrientation": "tangent",
+        "splineLineHeight": 36,
+        "splineLineScale": 1.2,
+        "splineStrokeWidth": 0.85
+      }
+    },
+    {
+      "id": "stage-mues67dq-64vwoif",
+      "kind": "effect",
+      "label": "Quantize a second selection to polygonal leaves",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "convert",
+        "convertFrom": "path",
+        "convertTo": "polygon",
+        "selector": "path.grass-blade:nth-of-type(2n)",
+        "pathSamplePoints": 12,
+        "convertScaleMode": "none",
+        "convertScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues67dq-wted8nn",
+      "kind": "transform",
+      "label": "A slight violet slant",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "matrix",
+            "m": [
+              0.975,
+              -0.035,
+              0.035,
+              0.975,
+              -4,
+              45
+            ]
+          }
+        ],
+        "ui": {
+          "splitMode": "fit"
+        }
+      }
+    }
+  ]
+}

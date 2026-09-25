@@ -1,0 +1,96 @@
+{
+  "title": "Needle Frequency Altar",
+  "source": "kakeya/collatz.js",
+  "visualId": "kakeyaBesicovitchNeedle",
+  "seed": 926716,
+  "frames": 0,
+  "algebra": {
+    "edition": "wild",
+    "expression": "A o C o F o E (G)",
+    "convention": "Compose right to left. One composition per app in this batch; no paired variants. Coefficients are concrete native operator parameters.",
+    "coefficients": {
+      "E1": {
+        "rangeMin": 0.4,
+        "rangeMax": 2.4,
+        "count": 4,
+        "opacityFixed": 0.82,
+        "spacing": "linear",
+        "recurrence": "sum(backward):opacity *0.72"
+      },
+      "F2": {
+        "fnSampleCount": 377,
+        "fnRectStrokeWidth": 0.9
+      },
+      "C3": {
+        "mapping": "byIndex",
+        "paletteSteps": 7
+      },
+      "A4": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": -33
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.85
+          }
+        ]
+      }
+    },
+    "interpretation": "Needle packs acquire an eleven-lobed rotating register of Fourier rectangles. Scale echoes, seven-color indexing, and shear pull angular coverage into a ceremonial interference pattern.",
+    "newCapabilities": [
+      "logarithmic echo spacing",
+      "unclamped spline tension when enabled",
+      "vector angle offset"
+    ],
+    "uniqueness": "This app was not used in the first algebraCOEF batch."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebracoef-wild-needle-frequency-altar.flow.json",
+  "nativeSettings": "../settings/algebracoef-wild-needle-frequency-altar.json",
+  "observedStages": [
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 2106,
+      "afterShapes": 2349,
+      "messages": [
+        "scale applied: 81 groups, 324 clones."
+      ]
+    },
+    {
+      "label": "F: functionRects",
+      "kind": "effect",
+      "effect": "functionRects",
+      "changed": true,
+      "beforeShapes": 2349,
+      "afterShapes": 2726,
+      "messages": [
+        "function rects applied: 377 rects."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 2726,
+      "afterShapes": 2726,
+      "messages": [
+        "color applied: 1430 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 2726,
+      "afterShapes": 2726,
+      "messages": []
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "growth": 0.96,
+  "density": 1700,
+  "bladeHeight": 125,
+  "heightVariation": 0.4,
+  "bladeWidth": 5.8,
+  "widthVariation": 0.7,
+  "taper": 2.2,
+  "seedHeads": 0.1,
+  "distribution": "radial",
+  "clumping": 0.58,
+  "clumpCount": 19,
+  "clumpRadius": 0.1,
+  "barePatches": 0.05,
+  "patchScale": 0.16,
+  "rowSpacing": 0.074,
+  "rowJitter": 0.08,
+  "bend": 1.35,
+  "bendVariation": 0.75,
+  "directionCoherence": 0.2,
+  "twist": 0.95,
+  "windStrength": 0.72,
+  "windDirection": 62,
+  "gustScale": 0.09,
+  "turbulence": 0.66,
+  "windPhase": 0.61,
+  "viewTilt": 0,
+  "viewYaw": 140,
+  "perspective": 0.03,
+  "fieldScale": 0.98,
+  "verticalOffset": 0,
+  "palette": "neon",
+  "colorVariation": 0.9,
+  "lightAngle": 320,
+  "bladeOpacity": 0.73,
+  "outlineWidth": 0.08,
+  "shadowStrength": 0.15,
+  "groundTexture": 0.15,
+  "groundTextureScale": 0.12,
+  "seed": 832169,
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0
+    },
+    "stack": []
+  },
+  "__ui": {
+    "tabsOpen": true,
+    "activeTab": "params",
+    "collapseParamsByDefault": true,
+    "paramGroups": {
+      "Growth": true,
+      "Distribution": false,
+      "Blade Form": false,
+      "Wind": true,
+      "Camera": true,
+      "Surface": false,
+      "System": false
+    },
+    "ioOpen": true,
+    "configPinned": true,
+    "navHidden": false
+  },
+  "__anim": {
+    "ui": {
+      "targetType": "params",
+      "paramTargets": [
+        {
+          "key": "windPhase",
+          "from": 0,
+          "to": 1
+        },
+        {
+          "key": "growth",
+          "from": 0.06,
+          "to": 1
+        }
+      ],
+      "durationSec": 9,
+      "fps": 24,
+      "easing": "easeInOutQuad",
+      "loop": true,
+      "yoyo": false,
+      "progress01": 0,
+      "autoPlay": false
+    }
+  }
+}

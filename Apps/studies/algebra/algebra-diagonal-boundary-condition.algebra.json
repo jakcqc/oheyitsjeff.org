@@ -1,0 +1,70 @@
+{
+  "title": "The Diagonal Is a Boundary Condition",
+  "source": "MondrianAbstraction/mondrian.js",
+  "visualId": "mondrianAbstraction",
+  "seed": 925315,
+  "frames": 0,
+  "algebra": {
+    "expression": "A = T[4.1deg,0.96] B_tangent[8,3,59,tension=-1.3] C[rect->path] P[outline](G)",
+    "interpretation": "Closed tile paths are reconstructed through an overshooting spline. The tangent field entangles neighboring cells into an angular woven fabric, with a small rotation exposing the resulting boundary condition.",
+    "order": "Read operators right to left; tool flow arrays execute top to bottom. P changes paint, C changes shape, K maps colors, H creates concentric scale copies, N samples normal marks, B samples tangent or vertical marks, T is a small affine transform."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebra-diagonal-boundary-condition.flow.json",
+  "nativeSettings": "../settings/algebra-diagonal-boundary-condition.json",
+  "observedStages": [
+    {
+      "label": "choose ink on rect",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 336,
+      "afterShapes": 336,
+      "messages": [
+        "paint applied: 336 elements."
+      ]
+    },
+    {
+      "label": "rect becomes path",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 336,
+      "afterShapes": 336,
+      "messages": [
+        "convert applied: 336 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "tangent spline differential",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 336,
+      "afterShapes": 8400,
+      "messages": [
+        "spline lines applied: 336 shapes, 8400 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "monochrome luminance palette",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 8400,
+      "afterShapes": 8400,
+      "messages": [
+        "color applied: 8400 elements, 48 mapped colors."
+      ]
+    },
+    {
+      "label": "small final affine change",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 8400,
+      "afterShapes": 8400,
+      "messages": []
+    }
+  ]
+}

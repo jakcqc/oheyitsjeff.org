@@ -9,9 +9,11 @@
  */
 
 import { runVisualApp } from "../helper/visualHelp.js";
+import { preloadLinkedSettings } from "../helper/linkedSettings.js";
 import "./BoysSurfaceModel_visual.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  if (!await preloadLinkedSettings("boysSurfaceModel")) return;
   runVisualApp({
     visualId: "boysSurfaceModel",
     mountEl: document.getElementById("vis"),

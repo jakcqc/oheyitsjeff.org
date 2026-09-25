@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "name": "Null Tiles and Residual Stars",
+  "stages": [
+    {
+      "id": "stage-mues67b9-9bmtttu",
+      "kind": "effect",
+      "label": "choose ink on rect:nth-of-type(3n)",
+      "enabled": true,
+      "config": {
+        "effectType": "paint",
+        "selector": "rect:nth-of-type(3n)",
+        "paintFill": "none",
+        "paintStroke": "none"
+      }
+    },
+    {
+      "id": "stage-mues67b9-v928noc",
+      "kind": "effect",
+      "label": "rect becomes circle",
+      "enabled": true,
+      "config": {
+        "effectType": "convert",
+        "selector": "rect:not([stroke=\"none\"])",
+        "convertFrom": "rect",
+        "convertTo": "circle",
+        "pathSamplePoints": 24,
+        "convertScaleMode": "center",
+        "convertScaleFactor": 0.58
+      }
+    },
+    {
+      "id": "stage-mues67b9-yml3kv8",
+      "kind": "effect",
+      "label": "choose ink on circle",
+      "enabled": true,
+      "config": {
+        "effectType": "paint",
+        "selector": "circle",
+        "paintFill": "none",
+        "paintStroke": "#222222"
+      }
+    },
+    {
+      "id": "stage-mues67b9-0ssq4e8",
+      "kind": "effect",
+      "label": "normal spline differential",
+      "enabled": true,
+      "config": {
+        "effectType": "splineLines",
+        "splineSource": "circle",
+        "splineSelector": "circle",
+        "splinePointCount": 6,
+        "splineStepsPerSegment": 3,
+        "splineTension": -0.65,
+        "splineLineOrientation": "normal",
+        "splineLineHeight": 52,
+        "splineLineScale": 1,
+        "splineStrokeWidth": 0.6,
+        "splineScaleMode": "none",
+        "splineScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues67b9-qp80xfc",
+      "kind": "effect",
+      "label": "monochrome luminance palette",
+      "enabled": true,
+      "config": {
+        "effectType": "color",
+        "color": {
+          "selector": "*",
+          "sourceProp": "each",
+          "targetProp": "both",
+          "mode": "byLuminance",
+          "colorSort": "luminance",
+          "paletteText": "#080808, #808080",
+          "paletteSteps": 48,
+          "useComputed": true,
+          "skipNone": true
+        }
+      }
+    },
+    {
+      "id": "stage-mues67b9-wb37n6m",
+      "kind": "transform",
+      "label": "small final affine change",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": 1.7
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.98
+          }
+        ]
+      }
+    }
+  ]
+}

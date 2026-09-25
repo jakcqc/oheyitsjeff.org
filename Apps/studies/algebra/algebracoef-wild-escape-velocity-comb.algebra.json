@@ -1,0 +1,109 @@
+{
+  "title": "Escape Velocity Comb",
+  "source": "Generic/mandel_visual.js",
+  "visualId": "mandelTilingZoomable",
+  "seed": 926703,
+  "frames": 0,
+  "algebra": {
+    "edition": "wild",
+    "expression": "A o C o Q o N (G)",
+    "convention": "Compose right to left. One composition per app in this batch; no paired variants. Coefficients are concrete native operator parameters.",
+    "coefficients": {
+      "N1": {
+        "splinePointCount": 7,
+        "splineStepsPerSegment": 2,
+        "splineTension": -1.8,
+        "splineAngleOffset": 33,
+        "splineLineHeight": 7,
+        "splineLineScale": 4.8,
+        "splineStrokeWidth": 0.65,
+        "splineScaleFactor": 1
+      },
+      "Q2": {
+        "pathSamplePoints": 13,
+        "convertScaleFactor": 1.9
+      },
+      "C3": {
+        "mapping": "byIndex",
+        "paletteSteps": 7
+      },
+      "A4": {
+        "stack": [
+          {
+            "kind": "split",
+            "count": 4
+          },
+          {
+            "kind": "flipX",
+            "targets": [
+              1,
+              2
+            ]
+          },
+          {
+            "kind": "rotate",
+            "deg": 29
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.9
+          }
+        ]
+      }
+    },
+    "interpretation": "A fractional-power escape set becomes a field of oblique splines and coarse circular fossils. Reflection replaces the familiar single fractal center with four competing directions.",
+    "newCapabilities": [
+      "logarithmic echo spacing",
+      "unclamped spline tension when enabled",
+      "vector angle offset"
+    ],
+    "uniqueness": "This app was not used in the first algebraCOEF batch."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebracoef-wild-escape-velocity-comb.flow.json",
+  "nativeSettings": "../settings/algebracoef-wild-escape-velocity-comb.json",
+  "observedStages": [
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 750,
+      "afterShapes": 1702,
+      "messages": [
+        "spline lines applied: 68 shapes, 1020 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "Q: convert",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 1702,
+      "afterShapes": 1702,
+      "messages": [
+        "convert applied: 23 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 1702,
+      "afterShapes": 1702,
+      "messages": [
+        "color applied: 1702 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 1702,
+      "afterShapes": 8510,
+      "messages": []
+    }
+  ]
+}

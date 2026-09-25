@@ -1,0 +1,65 @@
+{
+  "title": "Lamellar Boundary Derivative",
+  "source": "MarbledPatterns/MarbledPatterns_visual.js",
+  "visualId": "marbledPatterns",
+  "seed": 925408,
+  "frames": 0,
+  "algebra": {
+    "expression": "T_small o C_gray o N o P_92 (VortexMarbling)",
+    "convention": "Operators compose right to left; each selection acts on the current SVG result. These are discrete geometric operators, not identities in a vector space.",
+    "operators": {
+      "P_92": "Convert selected lamellae into 92-point polygons.",
+      "N": "Spline those polygons at higher tension and replace them by normal-oriented segments.",
+      "C_gray": "Map all remaining and generated marks into neutral gray levels.",
+      "T_small": "Small anisotropic compression."
+    },
+    "orderMatters": "Selection, conversion and spline replacement change the domain available to subsequent operators. Color before geometry is inherited by new marks; color after geometry enumerates the newly created marks."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebra-lamellar-boundary-derivative.flow.json",
+  "nativeSettings": "../settings/algebra-lamellar-boundary-derivative.json",
+  "observedStages": [
+    {
+      "label": "Approximate every third lamella by a polygon",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 34,
+      "afterShapes": 34,
+      "messages": [
+        "convert applied: 11 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "Take normal-line samples of projected lamellae",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 34,
+      "afterShapes": 2674,
+      "messages": [
+        "spline lines applied: 11 shapes, 2651 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "Map surviving curves and derivatives to neutral light",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 2674,
+      "afterShapes": 2674,
+      "messages": [
+        "color applied: 2674 elements, 53 mapped colors."
+      ]
+    },
+    {
+      "label": "Slight lamellar compression",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 2674,
+      "afterShapes": 2674,
+      "messages": []
+    }
+  ]
+}

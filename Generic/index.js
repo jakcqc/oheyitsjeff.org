@@ -10,9 +10,11 @@
 
 // main.js
 import { runVisualApp } from "../helper/visualHelp.js";
+import { preloadLinkedSettings } from "../helper/linkedSettings.js";
 import "./mandel_visual.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  if (!await preloadLinkedSettings("mandelTilingZoomable")) return;
   runVisualApp({
     visualId: "mandelTilingZoomable",
     mountEl: document.getElementById("vis"),

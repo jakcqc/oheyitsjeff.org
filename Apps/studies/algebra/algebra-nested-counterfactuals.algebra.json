@@ -1,0 +1,117 @@
+{
+  "title": "A Lattice of Nested Counterfactuals",
+  "source": "GameOfLife_aug/gameOfLife.js",
+  "visualId": "gameOfLifeSVG",
+  "seed": 925313,
+  "frames": 7,
+  "algebra": {
+    "expression": "A = T[-1.8deg,0.93] B_vertical[8,3,35] H_[0.5,1.7]^3 C[rect->circle] (F^6(L)-L_white)",
+    "interpretation": "The alive set is expanded into three nested geometric hypotheses per cell. Vertical spline samples form a perforated moire veil, preserving local centers while dissolving the square lattice.",
+    "order": "Read operators right to left; tool flow arrays execute top to bottom. P changes paint, C changes shape, K maps colors, H creates concentric scale copies, N samples normal marks, B samples tangent or vertical marks, T is a small affine transform."
+  },
+  "propertyPrefix": [
+    {
+      "kind": "propRule",
+      "selector": {
+        "rect": {
+          "fill": {
+            "eq": "#ffffff"
+          }
+        }
+      },
+      "apply": {
+        "$delete": true
+      }
+    }
+  ],
+  "nativeFlow": "../flows/algebra-nested-counterfactuals.flow.json",
+  "nativeSettings": "../settings/algebra-nested-counterfactuals.json",
+  "observedStages": [
+    {
+      "label": "Native property-rule prefix",
+      "kind": "property",
+      "changed": true,
+      "beforeShapes": 1530,
+      "afterShapes": 414,
+      "rules": [
+        {
+          "kind": "propRule",
+          "selector": {
+            "rect": {
+              "fill": {
+                "eq": "#ffffff"
+              }
+            }
+          },
+          "apply": {
+            "$delete": true
+          }
+        }
+      ]
+    },
+    {
+      "label": "rect becomes circle",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 414,
+      "afterShapes": 414,
+      "messages": [
+        "convert applied: 414 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "choose ink on circle",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 414,
+      "afterShapes": 414,
+      "messages": [
+        "paint applied: 414 elements."
+      ]
+    },
+    {
+      "label": "nested homothetic echoes",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 414,
+      "afterShapes": 1242,
+      "messages": [
+        "scale applied: 414 groups, 1242 clones."
+      ]
+    },
+    {
+      "label": "vertical spline differential",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 1242,
+      "afterShapes": 31050,
+      "messages": [
+        "spline lines applied: 1242 shapes, 31050 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "monochrome luminance palette",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 31050,
+      "afterShapes": 31050,
+      "messages": [
+        "color applied: 31050 elements, 48 mapped colors."
+      ]
+    },
+    {
+      "label": "small final affine change",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 31050,
+      "afterShapes": 31050,
+      "messages": []
+    }
+  ]
+}

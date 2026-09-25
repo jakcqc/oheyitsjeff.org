@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "name": "Tile Resonance A - Mark Color",
+  "stages": [
+    {
+      "id": "stage-muogddyp-mko5wea",
+      "kind": "effect",
+      "label": "rect becomes circle",
+      "enabled": true,
+      "config": {
+        "effectType": "convert",
+        "selector": "rect",
+        "convertFrom": "rect",
+        "convertTo": "circle",
+        "pathSamplePoints": 24,
+        "convertScaleMode": "center",
+        "convertScaleFactor": 0.9
+      }
+    },
+    {
+      "id": "stage-muogddyp-fuit4gk",
+      "kind": "effect",
+      "label": "choose ink on circle",
+      "enabled": true,
+      "config": {
+        "effectType": "paint",
+        "selector": "circle",
+        "paintFill": "none",
+        "paintStroke": "#ef8d30"
+      }
+    },
+    {
+      "id": "stage-muogddyp-rvqk4am",
+      "kind": "effect",
+      "label": "E: 2 echoes, scale 0.62 to 1.25",
+      "enabled": true,
+      "config": {
+        "effectType": "scale",
+        "selector": "circle",
+        "elementType": "circle",
+        "rangeMin": 0.62,
+        "rangeMax": 1.25,
+        "count": 2,
+        "spacing": "linear",
+        "opacityMode": "fixed",
+        "opacityFixed": 0.72,
+        "equation": ""
+      }
+    },
+    {
+      "id": "stage-muogddyp-k1ey0c9",
+      "kind": "effect",
+      "label": "N1: normal vectors, coefficient 0.65",
+      "enabled": true,
+      "config": {
+        "effectType": "splineLines",
+        "splineSource": "circle",
+        "splineSelector": "circle:nth-of-type(2n)",
+        "splinePointCount": 12,
+        "splineStepsPerSegment": 2,
+        "splineTension": 0.2,
+        "splineLineOrientation": "normal",
+        "splineLineHeight": 49,
+        "splineLineScale": 0.65,
+        "splineStrokeWidth": 0.7,
+        "splineScaleMode": "none",
+        "splineScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-muogddyp-snzoz6y",
+      "kind": "effect",
+      "label": "N2: tangent vectors, coefficient 1.35",
+      "enabled": true,
+      "config": {
+        "effectType": "splineLines",
+        "splineSource": "circle",
+        "splineSelector": "circle",
+        "splinePointCount": 12,
+        "splineStepsPerSegment": 2,
+        "splineTension": 0.2,
+        "splineLineOrientation": "tangent",
+        "splineLineHeight": 49,
+        "splineLineScale": 1.35,
+        "splineStrokeWidth": 0.7,
+        "splineScaleMode": "none",
+        "splineScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-muogddyp-rkip7o2",
+      "kind": "effect",
+      "label": "C: enumerate current marks through four colors",
+      "enabled": true,
+      "config": {
+        "effectType": "color",
+        "color": {
+          "selector": "circle,line[data-spline-lines-run]",
+          "sourceProp": "stroke",
+          "targetProp": "stroke",
+          "mode": "byIndex",
+          "colorSort": "appearance",
+          "paletteText": "#67dbd2,#7686ec,#ed85b2,#ffcd83",
+          "paletteSteps": 0,
+          "useComputed": true,
+          "skipNone": true
+        }
+      }
+    },
+    {
+      "id": "stage-muogddyp-8oqtcch",
+      "kind": "transform",
+      "label": "A^2: repeated rotation and contraction",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": 1.4
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.98
+          },
+          {
+            "kind": "rotate",
+            "deg": 1.4
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.98
+          }
+        ]
+      }
+    }
+  ]
+}

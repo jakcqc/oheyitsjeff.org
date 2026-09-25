@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "name": "Resonance After Colour Erasure",
+  "stages": [
+    {
+      "id": "stage-mues67b2-g2tvbg5",
+      "kind": "effect",
+      "label": "Two temporary colour classes",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "color",
+        "color": {
+          "selector": "path",
+          "sourceProp": "each",
+          "targetProp": "both",
+          "mode": "byExisting",
+          "colorSort": "appearance",
+          "paletteText": "#253a63, #bf573e",
+          "paletteSteps": 0,
+          "useComputed": true,
+          "skipNone": true
+        }
+      }
+    },
+    {
+      "id": "stage-mues67b2-rwzv16r",
+      "kind": "effect",
+      "label": "Every third survivor becomes a polygon",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "convert",
+        "convertFrom": "path",
+        "convertTo": "polygon",
+        "selector": "path:nth-of-type(3n)",
+        "pathSamplePoints": 28,
+        "convertScaleMode": "none",
+        "convertScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues67b2-3oncxnm",
+      "kind": "effect",
+      "label": "Polygon edges become normal combs",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "splineLines",
+        "splineSource": "polygon",
+        "splineSelector": "polygon",
+        "splinePointCount": 18,
+        "splineStepsPerSegment": 4,
+        "splineTension": 0.22,
+        "splineLineOrientation": "normal",
+        "splineLineHeight": 31,
+        "splineLineScale": 1.3,
+        "splineStrokeWidth": 0.7,
+        "splineScaleMode": "none",
+        "splineScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues67b2-ak3d1ln",
+      "kind": "effect",
+      "label": "Final monochrome lineage",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "color",
+        "color": {
+          "selector": "path,line,polygon,g",
+          "sourceProp": "each",
+          "targetProp": "both",
+          "mode": "byExisting",
+          "colorSort": "appearance",
+          "paletteText": "#131313, #626262",
+          "paletteSteps": 0,
+          "useComputed": true,
+          "skipNone": true
+        }
+      }
+    },
+    {
+      "id": "stage-mues67b2-mj3mnoo",
+      "kind": "transform",
+      "label": "Small oblique displacement",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "matrix",
+            "m": [
+              1,
+              0.055,
+              -0.075,
+              1,
+              49,
+              -41
+            ]
+          }
+        ],
+        "ui": {
+          "splitMode": "fit"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "title": "Halo Tangent Quotient",
+  "source": "BacteriaVisualizer/bacteriaVisualizer.js",
+  "visualId": "bacteriaMinimal",
+  "seed": 925401,
+  "frames": 112,
+  "algebra": {
+    "expression": "T_small o C_gray o N_(every4,24) o Q_scaffold (Halo(t=112))",
+    "convention": "Operators compose right to left; each selection acts on the current SVG result. These are discrete geometric operators, not identities in a vector space.",
+    "operators": {
+      "Q_scaffold": "Set fill and stroke of dot/outline scaffolding to none; this is visual suppression, not deletion.",
+      "N": "Sample selected circles, spline the samples and replace each source circle with normal-oriented line segments.",
+      "C_gray": "Luminance-to-neutral palette after replacement makes both inherited and new marks monochrome.",
+      "T_small": "A small affine shear preserves the global cellular arrangement."
+    },
+    "orderMatters": "Selection, conversion and spline replacement change the domain available to subsequent operators. Color before geometry is inherited by new marks; color after geometry enumerates the newly created marks."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebra-halo-tangent-quotient.flow.json",
+  "nativeSettings": "../settings/algebra-halo-tangent-quotient.json",
+  "observedStages": [
+    {
+      "label": "Quotient away cellular scaffolding",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 702,
+      "afterShapes": 702,
+      "messages": [
+        "paint applied: 216 elements."
+      ]
+    },
+    {
+      "label": "Replace every fourth halo by normal segments",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 702,
+      "afterShapes": 7182,
+      "messages": [
+        "spline lines applied: 108 shapes, 6588 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "Map surviving rings and generated lines to graphite",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 7182,
+      "afterShapes": 7182,
+      "messages": [
+        "color applied: 6966 elements, 48 mapped colors."
+      ]
+    },
+    {
+      "label": "Small centered shear",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 7182,
+      "afterShapes": 7182,
+      "messages": []
+    }
+  ]
+}

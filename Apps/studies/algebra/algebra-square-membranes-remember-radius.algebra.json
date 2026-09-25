@@ -1,0 +1,65 @@
+{
+  "title": "Square Membranes Remember Radius",
+  "source": "BacteriaVisualizer/bacteriaVisualizer.js",
+  "visualId": "bacteriaMinimal",
+  "seed": 925402,
+  "frames": 96,
+  "algebra": {
+    "expression": "T_small o N_tangent o R_(circle->rect) o C_radius (Halo(t=96))",
+    "convention": "Operators compose right to left; each selection acts on the current SVG result. These are discrete geometric operators, not identities in a vector space.",
+    "operators": {
+      "C_radius": "Map actual circle radius to a cyan/violet/rose/ochre palette before converting shape type.",
+      "R": "Convert selected circles to bounding rectangles.",
+      "N_tangent": "Replace those newly converted rectangles by spline-sampled tangent segments.",
+      "T_small": "Small affine drift."
+    },
+    "orderMatters": "Selection, conversion and spline replacement change the domain available to subsequent operators. Color before geometry is inherited by new marks; color after geometry enumerates the newly created marks."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebra-square-membranes-remember-radius.flow.json",
+  "nativeSettings": "../settings/algebra-square-membranes-remember-radius.json",
+  "observedStages": [
+    {
+      "label": "Encode radius before destroying circular type",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 476,
+      "afterShapes": 476,
+      "messages": [
+        "color applied: 294 elements, 48 mapped colors."
+      ]
+    },
+    {
+      "label": "Turn every third membrane into its bounding rectangle",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 476,
+      "afterShapes": 476,
+      "messages": [
+        "convert applied: 98 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "Spline the rectangular membranes into orthogonal cilia",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 476,
+      "afterShapes": 5180,
+      "messages": [
+        "spline lines applied: 98 shapes, 4802 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "Slight oblique drift",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 5180,
+      "afterShapes": 5180,
+      "messages": []
+    }
+  ]
+}

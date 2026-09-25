@@ -1,0 +1,22 @@
+{
+  "depth": 5,
+  "size": 0.3,
+  "spread": 1.16,
+  "branchCount": 5,
+  "spin": 1.85,
+  "fitMode": "contain",
+  "padding": 80,
+  "palette": "mineral",
+  "seed": 240924,
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0
+    },
+    "stack": []
+  }
+}

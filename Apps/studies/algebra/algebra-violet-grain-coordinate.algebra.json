@@ -1,0 +1,65 @@
+{
+  "title": "Violet Grain Coordinate",
+  "source": "ProceduralGrass/ProceduralGrass_visual.js",
+  "visualId": "proceduralGrassField",
+  "seed": 925406,
+  "frames": 0,
+  "algebra": {
+    "expression": "T_small o P_12 o N_tangent o C_height (Grass)",
+    "convention": "Operators compose right to left; each selection acts on the current SVG result. These are discrete geometric operators, not identities in a vector space.",
+    "operators": {
+      "C_height": "Map each native data-height value into violet and acid-green color.",
+      "N_tangent": "Replace every third current blade path with tangent-oriented spline segments.",
+      "P_12": "Convert every second remaining blade path into a 12-sample polygon.",
+      "T_small": "A small angle and contraction."
+    },
+    "orderMatters": "Selection, conversion and spline replacement change the domain available to subsequent operators. Color before geometry is inherited by new marks; color after geometry enumerates the newly created marks."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebra-violet-grain-coordinate.flow.json",
+  "nativeSettings": "../settings/algebra-violet-grain-coordinate.json",
+  "observedStages": [
+    {
+      "label": "Store blade height in color before basis change",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 752,
+      "afterShapes": 752,
+      "messages": [
+        "color applied: 680 elements, 64 mapped colors."
+      ]
+    },
+    {
+      "label": "Replace one third of the blades by tangent grain",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 752,
+      "afterShapes": 6176,
+      "messages": [
+        "spline lines applied: 226 shapes, 5650 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "Quantize a second selection to polygonal leaves",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 6176,
+      "afterShapes": 6176,
+      "messages": [
+        "convert applied: 227 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "A slight violet slant",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 6176,
+      "afterShapes": 6176,
+      "messages": []
+    }
+  ]
+}

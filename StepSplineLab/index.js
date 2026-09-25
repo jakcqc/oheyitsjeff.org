@@ -9,9 +9,11 @@
  */
 
 import { runVisualApp } from "../helper/visualHelp.js";
+import { preloadLinkedSettings } from "../helper/linkedSettings.js";
 import "./StepSplineLab_visual.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  if (!await preloadLinkedSettings("stepSplineLab")) return;
   runVisualApp({
     visualId: "stepSplineLab",
     mountEl: document.getElementById("vis"),

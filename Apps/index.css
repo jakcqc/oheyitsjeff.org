@@ -281,3 +281,48 @@
     transition: none;
   }
 }
+
+/* Permanent Apps views: a shared selector stays beside each search field. */
+.apps-directory[data-apps-view="studies"] .directory-main {
+  max-width: 1240px;
+}
+.directory-search:has(.apps-view-control) {
+  max-width: none;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.directory-search .directory-search-field {
+  width: auto;
+  min-width: 150px;
+}
+.apps-view-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  color: var(--color-accent);
+  font-size: 13px;
+}
+.apps-view-select {
+  box-sizing: border-box;
+  min-height: 42px;
+  max-width: 100%;
+  padding: 8px 30px 8px 14px;
+  border: 2px solid var(--color-accent);
+  border-radius: 999px;
+  background-color: var(--color-main);
+  color: var(--color-accent);
+  font: inherit;
+  font-size: 15px;
+  cursor: pointer;
+}
+.apps-view-select:focus-visible {
+  outline: 3px solid var(--accent-highlight);
+  outline-offset: 3px;
+}
+@media (max-width: 540px) {
+  .apps-view-caption { display: none; }
+  .apps-view-select { font-size: 14px; padding-right: 20px; }
+  .directory-search { gap: 8px; }
+  .directory-search .directory-search-field { min-width: 120px; }
+}

@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "name": "Rectangle Memory Becomes a Field",
+  "stages": [
+    {
+      "id": "stage-mues67bc-39nms47",
+      "kind": "effect",
+      "label": "rect becomes a closed quadrilateral path",
+      "enabled": true,
+      "config": {
+        "effectType": "convert",
+        "selector": "rect",
+        "convertFrom": "rect",
+        "convertTo": "path",
+        "pathSamplePoints": 24,
+        "convertScaleMode": "center",
+        "convertScaleFactor": 1.07
+      }
+    },
+    {
+      "id": "stage-mues67bc-qlowqcm",
+      "kind": "effect",
+      "label": "palette as ordered spectrum",
+      "enabled": true,
+      "config": {
+        "effectType": "color",
+        "color": {
+          "selector": "path",
+          "sourceProp": "stroke",
+          "targetProp": "stroke",
+          "mode": "byIndex",
+          "colorSort": "appearance",
+          "paletteText": "#5824ae, #dc3189, #f4b258, #1dd5c5",
+          "paletteSteps": 48,
+          "useComputed": true,
+          "skipNone": true,
+          "sizeSource": "bboxArea",
+          "sizeAttr": "r"
+        }
+      }
+    },
+    {
+      "id": "stage-mues67bc-ewtlhxb",
+      "kind": "effect",
+      "label": "tangent spline differential",
+      "enabled": true,
+      "config": {
+        "effectType": "splineLines",
+        "splineSource": "path",
+        "splineSelector": "path",
+        "splinePointCount": 8,
+        "splineStepsPerSegment": 3,
+        "splineTension": 0.45,
+        "splineLineOrientation": "tangent",
+        "splineLineHeight": 81,
+        "splineLineScale": 1,
+        "splineStrokeWidth": 0.48,
+        "splineScaleMode": "none",
+        "splineScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues67bc-8itmnd2",
+      "kind": "transform",
+      "label": "small final affine change",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": -2.7
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.97
+          }
+        ]
+      }
+    }
+  ]
+}

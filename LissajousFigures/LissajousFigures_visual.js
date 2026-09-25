@@ -22,6 +22,7 @@ function clampInt(value, fallback, min, max) {
 
 registerVisual("lissajousFigures", {
   title: "Lissajous Figures",
+  simulation: { param: "animate" },
   description: "Layered parametric curves that weave into flower-like loops.",
   params: [
     {
@@ -123,6 +124,8 @@ registerVisual("lissajousFigures", {
 
     let lastSize = { width: 1, height: 1 };
     let rafId = null;
+    let elapsedSeconds = 0;
+    let lastFrameTime = null;
 
     const size = () => {
       const rect = mountEl.getBoundingClientRect();
@@ -174,9 +177,12 @@ registerVisual("lissajousFigures", {
     const animateFrame = (timestamp) => {
       if (!state.animate) {
         rafId = null;
+        lastFrameTime = null;
         return;
       }
-      draw(timestamp / 1000);
+      if (lastFrameTime != null) elapsedSeconds += (timestamp - lastFrameTime) / 1000;
+      lastFrameTime = timestamp;
+      draw(elapsedSeconds);
       rafId = requestAnimationFrame(animateFrame);
     };
 
@@ -188,7 +194,8 @@ registerVisual("lissajousFigures", {
           cancelAnimationFrame(rafId);
           rafId = null;
         }
-        draw(0);
+        lastFrameTime = null;
+        draw(elapsedSeconds);
       }
     };
 

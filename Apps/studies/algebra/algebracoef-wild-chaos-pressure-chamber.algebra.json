@@ -1,0 +1,125 @@
+{
+  "title": "Chaos Pressure Chamber",
+  "source": "LorenzAttractor/LorenzAttractor_visual.js",
+  "visualId": "lorenzAttractor",
+  "seed": 926707,
+  "frames": 0,
+  "algebra": {
+    "edition": "wild",
+    "expression": "A o N o Q o C o E (G)",
+    "convention": "Compose right to left. One composition per app in this batch; no paired variants. Coefficients are concrete native operator parameters.",
+    "coefficients": {
+      "E1": {
+        "rangeMin": -1.2,
+        "rangeMax": 1.5,
+        "count": 5,
+        "opacityFixed": 0.82,
+        "spacing": "linear",
+        "recurrence": "sum(backward):opacity *0.72"
+      },
+      "C2": {
+        "mapping": "byIndex",
+        "paletteSteps": 7
+      },
+      "Q3": {
+        "pathSamplePoints": 19,
+        "convertScaleFactor": 1
+      },
+      "N4": {
+        "splinePointCount": 19,
+        "splineStepsPerSegment": 3,
+        "splineTension": -0.8,
+        "splineAngleOffset": 24,
+        "splineLineHeight": 26,
+        "splineLineScale": 3.14,
+        "splineStrokeWidth": 0.65,
+        "splineScaleFactor": 1
+      },
+      "A5": {
+        "stack": [
+          {
+            "kind": "zoom",
+            "factor": 0.7
+          },
+          {
+            "kind": "planes3d",
+            "count": 5,
+            "baseScale": 0.42,
+            "scaleStep": 0.14,
+            "offset": {
+              "x": 18,
+              "y": -13
+            },
+            "opacity": 0.8,
+            "opacityFalloff": 0.14
+          }
+        ]
+      }
+    },
+    "interpretation": "Signed orbit echoes are colored before sparse trajectories become coarse polygons and long tangential jets. Five offset depth copies pull the attractor apart.",
+    "newCapabilities": [
+      "logarithmic echo spacing",
+      "unclamped spline tension when enabled",
+      "vector angle offset"
+    ],
+    "uniqueness": "This app was not used in the first algebraCOEF batch."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebracoef-wild-chaos-pressure-chamber.flow.json",
+  "nativeSettings": "../settings/algebracoef-wild-chaos-pressure-chamber.json",
+  "observedStages": [
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 48,
+      "afterShapes": 112,
+      "messages": [
+        "scale applied: 16 groups, 80 clones."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 112,
+      "afterShapes": 112,
+      "messages": [
+        "color applied: 112 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "Q: convert",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 112,
+      "afterShapes": 112,
+      "messages": [
+        "convert applied: 4 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 112,
+      "afterShapes": 340,
+      "messages": [
+        "spline lines applied: 4 shapes, 232 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 340,
+      "afterShapes": 2040,
+      "messages": []
+    }
+  ]
+}

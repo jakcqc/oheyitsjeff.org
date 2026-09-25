@@ -3041,7 +3041,8 @@ registerVisual("voxelHatchingShadows", {
     }
 
     function onKeyDown(event) {
-      if (event.code !== "Space") return;
+      if (event.defaultPrevented || event.repeat || event.ctrlKey || event.metaKey || event.altKey) return;
+      if (event.code !== "KeyG") return;
       const target = event.target;
       if (target instanceof HTMLElement) {
         const tag = target.tagName;

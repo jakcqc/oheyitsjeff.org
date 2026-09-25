@@ -1,0 +1,153 @@
+{
+  "lobes": 8,
+  "twist": 23.6,
+  "ribbonWidth": 15,
+  "detail": 3000,
+  "layers": 6,
+  "layerSpread": 4.75,
+  "fitMode": "stretch",
+  "padding": 220,
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0,
+      "preset": "",
+      "splitMode": "fit",
+      "applyToAll": false,
+      "tileTargets": "0",
+      "zoomFactor": 1.25,
+      "matrix": {
+        "a": 1,
+        "b": 0,
+        "c": 0,
+        "d": 1,
+        "e": 0,
+        "f": 0
+      },
+      "zoomCenter": {
+        "x": null,
+        "y": null
+      },
+      "translateVec": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCount": 3,
+      "planeBaseScale": 1,
+      "planeScaleStep": -0.12,
+      "planeOpacity": 0.7,
+      "planeOpacityFalloff": 0.12,
+      "planeOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCenter": {
+        "x": null,
+        "y": null
+      },
+      "groupOpen": {}
+    },
+    "stack": [
+      {
+        "kind": "planes3d",
+        "count": 6,
+        "baseScale": 0.38,
+        "scaleStep": 0.13,
+        "offset": {
+          "x": 18,
+          "y": -11
+        },
+        "opacity": 0.8,
+        "opacityFalloff": 0.11
+      },
+      {
+        "kind": "rotate",
+        "deg": 33
+      }
+    ]
+  },
+  "__toolFlows": {
+    "ui": {
+      "flowName": "A Knot With No Inside",
+      "selectedId": "builtin-grayscale",
+      "autoRun": true,
+      "groupsOpen": {}
+    },
+    "stages": [
+      {
+        "id": "stage-mues66ga-i3vcddz",
+        "kind": "effect",
+        "label": "Nested path echoes",
+        "enabled": true,
+        "config": {
+          "autoRun": false,
+          "debug": false,
+          "effectType": "scale",
+          "elementType": "path",
+          "selector": "path:nth-of-type(3n)",
+          "count": 4,
+          "rangeMin": -0.7,
+          "rangeMax": 1.7,
+          "spacing": "linear",
+          "opacityMode": "ramp",
+          "opacityMin": 0.18,
+          "opacityMax": 0.88,
+          "equation": ""
+        }
+      },
+      {
+        "id": "stage-mues66ga-dll4unl",
+        "kind": "transform",
+        "label": "Six displaced ribbon immersions",
+        "enabled": true,
+        "config": {
+          "stack": [
+            {
+              "kind": "planes3d",
+              "count": 6,
+              "baseScale": 0.38,
+              "scaleStep": 0.13,
+              "offset": {
+                "x": 18,
+                "y": -11
+              },
+              "opacity": 0.8,
+              "opacityFalloff": 0.11
+            },
+            {
+              "kind": "rotate",
+              "deg": 33
+            }
+          ],
+          "ui": {
+            "splitMode": "fit"
+          }
+        }
+      }
+    ]
+  },
+  "__propOps": {
+    "ui": {
+      "ruleText": "{\n        \"selector\": {\"circle\":{\"r\":{\"range\":[20,100]}}},\n        \"apply\": {\"stroke\": null}\n        }",
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": []
+  },
+  "__scriptOps": {
+    "ui": {
+      "codeText": "// ctx.root is the <g> subtree being processed\n// ctx.svg is the owning <svg>\n// ctx.create(tag) creates an SVG element\n//\n// Example: circle -> 6-gon (polygon)\n// for (const c of ctx.root.querySelectorAll(\"circle\")) {\n//   const cx = Number(c.getAttribute(\"cx\") || 0);\n//   const cy = Number(c.getAttribute(\"cy\") || 0);\n//   const r = Number(c.getAttribute(\"r\") || 0);\n//   const n = 6;\n//   const pts = Array.from({length:n}, (_,i) => {\n//     const a = (Math.PI*2*i)/n;\n//     return [cx + r*Math.cos(a), cy + r*Math.sin(a)].join(\",\");\n//   }).join(\" \");\n//   const p = ctx.create(\"polygon\");\n//   p.setAttribute(\"points\", pts);\n//   for (const {name,value} of Array.from(c.attributes)) {\n//     if (name === \"cx\" || name === \"cy\" || name === \"r\") continue;\n//     p.setAttribute(name, value);\n//   }\n//   c.replaceWith(p);\n// }",
+      "fileName": "",
+      "selectedCacheKey": "",
+      "autoRunSelected": false,
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": [],
+    "cache": {}
+  }
+}

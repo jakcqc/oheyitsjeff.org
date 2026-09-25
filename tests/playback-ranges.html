@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Playback and parameter range checks</title>
+  <link rel="stylesheet" href="../helper/uiHelper.css">
+  <style>body { background:#171717; color:#eee; overflow:auto; } #results { white-space:pre-wrap; }</style>
+</head>
+<body>
+  <script type="module">
+    import { runPlaybackRangeRegressions } from './playback-ranges.js';
+    const output = document.createElement('pre');
+    output.id = 'results';
+    try {
+      const passed = await runPlaybackRangeRegressions();
+      output.textContent = `${passed.length} checks passed.\n\n${passed.join('\n')}`;
+      document.body.dataset.testStatus = 'passed';
+    } catch (error) {
+      output.textContent = error.stack;
+      document.body.dataset.testStatus = 'failed';
+      console.error(error);
+    }
+    document.body.appendChild(output);
+  </script>
+</body>
+</html>

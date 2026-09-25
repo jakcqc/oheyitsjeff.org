@@ -1,0 +1,116 @@
+{
+  "title": "Negative Crystal Weather",
+  "source": "FractalPolyhedra/FractalPolyhedra_visual.js",
+  "visualId": "fractalPolyhedra",
+  "seed": 926702,
+  "frames": 0,
+  "algebra": {
+    "edition": "wild",
+    "expression": "A o C o N o E (G)",
+    "convention": "Compose right to left. One composition per app in this batch; no paired variants. Coefficients are concrete native operator parameters.",
+    "coefficients": {
+      "E1": {
+        "rangeMin": -2.2,
+        "rangeMax": 1.6,
+        "count": 4,
+        "opacityFixed": 0.82,
+        "spacing": "linear",
+        "recurrence": "sum(backward):opacity *0.72"
+      },
+      "N2": {
+        "splinePointCount": 6,
+        "splineStepsPerSegment": 2,
+        "splineTension": 1.9,
+        "splineAngleOffset": 61,
+        "splineLineHeight": 10,
+        "splineLineScale": 3.6,
+        "splineStrokeWidth": 0.65,
+        "splineScaleFactor": 1
+      },
+      "C3": {
+        "mapping": "bySize",
+        "paletteSteps": 7
+      },
+      "A4": {
+        "stack": [
+          {
+            "kind": "split",
+            "count": 4
+          },
+          {
+            "kind": "flipX",
+            "targets": [
+              1,
+              3
+            ]
+          },
+          {
+            "kind": "flipY",
+            "targets": [
+              2,
+              3
+            ]
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.83
+          }
+        ]
+      }
+    },
+    "interpretation": "Selected crystal faces echo across zero scale while another family emits slanted quills. Size-ranked color and mirrored tiles turn recursion into opposing weather systems.",
+    "newCapabilities": [
+      "logarithmic echo spacing",
+      "unclamped spline tension when enabled",
+      "vector angle offset"
+    ],
+    "uniqueness": "This app was not used in the first algebraCOEF batch."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebracoef-wild-negative-crystal-weather.flow.json",
+  "nativeSettings": "../settings/algebracoef-wild-negative-crystal-weather.json",
+  "observedStages": [
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 1023,
+      "afterShapes": 1203,
+      "messages": [
+        "scale applied: 60 groups, 240 clones."
+      ]
+    },
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 1203,
+      "afterShapes": 1575,
+      "messages": [
+        "spline lines applied: 31 shapes, 403 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 1575,
+      "afterShapes": 1575,
+      "messages": [
+        "color applied: 403 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 1575,
+      "afterShapes": 7875,
+      "messages": []
+    }
+  ]
+}

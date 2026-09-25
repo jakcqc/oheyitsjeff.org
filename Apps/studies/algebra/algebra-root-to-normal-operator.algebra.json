@@ -1,0 +1,65 @@
+{
+  "title": "Root to Normal Operator",
+  "source": "ProceduralGrass/ProceduralGrass_visual.js",
+  "visualId": "proceduralGrassField",
+  "seed": 925405,
+  "frames": 0,
+  "algebra": {
+    "expression": "T_small o C_gray o N_all o Q_ground (Grass)",
+    "convention": "Operators compose right to left; each selection acts on the current SVG result. These are discrete geometric operators, not identities in a vector space.",
+    "operators": {
+      "Q_ground": "Suppress the ground and shadow paint while retaining their geometry in the settings workflow.",
+      "N_all": "Replace every blade path with spline-sampled normal segments.",
+      "C_gray": "Cycle neutral values through the generated line set.",
+      "T_small": "A restrained shear."
+    },
+    "orderMatters": "Selection, conversion and spline replacement change the domain available to subsequent operators. Color before geometry is inherited by new marks; color after geometry enumerates the newly created marks."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebra-root-to-normal-operator.flow.json",
+  "nativeSettings": "../settings/algebra-root-to-normal-operator.json",
+  "observedStages": [
+    {
+      "label": "Suppress ground and shadow support",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 920,
+      "afterShapes": 920,
+      "messages": [
+        "paint applied: 260 elements."
+      ]
+    },
+    {
+      "label": "Replace living blades by a normal field",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 920,
+      "afterShapes": 11840,
+      "messages": [
+        "spline lines applied: 520 shapes, 11440 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "Enumerate white to graphite normal segments",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 11840,
+      "afterShapes": 11840,
+      "messages": [
+        "color applied: 11580 elements, 47 mapped colors."
+      ]
+    },
+    {
+      "label": "Slight camera shear",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 11840,
+      "afterShapes": 11840,
+      "messages": []
+    }
+  ]
+}

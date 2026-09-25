@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "name": "Halo Tangent Quotient",
+  "stages": [
+    {
+      "id": "stage-mues67dl-eko954a",
+      "kind": "effect",
+      "label": "Quotient away cellular scaffolding",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "paint",
+        "elementType": "path",
+        "selector": "g.dots circle,.outline",
+        "paintFill": "none",
+        "paintStroke": "none"
+      }
+    },
+    {
+      "id": "stage-mues67dl-a2q7krf",
+      "kind": "effect",
+      "label": "Replace every fourth halo by normal segments",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "splineLines",
+        "splineSource": "circle",
+        "splineSelector": "circle.multi-ring:nth-of-type(4n)",
+        "splinePointCount": 20,
+        "splineStepsPerSegment": 3,
+        "splineTension": 0.24,
+        "splineLineOrientation": "normal",
+        "splineLineHeight": 24,
+        "splineLineScale": 1.2,
+        "splineStrokeWidth": 0.95
+      }
+    },
+    {
+      "id": "stage-mues67dl-yol2rx8",
+      "kind": "effect",
+      "label": "Map surviving rings and generated lines to graphite",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "color",
+        "color": {
+          "selector": "circle,line,ellipse,rect",
+          "sourceProp": "each",
+          "targetProp": "both",
+          "mode": "byLuminance",
+          "colorSort": "appearance",
+          "paletteText": "#555555,#f2f2f2",
+          "paletteSteps": 48,
+          "useComputed": true,
+          "skipNone": true
+        }
+      }
+    },
+    {
+      "id": "stage-mues67dl-4gi5ry8",
+      "kind": "transform",
+      "label": "Small centered shear",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "matrix",
+            "m": [
+              0.97,
+              0.055,
+              -0.035,
+              0.97,
+              48,
+              -23
+            ]
+          }
+        ],
+        "ui": {
+          "splitMode": "fit"
+        }
+      }
+    }
+  ]
+}

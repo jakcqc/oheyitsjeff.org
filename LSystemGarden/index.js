@@ -9,9 +9,11 @@
  */
 
 import { runVisualApp } from "../helper/visualHelp.js";
+import { preloadLinkedSettings } from "../helper/linkedSettings.js";
 import "./lsystem_visual.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  if (!await preloadLinkedSettings("lsystemGarden")) return;
   runVisualApp({
     visualId: "lsystemGarden",
     mountEl: document.getElementById("vis"),

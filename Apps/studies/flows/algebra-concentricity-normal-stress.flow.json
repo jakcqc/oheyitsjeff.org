@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "name": "Concentricity Under Normal Stress",
+  "stages": [
+    {
+      "id": "stage-mues67bb-wlsfymn",
+      "kind": "effect",
+      "label": "normal spline differential",
+      "enabled": true,
+      "config": {
+        "effectType": "splineLines",
+        "splineSource": "circle",
+        "splineSelector": "circle",
+        "splinePointCount": 39,
+        "splineStepsPerSegment": 3,
+        "splineTension": 0.88,
+        "splineLineOrientation": "normal",
+        "splineLineHeight": 221,
+        "splineLineScale": 1,
+        "splineStrokeWidth": 0.28,
+        "splineScaleMode": "none",
+        "splineScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues67bb-3soj11g",
+      "kind": "effect",
+      "label": "monochrome luminance palette",
+      "enabled": true,
+      "config": {
+        "effectType": "color",
+        "color": {
+          "selector": "*",
+          "sourceProp": "each",
+          "targetProp": "both",
+          "mode": "byLuminance",
+          "colorSort": "luminance",
+          "paletteText": "#080808, #808080",
+          "paletteSteps": 48,
+          "useComputed": true,
+          "skipNone": true
+        }
+      }
+    },
+    {
+      "id": "stage-mues67bb-332qqsu",
+      "kind": "transform",
+      "label": "small final affine change",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": 2.1
+          },
+          {
+            "kind": "zoom",
+            "factor": 1.03
+          }
+        ]
+      }
+    }
+  ]
+}

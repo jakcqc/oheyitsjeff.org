@@ -33,8 +33,9 @@ export function normalizeVector(x, y, fallbackX = 1, fallbackY = 0) {
   return { x: x / len, y: y / len };
 }
 
-function catmullRomPoint(p0, p1, p2, p3, t, tension) {
-  const s = (1 - clamp(tension, 0, 1)) * 0.5;
+function catmullRomPoint(p0, p1, p2, p3, t, tension, extrapolateTension) {
+  const finiteTension = Number.isFinite(Number(tension)) ? Number(tension) : 0;
+  const s = (1 - (extrapolateTension ? finiteTension : clamp(finiteTension, 0, 1))) * 0.5;
   const t2 = t * t;
   const t3 = t2 * t;
   const m1x = (p2.x - p0.x) * s;
@@ -65,7 +66,7 @@ function getWrapped(points, index, closed) {
   return points[clamp(index, 0, count - 1)];
 }
 
-export function sampleSpline(points, stepsPerSegment, tension, closed) {
+export function sampleSpline(points, stepsPerSegment, tension, closed, extrapolateTension = false) {
   if (points.length < 2) return [];
   const segmentCount = closed ? points.length : points.length - 1;
   const safeSteps = Math.max(2, Math.floor(stepsPerSegment));
@@ -80,7 +81,7 @@ export function sampleSpline(points, stepsPerSegment, tension, closed) {
     for (let stepIndex = 0; stepIndex <= safeSteps; stepIndex += 1) {
       if (segmentIndex > 0 && stepIndex === 0) continue;
       const u = stepIndex / safeSteps;
-      const point = catmullRomPoint(p0, p1, p2, p3, u, tension);
+      const point = catmullRomPoint(p0, p1, p2, p3, u, tension, extrapolateTension);
       samples.push({ x: point.x, y: point.y, segmentIndex, stepIndex, u });
     }
   }
@@ -329,6 +330,8 @@ export function applySplineLinesInSubtree(ctx, opts = {}) {
     pointCount = 16,
     stepsPerSegment = 18,
     tension = 0.12,
+    extrapolateTension = false,
+    angleOffset = 0,
     lineOrientation = "vertical",
     lineHeight = 18,
     lineScale = 1,
@@ -358,6 +361,8 @@ export function applySplineLinesInSubtree(ctx, opts = {}) {
     .filter((el) => !el.closest('g[data-spline-lines-group="1"]'))
     .filter((el) => !el.hasAttribute("data-spline-lines-clone"));
 
+  const angle = Number.isFinite(Number(angleOffset)) ? (Number(angleOffset) % 360) * Math.PI / 180 : 0;
+  const cosine = Math.cos(angle), sine = Math.sin(angle);
   const stats = {
     selector: query,
     sourceTag: safeSourceTag,
@@ -374,7 +379,7 @@ export function applySplineLinesInSubtree(ctx, opts = {}) {
       continue;
     }
 
-    const samples = sampleSpline(points, safeStepsPerSegment, Number(tension) || 0, closed);
+    const samples = sampleSpline(points, safeStepsPerSegment, Number(tension) || 0, closed, extrapolateTension);
     if (!samples.length || safeLineLength <= 0) {
       stats.skipped += 1;
       continue;
@@ -395,7 +400,11 @@ export function applySplineLinesInSubtree(ctx, opts = {}) {
 
     let madeLines = 0;
     for (const sample of samples) {
-      const direction = getLineDirection(sample, lineOrientation);
+      const baseDirection = getLineDirection(sample, lineOrientation);
+      const direction = angle === 0 ? baseDirection : {
+        x: baseDirection.x * cosine - baseDirection.y * sine,
+        y: baseDirection.x * sine + baseDirection.y * cosine,
+      };
       const half = safeLineLength * 0.5;
       const line = create("line");
       line.setAttribute("x1", String(sample.x - direction.x * half));

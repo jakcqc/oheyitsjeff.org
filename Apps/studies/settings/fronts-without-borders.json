@@ -1,0 +1,29 @@
+{
+  "model": "Fisher-KPP",
+  "feed": 0.0545,
+  "kill": 0.062,
+  "diffusionA": 0.24,
+  "diffusionB": 0.08,
+  "chemotaxis": 0.62,
+  "growth": 0.095,
+  "steps": 460,
+  "resolution": 140,
+  "seedCount": 16,
+  "seed": 319847,
+  "contourLevels": 16,
+  "cellMarks": false,
+  "markDensity": 0.15,
+  "palette": "violet",
+  "backgroundColor": "#0d0a18",
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0
+    },
+    "stack": []
+  }
+}

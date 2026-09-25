@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "name": "Escape Velocity Comb",
+  "stages": [
+    {
+      "id": "stage-mues68dr-mv5oa9n",
+      "kind": "effect",
+      "label": "N: splineLines",
+      "enabled": true,
+      "config": {
+        "effectType": "splineLines",
+        "splineSource": "path",
+        "splineSelector": "path:nth-of-type(11n)",
+        "splinePointCount": 7,
+        "splineStepsPerSegment": 2,
+        "splineTension": -1.8,
+        "splineExtrapolateTension": true,
+        "splineAngleOffset": 33,
+        "splineLineOrientation": "normal",
+        "splineLineHeight": 7,
+        "splineLineScale": 4.8,
+        "splineStrokeWidth": 0.65,
+        "splineScaleMode": "none",
+        "splineScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues68dr-zw10t62",
+      "kind": "effect",
+      "label": "Q: convert",
+      "enabled": true,
+      "config": {
+        "effectType": "convert",
+        "selector": "path:nth-of-type(29n)",
+        "convertFrom": "path",
+        "convertTo": "circle",
+        "pathSamplePoints": 13,
+        "convertScaleMode": "center",
+        "convertScaleFactor": 1.9
+      }
+    },
+    {
+      "id": "stage-mues68dr-t8u9895",
+      "kind": "effect",
+      "label": "C: color",
+      "enabled": true,
+      "config": {
+        "effectType": "color",
+        "color": {
+          "selector": "path,polygon,circle,rect,line",
+          "sourceProp": "each",
+          "targetProp": "stroke",
+          "mode": "byIndex",
+          "colorSort": "appearance",
+          "paletteText": "#481778,#ef3b56,#ffa32d,#f6ffb4",
+          "paletteSteps": 7,
+          "useComputed": true,
+          "skipNone": true,
+          "sizeSource": "bboxArea",
+          "sizeAttr": "r"
+        }
+      }
+    },
+    {
+      "id": "stage-mues68dr-giukvg4",
+      "kind": "transform",
+      "label": "A: folded presentation",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "split",
+            "count": 4
+          },
+          {
+            "kind": "flipX",
+            "targets": [
+              1,
+              2
+            ]
+          },
+          {
+            "kind": "rotate",
+            "deg": 29
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.9
+          }
+        ]
+      }
+    }
+  ]
+}

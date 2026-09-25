@@ -1,0 +1,22 @@
+{
+  "depth": 6,
+  "size": 0.2,
+  "spread": 1.75,
+  "branchCount": 2,
+  "spin": 0.95,
+  "fitMode": "stretch",
+  "padding": 80,
+  "palette": "crystal",
+  "seed": 761033,
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0
+    },
+    "stack": []
+  }
+}

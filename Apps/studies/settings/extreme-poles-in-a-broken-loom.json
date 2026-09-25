@@ -1,0 +1,179 @@
+{
+  "renderMode": "mono",
+  "function": "tan(z)",
+  "view": {
+    "centerRe": 0.12,
+    "centerIm": 0.06,
+    "spanRe": 16.8
+  },
+  "renderScale": 1,
+  "dotSpacing": 14,
+  "dotMinRadius": 0.2,
+  "dotMaxRadius": 4.8,
+  "dotStrokeStrength": 0.3,
+  "monoDensity": 8.7,
+  "monoJitter": 0.9,
+  "monoSizeBias": 3.8,
+  "showContours": true,
+  "contourStep": 7,
+  "contourCount": 58,
+  "angleContourCount": 72,
+  "contourOpacity": 0.38,
+  "contourStroke": "#eee8da",
+  "hueOffset": 0,
+  "saturation": 0.85,
+  "lightness": 0.55,
+  "ringDensity": 49.7,
+  "ringStrength": 0.95,
+  "angleLines": 79,
+  "angleStrength": 0.86,
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0,
+      "preset": "",
+      "splitMode": "fit",
+      "applyToAll": false,
+      "tileTargets": "0",
+      "zoomFactor": 1.25,
+      "matrix": {
+        "a": 1,
+        "b": 0,
+        "c": 0,
+        "d": 1,
+        "e": 0,
+        "f": 0
+      },
+      "zoomCenter": {
+        "x": null,
+        "y": null
+      },
+      "translateVec": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCount": 3,
+      "planeBaseScale": 1,
+      "planeScaleStep": -0.12,
+      "planeOpacity": 0.7,
+      "planeOpacityFalloff": 0.12,
+      "planeOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCenter": {
+        "x": null,
+        "y": null
+      },
+      "groupOpen": {}
+    },
+    "stack": [
+      {
+        "kind": "matrix",
+        "m": [
+          1,
+          -0.24,
+          0.25,
+          1,
+          -175,
+          192
+        ]
+      }
+    ]
+  },
+  "__toolFlows": {
+    "ui": {
+      "flowName": "Poles In A Broken Loom",
+      "selectedId": "builtin-grayscale",
+      "autoRun": true,
+      "groupsOpen": {}
+    },
+    "stages": [
+      {
+        "id": "stage-mues66gj-65dnpo0",
+        "kind": "effect",
+        "label": "Selected phase dots become diamonds",
+        "enabled": true,
+        "config": {
+          "autoRun": false,
+          "debug": false,
+          "effectType": "convert",
+          "convertFrom": "circle",
+          "convertTo": "rect",
+          "selector": "circle:nth-of-type(4n)",
+          "pathSamplePoints": 12,
+          "convertScaleMode": "center",
+          "convertScaleFactor": 1.5
+        }
+      },
+      {
+        "id": "stage-mues66gj-7xv0mza",
+        "kind": "effect",
+        "label": "monochrome luminance palette",
+        "enabled": true,
+        "config": {
+          "effectType": "color",
+          "color": {
+            "selector": "*",
+            "sourceProp": "each",
+            "targetProp": "both",
+            "mode": "byLuminance",
+            "colorSort": "luminance",
+            "paletteText": "#777777, #fafafa",
+            "paletteSteps": 48,
+            "useComputed": true,
+            "skipNone": true
+          }
+        }
+      },
+      {
+        "id": "stage-mues66gj-owxdasn",
+        "kind": "transform",
+        "label": "Sheared phase lattice",
+        "enabled": true,
+        "config": {
+          "stack": [
+            {
+              "kind": "matrix",
+              "m": [
+                1,
+                -0.24,
+                0.25,
+                1,
+                -175,
+                192
+              ]
+            }
+          ],
+          "ui": {
+            "splitMode": "fit"
+          }
+        }
+      }
+    ]
+  },
+  "__propOps": {
+    "ui": {
+      "ruleText": "{\n        \"selector\": {\"circle\":{\"r\":{\"range\":[20,100]}}},\n        \"apply\": {\"stroke\": null}\n        }",
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": []
+  },
+  "__scriptOps": {
+    "ui": {
+      "codeText": "// ctx.root is the <g> subtree being processed\n// ctx.svg is the owning <svg>\n// ctx.create(tag) creates an SVG element\n//\n// Example: circle -> 6-gon (polygon)\n// for (const c of ctx.root.querySelectorAll(\"circle\")) {\n//   const cx = Number(c.getAttribute(\"cx\") || 0);\n//   const cy = Number(c.getAttribute(\"cy\") || 0);\n//   const r = Number(c.getAttribute(\"r\") || 0);\n//   const n = 6;\n//   const pts = Array.from({length:n}, (_,i) => {\n//     const a = (Math.PI*2*i)/n;\n//     return [cx + r*Math.cos(a), cy + r*Math.sin(a)].join(\",\");\n//   }).join(\" \");\n//   const p = ctx.create(\"polygon\");\n//   p.setAttribute(\"points\", pts);\n//   for (const {name,value} of Array.from(c.attributes)) {\n//     if (name === \"cx\" || name === \"cy\" || name === \"r\") continue;\n//     p.setAttribute(name, value);\n//   }\n//   c.replaceWith(p);\n// }",
+      "fileName": "",
+      "selectedCacheKey": "",
+      "autoRunSelected": false,
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": [],
+    "cache": {}
+  }
+}

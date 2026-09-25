@@ -1,0 +1,365 @@
+{
+  "running": true,
+  "tickMs": 16,
+  "speed": 7.3887,
+  "outlinePad": 0,
+  "outlineLag": 0.36,
+  "outlineScale": 1.8956,
+  "outlineShape": "ellipse",
+  "outlineStrokeWidth": 0.2,
+  "lineColor": "#a3b7c2",
+  "backgroundColor": "#0c0e16",
+  "dotStrokeWidth": 0.15,
+  "collisionPush": 0.9,
+  "showMergePaths": false,
+  "mergeContactRatio": 0.97,
+  "mergeMaxPairs": 72,
+  "mergeSmoothing": 0.99,
+  "mergeFalloff": 0,
+  "mergeEffectStyle": "ring",
+  "mergeEffectColor": "#aa0000",
+  "ringCount": 6,
+  "fitCells": false,
+  "fitFillRatio": 0.35,
+  "ringMinRadius": 44.3209,
+  "ringMaxRadius": 87.4417,
+  "showMultiRing": true,
+  "multiRingCount": 7,
+  "multiRingStart": 0.7282,
+  "multiRingGap": 6.5239,
+  "multiRingStrokeWidth": 1.15,
+  "multiRingOpacity": 0.9104,
+  "multiRingFade": 0.0143,
+  "multiRingColor": "#c2c5d5",
+  "ringColorMode": "uniform",
+  "ringColorA": "#ffffff",
+  "ringColorB": "#000000",
+  "multiRingPalette": "#aa0000,#0088ff,#00aa44,#ffa500",
+  "showCircleRect": false,
+  "circleStrokeWidth": 0.2,
+  "circleRectColor": "#000000",
+  "showTrail": false,
+  "trailEveryN": 3,
+  "trailLength": 80,
+  "trailOpacity": 0.08,
+  "trailRadius": 2.6,
+  "trailColor": "#eee8da",
+  "trailStrokeColor": "#eee8da",
+  "trailStrokeWidth": 0.2,
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0,
+      "preset": "",
+      "splitMode": "screen",
+      "applyToAll": false,
+      "tileTargets": "0",
+      "zoomFactor": 1.25,
+      "matrix": {
+        "a": 1,
+        "b": 0,
+        "c": 0,
+        "d": 1,
+        "e": 0,
+        "f": 0
+      },
+      "zoomCenter": {
+        "x": null,
+        "y": null
+      },
+      "translateVec": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCount": 3,
+      "planeBaseScale": 1,
+      "planeScaleStep": -0.12,
+      "planeOpacity": 0.7,
+      "planeOpacityFalloff": 0.12,
+      "planeOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCenter": {
+        "x": null,
+        "y": null
+      },
+      "groupOpen": {}
+    },
+    "stack": [
+      {
+        "kind": "rotate",
+        "deg": -1.7
+      },
+      {
+        "kind": "zoom",
+        "factor": 0.98
+      },
+      {
+        "kind": "rotate",
+        "deg": -1.7
+      },
+      {
+        "kind": "zoom",
+        "factor": 0.98
+      },
+      {
+        "kind": "rotate",
+        "deg": -1.7
+      },
+      {
+        "kind": "zoom",
+        "factor": 0.98
+      }
+    ]
+  },
+  "__studyRandomization": {
+    "version": 1,
+    "algorithm": "mulberry32-v1",
+    "seed": 3063906084,
+    "operation": "R_seed(p): randomize starting native parameters before G renders and before any algebra flow",
+    "samples": [
+      {
+        "path": "ringCount",
+        "op": "integer",
+        "min": 4,
+        "max": 10,
+        "before": 6,
+        "value": 6
+      },
+      {
+        "path": "ringMinRadius",
+        "op": "uniform",
+        "min": 18,
+        "max": 52,
+        "before": 35,
+        "value": 44.3209
+      },
+      {
+        "path": "ringMaxRadius",
+        "op": "uniform",
+        "min": 70,
+        "max": 145,
+        "before": 98,
+        "value": 87.4417
+      },
+      {
+        "path": "multiRingCount",
+        "op": "integer",
+        "min": 4,
+        "max": 12,
+        "before": 7,
+        "value": 7
+      },
+      {
+        "path": "multiRingStart",
+        "op": "uniform",
+        "min": 0.45,
+        "max": 1.05,
+        "before": 0.55,
+        "value": 0.7282
+      },
+      {
+        "path": "multiRingGap",
+        "op": "uniform",
+        "min": 3,
+        "max": 18,
+        "before": 9.8,
+        "value": 6.5239
+      },
+      {
+        "path": "multiRingOpacity",
+        "op": "uniform",
+        "min": 0.7,
+        "max": 1,
+        "before": 0.83,
+        "value": 0.9104
+      },
+      {
+        "path": "multiRingFade",
+        "op": "uniform",
+        "min": 0.004,
+        "max": 0.025,
+        "before": 0.018,
+        "value": 0.0143
+      },
+      {
+        "path": "speed",
+        "op": "uniform",
+        "min": 2,
+        "max": 10,
+        "before": 8,
+        "value": 7.3887
+      },
+      {
+        "path": "outlineScale",
+        "op": "multiply",
+        "min": 0.75,
+        "max": 1.4,
+        "before": 1.4,
+        "value": 1.8956
+      }
+    ]
+  },
+  "__toolFlows": {
+    "ui": {
+      "flowName": "Halo Interference B - Source Color",
+      "selectedId": "builtin-grayscale",
+      "autoRun": true,
+      "groupsOpen": {}
+    },
+    "stages": [
+      {
+        "id": "stage-mvc1c49n-4e56zqa",
+        "kind": "effect",
+        "label": "Q: suppress cellular scaffolding",
+        "enabled": true,
+        "config": {
+          "autoRun": false,
+          "debug": false,
+          "effectType": "paint",
+          "elementType": "circle",
+          "selector": "g.dots circle,.outline",
+          "paintFill": "none",
+          "paintStroke": "none"
+        }
+      },
+      {
+        "id": "stage-mvc1c49n-zoffh0u",
+        "kind": "effect",
+        "label": "E: 3 echoes, scale 0.83 to 1.25",
+        "enabled": true,
+        "config": {
+          "effectType": "scale",
+          "selector": "circle.multi-ring",
+          "elementType": "circle",
+          "rangeMin": 0.83,
+          "rangeMax": 1.25,
+          "count": 3,
+          "spacing": "linear",
+          "opacityMode": "fixed",
+          "opacityFixed": 0.72,
+          "equation": ""
+        }
+      },
+      {
+        "id": "stage-mvc1c49n-c2kyp8m",
+        "kind": "effect",
+        "label": "C: enumerate current marks through four colors",
+        "enabled": true,
+        "config": {
+          "effectType": "color",
+          "color": {
+            "selector": "circle.multi-ring,line[data-spline-lines-run]",
+            "sourceProp": "stroke",
+            "targetProp": "stroke",
+            "mode": "byIndex",
+            "colorSort": "appearance",
+            "paletteText": "#67dbd2,#7686ec,#ed85b2,#ffcd83",
+            "paletteSteps": 0,
+            "useComputed": true,
+            "skipNone": true
+          }
+        }
+      },
+      {
+        "id": "stage-mvc1c49n-0rh6bi3",
+        "kind": "effect",
+        "label": "N1: normal vectors, coefficient 1.45",
+        "enabled": true,
+        "config": {
+          "autoRun": false,
+          "debug": false,
+          "effectType": "splineLines",
+          "splineSource": "circle",
+          "splineSelector": "circle.multi-ring:nth-of-type(2n)",
+          "splinePointCount": 12,
+          "splineStepsPerSegment": 2,
+          "splineTension": 0.2,
+          "splineLineOrientation": "normal",
+          "splineLineHeight": 48,
+          "splineLineScale": 1.45,
+          "splineStrokeWidth": 0.7
+        }
+      },
+      {
+        "id": "stage-mvc1c49n-d43roe1",
+        "kind": "effect",
+        "label": "N2: tangent vectors, coefficient 0.8",
+        "enabled": true,
+        "config": {
+          "autoRun": false,
+          "debug": false,
+          "effectType": "splineLines",
+          "splineSource": "circle",
+          "splineSelector": "circle.multi-ring",
+          "splinePointCount": 12,
+          "splineStepsPerSegment": 2,
+          "splineTension": 0.2,
+          "splineLineOrientation": "tangent",
+          "splineLineHeight": 48,
+          "splineLineScale": 0.8,
+          "splineStrokeWidth": 0.7
+        }
+      },
+      {
+        "id": "stage-mvc1c49n-gpzhcza",
+        "kind": "transform",
+        "label": "A^3: repeated rotation and contraction",
+        "enabled": true,
+        "config": {
+          "stack": [
+            {
+              "kind": "rotate",
+              "deg": -1.7
+            },
+            {
+              "kind": "zoom",
+              "factor": 0.98
+            },
+            {
+              "kind": "rotate",
+              "deg": -1.7
+            },
+            {
+              "kind": "zoom",
+              "factor": 0.98
+            },
+            {
+              "kind": "rotate",
+              "deg": -1.7
+            },
+            {
+              "kind": "zoom",
+              "factor": 0.98
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "__propOps": {
+    "ui": {
+      "ruleText": "{\n        \"selector\": {\"circle\":{\"r\":{\"range\":[20,100]}}},\n        \"apply\": {\"stroke\": null}\n        }",
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": []
+  },
+  "__scriptOps": {
+    "ui": {
+      "codeText": "// ctx.root is the <g> subtree being processed\n// ctx.svg is the owning <svg>\n// ctx.create(tag) creates an SVG element\n//\n// Example: circle -> 6-gon (polygon)\n// for (const c of ctx.root.querySelectorAll(\"circle\")) {\n//   const cx = Number(c.getAttribute(\"cx\") || 0);\n//   const cy = Number(c.getAttribute(\"cy\") || 0);\n//   const r = Number(c.getAttribute(\"r\") || 0);\n//   const n = 6;\n//   const pts = Array.from({length:n}, (_,i) => {\n//     const a = (Math.PI*2*i)/n;\n//     return [cx + r*Math.cos(a), cy + r*Math.sin(a)].join(\",\");\n//   }).join(\" \");\n//   const p = ctx.create(\"polygon\");\n//   p.setAttribute(\"points\", pts);\n//   for (const {name,value} of Array.from(c.attributes)) {\n//     if (name === \"cx\" || name === \"cy\" || name === \"r\") continue;\n//     p.setAttribute(name, value);\n//   }\n//   c.replaceWith(p);\n// }",
+      "fileName": "",
+      "selectedCacheKey": "",
+      "autoRunSelected": false,
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": [],
+    "cache": {}
+  }
+}

@@ -1,5 +1,12 @@
 [
   {
+    "title": "Image to SVG",
+    "image": "assets/Images/imageToSVG.png",
+    "description": "Convert images into SVG with 22 tracing, mosaic, halftone, and continuous-line approaches. Control line counts, squiggle density, palette size, and up to 30,000 Voronoi cells.",
+    "link": "/imageToSVG/",
+    "infoTitle": "Image to SVG Lab"
+  },
+  {
     "title": "Mondrian Abstraction 3D",
     "image": "assets/Images/monder3D.jpg",
     "description": "Ever wonder what A Mondrian Composition would like look like in 3D?",
@@ -60,6 +67,17 @@
     "image": "/assets/Images/marble.png",
     "description": "A dedicated gallery of the new math visualization set.",
     "link": "/MathVisuals/"
+  },
+  {
+    "title": "Apps",
+    "isApp": false,
+    "shape": "diamond",
+    "innerShape": "diamond",
+    "outerShape": "circle",
+    "size": "large",
+    "image": "/assets/Images/APPS.png",
+    "description": "Browse the app directory and SVG studies.",
+    "link": "/Apps/"
   },
   {
     "title": "ART",

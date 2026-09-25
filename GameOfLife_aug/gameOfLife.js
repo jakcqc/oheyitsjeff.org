@@ -10,8 +10,10 @@
 
 // life_visual.js
 import { registerVisual,runVisualApp } from "../helper/visualHelp.js";
+import { preloadLinkedSettings } from "../helper/linkedSettings.js";
 
 registerVisual("gameOfLifeSVG", {
+  simulation: { param: "running" },
   title: "Game of Life (SVG)",
   description: "Clickable SVG grid + 3 rule modes: classic, dense neighborhood, color replication.",
 
@@ -534,7 +536,7 @@ registerVisual("gameOfLifeSVG", {
 
     function startLoop() {
       if (rafId) return;
-      //lastTick = 0;
+      lastTick = 0;
       rafId = requestAnimationFrame(loop);
     }
 
@@ -659,7 +661,8 @@ registerVisual("gameOfLifeSVG", {
     };
   }
 });
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  if (!await preloadLinkedSettings("gameOfLifeSVG")) return;
   runVisualApp({
     visualId: "gameOfLifeSVG",
     mountEl: document.getElementById("vis"),

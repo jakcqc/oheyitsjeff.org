@@ -1,0 +1,117 @@
+{
+  "title": "A Trajectory Loses Its Beginning",
+  "source": "LorenzAttractor/LorenzAttractor_visual.js",
+  "visualId": "lorenzAttractor",
+  "seed": 925311,
+  "frames": 0,
+  "algebra": {
+    "expression": "A o C o N o Q o D o G",
+    "interpretation": "Deletion is based on original chunk color, which combines progression and trail index; it is not an exact physical time cut. Coarse conversion intentionally closes each selected chunk before sampling normals.",
+    "convention": "Compose right to left."
+  },
+  "propertyPrefix": [
+    {
+      "kind": "propRule",
+      "selector": {
+        "path": {
+          "stroke": {
+            "range": [
+              [
+                0,
+                120,
+                120
+              ],
+              [
+                120,
+                255,
+                255
+              ]
+            ]
+          }
+        }
+      },
+      "apply": {
+        "$delete": true
+      }
+    }
+  ],
+  "nativeFlow": "../flows/algebra-a-trajectory-loses-its-beginning.flow.json",
+  "nativeSettings": "../settings/algebra-a-trajectory-loses-its-beginning.json",
+  "observedStages": [
+    {
+      "label": "Native property-rule prefix",
+      "kind": "property",
+      "changed": true,
+      "beforeShapes": 64,
+      "afterShapes": 54,
+      "rules": [
+        {
+          "kind": "propRule",
+          "selector": {
+            "path": {
+              "stroke": {
+                "range": [
+                  [
+                    0,
+                    120,
+                    120
+                  ],
+                  [
+                    120,
+                    255,
+                    255
+                  ]
+                ]
+              }
+            }
+          },
+          "apply": {
+            "$delete": true
+          }
+        }
+      ]
+    },
+    {
+      "label": "Selected trajectory chunks become closed polygons",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 54,
+      "afterShapes": 54,
+      "messages": [
+        "convert applied: 7 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "Closed chunks emit short normal vectors",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 54,
+      "afterShapes": 334,
+      "messages": [
+        "spline lines applied: 7 shapes, 287 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "Mint copper and ice lineages",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 334,
+      "afterShapes": 334,
+      "messages": [
+        "color applied: 334 elements, 11 mapped colors."
+      ]
+    },
+    {
+      "label": "Subtle trajectory shear",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 334,
+      "afterShapes": 334,
+      "messages": []
+    }
+  ]
+}

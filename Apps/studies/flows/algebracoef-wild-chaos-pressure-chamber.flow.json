@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "name": "Chaos Pressure Chamber",
+  "stages": [
+    {
+      "id": "stage-mues68dv-oru49cz",
+      "kind": "effect",
+      "label": "E: scale",
+      "enabled": true,
+      "config": {
+        "effectType": "scale",
+        "elementType": "path",
+        "selector": "path:nth-of-type(3n)",
+        "rangeMin": -1.2,
+        "rangeMax": 1.5,
+        "count": 5,
+        "spacing": "linear",
+        "opacityMode": "fixed",
+        "opacityFixed": 0.82,
+        "equation": "sum(backward):opacity *0.72"
+      }
+    },
+    {
+      "id": "stage-mues68dv-mykizjc",
+      "kind": "effect",
+      "label": "C: color",
+      "enabled": true,
+      "config": {
+        "effectType": "color",
+        "color": {
+          "selector": "path,polygon,circle,rect,line",
+          "sourceProp": "each",
+          "targetProp": "stroke",
+          "mode": "byIndex",
+          "colorSort": "appearance",
+          "paletteText": "#50ffe0,#8485ff,#ff59c7,#fff0ac",
+          "paletteSteps": 7,
+          "useComputed": true,
+          "skipNone": true,
+          "sizeSource": "bboxArea",
+          "sizeAttr": "r"
+        }
+      }
+    },
+    {
+      "id": "stage-mues68dv-yz4kfqf",
+      "kind": "effect",
+      "label": "Q: convert",
+      "enabled": true,
+      "config": {
+        "effectType": "convert",
+        "selector": "path:nth-of-type(7n)",
+        "convertFrom": "path",
+        "convertTo": "polygon",
+        "pathSamplePoints": 19,
+        "convertScaleMode": "center",
+        "convertScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues68dv-xibkydm",
+      "kind": "effect",
+      "label": "N: splineLines",
+      "enabled": true,
+      "config": {
+        "effectType": "splineLines",
+        "splineSource": "polygon",
+        "splineSelector": "polygon",
+        "splinePointCount": 19,
+        "splineStepsPerSegment": 3,
+        "splineTension": -0.8,
+        "splineExtrapolateTension": true,
+        "splineAngleOffset": 24,
+        "splineLineOrientation": "tangent",
+        "splineLineHeight": 26,
+        "splineLineScale": 3.14,
+        "splineStrokeWidth": 0.65,
+        "splineScaleMode": "none",
+        "splineScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues68dv-hqfdb7n",
+      "kind": "transform",
+      "label": "A: folded presentation",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "zoom",
+            "factor": 0.7
+          },
+          {
+            "kind": "planes3d",
+            "count": 5,
+            "baseScale": 0.42,
+            "scaleStep": 0.14,
+            "offset": {
+              "x": 18,
+              "y": -13
+            },
+            "opacity": 0.8,
+            "opacityFalloff": 0.14
+          }
+        ]
+      }
+    }
+  ]
+}

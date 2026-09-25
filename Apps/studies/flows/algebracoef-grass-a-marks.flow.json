@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "name": "Grass Tangent Fields A - Mark Color",
+  "stages": [
+    {
+      "id": "stage-mul0ze3l-l84ruh2",
+      "kind": "effect",
+      "label": "Suppress ground and shadow support",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "paint",
+        "elementType": "path",
+        "selector": ".grass-ground,.grass-shadow",
+        "paintFill": "none",
+        "paintStroke": "none"
+      }
+    },
+    {
+      "id": "stage-mul0ze3l-0vfseif",
+      "kind": "effect",
+      "label": "E: 2 echoes, scale 0.62 to 1.25",
+      "enabled": true,
+      "config": {
+        "effectType": "scale",
+        "selector": "path.grass-blade",
+        "elementType": "path",
+        "rangeMin": 0.62,
+        "rangeMax": 1.25,
+        "count": 2,
+        "spacing": "linear",
+        "opacityMode": "fixed",
+        "opacityFixed": 0.72,
+        "equation": ""
+      }
+    },
+    {
+      "id": "stage-mul0ze3l-gaq7tnh",
+      "kind": "effect",
+      "label": "N1: normal vectors, coefficient 0.65",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "splineLines",
+        "splineSource": "path",
+        "splineSelector": "path.grass-blade:nth-of-type(2n)",
+        "splinePointCount": 12,
+        "splineStepsPerSegment": 2,
+        "splineTension": 0.2,
+        "splineLineOrientation": "normal",
+        "splineLineHeight": 31,
+        "splineLineScale": 0.65,
+        "splineStrokeWidth": 0.7
+      }
+    },
+    {
+      "id": "stage-mul0ze3l-yc8jjge",
+      "kind": "effect",
+      "label": "N2: tangent vectors, coefficient 1.35",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "splineLines",
+        "splineSource": "path",
+        "splineSelector": "path.grass-blade",
+        "splinePointCount": 12,
+        "splineStepsPerSegment": 2,
+        "splineTension": 0.2,
+        "splineLineOrientation": "tangent",
+        "splineLineHeight": 31,
+        "splineLineScale": 1.35,
+        "splineStrokeWidth": 0.7
+      }
+    },
+    {
+      "id": "stage-mul0ze3l-elvdfq0",
+      "kind": "effect",
+      "label": "C: enumerate current marks through four colors",
+      "enabled": true,
+      "config": {
+        "effectType": "color",
+        "color": {
+          "selector": "path.grass-blade,line[data-spline-lines-run]",
+          "sourceProp": "stroke",
+          "targetProp": "stroke",
+          "mode": "byIndex",
+          "colorSort": "appearance",
+          "paletteText": "#67dbd2,#7686ec,#ed85b2,#ffcd83",
+          "paletteSteps": 0,
+          "useComputed": true,
+          "skipNone": true
+        }
+      }
+    },
+    {
+      "id": "stage-mul0ze3l-fh6g4hh",
+      "kind": "transform",
+      "label": "A^2: repeated rotation and contraction",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": 1.4
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.98
+          },
+          {
+            "kind": "rotate",
+            "deg": 1.4
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.98
+          }
+        ]
+      }
+    }
+  ]
+}

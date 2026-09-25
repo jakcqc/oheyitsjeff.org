@@ -1,0 +1,185 @@
+{
+  "levels": 5,
+  "splitK": 3,
+  "overlap": 0.81,
+  "copies": 31,
+  "baseWidth": 6.4,
+  "height": 0.31,
+  "needleLen": 4.9,
+  "needleThickPx": 0.55,
+  "needlePadPx": 0,
+  "needleAlpha": 0.29,
+  "maxNeedles": 13000,
+  "showTriangles": true,
+  "triFillAlpha": 0.007,
+  "triStrokeAlpha": 0.035,
+  "showAllNeedles": true,
+  "colorMode": "mono",
+  "palette": "magma",
+  "monoColor": "#12141a",
+  "showBoundsCircle": false,
+  "showStats": false,
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0,
+      "preset": "",
+      "splitMode": "fit",
+      "applyToAll": false,
+      "tileTargets": "0",
+      "zoomFactor": 1.25,
+      "matrix": {
+        "a": 1,
+        "b": 0,
+        "c": 0,
+        "d": 1,
+        "e": 0,
+        "f": 0
+      },
+      "zoomCenter": {
+        "x": null,
+        "y": null
+      },
+      "translateVec": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCount": 3,
+      "planeBaseScale": 1,
+      "planeScaleStep": -0.12,
+      "planeOpacity": 0.7,
+      "planeOpacityFalloff": 0.12,
+      "planeOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCenter": {
+        "x": null,
+        "y": null
+      },
+      "groupOpen": {}
+    },
+    "stack": [
+      {
+        "kind": "planes3d",
+        "count": 3,
+        "baseScale": 0.65,
+        "scaleStep": 0.21,
+        "offset": {
+          "x": 16,
+          "y": -21
+        },
+        "opacity": 0.8,
+        "opacityFalloff": 0.11
+      },
+      {
+        "kind": "rotate",
+        "deg": 23
+      }
+    ]
+  },
+  "__toolFlows": {
+    "ui": {
+      "flowName": "Thirty-One Direction Fugue",
+      "selectedId": "builtin-grayscale",
+      "autoRun": true,
+      "groupsOpen": {}
+    },
+    "stages": [
+      {
+        "id": "stage-mues66gk-aohckax",
+        "kind": "effect",
+        "label": "Nested rect echoes",
+        "enabled": true,
+        "config": {
+          "autoRun": false,
+          "debug": false,
+          "effectType": "scale",
+          "elementType": "rect",
+          "selector": "rect:nth-of-type(7n)",
+          "count": 3,
+          "rangeMin": 0.2,
+          "rangeMax": 2.7,
+          "spacing": "linear",
+          "opacityMode": "ramp",
+          "opacityMin": 0.18,
+          "opacityMax": 0.88,
+          "equation": ""
+        }
+      },
+      {
+        "id": "stage-mues66gk-ix62pbe",
+        "kind": "effect",
+        "label": "monochrome luminance palette",
+        "enabled": true,
+        "config": {
+          "effectType": "color",
+          "color": {
+            "selector": "*",
+            "sourceProp": "each",
+            "targetProp": "both",
+            "mode": "byLuminance",
+            "colorSort": "luminance",
+            "paletteText": "#080808, #808080",
+            "paletteSteps": 48,
+            "useComputed": true,
+            "skipNone": true
+          }
+        }
+      },
+      {
+        "id": "stage-mues66gk-hbzis7d",
+        "kind": "transform",
+        "label": "Directional planes",
+        "enabled": true,
+        "config": {
+          "stack": [
+            {
+              "kind": "planes3d",
+              "count": 3,
+              "baseScale": 0.65,
+              "scaleStep": 0.21,
+              "offset": {
+                "x": 16,
+                "y": -21
+              },
+              "opacity": 0.8,
+              "opacityFalloff": 0.11
+            },
+            {
+              "kind": "rotate",
+              "deg": 23
+            }
+          ],
+          "ui": {
+            "splitMode": "fit"
+          }
+        }
+      }
+    ]
+  },
+  "__propOps": {
+    "ui": {
+      "ruleText": "{\n        \"selector\": {\"circle\":{\"r\":{\"range\":[20,100]}}},\n        \"apply\": {\"stroke\": null}\n        }",
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": []
+  },
+  "__scriptOps": {
+    "ui": {
+      "codeText": "// ctx.root is the <g> subtree being processed\n// ctx.svg is the owning <svg>\n// ctx.create(tag) creates an SVG element\n//\n// Example: circle -> 6-gon (polygon)\n// for (const c of ctx.root.querySelectorAll(\"circle\")) {\n//   const cx = Number(c.getAttribute(\"cx\") || 0);\n//   const cy = Number(c.getAttribute(\"cy\") || 0);\n//   const r = Number(c.getAttribute(\"r\") || 0);\n//   const n = 6;\n//   const pts = Array.from({length:n}, (_,i) => {\n//     const a = (Math.PI*2*i)/n;\n//     return [cx + r*Math.cos(a), cy + r*Math.sin(a)].join(\",\");\n//   }).join(\" \");\n//   const p = ctx.create(\"polygon\");\n//   p.setAttribute(\"points\", pts);\n//   for (const {name,value} of Array.from(c.attributes)) {\n//     if (name === \"cx\" || name === \"cy\" || name === \"r\") continue;\n//     p.setAttribute(name, value);\n//   }\n//   c.replaceWith(p);\n// }",
+      "fileName": "",
+      "selectedCacheKey": "",
+      "autoRunSelected": false,
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": [],
+    "cache": {}
+  }
+}

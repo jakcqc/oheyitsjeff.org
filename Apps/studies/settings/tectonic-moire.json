@@ -1,0 +1,22 @@
+{
+  "grid": 80,
+  "frequency": 7.35,
+  "amplitude": 1.25,
+  "depth": 190,
+  "warp": 1.1,
+  "tilt": 0.85,
+  "fitMode": "stretch",
+  "padding": 80,
+  "strokeWidth": 1.2,
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0
+    },
+    "stack": []
+  }
+}

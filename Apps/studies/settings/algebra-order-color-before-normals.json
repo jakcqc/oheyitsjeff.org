@@ -1,0 +1,218 @@
+{
+  "running": true,
+  "tickMs": 16,
+  "speed": 8,
+  "outlinePad": 0,
+  "outlineLag": 0.36,
+  "outlineScale": 1.4,
+  "outlineShape": "ellipse",
+  "outlineStrokeWidth": 0.2,
+  "lineColor": "#a3b7c2",
+  "backgroundColor": "#0c0e16",
+  "dotStrokeWidth": 0.15,
+  "collisionPush": 0.9,
+  "showMergePaths": false,
+  "mergeContactRatio": 0.97,
+  "mergeMaxPairs": 72,
+  "mergeSmoothing": 0.99,
+  "mergeFalloff": 0,
+  "mergeEffectStyle": "ring",
+  "mergeEffectColor": "#aa0000",
+  "ringCount": 9,
+  "fitCells": false,
+  "fitFillRatio": 0.35,
+  "ringMinRadius": 35,
+  "ringMaxRadius": 98,
+  "showMultiRing": true,
+  "multiRingCount": 11,
+  "multiRingStart": 0.55,
+  "multiRingGap": 9.8,
+  "multiRingStrokeWidth": 1.15,
+  "multiRingOpacity": 0.83,
+  "multiRingFade": 0.018,
+  "multiRingColor": "#c2c5d5",
+  "ringColorMode": "uniform",
+  "ringColorA": "#ffffff",
+  "ringColorB": "#000000",
+  "multiRingPalette": "#aa0000,#0088ff,#00aa44,#ffa500",
+  "showCircleRect": false,
+  "circleStrokeWidth": 0.2,
+  "circleRectColor": "#000000",
+  "showTrail": false,
+  "trailEveryN": 3,
+  "trailLength": 80,
+  "trailOpacity": 0.08,
+  "trailRadius": 2.6,
+  "trailColor": "#eee8da",
+  "trailStrokeColor": "#eee8da",
+  "trailStrokeWidth": 0.2,
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0,
+      "preset": "",
+      "splitMode": "fit",
+      "applyToAll": false,
+      "tileTargets": "0",
+      "zoomFactor": 1.25,
+      "matrix": {
+        "a": 1,
+        "b": 0,
+        "c": 0,
+        "d": 1,
+        "e": 0,
+        "f": 0
+      },
+      "zoomCenter": {
+        "x": null,
+        "y": null
+      },
+      "translateVec": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCount": 3,
+      "planeBaseScale": 1,
+      "planeScaleStep": -0.12,
+      "planeOpacity": 0.7,
+      "planeOpacityFalloff": 0.12,
+      "planeOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCenter": {
+        "x": null,
+        "y": null
+      },
+      "groupOpen": {}
+    },
+    "stack": [
+      {
+        "kind": "matrix",
+        "m": [
+          0.985,
+          0.025,
+          -0.025,
+          0.985,
+          29,
+          -10
+        ]
+      }
+    ]
+  },
+  "__toolFlows": {
+    "ui": {
+      "flowName": "Color Before Normals: Membrane Memory",
+      "selectedId": "builtin-grayscale",
+      "autoRun": true,
+      "groupsOpen": {}
+    },
+    "stages": [
+      {
+        "id": "stage-mues67g2-vqrdjys",
+        "kind": "effect",
+        "label": "Q: suppress cellular scaffolding",
+        "enabled": true,
+        "config": {
+          "autoRun": false,
+          "debug": false,
+          "effectType": "paint",
+          "elementType": "circle",
+          "selector": "g.dots circle,.outline",
+          "paintFill": "none",
+          "paintStroke": "none"
+        }
+      },
+      {
+        "id": "stage-mues67g2-6sahfjt",
+        "kind": "effect",
+        "label": "C: enumerate current marks through the same five colors",
+        "enabled": true,
+        "config": {
+          "autoRun": false,
+          "debug": false,
+          "effectType": "color",
+          "color": {
+            "selector": "circle.multi-ring,line[data-spline-lines-run]",
+            "sourceProp": "stroke",
+            "targetProp": "stroke",
+            "mode": "byIndex",
+            "colorSort": "appearance",
+            "paletteText": "#55d8cf,#626fe7,#e27aba,#ffac72,#f1e8ae",
+            "paletteSteps": 0,
+            "useComputed": true,
+            "skipNone": true
+          }
+        }
+      },
+      {
+        "id": "stage-mues67g2-g92tu55",
+        "kind": "effect",
+        "label": "N: replace each halo with normal-line spline samples",
+        "enabled": true,
+        "config": {
+          "autoRun": false,
+          "debug": false,
+          "effectType": "splineLines",
+          "splineSource": "circle",
+          "splineSelector": "circle.multi-ring",
+          "splinePointCount": 22,
+          "splineStepsPerSegment": 4,
+          "splineTension": 0.31,
+          "splineLineOrientation": "normal",
+          "splineLineHeight": 48,
+          "splineLineScale": 1,
+          "splineStrokeWidth": 1.25
+        }
+      },
+      {
+        "id": "stage-mues67g2-wgpj424",
+        "kind": "transform",
+        "label": "T: common small centered shear",
+        "enabled": true,
+        "config": {
+          "stack": [
+            {
+              "kind": "matrix",
+              "m": [
+                0.985,
+                0.025,
+                -0.025,
+                0.985,
+                29,
+                -10
+              ]
+            }
+          ],
+          "ui": {
+            "splitMode": "fit"
+          }
+        }
+      }
+    ]
+  },
+  "__propOps": {
+    "ui": {
+      "ruleText": "{\n        \"selector\": {\"circle\":{\"r\":{\"range\":[20,100]}}},\n        \"apply\": {\"stroke\": null}\n        }",
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": []
+  },
+  "__scriptOps": {
+    "ui": {
+      "codeText": "// ctx.root is the <g> subtree being processed\n// ctx.svg is the owning <svg>\n// ctx.create(tag) creates an SVG element\n//\n// Example: circle -> 6-gon (polygon)\n// for (const c of ctx.root.querySelectorAll(\"circle\")) {\n//   const cx = Number(c.getAttribute(\"cx\") || 0);\n//   const cy = Number(c.getAttribute(\"cy\") || 0);\n//   const r = Number(c.getAttribute(\"r\") || 0);\n//   const n = 6;\n//   const pts = Array.from({length:n}, (_,i) => {\n//     const a = (Math.PI*2*i)/n;\n//     return [cx + r*Math.cos(a), cy + r*Math.sin(a)].join(\",\");\n//   }).join(\" \");\n//   const p = ctx.create(\"polygon\");\n//   p.setAttribute(\"points\", pts);\n//   for (const {name,value} of Array.from(c.attributes)) {\n//     if (name === \"cx\" || name === \"cy\" || name === \"r\") continue;\n//     p.setAttribute(name, value);\n//   }\n//   c.replaceWith(p);\n// }",
+      "fileName": "",
+      "selectedCacheKey": "",
+      "autoRunSelected": false,
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": [],
+    "cache": {}
+  }
+}

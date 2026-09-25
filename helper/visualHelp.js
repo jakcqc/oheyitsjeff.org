@@ -17,11 +17,17 @@ import { ensureTransformState,initTransformRuntime,buildTransformPanel} from "..
 import { registerTransformTab } from "../helper/transformHelp.js";
 import { applyPropOpsToSubtree, applyScriptOpsToSubtree } from "../helper/svgEditor.js";
 import { registerPropOpsTab, registerScriptOpsTab } from "../helper/svgEditor.js";
-import { registerAnimateTab, maybeAutoplayAnimation } from "../helper/animationHelp.js";
-//import { registerLLMTab } from "../helper/llmTab.js";
+import { registerAnimateTab, maybeAutoplayAnimation, controlAnimation } from "../helper/animationHelp.js";
+import { registerLLMTab } from "../helper/llmTab.js";
 import { registerEffectsTab, applyEffectsToSubtree } from "../helper/effectsHelp.js";
 import { registerAutoExportTab } from "../helper/autoExportHelp.js";
 import { registerToolFlowTab, applyToolFlowToSubtree } from "../helper/toolFlowHelp.js";
+import { createSubTabs } from "./subTabs.js";
+import { mountDockTabs } from "./tabDock.js";
+import { activateDockTab, normalizeDockLayout } from "./tabDockModel.js";
+import { acceptTypedNumber, getParamRange } from "./paramRanges.js";
+import { matchesParamVisibility } from "./paramVisibility.js";
+import { consumeLinkedSettings } from "./linkedSettings.js";
 
 const TAB_BUILDERS = new Map();
 let ACTIVE_UNDO_CONTEXT = null;
@@ -50,6 +56,7 @@ function setActiveUndoContext(ctx) {
   ACTIVE_UNDO_CONTEXT = ctx;
   if (!undoListenerAttached && typeof window !== "undefined") {
     window.addEventListener("keydown", handleUndoKeydown);
+    window.addEventListener("keydown", handlePlaybackKeydown);
     undoListenerAttached = true;
   }
 }
@@ -69,17 +76,87 @@ export function registerTab(tabName, build) {
 function buildRegisteredTabs(ctx) {
   /** @type {Record<string, () => HTMLElement>} */
   const extraTabs = {};
+  const developerTabs = {};
   for (const [tabName, build] of TAB_BUILDERS.entries()) {
-    extraTabs[tabName] = () => build(ctx);
+    const target = tabName === "propOps" || tabName === "autoExport" ? developerTabs : extraTabs;
+    target[tabName] = () => build(ctx);
   }
+  // Preserve the selected editor when opening settings saved before Developer existed.
+  if (ctx.state?.__ui && developerTabs[ctx.state.__ui.activeTab]) {
+    ctx.state.__ui.developerTab = ctx.state.__ui.activeTab;
+    ctx.state.__ui.activeTab = "developer";
+    if (ctx.state.__ui.dockLayout) {
+      ctx.state.__ui.dockLayout = activateDockTab(
+        normalizeDockLayout(ctx.state.__ui.dockLayout, ["params", ...Object.keys(extraTabs), "developer"]),
+        "developer"
+      );
+    }
+  }
+  extraTabs.developer = () => buildDeveloperPanel(ctx, developerTabs);
   return extraTabs;
+}
+
+function handlePlaybackKeydown(event) {
+  if (!ACTIVE_UNDO_CONTEXT || event.defaultPrevented || event.repeat ||
+      event.ctrlKey || event.metaKey || event.altKey || event.shiftKey || isEditableTarget(event.target)) return;
+  const key = String(event.key).toLowerCase();
+  if (key === "p" || key === "r") {
+    ACTIVE_UNDO_CONTEXT.animate?.(key === "p" ? "toggle" : "restart");
+    event.preventDefault();
+  } else if (event.code === "Space" || key === " ") {
+    // Space retains native activation when a button or link has focus.
+    if (event.target?.closest?.('button, a, [role="button"], [role="tab"]')) return;
+    if (ACTIVE_UNDO_CONTEXT.toggleSimulation?.()) event.preventDefault();
+  }
+}
+
+function buildDeveloperPanel({ state, developerControls, onUiChange }, builders) {
+  const root = el("div", { className: "vr-developerPanel" });
+  const uiState = state.__ui || (state.__ui = {});
+  const sections = { settings: () => developerControls || el("div"), ...builders };
+  const panels = new Map();
+  const wrappers = new Map();
+  let active = Object.hasOwn(sections, uiState.developerTab) ? uiState.developerTab : "settings";
+  uiState.developerTab = active;
+  const show = (name) => {
+    if (name !== active) panels.get(active)?._onHide?.();
+    active = name;
+    uiState.developerTab = name;
+    if (!panels.has(name)) {
+      const panel = sections[name]();
+      panels.set(name, panel);
+      wrappers.get(name).appendChild(panel);
+    }
+    panels.get(name)?._onShow?.();
+  };
+  const options = Object.keys(sections).map((name) => {
+    const panel = el("div", { className: "vr-developerSection" });
+    panel.dataset.developerSection = name;
+    wrappers.set(name, panel);
+    return { value: name, label: name === "settings" ? "Settings" : name, panel };
+  });
+  const tabs = createSubTabs({
+    label: "Developer tools",
+    options,
+    value: active,
+    onChange: (name) => { show(name); onUiChange?.(); },
+  });
+  root.append(tabs.root, ...wrappers.values());
+  show(active);
+  root._onShow = () => panels.get(active)?._onShow?.();
+  root._onHide = () => panels.get(active)?._onHide?.();
+  root._destroy = () => {
+    for (const panel of panels.values()) panel._destroy?.();
+    panels.clear();
+  };
+  return root;
 }
 
 registerTransformTab();
 registerPropOpsTab();
 //registerScriptOpsTab();
 registerAnimateTab();
-//registerLLMTab();
+registerLLMTab();
 registerEffectsTab();
 registerToolFlowTab();
 registerAutoExportTab();
@@ -183,9 +260,9 @@ function clearUiCache(visualId) {
 }
 
 function loadPersistFlag(visualId) {
-  if (!visualId) return false;
+  if (!visualId) return true;
   const raw = readCache(getPersistCacheKey(visualId));
-  if (raw == null) return false;
+  if (raw == null) return true;
   if (raw === "1" || raw === "true") return true;
   if (raw === "0" || raw === "false") return false;
   return !!raw;
@@ -358,6 +435,9 @@ function coerceImportedStateBySpec(nextState, spec) {
 export function importStateFromJSON(json, state, spec = null) {
   const parsed = JSON.parse(json);
   coerceImportedStateBySpec(parsed, spec);
+  if (state.__anim) controlAnimation({ state }, "stop");
+  // A saved range map describes the complete set of overrides in that save.
+  if (Object.hasOwn(parsed, "__paramRanges")) state.__paramRanges = {};
   mergeInto(state, parsed);
   return parsed;
 }
@@ -438,91 +518,8 @@ export function makeLoadSettingsButton(state, onChange, spec = null) {
   return el("", {}, [btn, input]);
 }
 
-export function mountUserTabs({
-  container,
-  spec,
-  state,
-  onChange,
-  buildParamsPanel,   // () => HTMLElement
-  extraTabs = {},     // { tabName: () => HTMLElement }
-  onUiChange,
-}) {
-  const tabs = ["params", ...Object.keys(extraTabs)];
-  const uiState = state?.__ui || {};
-  if (state && !state.__ui) state.__ui = uiState;
-  if (uiState.tabsOpen === undefined) uiState.tabsOpen = false;
-  if (uiState.activeTab == null) uiState.activeTab = "params";
-  let activeTab = tabs.includes(uiState.activeTab) ? uiState.activeTab : "params";
-  uiState.activeTab = activeTab;
-
-  const tabBar = el("div", { className: "vr-tabs" });
-  const body = el("div", { className: "vr-tabBody" });
-  const layout = el("div", { className: "vr-tabLayout" });
-  const tabCol = el("div", { className: "vr-tabCol" });
-
-  const tabToggle = el("button", {
-    className: "vr-tabsToggle",
-    type: "button",
-    textContent: uiState.tabsOpen ? "-" : "+",
-  });
-  tabToggle.onclick = () => {
-    uiState.tabsOpen = !uiState.tabsOpen;
-    tabToggle.textContent = uiState.tabsOpen ? "-" : "+";
-    tabBar.classList.toggle("hidden", !uiState.tabsOpen);
-    onUiChange?.();
-  };
-
-  const panels = new Map();
-  const scrollPositions = new Map();
-  const scroller = container.closest(".vr-autoUI") || body;
-  const render = () => {
-    tabBar.innerHTML = "";
-
-    if (!tabs.includes(activeTab)) {
-      activeTab = "params";
-      uiState.activeTab = activeTab;
-      onUiChange?.();
-    }
-
-    for (const name of tabs) {
-      const btn = el("button", {
-        className: `vr-tab ${name === activeTab ? "active" : ""}`,
-        textContent: name,
-      });
-      btn.type = "button";
-      btn.onclick = () => {
-        if (name === activeTab) return;
-        scrollPositions.set(activeTab, scroller.scrollTop);
-        panels.get(activeTab)?._onHide?.();
-        activeTab = name;
-        uiState.activeTab = name;
-        onUiChange?.();
-        render();
-      };
-      tabBar.appendChild(btn);
-    }
-
-    if (!panels.has(activeTab)) {
-      const panel = activeTab === "params" ? buildParamsPanel() : extraTabs[activeTab]();
-      panels.set(activeTab, panel);
-      body.appendChild(panel);
-    }
-    for (const [name, panel] of panels) panel.hidden = name !== activeTab;
-    panels.get(activeTab)?._onShow?.();
-    scroller.scrollTop = scrollPositions.get(activeTab) || 0;
-  };
-
-  tabBar.classList.toggle("hidden", !uiState.tabsOpen);
-  tabCol.appendChild(tabToggle);
-  tabCol.appendChild(tabBar);
-  layout.appendChild(tabCol);
-  layout.appendChild(body);
-  container.appendChild(layout);
-  render();
-  container._destroyTabs = () => {
-    for (const panel of panels.values()) panel._destroy?.();
-    panels.clear();
-  };
+export function mountUserTabs(options) {
+  return mountDockTabs(options);
 }
 
 /** Mount auto-UI for a spec. Returns { state, rerenderUI }. */
@@ -535,6 +532,10 @@ export function mountAutoUI({
   onUiChange,
   mountEl,
   xfRuntime,
+  onUndo,
+  visualId,
+  transaction,
+  developerControls,
 }) {
   container._destroyTabs?.();
   container.innerHTML = "";
@@ -545,14 +546,19 @@ export function mountAutoUI({
     state,
     onChange,
     buildParamsPanel: () => buildParamsPanel({ spec, state, onChange, onUiChange }),
-    extraTabs: buildRegisteredTabs({ mountEl, spec, state, xfRuntime, onChange, onStateChange }),
+    extraTabs: buildRegisteredTabs({
+      mountEl, spec, state, xfRuntime, onChange, onStateChange, visualId, onUiChange, developerControls,
+      refreshPanels: () => container._refreshPanels?.("assistant"),
+      undo: onUndo,
+      transaction,
+    }),
     onUiChange,
   });
 
   return {
     state,
     rerenderUI: () =>
-      mountAutoUI({ container, spec, state, onChange, onStateChange, onUiChange, mountEl, xfRuntime }),
+      mountAutoUI({ container, spec, state, onChange, onStateChange, onUiChange, mountEl, xfRuntime, onUndo, visualId, transaction, developerControls }),
   };
 }
 
@@ -592,6 +598,9 @@ function buildParamsPanel({ spec, state, onChange, onUiChange }) {
 
     group.appendChild(summary);
     group.appendChild(body);
+    group._controlState = state;
+    group._syncVisibility = () => { group.hidden = [...body.children].every(row => row.hidden); };
+    group._syncVisibility();
     panel.appendChild(group);
   }
 
@@ -614,10 +623,11 @@ function buildParamsPanel({ spec, state, onChange, onUiChange }) {
  * @property {string} [description]        - Small helper text under control
  * @property {string} [cssClass]           - Optional CSS class added to wrapper + input
  * @property {string} [category]           - Optional UI grouping label
- * @property {number} [min]                - Optional range constraints (number)
- * @property {number} [max]
+ * @property {number|{x:number,y:number,z?:number}} [min] - Slider bounds; vectors may declare bounds per axis
+ * @property {number|{x:number,y:number,z?:number}} [max]
  * @property {number} [step]
  * @property {string[]} [options]          - For type="select"
+ * @property {Object<string, string|number|boolean|Array<string|number|boolean>>} [shouldShowWhen] - Selector paths mapped to allowed values (AND across paths, OR within arrays)
  */
 
 /**
@@ -625,6 +635,7 @@ function buildParamsPanel({ spec, state, onChange, onUiChange }) {
  * @property {string} title
  * @property {string} description
  * @property {ParamSpec[]} params
+ * @property {{param:string,runningValue?:boolean}} [simulation] - Native simulation run flag toggled by Space
  * @property {(ctx: { mountEl: HTMLElement }, state: any) => VisualInstance} create
  * @property {any} [defaultState]          - Optional default state overrides (merged after param defaults)
  * @property {any} [data]                  - Whatever “data object” you want to store alongside params
@@ -658,6 +669,7 @@ export function exportVisualUIJsonSpec(visualId) {
       max: typeof p.max === "number" ? p.max : null,
       step: typeof p.step === "number" ? p.step : null,
       options: Array.isArray(p.options) ? p.options : null,
+      shouldShowWhen: p.shouldShowWhen ?? null,
     })),
   };
 }
@@ -703,6 +715,8 @@ export function makeDefaultState(spec) {
   // attach arbitrary spec.data under a stable place if you want:
   if (spec.data !== undefined) state.__data = spec.data;
   state.shouldRender = true;
+  state.overrideMinMax = true;
+  state.__paramRanges = {};
     // --- transforms state (UI + stack) ---
   state.__xf = {
     ui: {
@@ -729,6 +743,7 @@ export function mountVisualUI({
   runtimeRef,
   ensureRuntime,
   visualId,
+  startPaused = false,
 }) {
   uiEl.querySelector(".vr-autoUI")?._destroyTabs?.();
   uiEl.innerHTML = "";
@@ -736,12 +751,17 @@ export function mountVisualUI({
   const autoUiEl = el("div", { className: "vr-autoUI" });
   const ioWrap = el("div", { className: "vr-settingsWrap" });
   const ioEl = el("div", { className: "vr-settingsIO" });
+  const developerControls = el("div", { className: "vr-developerSettings" });
   if (!state.__ui) state.__ui = {};
+  if (state.overrideMinMax == null) state.overrideMinMax = true;
   const history = ensureStateHistory(state);
   history.suspend += 1;
-  let ioToggle = null;
   let collapseDefaultsToggle = null;
   let persistSettingsToggle = null;
+  let renderControl = null;
+  let rangeControl = null;
+  let syncPinLabel = () => {};
+  let syncNavLabel = () => {};
   let resizeHandle = null;
   let isResizingConfig = false;
   let persistEnabled = loadPersistFlag(visualId);
@@ -759,7 +779,7 @@ export function mountVisualUI({
       if (timer) clearTimeout(timer);
       timer = setTimeout(() => {
         timer = null;
-        saveSettingsCache(visualId, state);
+        if (persistEnabled) saveSettingsCache(visualId, state);
       }, delayMs);
     };
   })();
@@ -788,7 +808,6 @@ export function mountVisualUI({
   };
   const ensureUiDefaults = () => {
     if (!state.__ui) state.__ui = {};
-    if (state.__ui.ioOpen === undefined) state.__ui.ioOpen = true;
     if (state.__ui.collapseParamsByDefault == null) state.__ui.collapseParamsByDefault = true;
     if (state.__ui.configWidth != null && !Number.isFinite(Number(state.__ui.configWidth))) {
       state.__ui.configWidth = null;
@@ -831,27 +850,20 @@ export function mountVisualUI({
   };
   const syncPersistentUi = () => {
     ensureUiDefaults();
-    ioEl.classList.toggle("hidden", !state.__ui.ioOpen);
-    if (ioToggle) ioToggle.textContent = state.__ui.ioOpen ? "-" : "+";
     if (collapseDefaultsToggle) {
       collapseDefaultsToggle.checked = !!state.__ui.collapseParamsByDefault;
     }
     if (persistSettingsToggle) {
       persistSettingsToggle.checked = !!persistEnabled;
     }
+    renderControl?._sync?.();
+    rangeControl?._sync?.();
+    syncPinLabel();
+    syncNavLabel();
   };
+  developerControls._onShow = syncPersistentUi;
 
   uiEl.append(autoUiEl, ioWrap);
-
-  const GLOBAL_PARAMS = [
-    {
-      key: "shouldRender",
-      type: "boolean",
-      default: true,
-      category: "System",
-      description: "Master render toggle (disables rendering when off).",
-    },
-  ];
 
   function ensureRuntimeNow() {
     if (typeof ensureRuntime !== "function") return { instance, xfRuntime };
@@ -878,21 +890,42 @@ export function mountVisualUI({
     const activeInstance = runtimeRef?.instance ?? rt.instance ?? instance;
     const activeRuntime = runtimeRef?.xfRuntime ?? rt.xfRuntime ?? xfRuntime;
 
-    activeInstance?.render?.();
-    activeRuntime?.rebuildNow?.();
-    const svg = mountEl.firstElementChild;
-    if (svg) {
+    activeRuntime?.setSourceChangeHandler?.(() => applyRenderedTools(activeRuntime));
+    const renderPass = () => {
+      activeInstance?.render?.();
+      applyRenderedTools(activeRuntime);
+    };
+    if (activeRuntime?.withSourceUpdatesSuspended) activeRuntime.withSourceUpdatesSuspended(renderPass);
+    else renderPass();
+  }
+
+  function applyRenderedTools(activeRuntime) {
+    const apply = () => {
+      activeRuntime?.rebuildNow?.();
+      const svg = mountEl.querySelector("svg");
+      if (!svg) return;
       applyPropOpsToSubtree(svg, state.__propOps?.stack);
       applyScriptOpsToSubtree(svg, state.__scriptOps?.stack, { svg, state, mountEl });
       applyEffectsToSubtree({ mountEl, state, xfRuntime: activeRuntime });
       applyToolFlowToSubtree({ mountEl, state, xfRuntime: activeRuntime });
-    }
+    };
+    if (activeRuntime?.withSourceUpdatesSuspended) activeRuntime.withSourceUpdatesSuspended(apply);
+    else apply();
   }
 
 
-  const handleStateChange = () => {
-    record();
+
+  const handleStateChange = (key) => {
+    // Playback changes the picture every frame; the editable configuration is
+    // the undo step, rather than hundreds of intermediate animation frames.
+    if (!String(key || "").startsWith("__anim.")) record();
     rerender();
+    // Keyboard/animation updates share this path even when Params is visible.
+    // Leave a field alone while the user is actively editing its value.
+    for (const row of autoUiEl.querySelectorAll(".vr-row")) {
+      row._syncVisibility?.();
+      if (!row.contains(document.activeElement)) row._sync?.();
+    }
     persistSettings();
   };
   const handleStateMutation = () => {
@@ -901,7 +934,7 @@ export function mountVisualUI({
   };
 
   function rebuildAutoUI() {
-    const params = [...GLOBAL_PARAMS, ...(spec.params || [])];
+    const params = (spec.params || []).filter((param) => param.key !== "shouldRender" && param.key !== "overrideMinMax");
     mountAutoUI({
       container: autoUiEl,
       spec: { ...spec, params },
@@ -911,6 +944,15 @@ export function mountVisualUI({
       onChange: handleStateChange,
       onUiChange: handleUiChange,
       onStateChange: handleStateMutation,
+      onUndo: () => undoLastChange(true),
+      visualId,
+      developerControls,
+      transaction: (apply) => {
+        const result = withHistorySuspended(history, apply);
+        record();
+        persistSettings();
+        return result;
+      },
     });
   }
 
@@ -919,6 +961,7 @@ export function mountVisualUI({
   if (state.shouldRender) rerender();
 
   function resetToDefaults() {
+    controlAnimation({ mountEl, state }, "stop");
     const preservedUi = state.__ui;
     const preservedHistory = state.__history;
     const nextState = makeDefaultState(spec);
@@ -996,7 +1039,22 @@ export function mountVisualUI({
     record();
     persistSettings();
   };
-  ioEl.append(
+  renderControl = buildControl({
+    param: { key: "shouldRender", type: "boolean", description: "Enable the visual renderer. Use Space to pause or resume the simulation." },
+    state,
+    onChange: handleStateChange,
+  });
+  rangeControl = buildControl({
+    param: { key: "overrideMinMax", type: "boolean", description: "Typed numbers expand slider limits, including each vector coordinate. Save Settings remembers these ranges; Reset Defaults clears them." },
+    state,
+    onChange: (key) => {
+      handleStateChange(key);
+      for (const row of autoUiEl.querySelectorAll(".vr-row")) row._sync?.();
+    },
+  });
+  developerControls.append(
+    renderControl,
+    rangeControl,
     makeSaveSettingsButton(state, visualId),
     makeLoadSettingsButton(state, applyImportedStateAndRefresh, spec),
     resetDefaultsBtn,
@@ -1016,7 +1074,13 @@ export function mountVisualUI({
     // runUserCode();
     },
   });
-  makeLoadSettingsFromSVG(ioEl, state, applyImportedStateAndRefresh, spec);
+  makeLoadSettingsFromSVG(developerControls, state, applyImportedStateAndRefresh, spec);
+  for (const button of ioEl.querySelectorAll("button")) {
+    button.title = button.textContent;
+    button.setAttribute("aria-label", button.textContent);
+    button.textContent = button.textContent === "Save SVG" ? "Save" : "Load";
+    button.style.removeProperty("margin-top");
+  }
   const syncPinnedLayout = () => {
     const root = document.documentElement;
     const body = document.body;
@@ -1088,7 +1152,7 @@ export function mountVisualUI({
     const pinBtn = document.createElement("button");
     pinBtn.type = "button";
     pinBtn.classList.add("btn-inline");
-    const syncPinLabel = () => {
+    syncPinLabel = () => {
       pinBtn.textContent = configEl.classList.contains("pinned") ? "Unpin UI" : "Pin UI";
     };
     pinBtn.onclick = () => {
@@ -1098,31 +1162,17 @@ export function mountVisualUI({
       handleUiChange();
     };
     syncPinLabel();
-    ioEl.appendChild(pinBtn);
+    developerControls.appendChild(pinBtn);
   }
 
-  if (state) {
-    ensureUiDefaults();
-
-    ioToggle = document.createElement("button");
-    ioToggle.type = "button";
-    ioToggle.classList.add("vr-ioToggle");
-    ioToggle.onclick = () => {
-      state.__ui.ioOpen = !state.__ui.ioOpen;
-      syncPersistentUi();
-      handleUiChange();
-    };
-    syncPersistentUi();
-    ioWrap.appendChild(ioToggle);
-    ioWrap.appendChild(ioEl);
-
-  }
+  syncPersistentUi();
+  ioWrap.appendChild(ioEl);
 
   if (infoBar) {
     const navBtn = document.createElement("button");
     navBtn.type = "button";
     navBtn.classList.add("btn-inline");
-    const syncNavLabel = () => {
+    syncNavLabel = () => {
       navBtn.textContent = infoBar.classList.contains("hidden") ? "Show Nav" : "Hide Nav";
     };
     navBtn.onclick = () => {
@@ -1132,7 +1182,7 @@ export function mountVisualUI({
       handleUiChange();
     };
     syncNavLabel();
-    ioEl.appendChild(navBtn);
+    developerControls.appendChild(navBtn);
   }
   if (configEl) {
     if (typeof ResizeObserver !== "undefined") {
@@ -1143,33 +1193,80 @@ export function mountVisualUI({
     syncPinnedLayout();
   }
 
-  // If a visual sets `state.__anim.ui.autoPlay = true`, start playing immediately (even if tab never opened).
-  maybeAutoplayAnimation({ mountEl, state, onChange: rerender });
+  // A linked study stays at its saved parameters, including visuals whose factory
+  // seeds animation defaults. Keep its tracks available for an explicit Play.
+  if (startPaused) {
+    pauseLinkedStudyPlayback(state, spec);
+    controlAnimation({ mountEl, state, onChange: rerender }, "pause");
+  } else {
+    // Ordinary app launches retain the visual's autoplay preference.
+    maybeAutoplayAnimation({ mountEl, state, onChange: rerender });
+  }
   const baseline = getHistorySnapshot(state);
   if (baseline) history.last = baseline;
   history.suspend = Math.max(0, history.suspend - 1);
+  function undoLastChange(preserveAssistant = false) {
+    if (!history?.past?.length) return false;
+    controlAnimation({ mountEl, state, onChange: rerender }, "stop");
+    const snapshot = history.past.pop();
+    if (history.last) history.future.push(history.last);
+    const applied = withHistorySuspended(history, () => {
+      const ok = applyHistorySnapshot(state, history, snapshot);
+      if (!ok) return false;
+      syncPersistentUi();
+      applyLayoutFromUi();
+      rerender();
+      if (preserveAssistant) autoUiEl._refreshPanels?.("assistant");
+      else rebuildAutoUI();
+      return true;
+    });
+    if (!applied) return false;
+    persistUiNow();
+    persistSettings();
+    return true;
+  }
+  function setParam(key, value) {
+    if (key !== "shouldRender" && key !== "overrideMinMax" && !spec.params?.some((param) => param.key === key)) {
+      throw new Error(`Unknown visual parameter "${key}"`);
+    }
+    setByPath(state, key, value);
+    handleStateChange(key);
+    syncPersistentUi();
+    for (const row of autoUiEl.querySelectorAll(".vr-row")) row._sync?.();
+  }
+  function toggleSimulation() {
+    const key = spec.simulation?.param;
+    if (!key || !spec.params?.some((param) => param.key === key && param.type === "boolean")) return false;
+    const runningValue = spec.simulation.runningValue ?? true;
+    setParam(key, getByPath(state, key) === runningValue ? !runningValue : runningValue);
+    return true;
+  }
   setActiveUndoContext({
     state,
-    undo: () => {
-      if (!history?.past?.length) return false;
-      const snapshot = history.past.pop();
-      if (history.last) history.future.push(history.last);
-      const applied = withHistorySuspended(history, () => {
-        const ok = applyHistorySnapshot(state, history, snapshot);
-        if (!ok) return false;
-        syncPersistentUi();
-        applyLayoutFromUi();
-        rerender();
-        rebuildAutoUI();
-        return true;
-      });
-      if (!applied) return false;
-      persistUiNow();
-      persistSettings();
-      return true;
-    },
+    undo: () => undoLastChange(),
+    animate: (command) => controlAnimation({ mountEl, state, onChange: handleStateChange }, command),
+    toggleSimulation,
   });
-  return { rebuildAutoUI };
+  return {
+    rebuildAutoUI,
+    refresh: rerender,
+    // App shortcuts use the same history, persistence and render path as controls,
+    // including when their parameter panel has not been mounted yet.
+    setParam,
+    toggleSimulation,
+  };
+}
+
+// Pause only declared native playback controls: booleans such as trails,
+// effects, or shape visibility are part of the saved picture, not playback.
+function pauseLinkedStudyPlayback(state, spec) {
+  if (!state.__anim || typeof state.__anim !== "object" || Array.isArray(state.__anim)) state.__anim = {};
+  if (!state.__anim.ui || typeof state.__anim.ui !== "object" || Array.isArray(state.__anim.ui)) state.__anim.ui = {};
+  state.__anim.ui.autoPlay = false;
+  const key = spec.simulation?.param;
+  if (key && spec.params?.some((param) => param.key === key && param.type === "boolean")) {
+    setByPath(state, key, !(spec.simulation.runningValue ?? true));
+  }
 }
 
 /** Run a visual by id; wires UI->state->render(). */
@@ -1182,28 +1279,36 @@ export function runVisualApp({
   const spec = VISUALS[visualId];
   if (!spec) throw new Error(`Unknown visualId "${visualId}"`);
 
-  //const state = providedState || makeDefaultState(spec);
   const state = makeDefaultState(spec);
-  const persistEnabled = loadPersistFlag(visualId);
-  if (persistEnabled) {
-    const cachedSettings = loadSettingsCache(visualId);
-    if (cachedSettings) mergeInto(state, cachedSettings);
-    const cachedUi = loadUiCache(visualId);
-    if (cachedUi) {
-      if (!state.__ui) state.__ui = {};
-      mergeInto(state.__ui, cachedUi);
+  const linkedJSON = consumeLinkedSettings(visualId);
+  if (linkedJSON !== null) {
+    // A study is a complete save: stale cache/preset flows must not leak into it.
+    importStateFromJSON(linkedJSON, state, spec);
+  } else {
+    const persistEnabled = loadPersistFlag(visualId);
+    if (persistEnabled) {
+      const cachedSettings = loadSettingsCache(visualId);
+      if (cachedSettings) mergeInto(state, cachedSettings);
+      const cachedUi = loadUiCache(visualId);
+      if (cachedUi) {
+        if (!state.__ui) state.__ui = {};
+        mergeInto(state.__ui, cachedUi);
+      }
+    }
+    if (providedState && typeof providedState === "object") {
+      mergeInto(state, providedState);
     }
   }
-  if (providedState && typeof providedState === "object") {
-    mergeInto(state, providedState);
-  }
 
+  let linkedStartup = linkedJSON !== null;
+  if (linkedStartup) pauseLinkedStudyPlayback(state, spec);
   const runtimeRef = { instance: null, xfRuntime: null };
 
   const ensureRuntime = () => {
     if (!state.shouldRender) return runtimeRef;
     if (!runtimeRef.instance) {
       runtimeRef.instance = spec.create({ mountEl }, state);
+      if (linkedStartup) pauseLinkedStudyPlayback(state, spec);
     }
     if (!runtimeRef.xfRuntime) {
       ensureTransformState(state);
@@ -1212,7 +1317,7 @@ export function runVisualApp({
     return runtimeRef;
   };
 
-  const { rebuildAutoUI } = mountVisualUI({
+  const { setParam, refresh, toggleSimulation } = mountVisualUI({
     uiEl,
     spec,
     state,
@@ -1222,7 +1327,9 @@ export function runVisualApp({
     runtimeRef,
     ensureRuntime,
     visualId,
+    startPaused: linkedStartup,
   });
+  linkedStartup = false;
 
   const infoButton = document.getElementById("button-info");
   if (infoButton) infoButton.onclick = () => {
@@ -1254,12 +1361,18 @@ export function runVisualApp({
   return {
     spec,
     state,
+    setParam,
+    refresh,
+    toggleSimulation,
     get instance() {
       return runtimeRef.instance;
     },
     getParamsJSON: () => getVisualParamsTree(spec, state),
     setVisual(nextId) {
+      uiEl.querySelector(".vr-autoUI")?._destroyTabs?.();
+      controlAnimation({ mountEl, state, onChange: () => {} }, "stop");
       runtimeRef.instance?.destroy?.();
+      runtimeRef.xfRuntime?.destroy?.();
       uiEl.innerHTML = "";
       mountEl.innerHTML = "";
       return runVisualApp({ visualId: nextId, mountEl, uiEl });
@@ -1267,9 +1380,31 @@ export function runVisualApp({
   };
 }
 
+/** Update conditional rows without rebuilding editors or changing their values. */
+export function syncControlVisibility(root, state) {
+  if (!root?.querySelectorAll) return;
+  const rows = [...root.querySelectorAll('.vr-row')];
+  if (root.matches?.('.vr-row')) rows.unshift(root);
+  for (const row of rows) {
+    if (state === undefined || row._controlState === state) row._syncVisibility?.();
+  }
+  for (const group of root.querySelectorAll('.vr-paramGroup')) {
+    if (state === undefined || group._controlState === state) group._syncVisibility?.();
+  }
+}
+
 export function buildControl({ param, state, onChange }) {
   const labelText = param.label ?? param.key;
   const wrap = el("div", { className: ["vr-row", param.cssClass].filter(Boolean).join(" ") });
+  wrap._controlState = state;
+  wrap._syncVisibility = () => {
+    if (param.shouldShowWhen == null) return;
+    const hidden = !matchesParamVisibility(param.shouldShowWhen, state);
+    const focused = document.activeElement;
+    wrap.hidden = hidden;
+    if (hidden && wrap.contains(focused)) focused.blur?.();
+    wrap.closest('.vr-paramGroup')?._syncVisibility?.();
+  };
   wrap.appendChild(el("label", { className: "vr-label", textContent: labelText }));
 
   if (param.description) {
@@ -1278,7 +1413,14 @@ export function buildControl({ param, state, onChange }) {
 
   const value = getByPath(state, param.key);
   const builder = CONTROL_BUILDERS[param.type] || buildTextControl;
-  const input = builder({ param, state, value, onChange });
+  const notifyChange = (...args) => {
+    const root = wrap.closest('.vr-autoUI') || wrap.getRootNode();
+    syncControlVisibility(root, state);
+    try { onChange?.(...args); }
+    finally { syncControlVisibility(root, state); }
+  };
+  const input = builder({ param, state, value, onChange: notifyChange });
+  if (input.matches("input, select, textarea") && !input.hasAttribute("aria-label")) input.setAttribute("aria-label", labelText);
 
   if (param.cssClass && input instanceof HTMLElement) input.classList.add(param.cssClass);
 
@@ -1290,7 +1432,13 @@ export function buildControl({ param, state, onChange }) {
   input.addEventListener("input", rememberValue);
   input.addEventListener("change", rememberValue);
   wrap._sync = () => {
+    wrap._syncVisibility();
     const next = getByPath(state, param.key);
+    if (input._sync) {
+      input._sync();
+      lastValue = JSON.stringify(next);
+      return;
+    }
     if (JSON.stringify(next) === lastValue) return;
     lastValue = JSON.stringify(next);
     const fields = input.matches("input, select, textarea") ? [input] : [...input.querySelectorAll("input")];
@@ -1301,6 +1449,7 @@ export function buildControl({ param, state, onChange }) {
     });
   };
 
+  wrap._syncVisibility();
   return wrap;
 }
 
@@ -1352,87 +1501,79 @@ function buildButtonControl({ param, state, onChange }) {
 }
 
 function buildNumberControl({ param, state, onChange, value }) {
-  const hasRange = isFiniteNumber(param.min) && isFiniteNumber(param.max);
-  const startingValue = value ?? param.default ?? 0;
+  return buildNumericField({
+    param, state,
+    read: () => getByPath(state, param.key) ?? param.default ?? value ?? 0,
+    write: (next) => {
+      setByPath(state, param.key, next);
+      onChange?.(param.key, next, state);
+    },
+  });
+}
 
-  if (!hasRange) {
-    const input = el("input", { type: "number", step: String(param.step ?? 1) });
-    input.value = String(startingValue);
-    const commit = () => {
-      setByPath(state, param.key, toNumber(input.value));
-      onChange?.(param.key, getByPath(state, param.key), state);
-    };
-    input.addEventListener("change", commit);
-    input.addEventListener("blur", commit);
-    return input;
-  }
-
+function buildNumericField({ param, state, axis, read, write }) {
   const row = el("div", { className: "vr-rangeRow" });
+  const label = `${param.label ?? param.key}${axis ? ` ${axis}` : ""}`;
   const slider = el("input", {
     type: "range",
-    min: String(param.min),
-    max: String(param.max),
     step: String(param.step ?? 1),
-    value: String(startingValue),
   });
   const box = el("input", {
     type: "number",
-    min: String(param.min),
-    max: String(param.max),
     step: String(param.step ?? 1),
-    value: String(startingValue),
   });
-
-  const sync = (next) => {
-    const val = toNumber(next, toNumber(startingValue, 0));
-    setByPath(state, param.key, val);
-    slider.value = String(val);
-    box.value = String(val);
-    onChange?.(param.key, val, state);
+  slider.setAttribute("aria-label", `${label} slider`);
+  box.setAttribute("aria-label", label);
+  const sync = () => {
+    const { min, max } = getParamRange(state, param, axis);
+    slider.hidden = !(Number.isFinite(min) && Number.isFinite(max) && min < max);
+    for (const field of [box, slider]) {
+      if (min != null) field.min = String(min); else field.removeAttribute("min");
+      if (max != null) field.max = String(max); else field.removeAttribute("max");
+      field.value = String(read());
+    }
   };
-
-  slider.addEventListener("input", () => sync(slider.value));
-  box.addEventListener("change", () => sync(box.value));
-  box.addEventListener("blur", () => sync(box.value));
-
-  row.appendChild(slider);
-  row.appendChild(box);
+  const commit = () => {
+    const parsed = box.value.trim() ? Number(box.value) : NaN;
+    if (!Number.isFinite(parsed)) { sync(); return; }
+    const before = JSON.stringify(state.__paramRanges);
+    const next = acceptTypedNumber(state, param, axis, parsed);
+    if (next !== read() || before !== JSON.stringify(state.__paramRanges)) write(next);
+    sync();
+  };
+  slider.addEventListener("input", () => { write(Number(slider.value)); sync(); });
+  box.addEventListener("change", commit);
+  box.addEventListener("blur", commit);
+  row.append(slider, box);
+  row._sync = sync;
+  sync();
   return row;
 }
 
 function buildVectorControl({ param, state, onChange, value, dims }) {
   const def = param.default ?? (dims === 3 ? { x: 0, y: 0, z: 0 } : { x: 0, y: 0 });
-  let vec = normalizeVector(value ?? def, def, dims);
-  const row = el("div", { className: "vr-rangeRow" });
-
+  const read = () => normalizeVector(getByPath(state, param.key) ?? value ?? def, def, dims);
+  const row = el("div", { className: "vr-vectorFields" });
+  const fields = [];
   const axes = dims === 3 ? ["x", "y", "z"] : ["x", "y"];
   for (const axis of axes) {
-    const box = el("input", {
-      type: "number",
-      step: String(param.step ?? 1),
-      value: String(vec[axis] ?? 0),
+    const field = buildNumericField({
+      param, state, axis,
+      read: () => read()[axis],
+      write: (next) => {
+        const vector = { ...read(), [axis]: next };
+        setByPath(state, param.key, vector);
+        onChange?.(param.key, vector, state);
+      },
     });
-
-    const sync = () => {
-      const nextVal = clampNumber(
-        toNumber(box.value),
-        typeof param.min === "number" ? param.min : -Infinity,
-        typeof param.max === "number" ? param.max : Infinity
-      );
-      vec = { ...normalizeVector(getByPath(state, param.key), def, dims), [axis]: nextVal };
-      setByPath(state, param.key, vec);
-      onChange?.(param.key, vec, state);
-    };
-
-    box.addEventListener("change", sync);
-    box.addEventListener("blur", sync);
-
+    fields.push(field);
     const wrap = el("div", { className: "vr-vecField" });
     wrap.appendChild(el("div", { className: "vr-vecLabel", textContent: axis }));
-    wrap.appendChild(box);
+    wrap.appendChild(field);
     row.appendChild(wrap);
   }
 
+  row._sync = () => fields.forEach((field) => field._sync());
   return row;
 }
 

@@ -1,0 +1,196 @@
+{
+  "title": "Halo Interference B - Source Color",
+  "source": "BacteriaVisualizer/bacteriaVisualizer.js",
+  "visualId": "bacteriaMinimal",
+  "seed": 2011701659,
+  "frames": 75,
+  "randomization": {
+    "version": 1,
+    "algorithm": "mulberry32-v1",
+    "seed": 3063906084,
+    "operation": "R_seed(p): randomize starting native parameters before G renders and before any algebra flow",
+    "samples": [
+      {
+        "path": "ringCount",
+        "op": "integer",
+        "min": 4,
+        "max": 10,
+        "before": 6,
+        "value": 6
+      },
+      {
+        "path": "ringMinRadius",
+        "op": "uniform",
+        "min": 18,
+        "max": 52,
+        "before": 35,
+        "value": 44.3209
+      },
+      {
+        "path": "ringMaxRadius",
+        "op": "uniform",
+        "min": 70,
+        "max": 145,
+        "before": 98,
+        "value": 87.4417
+      },
+      {
+        "path": "multiRingCount",
+        "op": "integer",
+        "min": 4,
+        "max": 12,
+        "before": 7,
+        "value": 7
+      },
+      {
+        "path": "multiRingStart",
+        "op": "uniform",
+        "min": 0.45,
+        "max": 1.05,
+        "before": 0.55,
+        "value": 0.7282
+      },
+      {
+        "path": "multiRingGap",
+        "op": "uniform",
+        "min": 3,
+        "max": 18,
+        "before": 9.8,
+        "value": 6.5239
+      },
+      {
+        "path": "multiRingOpacity",
+        "op": "uniform",
+        "min": 0.7,
+        "max": 1,
+        "before": 0.83,
+        "value": 0.9104
+      },
+      {
+        "path": "multiRingFade",
+        "op": "uniform",
+        "min": 0.004,
+        "max": 0.025,
+        "before": 0.018,
+        "value": 0.0143
+      },
+      {
+        "path": "speed",
+        "op": "uniform",
+        "min": 2,
+        "max": 10,
+        "before": 8,
+        "value": 7.3887
+      },
+      {
+        "path": "outlineScale",
+        "op": "multiply",
+        "min": 0.75,
+        "max": 1.4,
+        "before": 1.4,
+        "value": 1.8956
+      }
+    ]
+  },
+  "startingStateSha256": "c5244a3da5cca214f50903e9cd2f847e4dd8d54f1a2947dab45da55878143652",
+  "startingSvgSha256": "87baa15fb5ad2498dbc26eb141be28bc0df9e145ccb83f8557a918b902f92f76",
+  "algebra": {
+    "expression": "A^3 o N2[beta] o N1[alpha] o C o E[lambda,k] o B (G(R_seed(p), s, f))",
+    "convention": "Compose right to left. B is the ordered native preparation plus the optional property prefix. Coefficients parameterize operators; they are not scalar multiplication of SVGs.",
+    "coefficients": {
+      "alpha": 1.45,
+      "beta": 0.8,
+      "lambda": 0.83,
+      "echoMax": 1.25,
+      "k": 3,
+      "affineRepeat": 3,
+      "rotationDeg": -1.7,
+      "zoom": 0.98
+    },
+    "pairId": "algebracoef-halo-b",
+    "companionSlug": "algebracoef-halo-b-marks",
+    "orderLabel": "source",
+    "controlledVariables": [
+      "Source parameters, seed, frame count, canvas, coefficients, preparation and affine stack are identical within each pair.",
+      "Only C moves across the two spline stages."
+    ],
+    "repetition": "N1 samples even siblings; N2 samples the remaining eligible sources. Native guards exclude N1-generated lines. Affine powers expand inside one stack because separate transform stages replace the stack.",
+    "startingOperation": "R_seed(p): seeded parameter randomization before the native generator G; fixed within each order pair."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebracoef-halo-b-source.flow.json",
+  "nativeSettings": "../settings/algebracoef-halo-b-source.json",
+  "observedStages": [
+    {
+      "label": "Q: suppress cellular scaffolding",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 120,
+      "afterShapes": 120,
+      "messages": [
+        "paint applied: 72 elements."
+      ]
+    },
+    {
+      "label": "E: 3 echoes, scale 0.83 to 1.25",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 120,
+      "afterShapes": 204,
+      "messages": [
+        "scale applied: 42 groups, 126 clones."
+      ]
+    },
+    {
+      "label": "C: enumerate current marks through four colors",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 204,
+      "afterShapes": 204,
+      "messages": [
+        "color applied: 126 elements, 4 mapped colors."
+      ]
+    },
+    {
+      "label": "N1: normal vectors, coefficient 1.45",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 204,
+      "afterShapes": 1212,
+      "messages": [
+        "spline lines applied: 42 shapes, 1050 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "N2: tangent vectors, coefficient 0.8",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 1212,
+      "afterShapes": 3228,
+      "messages": [
+        "spline lines applied: 84 shapes, 2100 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "A^3: repeated rotation and contraction",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 3228,
+      "afterShapes": 3228,
+      "messages": []
+    }
+  ],
+  "orderComparison": {
+    "pair": "algebracoef-halo-b",
+    "geometrySha256": "66597394ccc1c04c33d65596d7f690720b5310eb090686359217a3d6b5f61bff",
+    "lines": 3150,
+    "changedLineStrokes": 2268,
+    "changedPercent": 72
+  }
+}

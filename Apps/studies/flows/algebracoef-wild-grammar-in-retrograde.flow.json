@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "name": "Grammar in Retrograde",
+  "stages": [
+    {
+      "id": "stage-mues68du-xmya6ci",
+      "kind": "effect",
+      "label": "E: scale",
+      "enabled": true,
+      "config": {
+        "effectType": "scale",
+        "elementType": "path",
+        "selector": "path:nth-of-type(4n)",
+        "rangeMin": -0.8,
+        "rangeMax": 1.6,
+        "count": 5,
+        "spacing": "linear",
+        "opacityMode": "fixed",
+        "opacityFixed": 0.82,
+        "equation": "sum(backward):opacity *0.72"
+      }
+    },
+    {
+      "id": "stage-mues68du-usgzg4l",
+      "kind": "effect",
+      "label": "N: splineLines",
+      "enabled": true,
+      "config": {
+        "effectType": "splineLines",
+        "splineSource": "path",
+        "splineSelector": "path",
+        "splinePointCount": 61,
+        "splineStepsPerSegment": 3,
+        "splineTension": -0.9,
+        "splineExtrapolateTension": true,
+        "splineAngleOffset": 111.246,
+        "splineLineOrientation": "tangent",
+        "splineLineHeight": 40,
+        "splineLineScale": 2.8,
+        "splineStrokeWidth": 1.35,
+        "splineScaleMode": "none",
+        "splineScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues68du-nap5sd4",
+      "kind": "effect",
+      "label": "C: color",
+      "enabled": true,
+      "config": {
+        "effectType": "color",
+        "color": {
+          "selector": "path,polygon,circle,rect,line",
+          "sourceProp": "each",
+          "targetProp": "stroke",
+          "mode": "byIndex",
+          "colorSort": "appearance",
+          "paletteText": "#481778,#ef3b56,#ffa32d,#f6ffb4",
+          "paletteSteps": 7,
+          "useComputed": true,
+          "skipNone": true,
+          "sizeSource": "bboxArea",
+          "sizeAttr": "r"
+        }
+      }
+    },
+    {
+      "id": "stage-mues68du-iuyzgbd",
+      "kind": "transform",
+      "label": "A: folded presentation",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": -19
+          },
+          {
+            "kind": "zoom",
+            "factor": 1.12
+          },
+          {
+            "kind": "planes3d",
+            "count": 3,
+            "baseScale": 0.85,
+            "scaleStep": 0.18,
+            "offset": {
+              "x": 22,
+              "y": -15
+            },
+            "opacity": 0.8,
+            "opacityFalloff": 0.14
+          }
+        ]
+      }
+    }
+  ]
+}

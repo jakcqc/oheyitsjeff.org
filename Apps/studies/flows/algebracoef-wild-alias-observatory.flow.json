@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "name": "Alias Observatory",
+  "stages": [
+    {
+      "id": "stage-mues68e1-858c8gb",
+      "kind": "effect",
+      "label": "N: splineLines",
+      "enabled": true,
+      "config": {
+        "effectType": "splineLines",
+        "splineSource": "line",
+        "splineSelector": "line:nth-of-type(37n)",
+        "splinePointCount": 5,
+        "splineStepsPerSegment": 3,
+        "splineTension": -2,
+        "splineExtrapolateTension": true,
+        "splineAngleOffset": 151,
+        "splineLineOrientation": "normal",
+        "splineLineHeight": 19,
+        "splineLineScale": 2.2,
+        "splineStrokeWidth": 1.3,
+        "splineScaleMode": "none",
+        "splineScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues68e1-eb5gkux",
+      "kind": "effect",
+      "label": "C: color",
+      "enabled": true,
+      "config": {
+        "effectType": "color",
+        "color": {
+          "selector": "path,polygon,circle,rect,line",
+          "sourceProp": "each",
+          "targetProp": "stroke",
+          "mode": "byIndex",
+          "colorSort": "appearance",
+          "paletteText": "#50ffe0,#8485ff,#ff59c7,#fff0ac",
+          "paletteSteps": 7,
+          "useComputed": true,
+          "skipNone": true,
+          "sizeSource": "bboxArea",
+          "sizeAttr": "r"
+        }
+      }
+    },
+    {
+      "id": "stage-mues68e1-1g60ccg",
+      "kind": "transform",
+      "label": "A: folded presentation",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": 37
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.83
+          }
+        ]
+      }
+    }
+  ]
+}

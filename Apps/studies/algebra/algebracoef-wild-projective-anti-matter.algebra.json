@@ -1,0 +1,93 @@
+{
+  "title": "Projective Anti-Matter",
+  "source": "BoysSurfaceModel/BoysSurfaceModel_visual.js",
+  "visualId": "boysSurfaceModel",
+  "seed": 926700,
+  "frames": 0,
+  "algebra": {
+    "edition": "wild",
+    "expression": "A o C o E (G)",
+    "convention": "Compose right to left. One composition per app in this batch; no paired variants. Coefficients are concrete native operator parameters.",
+    "coefficients": {
+      "E1": {
+        "rangeMin": -1.6,
+        "rangeMax": 2.4,
+        "count": 5,
+        "opacityFixed": 0.82,
+        "spacing": "linear",
+        "recurrence": "sum(backward):opacity *0.72"
+      },
+      "C2": {
+        "mapping": "bySize",
+        "paletteSteps": 7
+      },
+      "A3": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": 47
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.64
+          },
+          {
+            "kind": "planes3d",
+            "count": 3,
+            "baseScale": 0.58,
+            "scaleStep": 0.19,
+            "offset": {
+              "x": 31,
+              "y": -19
+            },
+            "opacity": 0.8,
+            "opacityFalloff": 0.14
+          }
+        ]
+      }
+    },
+    "interpretation": "Signed echoes flip ribbons through their own centers; reverse opacity recurrence makes the smallest time slices dominate a three-plane knot.",
+    "newCapabilities": [
+      "logarithmic echo spacing",
+      "unclamped spline tension when enabled",
+      "vector angle offset"
+    ],
+    "uniqueness": "This app was not used in the first algebraCOEF batch."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebracoef-wild-projective-anti-matter.flow.json",
+  "nativeSettings": "../settings/algebracoef-wild-projective-anti-matter.json",
+  "observedStages": [
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 96,
+      "afterShapes": 224,
+      "messages": [
+        "scale applied: 32 groups, 160 clones."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 224,
+      "afterShapes": 224,
+      "messages": [
+        "color applied: 224 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 224,
+      "afterShapes": 896,
+      "messages": []
+    }
+  ]
+}

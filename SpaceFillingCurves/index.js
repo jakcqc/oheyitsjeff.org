@@ -9,9 +9,11 @@
  */
 
 import { runVisualApp } from "../helper/visualHelp.js";
+import { preloadLinkedSettings } from "../helper/linkedSettings.js";
 import "./SpaceFillingCurves_visual.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  if (!await preloadLinkedSettings("spaceFillingCurves")) return;
   runVisualApp({
     visualId: "spaceFillingCurves",
     mountEl: document.getElementById("vis"),

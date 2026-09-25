@@ -1,0 +1,106 @@
+{
+  "title": "A Loom Without Its Weft",
+  "source": "QuasicrystallineWickerwork/QuasicrystallineWickerwork_visual.js",
+  "visualId": "quasicrystallineWickerwork",
+  "seed": 925312,
+  "frames": 0,
+  "algebra": {
+    "expression": "A o C o N o Q o E o D o G",
+    "interpretation": "D removes the exact #1f1f1f weft family, not a random proportion. E is the existing native scale effect; later selectors operate on the changed DOM, so reversing E and Q selects different descendants.",
+    "convention": "Compose right to left."
+  },
+  "propertyPrefix": [
+    {
+      "kind": "propRule",
+      "selector": {
+        "path": {
+          "stroke": {
+            "eq": "#1f1f1f"
+          }
+        }
+      },
+      "apply": {
+        "$delete": true
+      }
+    }
+  ],
+  "nativeFlow": "../flows/algebra-a-loom-without-its-weft.flow.json",
+  "nativeSettings": "../settings/algebra-a-loom-without-its-weft.json",
+  "observedStages": [
+    {
+      "label": "Native property-rule prefix",
+      "kind": "property",
+      "changed": true,
+      "beforeShapes": 83,
+      "afterShapes": 66,
+      "rules": [
+        {
+          "kind": "propRule",
+          "selector": {
+            "path": {
+              "stroke": {
+                "eq": "#1f1f1f"
+              }
+            }
+          },
+          "apply": {
+            "$delete": true
+          }
+        }
+      ]
+    },
+    {
+      "label": "Sparse spoke echoes",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 66,
+      "afterShapes": 75,
+      "messages": [
+        "scale applied: 9 groups, 18 clones."
+      ]
+    },
+    {
+      "label": "Selected spoke histories become polygons",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 75,
+      "afterShapes": 75,
+      "messages": [
+        "convert applied: 6 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "Folded spokes grow normal-vector ribbons",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 75,
+      "afterShapes": 411,
+      "messages": [
+        "spline lines applied: 6 shapes, 342 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "Coral amber and ivory lineages",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 411,
+      "afterShapes": 411,
+      "messages": [
+        "color applied: 411 elements, 5 mapped colors."
+      ]
+    },
+    {
+      "label": "Small loom shear",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 411,
+      "afterShapes": 411,
+      "messages": []
+    }
+  ]
+}

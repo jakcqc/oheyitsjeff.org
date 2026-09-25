@@ -1,0 +1,117 @@
+{
+  "title": "The Missing Coordinate Family",
+  "source": "PinkallSchmittGunnHoffmannCollection/PinkallSchmittGunnHoffmannCollection_visual.js",
+  "visualId": "pinkallSchmittGunnHoffmannCollection",
+  "seed": 925313,
+  "frames": 0,
+  "algebra": {
+    "expression": "A o C o N o Q o D o G",
+    "interpretation": "The original row and column colors identify position within their respective families. Deletion therefore changes the mesh unevenly; it does not approximate a new smooth surface.",
+    "convention": "Compose right to left."
+  },
+  "propertyPrefix": [
+    {
+      "kind": "propRule",
+      "selector": {
+        "path": {
+          "stroke": {
+            "range": [
+              [
+                0,
+                90,
+                120
+              ],
+              [
+                90,
+                180,
+                180
+              ]
+            ]
+          }
+        }
+      },
+      "apply": {
+        "$delete": true
+      }
+    }
+  ],
+  "nativeFlow": "../flows/algebra-the-missing-coordinate-family.flow.json",
+  "nativeSettings": "../settings/algebra-the-missing-coordinate-family.json",
+  "observedStages": [
+    {
+      "label": "Native property-rule prefix",
+      "kind": "property",
+      "changed": true,
+      "beforeShapes": 70,
+      "afterShapes": 25,
+      "rules": [
+        {
+          "kind": "propRule",
+          "selector": {
+            "path": {
+              "stroke": {
+                "range": [
+                  [
+                    0,
+                    90,
+                    120
+                  ],
+                  [
+                    90,
+                    180,
+                    180
+                  ]
+                ]
+              }
+            }
+          },
+          "apply": {
+            "$delete": true
+          }
+        }
+      ]
+    },
+    {
+      "label": "Every fifth coordinate becomes a polygon",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 25,
+      "afterShapes": 25,
+      "messages": [
+        "convert applied: 5 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "Selected coordinate polygons become bristles",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 25,
+      "afterShapes": 345,
+      "messages": [
+        "spline lines applied: 5 shapes, 325 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "Two-tone coordinate memory",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 345,
+      "afterShapes": 345,
+      "messages": [
+        "color applied: 345 elements, 23 mapped colors."
+      ]
+    },
+    {
+      "label": "Small coordinate shear",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 345,
+      "afterShapes": 345,
+      "messages": []
+    }
+  ]
+}

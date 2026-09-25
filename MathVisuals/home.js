@@ -18,6 +18,12 @@ let dragSimStrength = 0.09;
 let needsSingleBubbleMode = false;
 const MOBILE_BREAKPOINT_PX = 600;
 const MOBILE_MODE_STORAGE_KEY = "home.mobileMode"; // "bubbles" | "apps"
+const BUBBLE_SIZE_SCALES = { small: 0.7, medium: 1, large: 1.8, extralarge: 2.5 };
+
+function getProjectBubbleRadius(project) {
+  const size = String(project.size || "medium").toLowerCase().replace(/[\s_-]+/g, "");
+  return bubbleRadius * (BUBBLE_SIZE_SCALES[size] || BUBBLE_SIZE_SCALES.medium);
+}
 
 function getMobileModePref() {
   const raw = localStorage.getItem(MOBILE_MODE_STORAGE_KEY);
@@ -37,9 +43,13 @@ function getEffectiveMode() {
 }
 
 let appsViewer;
+let attachBubbleGestures;
+let clearBubbleGestures = () => {};
 let homeRenderVersion = 0;
 
 function clearHome() {
+  clearBubbleGestures();
+  clearBubbleGestures = () => {};
   homeRenderVersion++;
   appsViewer?.destroy();
   appsViewer = null;
@@ -86,7 +96,9 @@ function renderHome() {
   const bubbleDiameter = (bubbleRadius * 2) + (textRadius * 2) + 16; // include label ring + padding
   const cols = Math.max(1, Math.floor((width - 16) / bubbleDiameter));
   const rows = Math.ceil(projects.length / cols);
-  const minBubbleAreaHeight = Math.ceil(rows * bubbleDiameter);
+  const extraSizeHeight = projects.reduce((total, project) =>
+    total + Math.max(0, getProjectBubbleRadius(project) - bubbleRadius) * 2, 0);
+  const minBubbleAreaHeight = Math.ceil(rows * bubbleDiameter + extraSizeHeight);
   height = isMobile ? Math.max(baseHeight, minBubbleAreaHeight) : baseHeight;
 
   const svg = d3.select("#d3-container")
@@ -103,6 +115,23 @@ function shuffle(array) {
   }
   return array;
 }
+
+function appendMathBubbleShape(group, radius, shape) {
+  if (shape === "diamond") {
+    // Match the softly rounded diamond used by the main gallery's route bubble.
+    const r = radius / 0.9434314575;
+    const inset = r * 0.16 / Math.SQRT2;
+    return group.append("path").attr("d",
+      `M${-inset},${-r + inset} Q0,${-r} ${inset},${-r + inset}` +
+      ` L${r - inset},${-inset} Q${r},0 ${r - inset},${inset}` +
+      ` L${inset},${r - inset} Q0,${r} ${-inset},${r - inset}` +
+      ` L${-r + inset},${inset} Q${-r},0 ${-r + inset},${-inset} Z`);
+  }
+  return group.append("rect")
+    .attr("x", -radius).attr("y", -radius)
+    .attr("width", radius * 2).attr("height", radius * 2);
+}
+
 function createD3Bubbles(svg) {
  
     // after you’ve set width, height, initStrength, dragSimStrength
@@ -121,8 +150,8 @@ const centerY = (height - height*0.4) / 2;
     .append("image")
     .attr("xlink:href", d => d.image)
     .attr("preserveAspectRatio", "xMidYMid slice")
-    .attr("width", bubbleRadius * 2)
-    .attr("height", bubbleRadius * 2)
+    .attr("width", d => getProjectBubbleRadius(d) * 2)
+    .attr("height", d => getProjectBubbleRadius(d) * 2)
     .attr("x", 0)
     .attr("y", 0)
     .style("opacity", 0)
@@ -140,9 +169,9 @@ const centerY = (height - height*0.4) / 2;
   // Initial data
   nodes = projects.map((d, i) => ({
     ...d,
-    r: bubbleRadius,
-    x: Math.random() * (width - bubbleRadius * 2) + bubbleRadius,
-    y: Math.random() * (height - bubbleRadius * 2) + bubbleRadius
+    r: getProjectBubbleRadius(d),
+    x: Math.random() * (width - getProjectBubbleRadius(d) * 2) + getProjectBubbleRadius(d),
+    y: Math.random() * (height - getProjectBubbleRadius(d) * 2) + getProjectBubbleRadius(d)
   }));
 
 const forceX = d3.forceX(centerX)
@@ -157,61 +186,62 @@ const forceY = d3.forceY(centerY)
   .alpha(0)
   .on("tick", ticked)
   .stop(); 
-// now add drag behavior to your bubbles:
-const dragBehavior = d3.drag()
-.on("start", (event, d) => {
-  // if the simulation is “sleeping,” wake it up
-  // if (!event.active) simulation.alphaTarget(0.3).restart();
-  // fix the node’s position to the pointer
-  d.fx = d.x;
-
-  d.fy = d.y;
-  
-  runSimulationBurst(3000, 0.8,simulation);
-  
-
-})
-.on("drag", (event, d) => {
-  // move the fixed position with the pointer
-  d.fx = event.x;
-  d.fy = event.y;
-})
-.on("end", (event, d) => {
-  // release the node so simulation can re-position it
-  if (!event.active) simulation.alphaTarget(0);
-  d.fx = null;
-  d.fy = null;
-});
   // Create g for each node
    node = svg.selectAll("g.bubble")
     .data(nodes)
     .enter()
     .append("g")
     .attr("class", "bubble")
-    .style("cursor", "pointer")
-    .call(dragBehavior);
+    .style("cursor", "pointer");
+  clearBubbleGestures = attachBubbleGestures(node, {
+    d3,
+    simulation,
+    restartSimulation: () => runSimulationBurst(3000, 0.8, simulation),
+    activate: datum => { window.location.href = datum.link; },
+  });
 
   // Draw the bubbles
-  node.append("rect")
-    .attr("x", d => -d.r)
-    .attr("y", d => -d.r)
-    .attr("width", d => d.r * 2)
-    .attr("height", d => d.r * 2)
-    .attr("fill", d => `url(#imgpat-${d.title.replace(/\s/g, "")})`)
+  node.each(function(d) {
+    const group = d3.select(this);
+    appendMathBubbleShape(group, d.r, d.innerShape)
+    .attr("class", `bubble-shape bubble-shape--${d.innerShape}`)
+    .attr("fill", `url(#imgpat-${d.title.replace(/\s/g, "")})`)
     .attr("stroke", "var(--bubble-stroke)")
     .attr("stroke-width", "4px")
     .style("filter", "drop-shadow(0 2px 5px var(--bubble-glow))");
-  node.append("rect")
-    .attr("x", d => -d.r + 5)
-    .attr("y", d => -d.r + 5)
-    .attr("width", d => d.r * 2 - 10)
-    .attr("height", d => d.r * 2 - 10)
+    appendMathBubbleShape(group, d.r - 5, d.innerShape)
     .attr("fill", "none")
     .attr("stroke", "var(--bubble-highlight)")
     .attr("stroke-width", "3px")
     .style("filter", "drop-shadow(0 2px 5px var(--bubble-glow-soft))");
 
-  node.append("text")
+    if (d.outerShape === "circle") {
+      const radius = d.r + 12;
+      const arcId = `bubbleArc-${d.title.replace(/\s/g, "")}`;
+      svg.select("defs").append("path")
+        .attr("id", arcId)
+        .attr("d", describeArc(0, 0, radius, 90, 270));
+      group.append("circle")
+        .attr("class", "bubble-title-strip bubble-title-strip--circle")
+        .attr("r", radius)
+        .attr("fill", "none")
+        .attr("stroke", "var(--bubble-highlight)")
+        .attr("stroke-opacity", 0.25)
+        .attr("stroke-width", textRadius)
+        .style("filter", "drop-shadow(1 2px 6px var(--bubble-glow-soft))");
+      group.append("text").attr("dy", 6)
+        .append("textPath")
+        .attr("href", `#${arcId}`)
+        .attr("startOffset", "50%")
+        .style("text-anchor", "middle")
+        .style("font-size", "1.0rem")
+        .style("fill", "var(--bubble-text)")
+        .style("user-select", "none")
+        .text(d.title);
+    }
+  });
+
+  node.filter(d => d.outerShape !== "circle").append("text")
     .attr("y", d => d.r + textRadius * 0.6)
     .style("user-select", "none")          // standard
     .style("-webkit-user-select", "none")  // Safari
@@ -251,11 +281,6 @@ function isOutX(d) {
 //   .on("tick", ticked);
   
 
-  // On click, go to the link
-  node.on("click", function(event, d) {
-    window.location.href = d.link;
-  });
-  
   return simulation;
 }
 
@@ -336,7 +361,9 @@ Promise.all([
   new Promise(r => document.readyState === "complete" ? r() : window.addEventListener("load", r, { once: true })),
   document.fonts.ready,
   import("../helper/galleryRegistry.js").then(({ loadGalleryProjects }) => loadGalleryProjects("math")),
-]).then(([, , registeredProjects]) => {
+  import("../helper/galleryGestures.js"),
+]).then(([, , registeredProjects, gestures]) => {
+  attachBubbleGestures = gestures.attachBubbleGestures;
   projects = shuffle(registeredProjects);
   
   initOnceStable();

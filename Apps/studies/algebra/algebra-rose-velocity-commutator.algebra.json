@@ -1,0 +1,65 @@
+{
+  "title": "Rose Velocity Commutator",
+  "source": "MarbledPatterns/MarbledPatterns_visual.js",
+  "visualId": "marbledPatterns",
+  "seed": 925407,
+  "frames": 0,
+  "algebra": {
+    "expression": "T_small o C_newMarks o N_odd o C_bands (VortexMarbling)",
+    "convention": "Operators compose right to left; each selection acts on the current SVG result. These are discrete geometric operators, not identities in a vector space.",
+    "operators": {
+      "C_bands": "Color the 28 original vortex bands by index.",
+      "N_odd": "Replace odd bands with a normal-line representation.",
+      "C_newMarks": "Recolor every fourth generated line with a cyan-to-ivory sequence.",
+      "T_small": "A slight differential shear."
+    },
+    "orderMatters": "Selection, conversion and spline replacement change the domain available to subsequent operators. Color before geometry is inherited by new marks; color after geometry enumerates the newly created marks."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebra-rose-velocity-commutator.flow.json",
+  "nativeSettings": "../settings/algebra-rose-velocity-commutator.json",
+  "observedStages": [
+    {
+      "label": "Encode band order before subdivision",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 28,
+      "afterShapes": 28,
+      "messages": [
+        "color applied: 28 elements, 28 mapped colors."
+      ]
+    },
+    {
+      "label": "Replace odd bands with normal velocity strokes",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 28,
+      "afterShapes": 4004,
+      "messages": [
+        "spline lines applied: 14 shapes, 3990 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "Re-index one quarter of the newly emitted strokes",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 4004,
+      "afterShapes": 4004,
+      "messages": [
+        "color applied: 994 elements, 17 mapped colors."
+      ]
+    },
+    {
+      "label": "Small differential shear",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 4004,
+      "afterShapes": 4004,
+      "messages": []
+    }
+  ]
+}

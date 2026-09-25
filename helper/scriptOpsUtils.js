@@ -510,6 +510,13 @@ function getScaleAtIndex(i, count, minS, maxS, { spacing = "linear", spacingFn =
   let t = i / (count - 1);
   if (typeof spacingFn === "function") t = clamp(Number(spacingFn(t)), 0, 1);
   else if (spacing === "easeInOut") t = easeInOut(t);
+  // Log spacing is meaningful on either side of zero, but cannot cross it.
+  // A crossing/zero endpoint retains linear spacing instead of producing NaN.
+  if (spacing === "logarithmic" && minS !== 0 && maxS !== 0 && Math.sign(minS) === Math.sign(maxS)) {
+    if (t === 0) return minS;
+    if (t === 1) return maxS;
+    return Math.sign(minS) * Math.exp(lerp(Math.log(Math.abs(minS)), Math.log(Math.abs(maxS)), t));
+  }
   return lerp(minS, maxS, t);
 }
 
@@ -864,24 +871,25 @@ export function scalePathsInSubtree(ctx, opts = {}) {
     console.log("[scriptOps][scalePathsInSubtree] matched:", stats.matched, "selector:", selector, "range:", range);
   }
 
+  // Measure every source path before replacing any of them. Reading bounds
+  // between connected-DOM writes makes dense SVG flows repeatedly relayout.
+  const measuredPaths = [];
   for (const path of paths) {
     if (String(path.tagName || "").toLowerCase() !== "path") {
       stats.skippedBadTag++;
       continue;
     }
-
     let bbox;
-    try {
-      bbox = path.getBBox();
-    } catch {
-      stats.skippedNoBBox++;
-      continue;
-    }
+    try { bbox = path.getBBox(); }
+    catch { stats.skippedNoBBox++; continue; }
     if (!bbox || !Number.isFinite(bbox.width) || !Number.isFinite(bbox.height)) {
       stats.skippedNoBBox++;
       continue;
     }
+    measuredPaths.push({ path, bbox });
+  }
 
+  for (const { path, bbox } of measuredPaths) {
     const cx = bbox.x + bbox.width / 2;
     const cy = bbox.y + bbox.height / 2;
 

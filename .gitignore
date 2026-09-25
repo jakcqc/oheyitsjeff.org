@@ -26,3 +26,6 @@ out/
 
 # Generated galleries/playgrounds
 SvgPlayground/
+
+# Local study generation, contact sheets, archives, and review artifacts
+/.local/

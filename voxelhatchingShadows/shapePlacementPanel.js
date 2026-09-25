@@ -130,7 +130,7 @@ function loadTemplateHtml() {
       <h3 class="vhs-shapeEditor__title">Shape Tool</h3>
       <button type="button" class="vhs-shapeEditor__collapseBtn" data-shape-collapse-toggle aria-expanded="true" aria-label="Collapse shape placement menu">Collapse</button>
     </div>
-    <p class="vhs-shapeEditor__hint">Space toggles Point/Rotate gizmo mode</p>
+    <p class="vhs-shapeEditor__hint">G toggles Point/Rotate gizmo mode</p>
   </div>
   <div class="vhs-shapeEditor__body" data-shape-collapsible>
   <div class="vhs-shapeEditor__field">

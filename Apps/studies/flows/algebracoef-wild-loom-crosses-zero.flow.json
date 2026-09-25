@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "name": "The Loom Crosses Zero",
+  "stages": [
+    {
+      "id": "stage-mues68dz-ib0nciw",
+      "kind": "effect",
+      "label": "E: scale",
+      "enabled": true,
+      "config": {
+        "effectType": "scale",
+        "elementType": "path",
+        "selector": "path:nth-of-type(4n)",
+        "rangeMin": -2.4,
+        "rangeMax": 2,
+        "count": 6,
+        "spacing": "linear",
+        "opacityMode": "fixed",
+        "opacityFixed": 0.82,
+        "equation": "sum(backward):opacity *0.72"
+      }
+    },
+    {
+      "id": "stage-mues68dz-66sueib",
+      "kind": "effect",
+      "label": "Q: convert",
+      "enabled": true,
+      "config": {
+        "effectType": "convert",
+        "selector": "path:nth-of-type(7n)",
+        "convertFrom": "path",
+        "convertTo": "polygon",
+        "pathSamplePoints": 17,
+        "convertScaleMode": "center",
+        "convertScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues68dz-vb2ara0",
+      "kind": "effect",
+      "label": "N: splineLines",
+      "enabled": true,
+      "config": {
+        "effectType": "splineLines",
+        "splineSource": "polygon",
+        "splineSelector": "polygon",
+        "splinePointCount": 17,
+        "splineStepsPerSegment": 3,
+        "splineTension": 1.9,
+        "splineExtrapolateTension": true,
+        "splineAngleOffset": 83,
+        "splineLineOrientation": "tangent",
+        "splineLineHeight": 24,
+        "splineLineScale": 2.2,
+        "splineStrokeWidth": 0.65,
+        "splineScaleMode": "none",
+        "splineScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues68dz-x72mkx3",
+      "kind": "effect",
+      "label": "C: color",
+      "enabled": true,
+      "config": {
+        "effectType": "color",
+        "color": {
+          "selector": "path,polygon,circle,rect,line",
+          "sourceProp": "each",
+          "targetProp": "stroke",
+          "mode": "byIndex",
+          "colorSort": "appearance",
+          "paletteText": "#50ffe0,#8485ff,#ff59c7,#fff0ac",
+          "paletteSteps": 7,
+          "useComputed": true,
+          "skipNone": true,
+          "sizeSource": "bboxArea",
+          "sizeAttr": "r"
+        }
+      }
+    },
+    {
+      "id": "stage-mues68dz-y4ln1o3",
+      "kind": "transform",
+      "label": "A: folded presentation",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "split",
+            "count": 4
+          },
+          {
+            "kind": "flipX",
+            "targets": [
+              1,
+              3
+            ]
+          },
+          {
+            "kind": "flipY",
+            "targets": [
+              2,
+              3
+            ]
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.81
+          }
+        ]
+      }
+    }
+  ]
+}

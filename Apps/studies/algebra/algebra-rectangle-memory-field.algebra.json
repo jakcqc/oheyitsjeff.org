@@ -1,0 +1,59 @@
+{
+  "title": "Rectangle Memory Becomes a Field",
+  "source": "InnerLight/index.js",
+  "visualId": "innerLight",
+  "seed": 925320,
+  "frames": 0,
+  "algebra": {
+    "expression": "A = T[-2.7deg,0.97] B_tangent[8,3,81] K_index C[rect->closed-path,1.07](G_variable)",
+    "interpretation": "Inner Light produces a grid with a slow size gradient. Converting each cell to a closed path and resampling its boundary makes this gradient into a tangent field: large woven frames contract into smaller, concentrated knots.",
+    "order": "Read operators right to left; tool flow arrays execute top to bottom. P changes paint, C changes shape, K maps colors, H creates concentric scale copies, N samples normal marks, B samples tangent or vertical marks, T is a small affine transform."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebra-rectangle-memory-field.flow.json",
+  "nativeSettings": "../settings/algebra-rectangle-memory-field.json",
+  "observedStages": [
+    {
+      "label": "rect becomes a closed quadrilateral path",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 552,
+      "afterShapes": 552,
+      "messages": [
+        "convert applied: 552 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "palette as ordered spectrum",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 552,
+      "afterShapes": 552,
+      "messages": [
+        "color applied: 552 elements, 48 mapped colors."
+      ]
+    },
+    {
+      "label": "tangent spline differential",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 552,
+      "afterShapes": 13800,
+      "messages": [
+        "spline lines applied: 552 shapes, 13800 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "small final affine change",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 13800,
+      "afterShapes": 13800,
+      "messages": []
+    }
+  ]
+}

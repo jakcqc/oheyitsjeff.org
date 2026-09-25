@@ -9,6 +9,7 @@
  */
 
 import { registerVisual, runVisualApp } from "../helper/visualHelp.js";
+import { preloadLinkedSettings } from "../helper/linkedSettings.js";
 
 const TAU = Math.PI * 2;
 const EPS = 1e-12;
@@ -544,6 +545,11 @@ registerVisual("domainColoring", {
         }
       }
 
+      // Flow tools may replace circles with other shapes or wrap contours.
+      // Start each native drawing from clean layer contents so resizing cannot
+      // retain old converted shapes alongside the freshly sampled domain.
+      dotLayer.selectAll("*").remove();
+      contourLayer.selectAll("*").remove();
       const selection = dotLayer.selectAll("circle").data(dots);
       selection.exit().remove();
       selection
@@ -767,7 +773,8 @@ function wirePresetToggle() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  if (!await preloadLinkedSettings("domainColoring")) return;
   startDomainApp();
   wirePresetButtons();
   wirePresetToggle();

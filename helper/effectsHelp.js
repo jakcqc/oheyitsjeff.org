@@ -99,6 +99,8 @@ function ensureEffectsState(state) {
     splinePointCount: 16,
     splineStepsPerSegment: 18,
     splineTension: 0.12,
+    splineExtrapolateTension: false,
+    splineAngleOffset: 0,
     splineLineOrientation: "vertical",
     splineLineHeight: 18,
     splineLineScale: 1,
@@ -255,25 +257,29 @@ function combineTransform(existing, next) {
   return `${a} ${b}`;
 }
 
-function applyScaleTransform(el, scaleFactor, mode) {
+function applyScaleTransforms(elements, scaleFactor, mode) {
   const s = Number(scaleFactor);
   if (!Number.isFinite(s) || s === 1) return;
 
-  let transform = "";
-  if (mode === "center") {
-    let bb = null;
-    try { bb = el.getBBox(); } catch {}
-    if (bb && Number.isFinite(bb.width) && Number.isFinite(bb.height)) {
-      const cx = bb.x + bb.width / 2;
-      const cy = bb.y + bb.height / 2;
-      transform = `translate(${cx} ${cy}) scale(${s}) translate(${-cx} ${-cy})`;
+  // Read all geometry before writing transforms. Alternating getBBox() and
+  // setAttribute() forces a full SVG layout for each of thousands of shapes.
+  const transforms = elements.map((element) => {
+    let transform = "";
+    if (mode === "center") {
+      let bb = null;
+      try { bb = element.getBBox(); } catch {}
+      if (bb && Number.isFinite(bb.width) && Number.isFinite(bb.height)) {
+        const cx = bb.x + bb.width / 2;
+        const cy = bb.y + bb.height / 2;
+        transform = `translate(${cx} ${cy}) scale(${s}) translate(${-cx} ${-cy})`;
+      }
     }
-  }
-
-  if (!transform) transform = `scale(${s})`;
-  const existing = el.getAttribute("transform");
-  const combined = combineTransform(existing, transform);
-  if (combined) el.setAttribute("transform", combined);
+    if (!transform) transform = `scale(${s})`;
+    return combineTransform(element.getAttribute("transform"), transform);
+  });
+  elements.forEach((element, index) => {
+    if (transforms[index]) element.setAttribute("transform", transforms[index]);
+  });
 }
 
 function getSvgBounds(svgEl) {
@@ -466,7 +472,7 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
   };
 
   const spacingSel = el("select");
-  ["linear", "easeInOut"].forEach((t) => spacingSel.appendChild(el("option", { value: t, textContent: t })));
+  ["linear", "easeInOut", "logarithmic"].forEach((t) => spacingSel.appendChild(el("option", { value: t, textContent: t })));
   spacingSel.value = ui.spacing || "linear";
   spacingSel.onchange = () => {
     ui.spacing = spacingSel.value;
@@ -607,6 +613,21 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
     markDirty();
   };
 
+  const splineExtrapolateTension = el("input", { type: "checkbox", checked: !!ui.splineExtrapolateTension });
+  const syncTensionBounds = () => {
+    if (splineExtrapolateTension.checked) {
+      splineTension.removeAttribute("min"); splineTension.removeAttribute("max");
+    } else { splineTension.min = "0"; splineTension.max = "1"; }
+  };
+  splineExtrapolateTension.onchange = () => {
+    ui.splineExtrapolateTension = splineExtrapolateTension.checked;
+    syncTensionBounds(); markDirty();
+  };
+  syncTensionBounds();
+  const splineAngleOffset = el("input", { type: "number", step: "0.1", value: String(ui.splineAngleOffset ?? 0) });
+  splineAngleOffset.oninput = () => {
+    ui.splineAngleOffset = clampNum(splineAngleOffset.value, ui.splineAngleOffset); markDirty();
+  };
   const splineLineOrientation = el("select");
   ["vertical", "normal", "tangent"].forEach((t) => splineLineOrientation.appendChild(el("option", { value: t, textContent: t })));
   splineLineOrientation.value = ui.splineLineOrientation || "vertical";
@@ -779,6 +800,8 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
     ui.splinePointCount = Math.max(2, Math.trunc(clampNum(splinePointCount.value, ui.splinePointCount)));
     ui.splineStepsPerSegment = Math.max(2, Math.trunc(clampNum(splineStepsPerSegment.value, ui.splineStepsPerSegment)));
     ui.splineTension = clampNum(splineTension.value, ui.splineTension);
+    ui.splineExtrapolateTension = splineExtrapolateTension.checked;
+    ui.splineAngleOffset = clampNum(splineAngleOffset.value, ui.splineAngleOffset);
     ui.splineLineOrientation = splineLineOrientation.value;
     ui.splineLineHeight = clampNum(splineLineHeight.value, ui.splineLineHeight);
     ui.splineLineScale = clampNum(splineLineScale.value, ui.splineLineScale);
@@ -846,7 +869,7 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
     row("scale min", minInput, "Minimum scale factor."),
     row("scale max", maxInput, "Maximum scale factor."),
     row("count", countInput, "Number of scaled copies."),
-    row("spacing", spacingSel, "Scale spacing: linear or smooth."),
+    row("spacing", spacingSel, "Linear, eased, or logarithmic ratios. Logarithmic ranges must stay on one side of zero; crossing zero uses linear spacing."),
     row("opacity mode", opacityMode, "Auto ramps opacity unless disabled."),
     row("opacity fixed", opacityFixed, "Used when opacity mode = fixed."),
     row("opacity min", opacityMin, "Used when opacity mode = ramp."),
@@ -869,7 +892,9 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
     row("selector", selectorSplineInput, "Optional CSS selector override."),
     row("control points", splinePointCount, "How many shape points become spline control points."),
     row("steps per segment", splineStepsPerSegment, "Spline sample density; higher = more output lines."),
-    row("tension", splineTension, "Catmull-Rom tension used for the spline interpolation."),
+    row("tension", splineTension, "Catmull-Rom tension. Values outside 0?1 require extrapolation."),
+    row("extrapolate tension", splineExtrapolateTension, "Allow negative or above-one tension to overshoot or reverse spline tangents."),
+    row("angle offset (deg)", splineAngleOffset, "Rotate each emitted vector away from its normal, tangent, or vertical direction."),
     row("line orientation", splineLineOrientation, "Vertical, spline normal, or spline tangent."),
     row("line height", splineLineHeight, "Base height for each generated line."),
     row("line scale", splineLineScale, "Multiplies the line height."),
@@ -1069,6 +1094,9 @@ export function buildEffectsPanel({ mountEl, state, xfRuntime, onStateChange }) 
     splinePointCount.value = String(ui.splinePointCount ?? 16);
     splineStepsPerSegment.value = String(ui.splineStepsPerSegment ?? 18);
     splineTension.value = String(ui.splineTension ?? 0.12);
+    splineExtrapolateTension.checked = !!ui.splineExtrapolateTension;
+    syncTensionBounds();
+    splineAngleOffset.value = String(ui.splineAngleOffset ?? 0);
     splineLineOrientation.value = ui.splineLineOrientation || "vertical";
     splineLineHeight.value = String(ui.splineLineHeight ?? 18);
     splineLineScale.value = String(ui.splineLineScale ?? 1);
@@ -1117,7 +1145,13 @@ function getSvgContexts(mountEl) {
   });
 }
 
-export function runEffectsFromUI({ mountEl, state, xfRuntime, statusEl } = {}) {
+export function runEffectsFromUI(options = {}) {
+  const run = () => runEffectsWithoutObserving(options);
+  const runtime = options.xfRuntime;
+  return runtime?.withSourceUpdatesSuspended ? runtime.withSourceUpdatesSuspended(run) : run();
+}
+
+function runEffectsWithoutObserving({ mountEl, state, xfRuntime, statusEl } = {}) {
   ensureEffectsState(state);
   const ui = state.__effects.ui;
   if (ui.effectType === "color") return runColorEffect({ mountEl, ui: ui.color, statusEl });
@@ -1200,9 +1234,7 @@ export function runEffectsFromUI({ mountEl, state, xfRuntime, statusEl } = {}) {
 
       if (ui.convertScaleMode !== "none" && ui.convertScaleFactor !== 1) {
         const converted = Array.from(rootEl.querySelectorAll(`[data-convert-run="${runId}"]`));
-        for (const el of converted) {
-          applyScaleTransform(el, ui.convertScaleFactor, ui.convertScaleMode);
-        }
+        applyScaleTransforms(converted, ui.convertScaleFactor, ui.convertScaleMode);
       }
     }
 
@@ -1222,6 +1254,8 @@ export function runEffectsFromUI({ mountEl, state, xfRuntime, statusEl } = {}) {
           pointCount: ui.splinePointCount,
           stepsPerSegment: ui.splineStepsPerSegment,
           tension: ui.splineTension,
+          extrapolateTension: ui.splineExtrapolateTension,
+          angleOffset: ui.splineAngleOffset,
           lineOrientation: ui.splineLineOrientation,
           lineHeight: ui.splineLineHeight,
           lineScale: ui.splineLineScale,
@@ -1237,9 +1271,7 @@ export function runEffectsFromUI({ mountEl, state, xfRuntime, statusEl } = {}) {
 
       if (ui.splineScaleMode !== "none" && ui.splineScaleFactor !== 1) {
         const converted = Array.from(rootEl.querySelectorAll(`[data-spline-lines-run="${runId}"][data-spline-lines-group="1"]`));
-        for (const el of converted) {
-          applyScaleTransform(el, ui.splineScaleFactor, ui.splineScaleMode);
-        }
+        applyScaleTransforms(converted, ui.splineScaleFactor, ui.splineScaleMode);
       }
     }
 

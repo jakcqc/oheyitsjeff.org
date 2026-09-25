@@ -1,0 +1,109 @@
+{
+  "title": "Advection in Reverse",
+  "source": "OliverLabsCollection/OliverLabsCollection_visual.js",
+  "visualId": "oliverLabsCollection",
+  "seed": 926709,
+  "frames": 0,
+  "algebra": {
+    "edition": "wild",
+    "expression": "A o N o C o E (G)",
+    "convention": "Compose right to left. One composition per app in this batch; no paired variants. Coefficients are concrete native operator parameters.",
+    "coefficients": {
+      "E1": {
+        "rangeMin": -2.8,
+        "rangeMax": 0.85,
+        "count": 4,
+        "opacityFixed": 0.82,
+        "spacing": "linear",
+        "recurrence": "sum(backward):opacity *0.72"
+      },
+      "C2": {
+        "mapping": "bySize",
+        "paletteSteps": 7
+      },
+      "N3": {
+        "splinePointCount": 18,
+        "splineStepsPerSegment": 3,
+        "splineTension": -2.7,
+        "splineAngleOffset": -71,
+        "splineLineHeight": 15,
+        "splineLineScale": 3.3,
+        "splineStrokeWidth": 0.65,
+        "splineScaleFactor": 1
+      },
+      "A4": {
+        "stack": [
+          {
+            "kind": "matrix",
+            "m": [
+              0.55,
+              0.18,
+              0.85,
+              0.64,
+              -155,
+              72
+            ]
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.78
+          }
+        ]
+      }
+    },
+    "interpretation": "Nonlocal currents acquire large inverted ghosts. Extrapolated tangents break selected paths into tilted needles and a strong centered shear folds the flow into a diagonal storm.",
+    "newCapabilities": [
+      "logarithmic echo spacing",
+      "unclamped spline tension when enabled",
+      "vector angle offset"
+    ],
+    "uniqueness": "This app was not used in the first algebraCOEF batch."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebracoef-wild-advection-in-reverse.flow.json",
+  "nativeSettings": "../settings/algebracoef-wild-advection-in-reverse.json",
+  "observedStages": [
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 100,
+      "afterShapes": 160,
+      "messages": [
+        "scale applied: 20 groups, 80 clones."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 160,
+      "afterShapes": 160,
+      "messages": [
+        "color applied: 160 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 160,
+      "afterShapes": 517,
+      "messages": [
+        "spline lines applied: 7 shapes, 364 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 517,
+      "afterShapes": 517,
+      "messages": []
+    }
+  ]
+}

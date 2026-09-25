@@ -1,0 +1,120 @@
+{
+  "title": "City Without Scale",
+  "source": "SpaceFillingCurves/SpaceFillingCurves_visual.js",
+  "visualId": "spaceFillingCurves",
+  "seed": 926712,
+  "frames": 0,
+  "algebra": {
+    "edition": "wild",
+    "expression": "A o P o Q o C o E (G)",
+    "convention": "Compose right to left. One composition per app in this batch; no paired variants. Coefficients are concrete native operator parameters.",
+    "coefficients": {
+      "E1": {
+        "rangeMin": 0.125,
+        "rangeMax": 2.2,
+        "count": 5,
+        "opacityFixed": 0.82,
+        "spacing": "logarithmic",
+        "recurrence": "sum(forward):opacity *0.76"
+      },
+      "C2": {
+        "mapping": "bySize",
+        "paletteSteps": 7
+      },
+      "Q3": {
+        "pathSamplePoints": 8,
+        "convertScaleFactor": 1
+      },
+      "P4": {},
+      "A5": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": -21
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.7
+          },
+          {
+            "kind": "planes3d",
+            "count": 4,
+            "baseScale": 0.5,
+            "scaleStep": 0.17,
+            "offset": {
+              "x": -23,
+              "y": 17
+            },
+            "opacity": 0.8,
+            "opacityFalloff": 0.14
+          }
+        ]
+      }
+    },
+    "interpretation": "Peano neighborhoods become logarithmic stacks, then sparse streets collapse into filled eight-vertex parcels. Four offset planes fracture the map at incompatible scales.",
+    "newCapabilities": [
+      "logarithmic echo spacing",
+      "unclamped spline tension when enabled",
+      "vector angle offset"
+    ],
+    "uniqueness": "This app was not used in the first algebraCOEF batch."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebracoef-wild-city-without-scale.flow.json",
+  "nativeSettings": "../settings/algebracoef-wild-city-without-scale.json",
+  "observedStages": [
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 40,
+      "afterShapes": 92,
+      "messages": [
+        "scale applied: 13 groups, 65 clones."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 92,
+      "afterShapes": 92,
+      "messages": [
+        "color applied: 92 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "Q: convert",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 92,
+      "afterShapes": 92,
+      "messages": [
+        "convert applied: 18 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "P: paint",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 92,
+      "afterShapes": 92,
+      "messages": [
+        "paint applied: 18 elements."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 92,
+      "afterShapes": 460,
+      "messages": []
+    }
+  ]
+}

@@ -9,6 +9,7 @@
  */
 
 import { runVisualApp } from "../helper/visualHelp.js";
+import { preloadLinkedSettings } from "../helper/linkedSettings.js";
 import "./BacterialConstructs_visual.js";
 
 let appHandle = null;
@@ -87,10 +88,11 @@ function startApp(state = PRESETS.coral) {
     uiEl: document.getElementById("config"),
     state,
   });
-  document.getElementById("equation-label").textContent = EQUATIONS[state.model] || state.model;
+  document.getElementById("equation-label").textContent = EQUATIONS[appHandle.state.model] || appHandle.state.model;
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  if (!await preloadLinkedSettings("bacterialConstructs")) return;
   startApp();
   Object.entries(PRESETS).forEach(([name, state]) => {
     document.getElementById(`preset-${name}`)?.addEventListener("click", () => startApp({ ...state }));

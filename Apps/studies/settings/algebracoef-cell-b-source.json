@@ -1,0 +1,321 @@
+{
+  "cellPx": 41,
+  "tickMs": 16,
+  "running": true,
+  "wrapEdges": true,
+  "randomFill": 0.2103,
+  "mode": "protofield",
+  "denseRadius": 2,
+  "denseBirth": 0,
+  "denseSurviveMin": 18,
+  "denseSurviveMax": 24,
+  "protoAlpha": 0.94,
+  "protoBeta": 0.006,
+  "protoThreshMin": -0.3617,
+  "protoThreshMax": 1.1314,
+  "protoNoise": 3.754,
+  "paintColor": "#111111",
+  "shiftColorOnSurvive": false,
+  "strokeColor": "#111111",
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0,
+      "preset": "",
+      "splitMode": "screen",
+      "applyToAll": false,
+      "tileTargets": "0",
+      "zoomFactor": 1.25,
+      "matrix": {
+        "a": 1,
+        "b": 0,
+        "c": 0,
+        "d": 1,
+        "e": 0,
+        "f": 0
+      },
+      "zoomCenter": {
+        "x": null,
+        "y": null
+      },
+      "translateVec": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCount": 3,
+      "planeBaseScale": 1,
+      "planeScaleStep": -0.12,
+      "planeOpacity": 0.7,
+      "planeOpacityFalloff": 0.12,
+      "planeOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCenter": {
+        "x": null,
+        "y": null
+      },
+      "groupOpen": {}
+    },
+    "stack": [
+      {
+        "kind": "rotate",
+        "deg": -1.7
+      },
+      {
+        "kind": "zoom",
+        "factor": 0.98
+      },
+      {
+        "kind": "rotate",
+        "deg": -1.7
+      },
+      {
+        "kind": "zoom",
+        "factor": 0.98
+      },
+      {
+        "kind": "rotate",
+        "deg": -1.7
+      },
+      {
+        "kind": "zoom",
+        "factor": 0.98
+      }
+    ]
+  },
+  "__studyRandomization": {
+    "version": 1,
+    "algorithm": "mulberry32-v1",
+    "seed": 1560368898,
+    "operation": "R_seed(p): randomize starting native parameters before G renders and before any algebra flow",
+    "samples": [
+      {
+        "path": "cellPx",
+        "op": "integer",
+        "min": 28,
+        "max": 70,
+        "before": 48,
+        "value": 41
+      },
+      {
+        "path": "randomFill",
+        "op": "uniform",
+        "min": 0.08,
+        "max": 0.6,
+        "before": 0,
+        "value": 0.2103
+      },
+      {
+        "path": "protoNoise",
+        "op": "uniform",
+        "min": 1.4,
+        "max": 4.8,
+        "before": 3.25,
+        "value": 3.754
+      },
+      {
+        "path": "protoThreshMin",
+        "op": "uniform",
+        "min": -0.9,
+        "max": -0.15,
+        "before": -0.6,
+        "value": -0.3617
+      },
+      {
+        "path": "protoThreshMax",
+        "op": "uniform",
+        "min": 0.4,
+        "max": 1.5,
+        "before": 1.1,
+        "value": 1.1314
+      }
+    ]
+  },
+  "__propOps": {
+    "ui": {
+      "ruleText": "{\n  \"selector\": {\n    \"rect\": {\n      \"fill\": {\n        \"eq\": \"#ffffff\"\n      }\n    }\n  },\n  \"apply\": {\n    \"$delete\": true\n  }\n}",
+      "showDocs": false
+    },
+    "stack": [
+      {
+        "kind": "propRule",
+        "selector": {
+          "rect": {
+            "fill": {
+              "eq": "#ffffff"
+            }
+          }
+        },
+        "apply": {
+          "$delete": true
+        }
+      }
+    ]
+  },
+  "__toolFlows": {
+    "ui": {
+      "flowName": "Cell Coefficients B - Source Color",
+      "selectedId": "builtin-grayscale",
+      "autoRun": true,
+      "groupsOpen": {}
+    },
+    "stages": [
+      {
+        "id": "stage-mv78x4wi-jkc2zfe",
+        "kind": "effect",
+        "label": "rect becomes circle",
+        "enabled": true,
+        "config": {
+          "effectType": "convert",
+          "selector": "rect",
+          "convertFrom": "rect",
+          "convertTo": "circle",
+          "pathSamplePoints": 24,
+          "convertScaleMode": "center",
+          "convertScaleFactor": 0.72
+        }
+      },
+      {
+        "id": "stage-mv78x4wi-jf2k92c",
+        "kind": "effect",
+        "label": "choose ink on circle",
+        "enabled": true,
+        "config": {
+          "effectType": "paint",
+          "selector": "circle",
+          "paintFill": "none",
+          "paintStroke": "#111111"
+        }
+      },
+      {
+        "id": "stage-mv78x4wi-3c4op36",
+        "kind": "effect",
+        "label": "E: 3 echoes, scale 0.83 to 1.25",
+        "enabled": true,
+        "config": {
+          "effectType": "scale",
+          "selector": "circle",
+          "elementType": "circle",
+          "rangeMin": 0.83,
+          "rangeMax": 1.25,
+          "count": 3,
+          "spacing": "linear",
+          "opacityMode": "fixed",
+          "opacityFixed": 0.72,
+          "equation": ""
+        }
+      },
+      {
+        "id": "stage-mv78x4wi-ic14i9q",
+        "kind": "effect",
+        "label": "C: enumerate current marks through four colors",
+        "enabled": true,
+        "config": {
+          "effectType": "color",
+          "color": {
+            "selector": "circle,line[data-spline-lines-run]",
+            "sourceProp": "stroke",
+            "targetProp": "stroke",
+            "mode": "byIndex",
+            "colorSort": "appearance",
+            "paletteText": "#203c75,#af3368,#b97313,#3c817d",
+            "paletteSteps": 0,
+            "useComputed": true,
+            "skipNone": true
+          }
+        }
+      },
+      {
+        "id": "stage-mv78x4wi-1u49qso",
+        "kind": "effect",
+        "label": "N1: normal vectors, coefficient 1.45",
+        "enabled": true,
+        "config": {
+          "effectType": "splineLines",
+          "splineSource": "circle",
+          "splineSelector": "circle:nth-of-type(2n)",
+          "splinePointCount": 12,
+          "splineStepsPerSegment": 2,
+          "splineTension": 0.2,
+          "splineLineOrientation": "normal",
+          "splineLineHeight": 31,
+          "splineLineScale": 1.45,
+          "splineStrokeWidth": 0.7,
+          "splineScaleMode": "none",
+          "splineScaleFactor": 1
+        }
+      },
+      {
+        "id": "stage-mv78x4wi-s7rqdcs",
+        "kind": "effect",
+        "label": "N2: tangent vectors, coefficient 0.8",
+        "enabled": true,
+        "config": {
+          "effectType": "splineLines",
+          "splineSource": "circle",
+          "splineSelector": "circle",
+          "splinePointCount": 12,
+          "splineStepsPerSegment": 2,
+          "splineTension": 0.2,
+          "splineLineOrientation": "tangent",
+          "splineLineHeight": 31,
+          "splineLineScale": 0.8,
+          "splineStrokeWidth": 0.7,
+          "splineScaleMode": "none",
+          "splineScaleFactor": 1
+        }
+      },
+      {
+        "id": "stage-mv78x4wi-zls4qq9",
+        "kind": "transform",
+        "label": "A^3: repeated rotation and contraction",
+        "enabled": true,
+        "config": {
+          "stack": [
+            {
+              "kind": "rotate",
+              "deg": -1.7
+            },
+            {
+              "kind": "zoom",
+              "factor": 0.98
+            },
+            {
+              "kind": "rotate",
+              "deg": -1.7
+            },
+            {
+              "kind": "zoom",
+              "factor": 0.98
+            },
+            {
+              "kind": "rotate",
+              "deg": -1.7
+            },
+            {
+              "kind": "zoom",
+              "factor": 0.98
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "__scriptOps": {
+    "ui": {
+      "codeText": "// ctx.root is the <g> subtree being processed\n// ctx.svg is the owning <svg>\n// ctx.create(tag) creates an SVG element\n//\n// Example: circle -> 6-gon (polygon)\n// for (const c of ctx.root.querySelectorAll(\"circle\")) {\n//   const cx = Number(c.getAttribute(\"cx\") || 0);\n//   const cy = Number(c.getAttribute(\"cy\") || 0);\n//   const r = Number(c.getAttribute(\"r\") || 0);\n//   const n = 6;\n//   const pts = Array.from({length:n}, (_,i) => {\n//     const a = (Math.PI*2*i)/n;\n//     return [cx + r*Math.cos(a), cy + r*Math.sin(a)].join(\",\");\n//   }).join(\" \");\n//   const p = ctx.create(\"polygon\");\n//   p.setAttribute(\"points\", pts);\n//   for (const {name,value} of Array.from(c.attributes)) {\n//     if (name === \"cx\" || name === \"cy\" || name === \"r\") continue;\n//     p.setAttribute(name, value);\n//   }\n//   c.replaceWith(p);\n// }",
+      "fileName": "",
+      "selectedCacheKey": "",
+      "autoRunSelected": false,
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": [],
+    "cache": {}
+  }
+}

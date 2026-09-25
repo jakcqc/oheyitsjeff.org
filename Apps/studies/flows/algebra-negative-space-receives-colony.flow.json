@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "name": "Negative Space Receives the Colony",
+  "stages": [
+    {
+      "id": "stage-mues67do-sga6i8d",
+      "kind": "effect",
+      "label": "Project alternating thresholds to sampled polygons",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "convert",
+        "convertFrom": "path",
+        "convertTo": "polygon",
+        "selector": "path:nth-of-type(2n)",
+        "pathSamplePoints": 72,
+        "convertScaleMode": "none",
+        "convertScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues67do-tf2lm0i",
+      "kind": "effect",
+      "label": "Remove concentration interiors",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "paint",
+        "elementType": "path",
+        "selector": "path,polygon",
+        "paintFill": "none",
+        "paintStroke": "#dedede"
+      }
+    },
+    {
+      "id": "stage-mues67do-p60757t",
+      "kind": "effect",
+      "label": "Differentiate the projected polygon boundary",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "splineLines",
+        "splineSource": "polygon",
+        "splineSelector": "polygon[data-convert-run]",
+        "splinePointCount": 36,
+        "splineStepsPerSegment": 3,
+        "splineTension": 0.52,
+        "splineLineOrientation": "normal",
+        "splineLineHeight": 4.6,
+        "splineLineScale": 1.2,
+        "splineStrokeWidth": 0.25
+      }
+    },
+    {
+      "id": "stage-mues67do-x2fev00",
+      "kind": "effect",
+      "label": "Neutral contour spectrum",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "color",
+        "color": {
+          "selector": "path,line,polygon",
+          "sourceProp": "stroke",
+          "targetProp": "stroke",
+          "mode": "byIndex",
+          "colorSort": "appearance",
+          "paletteText": "#5c5c5c,#fafafa",
+          "paletteSteps": 33,
+          "useComputed": true,
+          "skipNone": true
+        }
+      }
+    },
+    {
+      "id": "stage-mues67do-4dfo3db",
+      "kind": "transform",
+      "label": "Small anisotropic colony stretch",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "matrix",
+            "m": [
+              0.96,
+              0.024,
+              -0.024,
+              1.025,
+              49,
+              -37
+            ]
+          }
+        ],
+        "ui": {
+          "splitMode": "fit"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "name": "Residues of a Three Color Quotient",
+  "stages": [
+    {
+      "id": "stage-mues67b8-p613ehi",
+      "kind": "effect",
+      "label": "choose ink on rect",
+      "enabled": true,
+      "config": {
+        "effectType": "paint",
+        "selector": "rect",
+        "paintFill": "none",
+        "paintStroke": "#112c7d"
+      }
+    },
+    {
+      "id": "stage-mues67b8-ie3c9y8",
+      "kind": "effect",
+      "label": "nested homothetic echoes",
+      "enabled": true,
+      "config": {
+        "effectType": "scale",
+        "selector": "rect",
+        "elementType": "rect",
+        "rangeMin": 0.32,
+        "rangeMax": 1.55,
+        "count": 4,
+        "spacing": "linear",
+        "opacityMode": "fixed",
+        "opacityFixed": 0.78,
+        "equation": ""
+      }
+    },
+    {
+      "id": "stage-mues67b8-onk1i1l",
+      "kind": "effect",
+      "label": "palette as ordered spectrum",
+      "enabled": true,
+      "config": {
+        "effectType": "color",
+        "color": {
+          "selector": "rect",
+          "sourceProp": "stroke",
+          "targetProp": "stroke",
+          "mode": "byIndex",
+          "colorSort": "appearance",
+          "paletteText": "#22104f,#a51a70,#a7621a",
+          "paletteSteps": 48,
+          "useComputed": true,
+          "skipNone": true,
+          "sizeSource": "bboxArea",
+          "sizeAttr": "r"
+        }
+      }
+    },
+    {
+      "id": "stage-mues67b8-va4fg4r",
+      "kind": "effect",
+      "label": "normal spline differential",
+      "enabled": true,
+      "config": {
+        "effectType": "splineLines",
+        "splineSource": "rect",
+        "splineSelector": "rect:nth-of-type(2n)",
+        "splinePointCount": 8,
+        "splineStepsPerSegment": 3,
+        "splineTension": 0.15,
+        "splineLineOrientation": "normal",
+        "splineLineHeight": 67,
+        "splineLineScale": 1,
+        "splineStrokeWidth": 0.72,
+        "splineScaleMode": "none",
+        "splineScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues67b8-bp6vjiq",
+      "kind": "transform",
+      "label": "small final affine change",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": -2.4
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.97
+          }
+        ]
+      }
+    }
+  ]
+}

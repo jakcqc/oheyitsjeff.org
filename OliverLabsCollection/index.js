@@ -9,9 +9,11 @@
  */
 
 import { runVisualApp } from "../helper/visualHelp.js";
+import { preloadLinkedSettings } from "../helper/linkedSettings.js";
 import "./OliverLabsCollection_visual.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  if (!await preloadLinkedSettings("oliverLabsCollection")) return;
   runVisualApp({
     visualId: "oliverLabsCollection",
     mountEl: document.getElementById("vis"),

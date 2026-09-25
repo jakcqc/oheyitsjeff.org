@@ -1,0 +1,81 @@
+{
+  "title": "Superposition of Two Boundary Languages",
+  "source": "InnerLight/index.js",
+  "visualId": "innerLight",
+  "seed": 925321,
+  "frames": 0,
+  "algebra": {
+    "expression": "A = T[1.3deg,0.98] (N(Q_11^82) plus B_tangent(C_every3) plus R)",
+    "interpretation": "Nested rectangles retain their original boundary language. Eleven-sided contours become normal vectors and one in three concentric circles becomes a tangent bundle, superimposing three incompatible descriptions of the same center.",
+    "order": "Read operators right to left; tool flow arrays execute top to bottom. P changes paint, C changes shape, K maps colors, H creates concentric scale copies, N samples normal marks, B samples tangent or vertical marks, T is a small affine transform."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebra-two-boundary-languages.flow.json",
+  "nativeSettings": "../settings/algebra-two-boundary-languages.json",
+  "observedStages": [
+    {
+      "label": "choose ink on rect",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 237,
+      "afterShapes": 237,
+      "messages": [
+        "paint applied: 70 elements."
+      ]
+    },
+    {
+      "label": "choose ink on circle",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 237,
+      "afterShapes": 237,
+      "messages": [
+        "paint applied: 85 elements."
+      ]
+    },
+    {
+      "label": "normal spline differential",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 237,
+      "afterShapes": 8355,
+      "messages": [
+        "spline lines applied: 82 shapes, 8200 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "tangent spline differential",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 8355,
+      "afterShapes": 10371,
+      "messages": [
+        "spline lines applied: 28 shapes, 2044 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "monochrome luminance palette",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 10371,
+      "afterShapes": 10371,
+      "messages": [
+        "color applied: 10371 elements, 48 mapped colors."
+      ]
+    },
+    {
+      "label": "small final affine change",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 10371,
+      "afterShapes": 10371,
+      "messages": []
+    }
+  ]
+}

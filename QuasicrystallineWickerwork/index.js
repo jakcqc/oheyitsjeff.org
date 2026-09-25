@@ -9,9 +9,11 @@
  */
 
 import { runVisualApp } from "../helper/visualHelp.js";
+import { preloadLinkedSettings } from "../helper/linkedSettings.js";
 import "./QuasicrystallineWickerwork_visual.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  if (!await preloadLinkedSettings("quasicrystallineWickerwork")) return;
   runVisualApp({
     visualId: "quasicrystallineWickerwork",
     mountEl: document.getElementById("vis"),

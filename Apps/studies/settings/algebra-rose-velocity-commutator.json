@@ -1,0 +1,239 @@
+{
+  "bandCount": 28,
+  "bandWidth": 0.9,
+  "bandJitter": 95,
+  "amplitude": 235,
+  "frequency": 7.3,
+  "noise": 0.05,
+  "detail": 0.8,
+  "swirlCount": 9,
+  "swirlStrength": 3.4,
+  "swirlRadius": 490,
+  "strokeOpacity": 0.76,
+  "strokeMode": false,
+  "strokeColor": "#f2f2f2",
+  "seed": 925407,
+  "palette": "rose",
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0,
+      "preset": "",
+      "splitMode": "fit",
+      "applyToAll": false,
+      "tileTargets": "0",
+      "zoomFactor": 1.25,
+      "matrix": {
+        "a": 1,
+        "b": 0,
+        "c": 0,
+        "d": 1,
+        "e": 0,
+        "f": 0
+      },
+      "zoomCenter": {
+        "x": null,
+        "y": null
+      },
+      "translateVec": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCount": 3,
+      "planeBaseScale": 1,
+      "planeScaleStep": -0.12,
+      "planeOpacity": 0.7,
+      "planeOpacityFalloff": 0.12,
+      "planeOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCenter": {
+        "x": null,
+        "y": null
+      },
+      "groupOpen": {}
+    },
+    "stack": [
+      {
+        "kind": "matrix",
+        "m": [
+          1,
+          0.018,
+          -0.052,
+          1,
+          36,
+          -14
+        ]
+      }
+    ]
+  },
+  "__ui": {
+    "tabsOpen": true,
+    "activeTab": "params",
+    "paramGroups": {
+      "System": false,
+      "Structure": false,
+      "Styling": true,
+      "Flow": true
+    },
+    "collapseParamsByDefault": true,
+    "ioOpen": true,
+    "configPinned": true,
+    "navHidden": false
+  },
+  "__propOps": {
+    "ui": {
+      "ruleText": "{\n        \"selector\": {\"circle\":{\"r\":{\"range\":[20,100]}}},\n        \"apply\": {\"stroke\": null}\n        }",
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": []
+  },
+  "__scriptOps": {
+    "ui": {
+      "codeText": "// ctx.root is the <g> subtree being processed\n// ctx.svg is the owning <svg>\n// ctx.create(tag) creates an SVG element\n//\n// Example: circle -> 6-gon (polygon)\n// for (const c of ctx.root.querySelectorAll(\"circle\")) {\n//   const cx = Number(c.getAttribute(\"cx\") || 0);\n//   const cy = Number(c.getAttribute(\"cy\") || 0);\n//   const r = Number(c.getAttribute(\"r\") || 0);\n//   const n = 6;\n//   const pts = Array.from({length:n}, (_,i) => {\n//     const a = (Math.PI*2*i)/n;\n//     return [cx + r*Math.cos(a), cy + r*Math.sin(a)].join(\",\");\n//   }).join(\" \");\n//   const p = ctx.create(\"polygon\");\n//   p.setAttribute(\"points\", pts);\n//   for (const {name,value} of Array.from(c.attributes)) {\n//     if (name === \"cx\" || name === \"cy\" || name === \"r\") continue;\n//     p.setAttribute(name, value);\n//   }\n//   c.replaceWith(p);\n// }",
+      "fileName": "",
+      "selectedCacheKey": "",
+      "autoRunSelected": false,
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": [],
+    "cache": {}
+  },
+  "__anim": {
+    "ui": {
+      "targetType": "params",
+      "paramTargets": [
+        {
+          "key": "bandCount",
+          "from": 10,
+          "to": 800
+        },
+        {
+          "key": "bandWidth",
+          "from": 1,
+          "to": 20
+        }
+      ],
+      "paramKey": "",
+      "selector": "svg",
+      "svgKind": "attr",
+      "svgName": "opacity",
+      "durationSec": 7,
+      "fps": 24,
+      "easing": "linear",
+      "loop": true,
+      "yoyo": false,
+      "progress01": 1,
+      "autoFromCurrent": false,
+      "snapToEndOnStop": true,
+      "autoPlay": true
+    }
+  },
+  "usePreset": false,
+  "presetSvg": "",
+  "__toolFlows": {
+    "ui": {
+      "flowName": "Rose Velocity Commutator",
+      "selectedId": "builtin-grayscale",
+      "autoRun": true,
+      "groupsOpen": {}
+    },
+    "stages": [
+      {
+        "id": "stage-mues67dr-nibwuf2",
+        "kind": "effect",
+        "label": "Encode band order before subdivision",
+        "enabled": true,
+        "config": {
+          "autoRun": false,
+          "debug": false,
+          "effectType": "color",
+          "color": {
+            "selector": "path",
+            "sourceProp": "stroke",
+            "targetProp": "stroke",
+            "mode": "byIndex",
+            "colorSort": "appearance",
+            "paletteText": "#ec5479,#ffa668,#ffe6bb,#824fcd",
+            "paletteSteps": 28,
+            "useComputed": true,
+            "skipNone": true
+          }
+        }
+      },
+      {
+        "id": "stage-mues67dr-y44puu3",
+        "kind": "effect",
+        "label": "Replace odd bands with normal velocity strokes",
+        "enabled": true,
+        "config": {
+          "autoRun": false,
+          "debug": false,
+          "effectType": "splineLines",
+          "splineSource": "path",
+          "splineSelector": "path:nth-of-type(2n+1)",
+          "splinePointCount": 72,
+          "splineStepsPerSegment": 4,
+          "splineTension": 0.32,
+          "splineLineOrientation": "normal",
+          "splineLineHeight": 51,
+          "splineLineScale": 1.1,
+          "splineStrokeWidth": 0.9
+        }
+      },
+      {
+        "id": "stage-mues67dr-fzpcbuz",
+        "kind": "effect",
+        "label": "Re-index one quarter of the newly emitted strokes",
+        "enabled": true,
+        "config": {
+          "autoRun": false,
+          "debug": false,
+          "effectType": "color",
+          "color": {
+            "selector": "line:nth-of-type(4n)",
+            "sourceProp": "stroke",
+            "targetProp": "stroke",
+            "mode": "byIndex",
+            "colorSort": "appearance",
+            "paletteText": "#49d8dc,#e8eac2",
+            "paletteSteps": 17,
+            "useComputed": true,
+            "skipNone": true
+          }
+        }
+      },
+      {
+        "id": "stage-mues67dr-j0brtix",
+        "kind": "transform",
+        "label": "Small differential shear",
+        "enabled": true,
+        "config": {
+          "stack": [
+            {
+              "kind": "matrix",
+              "m": [
+                1,
+                0.018,
+                -0.052,
+                1,
+                36,
+                -14
+              ]
+            }
+          ],
+          "ui": {
+            "splitMode": "fit"
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,202 @@
+{
+  "running": true,
+  "tickMs": 16,
+  "speed": 29,
+  "outlinePad": 0,
+  "outlineLag": 0.36,
+  "outlineScale": 1.4,
+  "outlineShape": "ellipse",
+  "outlineStrokeWidth": 0.15,
+  "lineColor": "#eee8da",
+  "backgroundColor": "#080b12",
+  "dotStrokeWidth": 0.15,
+  "collisionPush": 2.4,
+  "showMergePaths": false,
+  "mergeContactRatio": 0.97,
+  "mergeMaxPairs": 72,
+  "mergeSmoothing": 0.99,
+  "mergeFalloff": 0,
+  "mergeEffectStyle": "ring",
+  "mergeEffectColor": "#aa0000",
+  "ringCount": 62,
+  "fitCells": false,
+  "fitFillRatio": 0.35,
+  "ringMinRadius": 10,
+  "ringMaxRadius": 105,
+  "showMultiRing": true,
+  "multiRingCount": 74,
+  "multiRingStart": 0.15,
+  "multiRingGap": 3.2,
+  "multiRingStrokeWidth": 0.45,
+  "multiRingOpacity": 0.4,
+  "multiRingFade": 0.004,
+  "multiRingColor": "#eee8da",
+  "ringColorMode": "uniform",
+  "ringColorA": "#ffffff",
+  "ringColorB": "#000000",
+  "multiRingPalette": "#aa0000,#0088ff,#00aa44,#ffa500",
+  "showCircleRect": false,
+  "circleStrokeWidth": 0.2,
+  "circleRectColor": "#000000",
+  "showTrail": true,
+  "trailEveryN": 3,
+  "trailLength": 80,
+  "trailOpacity": 0.08,
+  "trailRadius": 2.6,
+  "trailColor": "#eee8da",
+  "trailStrokeColor": "#eee8da",
+  "trailStrokeWidth": 0.2,
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0,
+      "preset": "",
+      "splitMode": "fit",
+      "applyToAll": false,
+      "tileTargets": "0",
+      "zoomFactor": 1.25,
+      "matrix": {
+        "a": 1,
+        "b": 0,
+        "c": 0,
+        "d": 1,
+        "e": 0,
+        "f": 0
+      },
+      "zoomCenter": {
+        "x": null,
+        "y": null
+      },
+      "translateVec": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCount": 3,
+      "planeBaseScale": 1,
+      "planeScaleStep": -0.12,
+      "planeOpacity": 0.7,
+      "planeOpacityFalloff": 0.12,
+      "planeOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCenter": {
+        "x": null,
+        "y": null
+      },
+      "groupOpen": {}
+    },
+    "stack": [
+      {
+        "kind": "matrix",
+        "m": [
+          1,
+          0.18,
+          -0.18,
+          1,
+          126,
+          -144
+        ]
+      }
+    ]
+  },
+  "__toolFlows": {
+    "ui": {
+      "flowName": "Halo Collision Engine",
+      "selectedId": "builtin-grayscale",
+      "autoRun": true,
+      "groupsOpen": {}
+    },
+    "stages": [
+      {
+        "id": "stage-mues66gh-vx1hoqo",
+        "kind": "effect",
+        "label": "Nested circle echoes",
+        "enabled": true,
+        "config": {
+          "autoRun": false,
+          "debug": false,
+          "effectType": "scale",
+          "elementType": "circle",
+          "selector": "circle:nth-of-type(13n)",
+          "count": 3,
+          "rangeMin": 0.25,
+          "rangeMax": 3.5,
+          "spacing": "linear",
+          "opacityMode": "ramp",
+          "opacityMin": 0.18,
+          "opacityMax": 0.88,
+          "equation": ""
+        }
+      },
+      {
+        "id": "stage-mues66gh-p9d2n2x",
+        "kind": "effect",
+        "label": "monochrome luminance palette",
+        "enabled": true,
+        "config": {
+          "effectType": "color",
+          "color": {
+            "selector": "*",
+            "sourceProp": "each",
+            "targetProp": "both",
+            "mode": "byLuminance",
+            "colorSort": "luminance",
+            "paletteText": "#777777, #fafafa",
+            "paletteSteps": 48,
+            "useComputed": true,
+            "skipNone": true
+          }
+        }
+      },
+      {
+        "id": "stage-mues66gh-9watxna",
+        "kind": "transform",
+        "label": "Sheared cellular interference",
+        "enabled": true,
+        "config": {
+          "stack": [
+            {
+              "kind": "matrix",
+              "m": [
+                1,
+                0.18,
+                -0.18,
+                1,
+                126,
+                -144
+              ]
+            }
+          ],
+          "ui": {
+            "splitMode": "fit"
+          }
+        }
+      }
+    ]
+  },
+  "__propOps": {
+    "ui": {
+      "ruleText": "{\n        \"selector\": {\"circle\":{\"r\":{\"range\":[20,100]}}},\n        \"apply\": {\"stroke\": null}\n        }",
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": []
+  },
+  "__scriptOps": {
+    "ui": {
+      "codeText": "// ctx.root is the <g> subtree being processed\n// ctx.svg is the owning <svg>\n// ctx.create(tag) creates an SVG element\n//\n// Example: circle -> 6-gon (polygon)\n// for (const c of ctx.root.querySelectorAll(\"circle\")) {\n//   const cx = Number(c.getAttribute(\"cx\") || 0);\n//   const cy = Number(c.getAttribute(\"cy\") || 0);\n//   const r = Number(c.getAttribute(\"r\") || 0);\n//   const n = 6;\n//   const pts = Array.from({length:n}, (_,i) => {\n//     const a = (Math.PI*2*i)/n;\n//     return [cx + r*Math.cos(a), cy + r*Math.sin(a)].join(\",\");\n//   }).join(\" \");\n//   const p = ctx.create(\"polygon\");\n//   p.setAttribute(\"points\", pts);\n//   for (const {name,value} of Array.from(c.attributes)) {\n//     if (name === \"cx\" || name === \"cy\" || name === \"r\") continue;\n//     p.setAttribute(name, value);\n//   }\n//   c.replaceWith(p);\n// }",
+      "fileName": "",
+      "selectedCacheKey": "",
+      "autoRunSelected": false,
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": [],
+    "cache": {}
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "curveMode": "peano",
+  "curveScalingMode": "globalClip",
+  "hilbertOrder": 5,
+  "peanoOrder": 5,
+  "detailStepPx": 5,
+  "curveCellPx": 96,
+  "lineInsetPx": 11,
+  "minRectSize": 75,
+  "maxRectSize": 380,
+  "minRectAspect": 0.3,
+  "maxRectAspect": 4.4,
+  "maxRectangles": 80,
+  "palette": "blueprint",
+  "lineWidth": 1.1,
+  "lineOpacity": 0.9,
+  "showRectFill": false,
+  "rectFillOpacity": 0.28,
+  "showOutlines": false,
+  "outlineWidth": 1,
+  "seed": 271828,
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0
+    },
+    "stack": []
+  }
+}

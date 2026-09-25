@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "name": "A Grid Learns to Exhale",
+  "stages": [
+    {
+      "id": "stage-mues67b6-qvcopr8",
+      "kind": "effect",
+      "label": "rect becomes circle",
+      "enabled": true,
+      "config": {
+        "effectType": "convert",
+        "selector": "rect",
+        "convertFrom": "rect",
+        "convertTo": "circle",
+        "pathSamplePoints": 24,
+        "convertScaleMode": "center",
+        "convertScaleFactor": 0.9
+      }
+    },
+    {
+      "id": "stage-mues67b6-l570obz",
+      "kind": "effect",
+      "label": "choose ink on circle",
+      "enabled": true,
+      "config": {
+        "effectType": "paint",
+        "selector": "circle",
+        "paintFill": "none",
+        "paintStroke": "#ef8d30"
+      }
+    },
+    {
+      "id": "stage-mues67b6-jvnxdba",
+      "kind": "effect",
+      "label": "palette as ordered spectrum",
+      "enabled": true,
+      "config": {
+        "effectType": "color",
+        "color": {
+          "selector": "circle",
+          "sourceProp": "stroke",
+          "targetProp": "stroke",
+          "mode": "byIndex",
+          "colorSort": "appearance",
+          "paletteText": "#621cff, #00dbc8, #ff639e, #ffdc71",
+          "paletteSteps": 48,
+          "useComputed": true,
+          "skipNone": true,
+          "sizeSource": "bboxArea",
+          "sizeAttr": "r"
+        }
+      }
+    },
+    {
+      "id": "stage-mues67b6-f2kev8h",
+      "kind": "effect",
+      "label": "normal spline differential",
+      "enabled": true,
+      "config": {
+        "effectType": "splineLines",
+        "splineSource": "circle",
+        "splineSelector": "circle",
+        "splinePointCount": 16,
+        "splineStepsPerSegment": 3,
+        "splineTension": 0.15,
+        "splineLineOrientation": "normal",
+        "splineLineHeight": 49,
+        "splineLineScale": 1,
+        "splineStrokeWidth": 0.65,
+        "splineScaleMode": "none",
+        "splineScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues67b6-5iv5e45",
+      "kind": "transform",
+      "label": "small final affine change",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": 2.3
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.97
+          }
+        ]
+      }
+    }
+  ]
+}

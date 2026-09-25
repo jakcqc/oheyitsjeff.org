@@ -1,0 +1,106 @@
+{
+  "title": "Cell State Becomes Chromatic Charge",
+  "source": "GameOfLife_aug/gameOfLife.js",
+  "visualId": "gameOfLifeSVG",
+  "seed": 925312,
+  "frames": 3,
+  "algebra": {
+    "expression": "A = T[4.2deg] N[8,3,67] K_index[blue,cyan,magenta,gold] C[rect->closed-path,0.74] (F^2(L)-L_white)",
+    "interpretation": "After a short protofield update, discard white cells and reinterpret each remaining state as a closed quadrilateral path. Index-ordered color and outward spline normals interfere across neighboring occupied sites.",
+    "order": "Read operators right to left; tool flow arrays execute top to bottom. P changes paint, C changes shape, K maps colors, H creates concentric scale copies, N samples normal marks, B samples tangent or vertical marks, T is a small affine transform."
+  },
+  "propertyPrefix": [
+    {
+      "kind": "propRule",
+      "selector": {
+        "rect": {
+          "fill": {
+            "eq": "#ffffff"
+          }
+        }
+      },
+      "apply": {
+        "$delete": true
+      }
+    }
+  ],
+  "nativeFlow": "../flows/algebra-cell-state-chromatic-charge.flow.json",
+  "nativeSettings": "../settings/algebra-cell-state-chromatic-charge.json",
+  "observedStages": [
+    {
+      "label": "Native property-rule prefix",
+      "kind": "property",
+      "changed": true,
+      "beforeShapes": 2394,
+      "afterShapes": 509,
+      "rules": [
+        {
+          "kind": "propRule",
+          "selector": {
+            "rect": {
+              "fill": {
+                "eq": "#ffffff"
+              }
+            }
+          },
+          "apply": {
+            "$delete": true
+          }
+        }
+      ]
+    },
+    {
+      "label": "rect becomes a closed quadrilateral path",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 509,
+      "afterShapes": 509,
+      "messages": [
+        "convert applied: 509 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "choose ink on closed path",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 509,
+      "afterShapes": 509,
+      "messages": [
+        "paint applied: 509 elements."
+      ]
+    },
+    {
+      "label": "palette as ordered spectrum",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 509,
+      "afterShapes": 509,
+      "messages": [
+        "color applied: 509 elements, 48 mapped colors."
+      ]
+    },
+    {
+      "label": "normal spline differential",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 509,
+      "afterShapes": 12725,
+      "messages": [
+        "spline lines applied: 509 shapes, 12725 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "small final affine change",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 12725,
+      "afterShapes": 12725,
+      "messages": []
+    }
+  ]
+}

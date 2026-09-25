@@ -1,0 +1,267 @@
+/*!
+ * Copyright (c) 2026 Jeffrey Kerley.
+ * SPDX-License-Identifier: LicenseRef-Jeffrey-Kerley-NC-NoAI-1.0
+ * See LICENSE.md at the repository root for the full terms.
+ */
+
+/* The normal toolbar keeps uiHelper's vertical tabs and natural panel sizing. */
+.vr-dockHost .vr-dockWorkspace {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.vr-dockHost .vr-dockPane {
+  position: relative;
+}
+
+.vr-dockHost .vr-dockTabs .vr-tab[draggable="true"] {
+  cursor: grab;
+  touch-action: none;
+}
+
+.vr-dockHost [hidden] {
+  display: none !important;
+}
+
+/* Only split layouts need bounded space and independent panel scrolling. */
+.vr-autoUI.vr-dockHost.is-split {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  height: min(68vh, 760px);
+  overflow: hidden;
+}
+
+#config.pinned .vr-autoUI.vr-dockHost.is-split {
+  height: auto;
+  flex: 1 1 0;
+}
+
+.vr-dockHost .vr-dockLayout.has-splits {
+  align-items: stretch;
+  flex: 1 1 0;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.vr-dockHost .has-splits > .vr-tabCol {
+  flex-shrink: 0;
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+.vr-dockHost .has-splits > .vr-dockWorkspace {
+  display: flex;
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.vr-dockHost .has-splits .vr-dockWorkspace > .vr-dockSplit,
+.vr-dockHost .has-splits .vr-dockWorkspace > .vr-dockPane {
+  flex: 1 1 0;
+}
+
+.vr-dockHost .vr-dockSplit {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.vr-dockHost .vr-dockSplit[data-axis="row"] {
+  flex-direction: row;
+}
+
+.vr-dockHost .vr-dockSplit[data-axis="column"] {
+  flex-direction: column;
+}
+
+.vr-dockHost .vr-dockChild {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.vr-dockHost .vr-dockChild > .vr-dockPane,
+.vr-dockHost .vr-dockChild > .vr-dockSplit {
+  flex: 1 1 0;
+}
+
+.vr-dockHost .has-splits .vr-dockPane {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.vr-dockHost .has-splits .vr-dockBody {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.vr-dockHost .vr-dockDivider {
+  position: relative;
+  flex: 0 0 8px;
+  min-width: 0;
+  min-height: 0;
+  touch-action: none;
+  user-select: none;
+  z-index: 2;
+}
+
+.vr-dockHost .vr-dockDivider::after {
+  content: "";
+  position: absolute;
+  border-radius: 2px;
+  background: #666;
+}
+
+.vr-dockHost .vr-dockSplit[data-axis="row"] > .vr-dockDivider {
+  cursor: col-resize;
+}
+
+.vr-dockHost .vr-dockSplit[data-axis="row"] > .vr-dockDivider::after {
+  top: 35%;
+  bottom: 35%;
+  left: 3px;
+  width: 2px;
+}
+
+.vr-dockHost .vr-dockSplit[data-axis="column"] > .vr-dockDivider {
+  cursor: row-resize;
+}
+
+.vr-dockHost .vr-dockSplit[data-axis="column"] > .vr-dockDivider::after {
+  left: 35%;
+  right: 35%;
+  top: 3px;
+  height: 2px;
+}
+
+.vr-dockHost .vr-dockDivider:hover::after,
+.vr-dockHost .vr-dockDivider:focus-visible::after {
+  background: #fffeb4;
+}
+
+.vr-dockHost .vr-dockDivider:focus-visible {
+  outline: 2px solid #8dc9ff;
+  outline-offset: -2px;
+}
+
+/* Drop targets appear over the existing panel only during a tab drag. */
+.vr-dockHost .vr-dockDropZones {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.vr-dockHost.dragging .vr-dockDropZones,
+.vr-dockHost .vr-dockLayout.dragging .vr-dockDropZones {
+  display: block;
+}
+
+.vr-dockHost .vr-dockDropTarget {
+  position: absolute;
+  box-sizing: border-box;
+  border: 1px dashed rgba(255, 254, 180, 0.6);
+  background: rgba(255, 254, 180, 0.06);
+  pointer-events: auto;
+}
+
+.vr-dockHost .vr-dockDropTarget[data-edge="center"] {
+  inset: 26%;
+}
+
+.vr-dockHost .vr-dockDropTarget[data-edge="top"] {
+  inset: 0 25% auto;
+  height: 25%;
+}
+
+.vr-dockHost .vr-dockDropTarget[data-edge="bottom"] {
+  inset: auto 25% 0;
+  height: 25%;
+}
+
+.vr-dockHost .vr-dockDropTarget[data-edge="left"] {
+  inset: 0 auto 0 0;
+  width: 25%;
+}
+
+.vr-dockHost .vr-dockDropTarget[data-edge="right"] {
+  inset: 0 0 0 auto;
+  width: 25%;
+}
+
+.vr-dockHost .vr-dockDropTarget.is-over {
+  border-style: solid;
+  border-color: #fffeb4;
+  background: rgba(255, 254, 180, 0.3);
+}
+
+.vr-dockHost .vr-dockLive {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.vr-dockDragGhost {
+  position: fixed;
+  z-index: 10010;
+  padding: 4px 5px;
+  border: 1px solid #666;
+  border-radius: 4px;
+  background: #2f2f2f;
+  color: white;
+  font-size: 15px;
+  pointer-events: none;
+}
+
+.vr-dockDragging .vr-dockHost,
+.vr-dockDragging .vr-dockHost * {
+  cursor: grabbing !important;
+  user-select: none;
+}
+
+.vr-dockHost .vr-dockLayout.resizing,
+.vr-dockHost .vr-dockLayout.resizing * {
+  user-select: none;
+}
+
+@media (max-width: 700px) {
+  .vr-autoUI.vr-dockHost.is-split {
+    height: auto;
+    flex: 1 1 0;
+  }
+}
+
+@media (pointer: coarse) {
+  .vr-dockHost .vr-dockDivider {
+    flex-basis: 12px;
+  }
+
+  .vr-dockHost .vr-dockSplit[data-axis="row"] > .vr-dockDivider::after {
+    left: 5px;
+  }
+
+  .vr-dockHost .vr-dockSplit[data-axis="column"] > .vr-dockDivider::after {
+    top: 5px;
+  }
+}

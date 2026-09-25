@@ -1,0 +1,102 @@
+{
+  "title": "Eleven-Sided Time Machine",
+  "source": "InnerLight/index.js",
+  "visualId": "innerLight",
+  "seed": 926705,
+  "frames": 0,
+  "algebra": {
+    "edition": "wild",
+    "expression": "A o C o N o E (G)",
+    "convention": "Compose right to left. One composition per app in this batch; no paired variants. Coefficients are concrete native operator parameters.",
+    "coefficients": {
+      "E1": {
+        "rangeMin": -1.618,
+        "rangeMax": 2.618,
+        "count": 6,
+        "opacityFixed": 0.82,
+        "spacing": "linear",
+        "recurrence": "sum(backward):opacity *0.72"
+      },
+      "N2": {
+        "splinePointCount": 11,
+        "splineStepsPerSegment": 3,
+        "splineTension": -3.2,
+        "splineAngleOffset": 72,
+        "splineLineHeight": 30,
+        "splineLineScale": 2.9,
+        "splineStrokeWidth": 1.5,
+        "splineScaleFactor": 1
+      },
+      "C3": {
+        "mapping": "bySize",
+        "paletteSteps": 7
+      },
+      "A4": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": 137.507
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.68
+          }
+        ]
+      }
+    },
+    "interpretation": "Eleven-sided rings travel through signed golden-ratio scales, then fracture into angled vectors with negative tension. Source size determines the spectral layer.",
+    "newCapabilities": [
+      "logarithmic echo spacing",
+      "unclamped spline tension when enabled",
+      "vector angle offset"
+    ],
+    "uniqueness": "This app was not used in the first algebraCOEF batch."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebracoef-wild-eleven-sided-time-machine.flow.json",
+  "nativeSettings": "../settings/algebracoef-wild-eleven-sided-time-machine.json",
+  "observedStages": [
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 37,
+      "afterShapes": 97,
+      "messages": [
+        "scale applied: 12 groups, 72 clones."
+      ]
+    },
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 97,
+      "afterShapes": 1681,
+      "messages": [
+        "spline lines applied: 48 shapes, 1632 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 1681,
+      "afterShapes": 1681,
+      "messages": [
+        "color applied: 1681 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 1681,
+      "afterShapes": 1681,
+      "messages": []
+    }
+  ]
+}

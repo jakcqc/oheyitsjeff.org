@@ -9,6 +9,7 @@
  */
 
 import { registerVisual, runVisualApp } from "../helper/visualHelp.js";
+import { preloadLinkedSettings } from "../helper/linkedSettings.js";
 
 function clamp(n, lo, hi) {
   const x = Number(n);
@@ -43,6 +44,7 @@ function hueColor(hue, sat, light) {
 function buildMondrianSpec() {
   return {
     title: "Mondrian Abstraction",
+    simulation: { param: "motion.running" },
     description: "Pointer over tiles to animate color + transform; parameters are editable in the UI.",
     params: [
       { key: "grid.cellSize", type: "number", default: 60, min: 10, max: 220, step: 5, category: "Grid", description: "Square size in px." },
@@ -89,6 +91,7 @@ function buildMondrianSpec() {
       let prev = {};
       let layout = { cols: 0, rows: 0, cellSize: 0, svgW: 0, svgH: 0 };
       let lastHoverAt = 0;
+      const tileAnimations = new Map();
 
       function stopLoop() {
         if (rafId) cancelAnimationFrame(rafId);
@@ -173,35 +176,61 @@ function buildMondrianSpec() {
       }
 
       function applyAnimationPlan(node, plan) {
-        if (!state.motion?.enabled) return;
+        if (!state.motion?.enabled || !state.motion?.running) return;
 
         const { width, height } = plan;
         node.parentNode?.appendChild?.(node);
-
-        d3.select(node)
-          .interrupt()
-          .transition()
-          .duration(plan.durationMs)
-          .attr("x", 0)
-          .attr("y", 0)
-          .attr("transform", `translate(${width * 0.5},${height * 0.5})scale(${plan.scaleBurst})rotate(${plan.rotateDeg})`)
-          .style("fill-opacity", clamp(state.color?.burstFillOpacity, 0, 1))
-          .style("stroke", "black")
-          .style("stroke-width", "1px")
-          .transition()
-          .delay(plan.delayMs)
-          .attr("x", 0)
-          .attr("y", 0)
-          .attr("transform", `translate(${plan.tx},${plan.ty})scale(${plan.settleScale})`)
-          .style("stroke-width", `${clamp(state.grid?.strokeWidth, 0, 50)}px`)
-          .style("stroke", "black")
-          .style("stroke-opacity", clamp(state.grid?.strokeOpacity, 0, 1))
-          .style("fill-opacity", clamp(state.color?.fillOpacity, 0, 1))
-          .style("fill", plan.fill);
+        tileAnimations.get(node)?.stop();
+        const element = d3.select(node).interrupt();
+        const burst = {
+          attrs: { x: 0, y: 0, transform: `translate(${width * 0.5},${height * 0.5})scale(${plan.scaleBurst})rotate(${plan.rotateDeg})` },
+          styles: { "fill-opacity": clamp(state.color?.burstFillOpacity, 0, 1), stroke: "black", "stroke-width": "1px" },
+        };
+        const settle = {
+          attrs: { x: 0, y: 0, transform: `translate(${plan.tx},${plan.ty})scale(${plan.settleScale})` },
+          styles: {
+            "stroke-width": `${clamp(state.grid?.strokeWidth, 0, 50)}px`, stroke: "black",
+            "stroke-opacity": clamp(state.grid?.strokeOpacity, 0, 1),
+            "fill-opacity": clamp(state.color?.fillOpacity, 0, 1), fill: plan.fill,
+          },
+        };
+        const interpolateStage = (target, previous = {}) => {
+          const attrs = Object.entries(target.attrs).map(([key, value]) => [key,
+            (key === "transform" ? d3.interpolateTransformSvg : d3.interpolate)(previous.attrs?.[key] ?? element.attr(key), value)]);
+          const styles = Object.entries(target.styles).map(([key, value]) => [key,
+            d3.interpolate(previous.styles?.[key] ?? element.style(key), value)]);
+          return (progress) => {
+            for (const [key, interpolate] of attrs) element.attr(key, interpolate(progress));
+            for (const [key, interpolate] of styles) element.style(key, interpolate(progress));
+          };
+        };
+        const drawBurst = interpolateStage(burst);
+        const drawSettle = interpolateStage(settle, burst);
+        let activeElapsed = 0;
+        let lastElapsed = 0;
+        const timer = d3.timer((elapsed) => {
+          const delta = elapsed - lastElapsed;
+          lastElapsed = elapsed;
+          if (!state.motion?.running) return;
+          activeElapsed += delta;
+          if (activeElapsed <= plan.durationMs) {
+            drawBurst(d3.easeCubicInOut(plan.durationMs ? activeElapsed / plan.durationMs : 1));
+          } else if (activeElapsed < plan.durationMs + plan.delayMs) {
+            drawBurst(1);
+          } else {
+            const progress = plan.durationMs ? Math.min(1, (activeElapsed - plan.durationMs - plan.delayMs) / plan.durationMs) : 1;
+            drawSettle(d3.easeCubicInOut(progress));
+            if (progress >= 1) {
+              timer.stop();
+              tileAnimations.delete(node);
+            }
+          }
+        });
+        tileAnimations.set(node, timer);
       }
 
       function onSvgPointerMove(event) {
-        if (!state.motion?.enabled) return;
+        if (!state.motion?.enabled || !state.motion?.running) return;
         const cooldown = clamp(state.motion?.hoverCooldownMs, 0, 10000);
         const now = performance.now();
         if (cooldown > 0 && now - lastHoverAt < cooldown) return;
@@ -254,7 +283,10 @@ function buildMondrianSpec() {
 
         const sel = g.selectAll("rect").data(d3.range(count), (d) => d);
         // Only remove/rebuild tiles when the layout changes; otherwise keep in-flight tiles stable.
-        if (layoutChanged) sel.exit().remove();
+        if (layoutChanged) sel.exit().each(function() {
+          tileAnimations.get(this)?.stop();
+          tileAnimations.delete(this);
+        }).remove();
 
         const strokeWidth = clamp(state.grid?.strokeWidth, 0, 50);
         const strokeOpacity = clamp(state.grid?.strokeOpacity, 0, 1);
@@ -267,15 +299,18 @@ function buildMondrianSpec() {
 
         const all = enter.merge(sel);
 
-        // Always allow style updates (safe during flight).
-        all
-          .style("stroke-width", `${strokeWidth}px`)
-          .style("stroke-opacity", strokeOpacity);
+        // Pausing must preserve the in-flight appearance as well as position.
+        if (layoutChanged || prev.strokeWidth !== strokeWidth) all.style("stroke-width", `${strokeWidth}px`);
+        if (layoutChanged || prev.strokeOpacity !== strokeOpacity) all.style("stroke-opacity", strokeOpacity);
 
         // Only touch layout-critical attrs when the layout changes.
         // If we rewrite x/y while a tile is mid-transition (using transform), it can jump offscreen.
         if (layoutChanged) {
           all
+            .each(function() {
+              tileAnimations.get(this)?.stop();
+              tileAnimations.delete(this);
+            })
             .interrupt()
             .attr("transform", null)
             .attr("x", (i) => Math.floor((i % cols) * cellSize))
@@ -301,6 +336,8 @@ function buildMondrianSpec() {
           running: !!state.motion?.running,
           tickMs: state.motion?.tickMs,
           triggers: state.motion?.triggersPerTick,
+          strokeWidth,
+          strokeOpacity,
         };
       }
 
@@ -314,6 +351,8 @@ function buildMondrianSpec() {
         render,
         destroy() {
           stopLoop();
+          for (const timer of tileAnimations.values()) timer.stop();
+          tileAnimations.clear();
           window.removeEventListener("resize", onResize);
           svg.remove();
         },
@@ -343,7 +382,10 @@ function startMondrianApp() {
   appHandle?.instance?.render?.();
 }
 
-document.addEventListener("DOMContentLoaded", () => startMondrianApp());
+document.addEventListener("DOMContentLoaded", async () => {
+  if (!await preloadLinkedSettings("mondrianAbstraction")) return;
+  startMondrianApp();
+});
 
 window.goTo = function goTo(page) {
   window.location.href = page;

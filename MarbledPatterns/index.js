@@ -9,6 +9,7 @@
  */
 
 import { runVisualApp } from "../helper/visualHelp.js";
+import { preloadLinkedSettings } from "../helper/linkedSettings.js";
 import "./MarbledPatterns_visual.js";
 
 let appHandle = null;
@@ -123,7 +124,8 @@ function wirePresetButtons() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  if (!await preloadLinkedSettings("marbledPatterns")) return;
   startApp();
   wirePresetButtons();
 });

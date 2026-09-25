@@ -11,6 +11,7 @@
 // bacteriaVisualizer.js
 // Multiple ring-only bacteria formations with stroke-only circles and outlines.
 import { registerVisual, runVisualApp } from "../helper/visualHelp.js";
+import { preloadLinkedSettings } from "../helper/linkedSettings.js";
 
 const DOT_R = 6;
 const MERGE_CONTACT_RATIO = 0.97;
@@ -460,10 +461,17 @@ function multiRingComponent(cell, group) {
       const gap = state.multiRingGap ?? 0.25;
       const rings = Array.from({ length: count }, (_d, i) => i);
 
+      // Flow conversion replaces native rings with other SVG shapes/groups.
+      // Remove those prior outputs before the native data join restores its
+      // circles; otherwise every refresh adds another full set of spline halos.
+      group.selectAll(".multi-ring[data-spline-lines-group], .multi-ring[data-convert-run]").remove();
+      group.selectAll('g[data-scale-stack="1"]').filter(function() {
+        return !!this.querySelector("circle.multi-ring");
+      }).remove();
       ringSel = group.selectAll("circle.multi-ring").data(rings);
       ringSel.exit().remove();
       const merged = ringSel.enter()
-        .append("circle")
+        .insert("circle", ".comp-circle")
         .attr("class", "multi-ring")
         .attr("fill", "none")
         .merge(ringSel);
@@ -564,6 +572,7 @@ const CELL_COMPONENT_FACTORIES = [
 ];
 
 registerVisual("bacteriaMinimal", {
+  simulation: { param: "running" },
   title: "Bacteria Outline",
   description: "Multiple ring-shaped bacteria with controllable outline halos, trails, and ring sizes.",
   params: [
@@ -1181,7 +1190,9 @@ registerVisual("bacteriaMinimal", {
     }
 
     function start() {
-      if (!rafId) rafId = requestAnimationFrame(loop);
+      if (rafId) return;
+      lastTick = 0;
+      rafId = requestAnimationFrame(loop);
     }
     function stop() {
       if (rafId) cancelAnimationFrame(rafId);
@@ -1279,7 +1290,7 @@ async function loadPresetSettings(fileName) {
   }
 }
 
-function wirePresetButtons() {
+function wirePresetButtons({ loadDefault = true } = {}) {
   const presets = [
     { id: "preset-default", file: "bacteriaDefault.settings.json" },
     { id: "preset-cluster", file: "clusterColor.json" },
@@ -1292,12 +1303,13 @@ function wirePresetButtons() {
     if (!btn) return;
     btn.addEventListener("click", () => loadPresetSettings(file));
   });
-  loadPresetSettings("bacteriaDefault.settings.json");
+  if (loadDefault) loadPresetSettings("bacteriaDefault.settings.json");
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  if (!await preloadLinkedSettings("bacteriaMinimal")) return;
   startBacteriaApp();
-  wirePresetButtons();
+  wirePresetButtons({ loadDefault: !new URL(window.location.href).searchParams.has("settings") });
 });
 
 function goTo(page) {

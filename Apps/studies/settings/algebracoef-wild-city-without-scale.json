@@ -1,0 +1,216 @@
+{
+  "curveMode": "peano",
+  "curveScalingMode": "stretch",
+  "hilbertOrder": 5,
+  "peanoOrder": 3,
+  "detailStepPx": 9,
+  "curveCellPx": 96,
+  "lineInsetPx": 1.2,
+  "minRectSize": 12,
+  "maxRectSize": 550,
+  "minRectAspect": 0.2,
+  "maxRectAspect": 77,
+  "maxRectangles": 100,
+  "palette": "blueprint",
+  "lineWidth": 0.72,
+  "lineOpacity": 0.72,
+  "showRectFill": false,
+  "rectFillOpacity": 0.28,
+  "showOutlines": false,
+  "outlineWidth": 1,
+  "seed": 926712,
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0,
+      "preset": "",
+      "splitMode": "screen",
+      "applyToAll": false,
+      "tileTargets": "0",
+      "zoomFactor": 1.25,
+      "matrix": {
+        "a": 1,
+        "b": 0,
+        "c": 0,
+        "d": 1,
+        "e": 0,
+        "f": 0
+      },
+      "zoomCenter": {
+        "x": null,
+        "y": null
+      },
+      "translateVec": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCount": 3,
+      "planeBaseScale": 1,
+      "planeScaleStep": -0.12,
+      "planeOpacity": 0.7,
+      "planeOpacityFalloff": 0.12,
+      "planeOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCenter": {
+        "x": null,
+        "y": null
+      },
+      "groupOpen": {}
+    },
+    "stack": [
+      {
+        "kind": "rotate",
+        "deg": -21
+      },
+      {
+        "kind": "zoom",
+        "factor": 0.7
+      },
+      {
+        "kind": "planes3d",
+        "count": 4,
+        "baseScale": 0.5,
+        "scaleStep": 0.17,
+        "offset": {
+          "x": -23,
+          "y": 17
+        },
+        "opacity": 0.8,
+        "opacityFalloff": 0.14
+      }
+    ]
+  },
+  "__toolFlows": {
+    "ui": {
+      "flowName": "City Without Scale",
+      "selectedId": "builtin-grayscale",
+      "autoRun": true,
+      "groupsOpen": {}
+    },
+    "stages": [
+      {
+        "id": "stage-mues68e0-ugduxlr",
+        "kind": "effect",
+        "label": "E: scale",
+        "enabled": true,
+        "config": {
+          "effectType": "scale",
+          "elementType": "path",
+          "selector": "path:nth-of-type(3n)",
+          "rangeMin": 0.125,
+          "rangeMax": 2.2,
+          "count": 5,
+          "spacing": "logarithmic",
+          "opacityMode": "fixed",
+          "opacityFixed": 0.82,
+          "equation": "sum(forward):opacity *0.76"
+        }
+      },
+      {
+        "id": "stage-mues68e0-yfc19cf",
+        "kind": "effect",
+        "label": "C: color",
+        "enabled": true,
+        "config": {
+          "effectType": "color",
+          "color": {
+            "selector": "path,polygon,circle,rect,line",
+            "sourceProp": "each",
+            "targetProp": "stroke",
+            "mode": "bySize",
+            "colorSort": "appearance",
+            "paletteText": "#50ffe0,#8485ff,#ff59c7,#fff0ac",
+            "paletteSteps": 7,
+            "useComputed": true,
+            "skipNone": true,
+            "sizeSource": "bboxArea",
+            "sizeAttr": "r"
+          }
+        }
+      },
+      {
+        "id": "stage-mues68e0-piaak3q",
+        "kind": "effect",
+        "label": "Q: convert",
+        "enabled": true,
+        "config": {
+          "effectType": "convert",
+          "selector": "path:nth-of-type(5n)",
+          "convertFrom": "path",
+          "convertTo": "polygon",
+          "pathSamplePoints": 8,
+          "convertScaleMode": "center",
+          "convertScaleFactor": 1
+        }
+      },
+      {
+        "id": "stage-mues68e0-yrxcsjp",
+        "kind": "effect",
+        "label": "P: paint",
+        "enabled": true,
+        "config": {
+          "effectType": "paint",
+          "selector": "polygon",
+          "paintStroke": "#ffdb92",
+          "paintFill": "#da528e"
+        }
+      },
+      {
+        "id": "stage-mues68e0-n54f6v5",
+        "kind": "transform",
+        "label": "A: folded presentation",
+        "enabled": true,
+        "config": {
+          "stack": [
+            {
+              "kind": "rotate",
+              "deg": -21
+            },
+            {
+              "kind": "zoom",
+              "factor": 0.7
+            },
+            {
+              "kind": "planes3d",
+              "count": 4,
+              "baseScale": 0.5,
+              "scaleStep": 0.17,
+              "offset": {
+                "x": -23,
+                "y": 17
+              },
+              "opacity": 0.8,
+              "opacityFalloff": 0.14
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "__propOps": {
+    "ui": {
+      "ruleText": "{\n        \"selector\": {\"circle\":{\"r\":{\"range\":[20,100]}}},\n        \"apply\": {\"stroke\": null}\n        }",
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": []
+  },
+  "__scriptOps": {
+    "ui": {
+      "codeText": "// ctx.root is the <g> subtree being processed\n// ctx.svg is the owning <svg>\n// ctx.create(tag) creates an SVG element\n//\n// Example: circle -> 6-gon (polygon)\n// for (const c of ctx.root.querySelectorAll(\"circle\")) {\n//   const cx = Number(c.getAttribute(\"cx\") || 0);\n//   const cy = Number(c.getAttribute(\"cy\") || 0);\n//   const r = Number(c.getAttribute(\"r\") || 0);\n//   const n = 6;\n//   const pts = Array.from({length:n}, (_,i) => {\n//     const a = (Math.PI*2*i)/n;\n//     return [cx + r*Math.cos(a), cy + r*Math.sin(a)].join(\",\");\n//   }).join(\" \");\n//   const p = ctx.create(\"polygon\");\n//   p.setAttribute(\"points\", pts);\n//   for (const {name,value} of Array.from(c.attributes)) {\n//     if (name === \"cx\" || name === \"cy\" || name === \"r\") continue;\n//     p.setAttribute(name, value);\n//   }\n//   c.replaceWith(p);\n// }",
+      "fileName": "",
+      "selectedCacheKey": "",
+      "autoRunSelected": false,
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": [],
+    "cache": {}
+  }
+}

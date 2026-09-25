@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "name": "Color Before Normals: Membrane Memory",
+  "stages": [
+    {
+      "id": "stage-mues67g2-vqrdjys",
+      "kind": "effect",
+      "label": "Q: suppress cellular scaffolding",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "paint",
+        "elementType": "circle",
+        "selector": "g.dots circle,.outline",
+        "paintFill": "none",
+        "paintStroke": "none"
+      }
+    },
+    {
+      "id": "stage-mues67g2-6sahfjt",
+      "kind": "effect",
+      "label": "C: enumerate current marks through the same five colors",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "color",
+        "color": {
+          "selector": "circle.multi-ring,line[data-spline-lines-run]",
+          "sourceProp": "stroke",
+          "targetProp": "stroke",
+          "mode": "byIndex",
+          "colorSort": "appearance",
+          "paletteText": "#55d8cf,#626fe7,#e27aba,#ffac72,#f1e8ae",
+          "paletteSteps": 0,
+          "useComputed": true,
+          "skipNone": true
+        }
+      }
+    },
+    {
+      "id": "stage-mues67g2-g92tu55",
+      "kind": "effect",
+      "label": "N: replace each halo with normal-line spline samples",
+      "enabled": true,
+      "config": {
+        "autoRun": false,
+        "debug": false,
+        "effectType": "splineLines",
+        "splineSource": "circle",
+        "splineSelector": "circle.multi-ring",
+        "splinePointCount": 22,
+        "splineStepsPerSegment": 4,
+        "splineTension": 0.31,
+        "splineLineOrientation": "normal",
+        "splineLineHeight": 48,
+        "splineLineScale": 1,
+        "splineStrokeWidth": 1.25
+      }
+    },
+    {
+      "id": "stage-mues67g2-wgpj424",
+      "kind": "transform",
+      "label": "T: common small centered shear",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "matrix",
+            "m": [
+              0.985,
+              0.025,
+              -0.025,
+              0.985,
+              29,
+              -10
+            ]
+          }
+        ],
+        "ui": {
+          "splitMode": "fit"
+        }
+      }
+    }
+  ]
+}

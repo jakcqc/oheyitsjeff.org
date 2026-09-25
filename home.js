@@ -60,9 +60,13 @@ function getEffectiveMode() {
 }
 
 let appsViewer;
+let attachBubbleGestures;
+let clearBubbleGestures = () => {};
 let homeRenderVersion = 0;
 
 function clearHome() {
+  clearBubbleGestures();
+  clearBubbleGestures = () => {};
   homeRenderVersion++;
   appsViewer?.destroy();
   appsViewer = null;
@@ -394,39 +398,19 @@ const forceY = d3.forceY(centerY)
   .alpha(0)
   .on("tick", ticked)
   .stop(); 
-// now add drag behavior to your bubbles:
-const dragBehavior = d3.drag()
-.on("start", (event, d) => {
-  // if the simulation is “sleeping,” wake it up
-  // if (!event.active) simulation.alphaTarget(0.3).restart();
-  // fix the node’s position to the pointer
-  d.fx = d.x;
-
-  d.fy = d.y;
-  
-  runSimulationBurst(3000, 0.8,simulation);
-  
-
-})
-.on("drag", (event, d) => {
-  // move the fixed position with the pointer
-  d.fx = event.x;
-  d.fy = event.y;
-})
-.on("end", (event, d) => {
-  // release the node so simulation can re-position it
-  if (!event.active) simulation.alphaTarget(0);
-  d.fx = null;
-  d.fy = null;
-});
   // Create g for each node
    node = svg.selectAll("g.bubble")
     .data(nodes)
     .enter()
     .append("g")
     .attr("class", d => `bubble bubble--${String(d.size || "medium").toLowerCase()}`)
-    .style("cursor", "pointer")
-    .call(dragBehavior);
+    .style("cursor", "pointer");
+  clearBubbleGestures = attachBubbleGestures(node, {
+    d3,
+    simulation,
+    restartSimulation: () => runSimulationBurst(3000, 0.8, simulation),
+    activate: datum => { window.location.href = datum.link; },
+  });
 
   // Draw the bubbles. A project's optional `shape` is passed to the helper;
   // leaving it out preserves the original circular bubble.
@@ -473,7 +457,7 @@ const dragBehavior = d3.drag()
         .attr("class", `bubble-title-strip bubble-title-strip--${outerShape}`)
         .attr("fill", "none")
         .attr("stroke", outerColor === "default" || outerColor === "average" ? "var(--bubble-highlight)" : outerColor)
-        .attr("stroke-opacity", 0.25)  // also make it a bit translucent
+        .attr("stroke-opacity", 0.25)
         .attr("stroke-width", textRadius) // thickness of the white strip
         .style("filter", "drop-shadow(1 2px 6px var(--bubble-glow-soft))"); // optional shadow
 
@@ -532,11 +516,6 @@ function isOutX(d) {
 //   .on("tick", ticked);
   
 
-  // On click, go to the link
-  node.on("click", function(event, d) {
-    window.location.href = d.link;
-  });
-  
   return simulation;
 }
 
@@ -617,7 +596,9 @@ Promise.all([
   new Promise(r => document.readyState === "complete" ? r() : window.addEventListener("load", r, { once: true })),
   document.fonts.ready,
   import("./helper/galleryRegistry.js").then(({ loadGalleryProjects }) => loadGalleryProjects("main")),
-]).then(([, , registeredProjects]) => {
+  import("./helper/galleryGestures.js"),
+]).then(([, , registeredProjects, gestures]) => {
+  attachBubbleGestures = gestures.attachBubbleGestures;
   projects = shuffle(registeredProjects);
   
   initOnceStable();

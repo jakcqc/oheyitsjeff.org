@@ -1,0 +1,326 @@
+{
+  "model": "Gray-Scott",
+  "feed": 0.0307,
+  "kill": 0.0548,
+  "diffusionA": 0.8516,
+  "diffusionB": 0.3838,
+  "chemotaxis": 0.8,
+  "growth": 0.013,
+  "steps": 396,
+  "resolution": 92,
+  "seedCount": 37,
+  "seed": 254266,
+  "contourLevels": 11,
+  "cellMarks": false,
+  "markDensity": 0.42,
+  "palette": "fluorescent",
+  "backgroundColor": "#100d1b",
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0,
+      "preset": "",
+      "splitMode": "screen",
+      "applyToAll": false,
+      "tileTargets": "0",
+      "zoomFactor": 1.25,
+      "matrix": {
+        "a": 1,
+        "b": 0,
+        "c": 0,
+        "d": 1,
+        "e": 0,
+        "f": 0
+      },
+      "zoomCenter": {
+        "x": null,
+        "y": null
+      },
+      "translateVec": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCount": 3,
+      "planeBaseScale": 1,
+      "planeScaleStep": -0.12,
+      "planeOpacity": 0.7,
+      "planeOpacityFalloff": 0.12,
+      "planeOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCenter": {
+        "x": null,
+        "y": null
+      },
+      "groupOpen": {}
+    },
+    "stack": [
+      {
+        "kind": "rotate",
+        "deg": -1.7
+      },
+      {
+        "kind": "zoom",
+        "factor": 0.98
+      },
+      {
+        "kind": "rotate",
+        "deg": -1.7
+      },
+      {
+        "kind": "zoom",
+        "factor": 0.98
+      },
+      {
+        "kind": "rotate",
+        "deg": -1.7
+      },
+      {
+        "kind": "zoom",
+        "factor": 0.98
+      }
+    ]
+  },
+  "__studyRandomization": {
+    "version": 1,
+    "algorithm": "mulberry32-v1",
+    "seed": 2947145065,
+    "operation": "R_seed(p): randomize starting native parameters before G renders and before any algebra flow",
+    "samples": [
+      {
+        "path": "seed",
+        "op": "integer",
+        "min": 1,
+        "max": 999999,
+        "before": 925403,
+        "value": 254266
+      },
+      {
+        "path": "seedCount",
+        "op": "integer",
+        "min": 5,
+        "max": 38,
+        "before": 24,
+        "value": 37
+      },
+      {
+        "path": "steps",
+        "op": "integer",
+        "min": 240,
+        "max": 640,
+        "before": 360,
+        "value": 396
+      },
+      {
+        "path": "resolution",
+        "op": "integer",
+        "min": 80,
+        "max": 130,
+        "before": 100,
+        "value": 92
+      },
+      {
+        "path": "diffusionA",
+        "op": "uniform",
+        "min": 0.65,
+        "max": 1,
+        "before": 1,
+        "value": 0.8516
+      },
+      {
+        "path": "diffusionB",
+        "op": "uniform",
+        "min": 0.24,
+        "max": 0.52,
+        "before": 0.46,
+        "value": 0.3838
+      },
+      {
+        "path": "feed",
+        "op": "uniform",
+        "min": 0.027,
+        "max": 0.039,
+        "before": 0.032,
+        "value": 0.0307
+      },
+      {
+        "path": "kill",
+        "op": "uniform",
+        "min": 0.052,
+        "max": 0.063,
+        "before": 0.057,
+        "value": 0.0548
+      },
+      {
+        "path": "contourLevels",
+        "op": "integer",
+        "min": 8,
+        "max": 16,
+        "before": 12,
+        "value": 11
+      }
+    ]
+  },
+  "__toolFlows": {
+    "ui": {
+      "flowName": "Culture Derivatives B - Source Color",
+      "selectedId": "builtin-grayscale",
+      "autoRun": true,
+      "groupsOpen": {}
+    },
+    "stages": [
+      {
+        "id": "stage-mvheo1dx-wxoynsl",
+        "kind": "effect",
+        "label": "Extract contour boundaries from concentration bands",
+        "enabled": true,
+        "config": {
+          "autoRun": false,
+          "debug": false,
+          "effectType": "paint",
+          "elementType": "path",
+          "selector": "path",
+          "paintFill": "none",
+          "paintStroke": "#a7cee8"
+        }
+      },
+      {
+        "id": "stage-mvheo1dx-bs80rv0",
+        "kind": "effect",
+        "label": "E: 3 echoes, scale 0.83 to 1.25",
+        "enabled": true,
+        "config": {
+          "effectType": "scale",
+          "selector": "path",
+          "elementType": "path",
+          "rangeMin": 0.83,
+          "rangeMax": 1.25,
+          "count": 3,
+          "spacing": "linear",
+          "opacityMode": "fixed",
+          "opacityFixed": 0.72,
+          "equation": ""
+        }
+      },
+      {
+        "id": "stage-mvheo1dx-qvnebvr",
+        "kind": "effect",
+        "label": "C: enumerate current marks through four colors",
+        "enabled": true,
+        "config": {
+          "effectType": "color",
+          "color": {
+            "selector": "path,line[data-spline-lines-run]",
+            "sourceProp": "stroke",
+            "targetProp": "stroke",
+            "mode": "byIndex",
+            "colorSort": "appearance",
+            "paletteText": "#67dbd2,#7686ec,#ed85b2,#ffcd83",
+            "paletteSteps": 0,
+            "useComputed": true,
+            "skipNone": true
+          }
+        }
+      },
+      {
+        "id": "stage-mvheo1dx-qy40bcd",
+        "kind": "effect",
+        "label": "N1: normal vectors, coefficient 1.45",
+        "enabled": true,
+        "config": {
+          "autoRun": false,
+          "debug": false,
+          "effectType": "splineLines",
+          "splineSource": "path",
+          "splineSelector": "path:nth-of-type(2n)",
+          "splinePointCount": 32,
+          "splineStepsPerSegment": 2,
+          "splineTension": 0.2,
+          "splineLineOrientation": "normal",
+          "splineLineHeight": 5.5,
+          "splineLineScale": 1.45,
+          "splineStrokeWidth": 0.3
+        }
+      },
+      {
+        "id": "stage-mvheo1dx-kcdv1m7",
+        "kind": "effect",
+        "label": "N2: tangent vectors, coefficient 0.8",
+        "enabled": true,
+        "config": {
+          "autoRun": false,
+          "debug": false,
+          "effectType": "splineLines",
+          "splineSource": "path",
+          "splineSelector": "path",
+          "splinePointCount": 32,
+          "splineStepsPerSegment": 2,
+          "splineTension": 0.2,
+          "splineLineOrientation": "tangent",
+          "splineLineHeight": 5.5,
+          "splineLineScale": 0.8,
+          "splineStrokeWidth": 0.3
+        }
+      },
+      {
+        "id": "stage-mvheo1dx-0dh8ccq",
+        "kind": "transform",
+        "label": "A^3: repeated rotation and contraction",
+        "enabled": true,
+        "config": {
+          "stack": [
+            {
+              "kind": "rotate",
+              "deg": -1.7
+            },
+            {
+              "kind": "zoom",
+              "factor": 0.98
+            },
+            {
+              "kind": "rotate",
+              "deg": -1.7
+            },
+            {
+              "kind": "zoom",
+              "factor": 0.98
+            },
+            {
+              "kind": "rotate",
+              "deg": -1.7
+            },
+            {
+              "kind": "zoom",
+              "factor": 0.98
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "__propOps": {
+    "ui": {
+      "ruleText": "{\n        \"selector\": {\"circle\":{\"r\":{\"range\":[20,100]}}},\n        \"apply\": {\"stroke\": null}\n        }",
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": []
+  },
+  "__scriptOps": {
+    "ui": {
+      "codeText": "// ctx.root is the <g> subtree being processed\n// ctx.svg is the owning <svg>\n// ctx.create(tag) creates an SVG element\n//\n// Example: circle -> 6-gon (polygon)\n// for (const c of ctx.root.querySelectorAll(\"circle\")) {\n//   const cx = Number(c.getAttribute(\"cx\") || 0);\n//   const cy = Number(c.getAttribute(\"cy\") || 0);\n//   const r = Number(c.getAttribute(\"r\") || 0);\n//   const n = 6;\n//   const pts = Array.from({length:n}, (_,i) => {\n//     const a = (Math.PI*2*i)/n;\n//     return [cx + r*Math.cos(a), cy + r*Math.sin(a)].join(\",\");\n//   }).join(\" \");\n//   const p = ctx.create(\"polygon\");\n//   p.setAttribute(\"points\", pts);\n//   for (const {name,value} of Array.from(c.attributes)) {\n//     if (name === \"cx\" || name === \"cy\" || name === \"r\") continue;\n//     p.setAttribute(name, value);\n//   }\n//   c.replaceWith(p);\n// }",
+      "fileName": "",
+      "selectedCacheKey": "",
+      "autoRunSelected": false,
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": [],
+    "cache": {}
+  }
+}

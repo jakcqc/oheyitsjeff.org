@@ -9,9 +9,11 @@
  */
 
 import { runVisualApp } from "../helper/visualHelp.js";
+import { preloadLinkedSettings } from "../helper/linkedSettings.js";
 import "./HerwigHauserClassicCollection_visual.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  if (!await preloadLinkedSettings("herwigHauserClassicCollection")) return;
   runVisualApp({
     visualId: "herwigHauserClassicCollection",
     mountEl: document.getElementById("vis"),

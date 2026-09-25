@@ -1,0 +1,41 @@
+{
+  "renderMode": "mono",
+  "function": "tan(z)",
+  "view": {
+    "centerRe": 0.32,
+    "centerIm": 0.05,
+    "spanRe": 8.6
+  },
+  "renderScale": 1,
+  "dotSpacing": 10,
+  "dotMinRadius": 0.35,
+  "dotMaxRadius": 3.3,
+  "dotStrokeStrength": 0.5,
+  "monoDensity": 3,
+  "monoJitter": 0.6,
+  "monoSizeBias": 2.2,
+  "showContours": true,
+  "contourStep": 6,
+  "contourCount": 27,
+  "angleContourCount": 35,
+  "contourOpacity": 0.62,
+  "contourStroke": "#a52449",
+  "hueOffset": 0,
+  "saturation": 0.85,
+  "lightness": 0.55,
+  "ringDensity": 15.8,
+  "ringStrength": 0.7,
+  "angleLines": 35,
+  "angleStrength": 0.6,
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0
+    },
+    "stack": []
+  }
+}

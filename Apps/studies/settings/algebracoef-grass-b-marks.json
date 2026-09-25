@@ -1,0 +1,443 @@
+{
+  "growth": 1,
+  "density": 213,
+  "bladeHeight": 124.3475,
+  "heightVariation": 0.88,
+  "bladeWidth": 11.2424,
+  "widthVariation": 0.75,
+  "taper": 1.7142,
+  "seedHeads": 0.25,
+  "distribution": "uniform",
+  "clumping": 0.84,
+  "clumpCount": 39,
+  "clumpRadius": 0.1469,
+  "barePatches": 0.11,
+  "patchScale": 0.04,
+  "rowSpacing": 0.052,
+  "rowJitter": 0.2,
+  "bend": 1.1718,
+  "bendVariation": 0.8,
+  "directionCoherence": 0.28,
+  "twist": 0.8,
+  "windStrength": 0.238,
+  "windDirection": 232,
+  "gustScale": 0.085,
+  "turbulence": 0.83,
+  "windPhase": 0.3814,
+  "viewTilt": 26,
+  "viewYaw": 213,
+  "perspective": 0.3234,
+  "fieldScale": 1.08,
+  "verticalOffset": 0.06,
+  "palette": "noir",
+  "colorVariation": 0.95,
+  "lightAngle": 320,
+  "bladeOpacity": 0.72,
+  "outlineWidth": 0.25,
+  "shadowStrength": 0.15,
+  "groundTexture": 0,
+  "groundTextureScale": 0.12,
+  "seed": 114442,
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0,
+      "preset": "",
+      "splitMode": "screen",
+      "applyToAll": false,
+      "tileTargets": "0",
+      "zoomFactor": 1.25,
+      "matrix": {
+        "a": 1,
+        "b": 0,
+        "c": 0,
+        "d": 1,
+        "e": 0,
+        "f": 0
+      },
+      "zoomCenter": {
+        "x": null,
+        "y": null
+      },
+      "translateVec": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCount": 3,
+      "planeBaseScale": 1,
+      "planeScaleStep": -0.12,
+      "planeOpacity": 0.7,
+      "planeOpacityFalloff": 0.12,
+      "planeOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCenter": {
+        "x": null,
+        "y": null
+      },
+      "groupOpen": {}
+    },
+    "stack": [
+      {
+        "kind": "rotate",
+        "deg": -1.7
+      },
+      {
+        "kind": "zoom",
+        "factor": 0.98
+      },
+      {
+        "kind": "rotate",
+        "deg": -1.7
+      },
+      {
+        "kind": "zoom",
+        "factor": 0.98
+      },
+      {
+        "kind": "rotate",
+        "deg": -1.7
+      },
+      {
+        "kind": "zoom",
+        "factor": 0.98
+      }
+    ]
+  },
+  "__ui": {
+    "tabsOpen": true,
+    "activeTab": "params",
+    "collapseParamsByDefault": true,
+    "paramGroups": {
+      "Growth": true,
+      "Distribution": false,
+      "Blade Form": false,
+      "Wind": true,
+      "Camera": true,
+      "Surface": false,
+      "System": false
+    },
+    "ioOpen": true,
+    "configPinned": true,
+    "navHidden": false
+  },
+  "__anim": {
+    "ui": {
+      "targetType": "params",
+      "paramTargets": [
+        {
+          "key": "windPhase",
+          "from": 0,
+          "to": 1
+        },
+        {
+          "key": "growth",
+          "from": 0.06,
+          "to": 1
+        }
+      ],
+      "durationSec": 9,
+      "fps": 24,
+      "easing": "easeInOutQuad",
+      "loop": true,
+      "yoyo": false,
+      "progress01": 0,
+      "autoPlay": false
+    }
+  },
+  "__studyRandomization": {
+    "version": 1,
+    "algorithm": "mulberry32-v1",
+    "seed": 2875073760,
+    "operation": "R_seed(p): randomize starting native parameters before G renders and before any algebra flow",
+    "samples": [
+      {
+        "path": "seed",
+        "op": "integer",
+        "min": 1,
+        "max": 999999,
+        "before": 925405,
+        "value": 114442
+      },
+      {
+        "path": "distribution",
+        "op": "choice",
+        "values": [
+          "uniform",
+          "clumps",
+          "oval",
+          "rows",
+          "radial"
+        ],
+        "before": "clumps",
+        "value": "uniform"
+      },
+      {
+        "path": "density",
+        "op": "integer",
+        "min": 105,
+        "max": 245,
+        "before": 160,
+        "value": 213
+      },
+      {
+        "path": "bladeHeight",
+        "op": "multiply",
+        "min": 0.35,
+        "max": 1.18,
+        "before": 150,
+        "value": 124.3475
+      },
+      {
+        "path": "bladeWidth",
+        "op": "uniform",
+        "min": 2.5,
+        "max": 13,
+        "before": 9,
+        "value": 11.2424
+      },
+      {
+        "path": "taper",
+        "op": "uniform",
+        "min": 0.3,
+        "max": 2.6,
+        "before": 0.3,
+        "value": 1.7142
+      },
+      {
+        "path": "clumpCount",
+        "op": "integer",
+        "min": 5,
+        "max": 45,
+        "before": 37,
+        "value": 39
+      },
+      {
+        "path": "clumpRadius",
+        "op": "uniform",
+        "min": 0.04,
+        "max": 0.18,
+        "before": 0.06,
+        "value": 0.1469
+      },
+      {
+        "path": "bend",
+        "op": "uniform",
+        "min": 0.2,
+        "max": 1.65,
+        "before": 1.5,
+        "value": 1.1718
+      },
+      {
+        "path": "windStrength",
+        "op": "uniform",
+        "min": 0.2,
+        "max": 1.4,
+        "before": 1.15,
+        "value": 0.238
+      },
+      {
+        "path": "windDirection",
+        "op": "integer",
+        "min": 0,
+        "max": 359,
+        "before": 218,
+        "value": 232
+      },
+      {
+        "path": "windPhase",
+        "op": "uniform",
+        "min": 0,
+        "max": 1,
+        "before": 0.38,
+        "value": 0.3814
+      },
+      {
+        "path": "viewTilt",
+        "op": "integer",
+        "min": 8,
+        "max": 65,
+        "before": 54,
+        "value": 26
+      },
+      {
+        "path": "viewYaw",
+        "op": "integer",
+        "min": 0,
+        "max": 359,
+        "before": 24,
+        "value": 213
+      },
+      {
+        "path": "perspective",
+        "op": "uniform",
+        "min": 0.1,
+        "max": 0.7,
+        "before": 0.64,
+        "value": 0.3234
+      }
+    ]
+  },
+  "__toolFlows": {
+    "ui": {
+      "flowName": "Grass Tangent Fields B - Mark Color",
+      "selectedId": "builtin-grayscale",
+      "autoRun": true,
+      "groupsOpen": {}
+    },
+    "stages": [
+      {
+        "id": "stage-mutmeupo-2dimh75",
+        "kind": "effect",
+        "label": "Suppress ground and shadow support",
+        "enabled": true,
+        "config": {
+          "autoRun": false,
+          "debug": false,
+          "effectType": "paint",
+          "elementType": "path",
+          "selector": ".grass-ground,.grass-shadow",
+          "paintFill": "none",
+          "paintStroke": "none"
+        }
+      },
+      {
+        "id": "stage-mutmeupo-nu7r6so",
+        "kind": "effect",
+        "label": "E: 3 echoes, scale 0.83 to 1.25",
+        "enabled": true,
+        "config": {
+          "effectType": "scale",
+          "selector": "path.grass-blade",
+          "elementType": "path",
+          "rangeMin": 0.83,
+          "rangeMax": 1.25,
+          "count": 3,
+          "spacing": "linear",
+          "opacityMode": "fixed",
+          "opacityFixed": 0.72,
+          "equation": ""
+        }
+      },
+      {
+        "id": "stage-mutmeupo-wdhnqex",
+        "kind": "effect",
+        "label": "N1: normal vectors, coefficient 1.45",
+        "enabled": true,
+        "config": {
+          "autoRun": false,
+          "debug": false,
+          "effectType": "splineLines",
+          "splineSource": "path",
+          "splineSelector": "path.grass-blade:nth-of-type(2n)",
+          "splinePointCount": 12,
+          "splineStepsPerSegment": 2,
+          "splineTension": 0.2,
+          "splineLineOrientation": "normal",
+          "splineLineHeight": 31,
+          "splineLineScale": 1.45,
+          "splineStrokeWidth": 0.7
+        }
+      },
+      {
+        "id": "stage-mutmeupo-70jweuz",
+        "kind": "effect",
+        "label": "N2: tangent vectors, coefficient 0.8",
+        "enabled": true,
+        "config": {
+          "autoRun": false,
+          "debug": false,
+          "effectType": "splineLines",
+          "splineSource": "path",
+          "splineSelector": "path.grass-blade",
+          "splinePointCount": 12,
+          "splineStepsPerSegment": 2,
+          "splineTension": 0.2,
+          "splineLineOrientation": "tangent",
+          "splineLineHeight": 31,
+          "splineLineScale": 0.8,
+          "splineStrokeWidth": 0.7
+        }
+      },
+      {
+        "id": "stage-mutmeupo-03rzefb",
+        "kind": "effect",
+        "label": "C: enumerate current marks through four colors",
+        "enabled": true,
+        "config": {
+          "effectType": "color",
+          "color": {
+            "selector": "path.grass-blade,line[data-spline-lines-run]",
+            "sourceProp": "stroke",
+            "targetProp": "stroke",
+            "mode": "byIndex",
+            "colorSort": "appearance",
+            "paletteText": "#67dbd2,#7686ec,#ed85b2,#ffcd83",
+            "paletteSteps": 0,
+            "useComputed": true,
+            "skipNone": true
+          }
+        }
+      },
+      {
+        "id": "stage-mutmeupo-nw917kh",
+        "kind": "transform",
+        "label": "A^3: repeated rotation and contraction",
+        "enabled": true,
+        "config": {
+          "stack": [
+            {
+              "kind": "rotate",
+              "deg": -1.7
+            },
+            {
+              "kind": "zoom",
+              "factor": 0.98
+            },
+            {
+              "kind": "rotate",
+              "deg": -1.7
+            },
+            {
+              "kind": "zoom",
+              "factor": 0.98
+            },
+            {
+              "kind": "rotate",
+              "deg": -1.7
+            },
+            {
+              "kind": "zoom",
+              "factor": 0.98
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "__propOps": {
+    "ui": {
+      "ruleText": "{\n        \"selector\": {\"circle\":{\"r\":{\"range\":[20,100]}}},\n        \"apply\": {\"stroke\": null}\n        }",
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": []
+  },
+  "__scriptOps": {
+    "ui": {
+      "codeText": "// ctx.root is the <g> subtree being processed\n// ctx.svg is the owning <svg>\n// ctx.create(tag) creates an SVG element\n//\n// Example: circle -> 6-gon (polygon)\n// for (const c of ctx.root.querySelectorAll(\"circle\")) {\n//   const cx = Number(c.getAttribute(\"cx\") || 0);\n//   const cy = Number(c.getAttribute(\"cy\") || 0);\n//   const r = Number(c.getAttribute(\"r\") || 0);\n//   const n = 6;\n//   const pts = Array.from({length:n}, (_,i) => {\n//     const a = (Math.PI*2*i)/n;\n//     return [cx + r*Math.cos(a), cy + r*Math.sin(a)].join(\",\");\n//   }).join(\" \");\n//   const p = ctx.create(\"polygon\");\n//   p.setAttribute(\"points\", pts);\n//   for (const {name,value} of Array.from(c.attributes)) {\n//     if (name === \"cx\" || name === \"cy\" || name === \"r\") continue;\n//     p.setAttribute(name, value);\n//   }\n//   c.replaceWith(p);\n// }",
+      "fileName": "",
+      "selectedCacheKey": "",
+      "autoRunSelected": false,
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": [],
+    "cache": {}
+  }
+}

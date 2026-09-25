@@ -1,0 +1,124 @@
+{
+  "title": "Nyquist Shatterglass",
+  "source": "PinkallSchmittGunnHoffmannCollection/PinkallSchmittGunnHoffmannCollection_visual.js",
+  "visualId": "pinkallSchmittGunnHoffmannCollection",
+  "seed": 926710,
+  "frames": 0,
+  "algebra": {
+    "edition": "wild",
+    "expression": "A o C o E o N o Q (G)",
+    "convention": "Compose right to left. One composition per app in this batch; no paired variants. Coefficients are concrete native operator parameters.",
+    "coefficients": {
+      "Q1": {
+        "pathSamplePoints": 9,
+        "convertScaleFactor": 1
+      },
+      "N2": {
+        "splinePointCount": 9,
+        "splineStepsPerSegment": 4,
+        "splineTension": -4.5,
+        "splineAngleOffset": 19,
+        "splineLineHeight": 18,
+        "splineLineScale": 3.7,
+        "splineStrokeWidth": 0.65,
+        "splineScaleFactor": 1
+      },
+      "E3": {
+        "rangeMin": 0.25,
+        "rangeMax": 2.5,
+        "count": 5,
+        "opacityFixed": 0.82,
+        "spacing": "logarithmic",
+        "recurrence": "sum(backward):opacity *0.72"
+      },
+      "C4": {
+        "mapping": "byIndex",
+        "paletteSteps": 7
+      },
+      "A5": {
+        "stack": [
+          {
+            "kind": "matrix",
+            "m": [
+              0,
+              0.78,
+              0.78,
+              0,
+              210,
+              32
+            ]
+          },
+          {
+            "kind": "rotate",
+            "deg": -13
+          }
+        ]
+      }
+    },
+    "interpretation": "A surface lattice is undersampled into nine-vertex shards, expanded through logarithmic echoes, and transposed across its diagonal. Overshooting vector fields expose the sampling fault.",
+    "newCapabilities": [
+      "logarithmic echo spacing",
+      "unclamped spline tension when enabled",
+      "vector angle offset"
+    ],
+    "uniqueness": "This app was not used in the first algebraCOEF batch."
+  },
+  "propertyPrefix": [],
+  "nativeFlow": "../flows/algebracoef-wild-nyquist-shatterglass.flow.json",
+  "nativeSettings": "../settings/algebracoef-wild-nyquist-shatterglass.json",
+  "observedStages": [
+    {
+      "label": "Q: convert",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 54,
+      "afterShapes": 54,
+      "messages": [
+        "convert applied: 7 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 54,
+      "afterShapes": 306,
+      "messages": [
+        "spline lines applied: 7 shapes, 259 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 306,
+      "afterShapes": 322,
+      "messages": [
+        "scale applied: 4 groups, 20 clones."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 322,
+      "afterShapes": 322,
+      "messages": [
+        "color applied: 322 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 322,
+      "afterShapes": 322,
+      "messages": []
+    }
+  ]
+}

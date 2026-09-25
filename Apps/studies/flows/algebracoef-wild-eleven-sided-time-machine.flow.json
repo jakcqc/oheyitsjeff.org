@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "name": "Eleven-Sided Time Machine",
+  "stages": [
+    {
+      "id": "stage-mues68dt-6unsfui",
+      "kind": "effect",
+      "label": "E: scale",
+      "enabled": true,
+      "config": {
+        "effectType": "scale",
+        "elementType": "polygon",
+        "selector": "polygon:nth-of-type(3n)",
+        "rangeMin": -1.618,
+        "rangeMax": 2.618,
+        "count": 6,
+        "spacing": "linear",
+        "opacityMode": "fixed",
+        "opacityFixed": 0.82,
+        "equation": "sum(backward):opacity *0.72"
+      }
+    },
+    {
+      "id": "stage-mues68dt-v1vorfv",
+      "kind": "effect",
+      "label": "N: splineLines",
+      "enabled": true,
+      "config": {
+        "effectType": "splineLines",
+        "splineSource": "polygon",
+        "splineSelector": "polygon:nth-of-type(2n)",
+        "splinePointCount": 11,
+        "splineStepsPerSegment": 3,
+        "splineTension": -3.2,
+        "splineExtrapolateTension": true,
+        "splineAngleOffset": 72,
+        "splineLineOrientation": "normal",
+        "splineLineHeight": 30,
+        "splineLineScale": 2.9,
+        "splineStrokeWidth": 1.5,
+        "splineScaleMode": "none",
+        "splineScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues68dt-3y5njkt",
+      "kind": "effect",
+      "label": "C: color",
+      "enabled": true,
+      "config": {
+        "effectType": "color",
+        "color": {
+          "selector": "path,polygon,circle,rect,line",
+          "sourceProp": "each",
+          "targetProp": "stroke",
+          "mode": "bySize",
+          "colorSort": "appearance",
+          "paletteText": "#50ffe0,#8485ff,#ff59c7,#fff0ac",
+          "paletteSteps": 7,
+          "useComputed": true,
+          "skipNone": true,
+          "sizeSource": "bboxArea",
+          "sizeAttr": "r"
+        }
+      }
+    },
+    {
+      "id": "stage-mues68dt-0pwzwd5",
+      "kind": "transform",
+      "label": "A: folded presentation",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": 137.507
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.68
+          }
+        ]
+      }
+    }
+  ]
+}

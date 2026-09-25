@@ -1,0 +1,191 @@
+{
+  "paths": 100,
+  "steps": 240,
+  "fieldScale": 0.073,
+  "stepSize": 42,
+  "passes": 4,
+  "curl": -21.7,
+  "fitMode": "stretch",
+  "padding": 25,
+  "strokeWidth": 0.8,
+  "seed": 926709,
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0,
+      "preset": "",
+      "splitMode": "screen",
+      "applyToAll": false,
+      "tileTargets": "0",
+      "zoomFactor": 1.25,
+      "matrix": {
+        "a": 1,
+        "b": 0,
+        "c": 0,
+        "d": 1,
+        "e": 0,
+        "f": 0
+      },
+      "zoomCenter": {
+        "x": null,
+        "y": null
+      },
+      "translateVec": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCount": 3,
+      "planeBaseScale": 1,
+      "planeScaleStep": -0.12,
+      "planeOpacity": 0.7,
+      "planeOpacityFalloff": 0.12,
+      "planeOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCenter": {
+        "x": null,
+        "y": null
+      },
+      "groupOpen": {}
+    },
+    "stack": [
+      {
+        "kind": "matrix",
+        "m": [
+          0.55,
+          0.18,
+          0.85,
+          0.64,
+          -155,
+          72
+        ]
+      },
+      {
+        "kind": "zoom",
+        "factor": 0.78
+      }
+    ]
+  },
+  "__toolFlows": {
+    "ui": {
+      "flowName": "Advection in Reverse",
+      "selectedId": "builtin-grayscale",
+      "autoRun": true,
+      "groupsOpen": {}
+    },
+    "stages": [
+      {
+        "id": "stage-mues68dx-1xgxydp",
+        "kind": "effect",
+        "label": "E: scale",
+        "enabled": true,
+        "config": {
+          "effectType": "scale",
+          "elementType": "path",
+          "selector": "path:nth-of-type(5n)",
+          "rangeMin": -2.8,
+          "rangeMax": 0.85,
+          "count": 4,
+          "spacing": "linear",
+          "opacityMode": "fixed",
+          "opacityFixed": 0.82,
+          "equation": "sum(backward):opacity *0.72"
+        }
+      },
+      {
+        "id": "stage-mues68dx-1mopzjv",
+        "kind": "effect",
+        "label": "C: color",
+        "enabled": true,
+        "config": {
+          "effectType": "color",
+          "color": {
+            "selector": "path,polygon,circle,rect,line",
+            "sourceProp": "each",
+            "targetProp": "stroke",
+            "mode": "bySize",
+            "colorSort": "appearance",
+            "paletteText": "#50ffe0,#8485ff,#ff59c7,#fff0ac",
+            "paletteSteps": 7,
+            "useComputed": true,
+            "skipNone": true,
+            "sizeSource": "bboxArea",
+            "sizeAttr": "r"
+          }
+        }
+      },
+      {
+        "id": "stage-mues68dx-3wfsfep",
+        "kind": "effect",
+        "label": "N: splineLines",
+        "enabled": true,
+        "config": {
+          "effectType": "splineLines",
+          "splineSource": "path",
+          "splineSelector": "path:nth-of-type(11n)",
+          "splinePointCount": 18,
+          "splineStepsPerSegment": 3,
+          "splineTension": -2.7,
+          "splineExtrapolateTension": true,
+          "splineAngleOffset": -71,
+          "splineLineOrientation": "tangent",
+          "splineLineHeight": 15,
+          "splineLineScale": 3.3,
+          "splineStrokeWidth": 0.65,
+          "splineScaleMode": "none",
+          "splineScaleFactor": 1
+        }
+      },
+      {
+        "id": "stage-mues68dx-7k1fe9w",
+        "kind": "transform",
+        "label": "A: folded presentation",
+        "enabled": true,
+        "config": {
+          "stack": [
+            {
+              "kind": "matrix",
+              "m": [
+                0.55,
+                0.18,
+                0.85,
+                0.64,
+                -155,
+                72
+              ]
+            },
+            {
+              "kind": "zoom",
+              "factor": 0.78
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "__propOps": {
+    "ui": {
+      "ruleText": "{\n        \"selector\": {\"circle\":{\"r\":{\"range\":[20,100]}}},\n        \"apply\": {\"stroke\": null}\n        }",
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": []
+  },
+  "__scriptOps": {
+    "ui": {
+      "codeText": "// ctx.root is the <g> subtree being processed\n// ctx.svg is the owning <svg>\n// ctx.create(tag) creates an SVG element\n//\n// Example: circle -> 6-gon (polygon)\n// for (const c of ctx.root.querySelectorAll(\"circle\")) {\n//   const cx = Number(c.getAttribute(\"cx\") || 0);\n//   const cy = Number(c.getAttribute(\"cy\") || 0);\n//   const r = Number(c.getAttribute(\"r\") || 0);\n//   const n = 6;\n//   const pts = Array.from({length:n}, (_,i) => {\n//     const a = (Math.PI*2*i)/n;\n//     return [cx + r*Math.cos(a), cy + r*Math.sin(a)].join(\",\");\n//   }).join(\" \");\n//   const p = ctx.create(\"polygon\");\n//   p.setAttribute(\"points\", pts);\n//   for (const {name,value} of Array.from(c.attributes)) {\n//     if (name === \"cx\" || name === \"cy\" || name === \"r\") continue;\n//     p.setAttribute(name, value);\n//   }\n//   c.replaceWith(p);\n// }",
+      "fileName": "",
+      "selectedCacheKey": "",
+      "autoRunSelected": false,
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": [],
+    "cache": {}
+  }
+}

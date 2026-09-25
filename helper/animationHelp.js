@@ -8,7 +8,7 @@
  * See LICENSE.md at the repository root for the full terms.
  */
 
-// helper/animateHelp.js
+// helper/animationHelp.js
 // Generic animation tab for oheyitsjeff.org visuals.
 // - Animate numeric *state params* (dot-path allowed) for N targets simultaneously, OR a numeric SVG attr/style.
 // - Uses requestAnimationFrame with FPS throttling.
@@ -60,10 +60,10 @@ export function ensureAnimateState(state) {
     loop: false,
     yoyo: false,
 
-    // UI convenience
+    // Playback state and legacy JSON/API fields. Flow only exposes Loop/Yoyo.
     progress01: 0,       // 0..1 scrubber
-    autoFromCurrent: true,
-    snapToEndOnStop: true,
+    autoFromCurrent: false,
+    snapToEndOnStop: false,
     autoPlay: false,
   };
   for (const [key, value] of Object.entries(defaults)) {
@@ -74,7 +74,7 @@ export function ensureAnimateState(state) {
   const ui = state.__anim.ui;
   if (!Array.isArray(ui.paramTargets)) ui.paramTargets = [];
   if (ui.autoPlay == null) ui.autoPlay = false;
-  if (!["edit", "flow", "json"].includes(ui.view)) ui.view = "edit";
+  if (!["flow", "json"].includes(ui.view)) ui.view = "flow";
 
   const legacyKey = String(ui.paramKey || "").trim();
   const hasLegacy = legacyKey.length > 0;
@@ -107,6 +107,23 @@ export function maybeAutoplayAnimation({ mountEl, state, onChange }) {
   rt.play();
 }
 
+// Public controls for the assistant and other shared panels. Configuration is
+// validated by the caller; this uses the same runtime as the animation editor.
+export function controlAnimation(ctx, command) {
+  if (!["play", "pause", "stop", "toggle", "restart"].includes(command)) throw new Error("Unknown animation command.");
+  ensureAnimateState(ctx.state);
+  const rt = getOrMakeRuntime(ctx);
+  if (command === "stop") {
+    rt.stop({ snap: false });
+    rt.initialized = false;
+    rt.dir = 1;
+  }
+  else if (command === "toggle") rt.playing ? rt.pause() : rt.play();
+  else if (command === "restart") rt.restart();
+  else rt[command]();
+  return { playing: rt.playing, paused: rt.paused, progress01: ctx.state.__anim.ui.progress01 };
+}
+
 export function registerAnimateTab() {
   registerTab("animate", ({ mountEl, state, spec, xfRuntime, onChange, onStateChange }) =>
     buildAnimatePanel({ mountEl, state, spec, xfRuntime, onChange, onStateChange })
@@ -127,8 +144,13 @@ function ease(t, kind) {
 }
 
 function clampNum(x, fallback = 0) {
+  if (x == null || x === "") return fallback;
   const n = Number(x);
   return Number.isFinite(n) ? n : fallback;
+}
+
+function safeParamKey(key) {
+  return key.split(".").every((part) => part && !["__proto__", "prototype", "constructor"].includes(part));
 }
 
 function cleanTargets(ui) {
@@ -137,12 +159,16 @@ function cleanTargets(ui) {
   const seen = new Set();
 
   for (const t of arr) {
+    if (!t || typeof t !== "object" || Array.isArray(t)) continue;
     const key = String(t?.key || "").trim();
-    if (!key) continue;
+    if (!key || !safeParamKey(key)) continue;
     if (seen.has(key)) continue;
     seen.add(key);
 
-    Object.assign(t, { key, from: clampNum(t.from, 0), to: clampNum(t.to, 0) });
+    t.key = key;
+    // Missing starts are resolved when playback starts, not while reading a save.
+    if (t.from != null && t.from !== "") t.from = clampNum(t.from, 0);
+    if (t.to != null && t.to !== "") t.to = clampNum(t.to, 0);
     out.push(t);
   }
 
@@ -154,8 +180,8 @@ function getOrMakeRuntime({ mountEl, state, onChange }) {
   let rt = RUNTIMES.get(state);
   if (rt) {
     // keep latest closures
-    rt.mountEl = mountEl;
-    rt.onChange = onChange;
+    if (mountEl != null) rt.mountEl = mountEl;
+    if (onChange != null) rt.onChange = onChange;
     return rt;
   }
 
@@ -163,6 +189,8 @@ function getOrMakeRuntime({ mountEl, state, onChange }) {
     mountEl,
     onChange,
     playing: false,
+    paused: false,
+    initialized: false,
     raf: 0,
     lastFrameAt: 0,
     startAt: 0,
@@ -210,6 +238,28 @@ function getOrMakeRuntime({ mountEl, state, onChange }) {
       return vals;
     },
 
+    resolveEndpoints() {
+      const ui = state.__anim.ui;
+      const current = rt.readCurrentValues();
+      if (ui.targetType === "svg") {
+        rt.from = clampNum(ui.from, clampNum(current, 0));
+        rt.to = clampNum(ui.to, rt.from);
+      } else {
+        const targets = cleanTargets(ui);
+        rt.froms = targets.map((target, index) => clampNum(target.from, clampNum(current[index], 0)));
+        rt.tos = targets.map((target, index) => clampNum(target.to, rt.froms[index]));
+      }
+      rt.initialized = true;
+    },
+
+    applyProgress(progress) {
+      const ui = state.__anim.ui;
+      const eased = ease(progress, ui.easing);
+      ui.progress01 = progress;
+      if (ui.targetType === "svg") rt.applyValues(rt.from + (rt.to - rt.from) * eased);
+      else rt.applyValues(rt.froms.map((from, index) => from + (rt.tos[index] - from) * eased));
+    },
+
     applyValues(v) {
       const ui = state.__anim?.ui || {};
 
@@ -218,7 +268,7 @@ function getOrMakeRuntime({ mountEl, state, onChange }) {
         if (!sel) return;
 
         // Rebuild first; then apply the numeric SVG value to the current nodes.
-        rt.onChange?.("__anim.svg", v, state);
+        rt.onChange?.("__anim.progress01", v, state);
         const nodes = rt.mountEl?.querySelectorAll?.(sel);
         if (!nodes || nodes.length === 0) return;
 
@@ -242,10 +292,10 @@ function getOrMakeRuntime({ mountEl, state, onChange }) {
         const val = v[i];
         setByPath(state, t.key, val);
       }
-      rt.onChange?.("__anim.params", v, state);
+      rt.onChange?.("__anim.progress01", v, state);
     },
 
-    stop({ snap } = {}) {
+    stop({ snap = false } = {}) {
       if (rt.raf) cancelAnimationFrame(rt.raf);
       rt.raf = 0;
       rt.playing = false;
@@ -253,9 +303,7 @@ function getOrMakeRuntime({ mountEl, state, onChange }) {
       rt.lastFrameAt = 0;
 
       const ui = state.__anim?.ui || {};
-      const shouldSnap = (snap != null) ? !!snap : !!ui.snapToEndOnStop;
-
-      if (shouldSnap) {
+      if (snap) {
         if (ui.targetType === "svg") {
           const v = clampNum(rt.to, clampNum(ui.to, 1));
           rt.applyValues(v);
@@ -281,7 +329,9 @@ function getOrMakeRuntime({ mountEl, state, onChange }) {
     },
 
     play() {
+      if (rt.playing) return;
       const ui = state.__anim?.ui || {};
+      if (ui.targetType !== "svg" && !cleanTargets(ui).length) { rt.notify(); return; }
       const durMs = Math.max(1, clampNum(ui.durationSec, 1) * 1000);
       const fps = Math.max(1, clampNum(ui.fps, 60));
       const frameMs = 1000 / fps;
@@ -296,38 +346,9 @@ function getOrMakeRuntime({ mountEl, state, onChange }) {
       if (!resume) rt.dir = 1;
       ui.progress01 = startProgress;
 
-      if (!resume) {
-        if (ui.targetType === "svg") {
-          // resolve endpoints for svg
-          const cur = rt.readCurrentValues();
-          const startV = ui.autoFromCurrent ? clampNum(cur, clampNum(ui.from, 0)) : clampNum(ui.from, clampNum(cur, 0));
-          const endV = clampNum(ui.to, startV);
-
-          rt.from = startV;
-          rt.to = endV;
-        } else {
-          // resolve endpoints for each param target
-          const targets = cleanTargets(ui);
-          const cur = rt.readCurrentValues(); // array
-          const froms = [];
-          const tos = [];
-
-          for (let i = 0; i < targets.length; i++) {
-            const t = targets[i];
-            const curV = clampNum(cur?.[i], clampNum(t.from, 0));
-
-            const startV = ui.autoFromCurrent ? curV : clampNum(t.from, curV);
-            const endV = clampNum(t.to, startV);
-
-            froms.push(startV);
-            tos.push(endV);
-          }
-
-          rt.froms = froms;
-          rt.tos = tos;
-        }
-
-      }
+      if (!resume) rt.resolveEndpoints();
+      // Starting/restarting applies only listed properties, immediately.
+      rt.applyProgress(startProgress);
 
       const tick = (now) => {
         if (!rt.playing) return;
@@ -341,21 +362,11 @@ function getOrMakeRuntime({ mountEl, state, onChange }) {
 
         let t = (now - rt.startAt) / durMs;
         if (!Number.isFinite(t)) t = 0;
-        if (t >= 1) t = 1;
+        // RAF timestamps can precede performance.now() sampled during resume.
+        // Preserve the scrubbed/paused position until the frame clock catches up.
+        t = Math.max(clampNum(ui.progress01, 0), Math.max(0, Math.min(1, t)));
 
-        const e = ease(t, ui.easing);
-        ui.progress01 = t;
-
-        if (ui.targetType === "svg") {
-          const v = rt.from + (rt.to - rt.from) * e;
-          rt.applyValues(v);
-        } else {
-          const vals = [];
-          for (let i = 0; i < rt.froms.length; i++) {
-            vals.push(rt.froms[i] + (rt.tos[i] - rt.froms[i]) * e);
-          }
-          rt.applyValues(vals);
-        }
+        rt.applyProgress(t);
 
         rt.notify();
 
@@ -377,10 +388,11 @@ function getOrMakeRuntime({ mountEl, state, onChange }) {
             }
             rt.startAt = now;
             ui.progress01 = 0;
+            rt.notify();
             rt.raf = requestAnimationFrame(tick);
             return;
           } else {
-            rt.stop({ snap: true });
+            rt.stop({ snap: false });
             return;
           }
         }
@@ -392,33 +404,22 @@ function getOrMakeRuntime({ mountEl, state, onChange }) {
       rt.notify();
     },
 
+    restart() {
+      rt.stop({ snap: false });
+      rt.initialized = false;
+      state.__anim.ui.progress01 = 0;
+      rt.play();
+    },
+
     scrubTo(p01) {
       const ui = state.__anim?.ui || {};
       const p = Math.max(0, Math.min(1, clampNum(p01, 0)));
-      ui.progress01 = p;
+      rt.stop({ snap: false });
+      // Resolve omitted starts once so repeated scrub input does not drift.
+      if (!rt.initialized || rt.dir !== 1) rt.resolveEndpoints();
       rt.dir = 1;
       rt.paused = true;
-
-      const e = ease(p, ui.easing);
-
-      if (ui.targetType === "svg") {
-        const from = clampNum(ui.from, 0);
-        const to = clampNum(ui.to, 0);
-        rt.from = from;
-        rt.to = to;
-        const v = from + (to - from) * e;
-        rt.applyValues(v);
-      } else {
-        const targets = cleanTargets(ui);
-        rt.froms = targets.map((target) => target.from);
-        rt.tos = targets.map((target) => target.to);
-        const vals = targets.map(t => {
-          const from = clampNum(t.from, 0);
-          const to = clampNum(t.to, 0);
-          return from + (to - from) * e;
-        });
-        rt.applyValues(vals);
-      }
+      rt.applyProgress(p);
 
       rt.notify();
     },
@@ -437,6 +438,9 @@ function numericParamKeys(spec) {
   const out = [];
   for (const p of (spec?.params || [])) {
     if (p?.type === "number" && p?.key) out.push(p.key);
+    if ((p?.type === "vector2D" || p?.type === "vector3D") && p?.key) {
+      for (const axis of p.type === "vector3D" ? ["x", "y", "z"] : ["x", "y"]) out.push(`${p.key}.${axis}`);
+    }
   }
   return out;
 }
@@ -448,20 +452,20 @@ export function buildAnimatePanel({ mountEl, state, spec, onChange, onStateChang
   cleanTargets(ui);
   const rt = getOrMakeRuntime({ mountEl, state, onChange });
   const root = el("div", { className: "anim-panel" });
-  const editPanel = el("div", { className: "anim-edit" });
   const flowPanel = el("div", { className: "anim-flow" });
   const jsonPanel = el("div", { className: "anim-json" });
   const status = el("div", { className: "anim-status", role: "status" });
   const keys = numericParamKeys(spec);
-  const dl = el("datalist", { id: `anim-keys-${Math.random().toString(16).slice(2)}` });
+  const dl = el("datalist", { id: "anim-keys-" + Math.random().toString(16).slice(2) });
   keys.forEach((key) => dl.appendChild(el("option", { value: key })));
   const bindings = [];
   const editor = state.__anim.editor || (state.__anim.editor = {});
 
   const markDirty = () => onStateChange?.();
   const edited = () => {
-    // End a paused tween's cached endpoints when its properties change.
-    if (rt.playing || rt.paused) rt.stop({ snap: false });
+    // Configuration changes end paused/running tweens and their endpoint cache.
+    rt.stop({ snap: false });
+    rt.initialized = false;
     markDirty();
   };
   const row = (label, input) => el("label", { className: "anim-row" }, [
@@ -471,7 +475,9 @@ export function buildAnimatePanel({ mountEl, state, spec, onChange, onStateChang
   const numericInput = (object, key, label, fallback = 0) => {
     const input = el("input", { type: "number", step: "any", value: String(object[key] ?? fallback), "aria-label": label });
     input.oninput = () => {
+      if (input.value === "" && key === "from") { delete object[key]; edited(); return; }
       if (input.value === "" || !Number.isFinite(input.valueAsNumber)) return;
+      if (input.min !== "" && input.valueAsNumber < Number(input.min)) return;
       object[key] = input.valueAsNumber;
       edited();
     };
@@ -486,21 +492,7 @@ export function buildAnimatePanel({ mountEl, state, spec, onChange, onStateChang
     sync();
     return input;
   };
-  const textSetting = (key, label, fallback) => {
-    if (ui[key] == null) ui[key] = fallback;
-    const input = bind(key, el("input", { type: "text", "aria-label": label }));
-    input.oninput = () => { ui[key] = input.value; edited(); };
-    return input;
-  };
-  const selectSetting = (key, label, values) => {
-    const input = el("select", { "aria-label": label });
-    values.forEach((value) => input.appendChild(el("option", { value, textContent: value })));
-    bind(key, input);
-    input.onchange = () => { ui[key] = input.value; edited(); };
-    return input;
-  };
   const numericSetting = (key, label, fallback, min, step = "any") => {
-    if (ui[key] == null) ui[key] = fallback;
     const input = numericInput(ui, key, label, fallback);
     input.min = String(min);
     input.step = step;
@@ -513,134 +505,74 @@ export function buildAnimatePanel({ mountEl, state, spec, onChange, onStateChang
     return el("label", { className: "anim-check" }, [input, el("span", { textContent: label })]);
   };
 
-  const paramsPanel = el("div");
-  const svgPanel = el("div");
-  const targetTabs = createSubTabs({
-    label: "Animation target", value: ui.targetType,
-    options: [
-      { value: "params", label: "Parameters", panel: paramsPanel },
-      { value: "svg", label: "SVG", panel: svgPanel },
-    ],
-    onChange: (value) => { ui.targetType = value; edited(); refreshEditors(); },
-  });
-  const addKey = el("input", { type: "text", placeholder: "Choose or type a parameter", list: dl.id, "aria-label": "Add animation parameter" });
+  const addKey = el("input", { type: "text", placeholder: "Choose or type a numeric property", list: dl.id, "aria-label": "Add animation parameter" });
+  const addMessage = el("div", { className: "anim-help", role: "status" });
   const addTarget = () => {
     const key = addKey.value.trim();
-    if (!key || ui.paramTargets.some((target) => target.key === key)) return;
-    const current = clampNum(getByPath(state, key), 0);
+    if (!key) return;
+    if (ui.paramTargets.some((target) => target.key === key)) {
+      addMessage.textContent = "That property is already in the flow.";
+      return;
+    }
+    const current = getByPath(state, key);
+    if (!safeParamKey(key) || typeof current !== "number" || !Number.isFinite(current)) {
+      addMessage.textContent = "Choose a numeric property or a vector component such as position.x.";
+      return;
+    }
+    ui.targetType = "params";
     ui.paramTargets.push({ key, from: current, to: current + 10 });
     addKey.value = "";
+    addMessage.textContent = "";
     edited();
     refreshEditors();
   };
   addKey.onkeydown = (event) => { if (event.key === "Enter") { event.preventDefault(); addTarget(); } };
   const targetsList = el("div", { className: "anim-targets tool-flow-stage-list" });
-  const captureAll = (key) => {
-    ui.paramTargets.forEach((target) => { target[key] = clampNum(getByPath(state, target.key), target[key]); });
-    edited();
-    refreshEditors();
-  };
-  paramsPanel.append(
-    row("Add parameter", el("div", { className: "tool-flow-actions" }, [addKey, button("Add", addTarget)])),
-    el("div", { className: "tool-flow-actions" }, [
-      button("Capture all starts", () => captureAll("from")),
-      button("Capture all ends", () => captureAll("to")),
-    ]), targetsList,
+  flowPanel.append(
+    el("p", { className: "anim-help", textContent: "Animate these properties together. Other parameters keep their current values." }),
+    row("Duration (seconds)", numericSetting("durationSec", "Duration in seconds", 3, 0.01, "0.01")),
+    row("Frames per second", numericSetting("fps", "Frames per second", 20, 1, "1")),
+    el("div", { className: "anim-checks" }, [checkSetting("loop", "Loop"), checkSetting("yoyo", "Yoyo")]),
+    row("Add property", el("div", { className: "tool-flow-actions" }, [addKey, button("Add", addTarget)])),
+    addMessage,
+    targetsList,
   );
-  const selector = textSetting("selector", "SVG selector", "svg");
-  selector.placeholder = "* or rect,circle,path,line";
-  svgPanel.append(
-    row("Selector", selector),
-    row("Property kind", selectSetting("svgKind", "SVG property kind", ["attr", "style"])),
-    row("Property", textSetting("svgName", "SVG property", "opacity")),
-    row("Start", bind("from", numericInput(ui, "from", "SVG start"))),
-    row("End", bind("to", numericInput(ui, "to", "SVG end", 1))),
-    el("div", { className: "tool-flow-actions" }, [
-      button("Capture start", () => { ui.from = rt.readCurrentValues(); edited(); refreshEditors(); }),
-      button("Capture end", () => { ui.to = rt.readCurrentValues(); edited(); refreshEditors(); }),
-    ]),
-  );
-  const timing = el("details", { className: "vr-paramGroup", open: ui.timingOpen !== false }, [
-    el("summary", { className: "vr-paramGroupTitle", textContent: "Timing and playback settings" }),
-    el("div", { className: "vr-paramGroupBody" }, [
-      row("Duration (seconds)", numericSetting("durationSec", "Duration in seconds", 3, 0.01, "0.01")),
-      row("Frames per second", numericSetting("fps", "Frames per second", 20, 1, "1")),
-      row("Easing", selectSetting("easing", "Animation easing", ["linear", "easeInOutQuad", "easeInQuad", "easeOutQuad"])),
-      el("div", { className: "anim-checks" }, [
-        checkSetting("loop", "Loop"), checkSetting("yoyo", "Yoyo"),
-        checkSetting("autoFromCurrent", "Start from current values"),
-        checkSetting("snapToEndOnStop", "Snap to end on stop"),
-        checkSetting("autoPlay", "Autoplay when loaded"),
-      ]),
-    ]),
-  ]);
-  timing.ontoggle = () => { ui.timingOpen = timing.open; markDirty(); };
-  editPanel.append(targetTabs.root, paramsPanel, svgPanel, timing);
 
+  const endpoints = (target, name) => {
+    const current = clampNum(getByPath(state, target.key), 0);
+    const start = numericInput(target, "from", name + " start", "");
+    if (target.from == null || target.from === "") start.placeholder = String(current);
+    return el("div", { className: "anim-endpoints" }, [
+      row("Start", start),
+      el("span", { className: "anim-arrow", textContent: "\u2192", "aria-hidden": "true" }),
+      row("End", numericInput(target, "to", name + " end", current)),
+    ]);
+  };
   const renderTargets = () => {
     targetsList.replaceChildren();
-    flowPanel.replaceChildren(el("p", {
-      className: "anim-help",
-      textContent: "Start → end. All properties animate together. Edit values here; use Edit for targeting and timing settings.",
-    }));
-    const compactList = el("div", { className: "tool-flow-stage-list" });
-    flowPanel.appendChild(compactList);
-    const makeCard = (target, index, compact) => {
-      const card = el("div", { className: compact ? "tool-flow-stage anim-flow-card" : "anim-target-card" });
-      const keyInput = el("input", { type: "text", value: target.key, list: dl.id, "aria-label": `Parameter ${index + 1}` });
-      keyInput.oninput = () => { target.key = keyInput.value.trim(); edited(); };
-      const remove = button("×", () => { ui.paramTargets.splice(index, 1); edited(); refreshEditors(); }, "Remove animation property");
-      const endpoints = el("div", { className: "anim-endpoints" }, [
-        row("Start", numericInput(target, "from", `${target.key} start`)),
-        el("span", { className: "anim-arrow", textContent: "→", "aria-hidden": "true" }),
-        row("End", numericInput(target, "to", `${target.key} end`)),
-      ]);
-      if (compact) {
-        card.append(keyInput, endpoints, remove);
-      } else {
-        const details = el("details", { open: target.expanded !== false, className: "vr-paramGroup" }, [
-          el("summary", { className: "vr-paramGroupTitle", textContent: `${index + 1}. ${target.key || "Animation property"}` }),
-          el("div", { className: "vr-paramGroupBody" }, [
-            row("Parameter", keyInput), endpoints,
-            el("div", { className: "tool-flow-actions" }, [
-              button("Capture start", () => { target.from = clampNum(getByPath(state, target.key), target.from); edited(); refreshEditors(); }),
-              button("Capture end", () => { target.to = clampNum(getByPath(state, target.key), target.to); edited(); refreshEditors(); }),
-              button("Apply start", () => applyEndpoint(target, "from")),
-              button("Apply end", () => applyEndpoint(target, "to")), remove,
-            ]),
-          ]),
-        ]);
-        details.ontoggle = () => { target.expanded = details.open; markDirty(); };
-        card.appendChild(details);
-      }
-      return card;
-    };
-    ui.paramTargets.forEach((target, index) => {
-      targetsList.appendChild(makeCard(target, index, false));
-      if (ui.targetType === "params") compactList.appendChild(makeCard(target, index, true));
-    });
-    if (!ui.paramTargets.length) {
-      targetsList.appendChild(el("p", { className: "anim-help", textContent: "Add numeric parameters to animate together. Dot-paths are supported." }));
-      if (ui.targetType === "params") compactList.appendChild(button("Add properties in Edit", () => viewTabs.setValue("edit", true)));
-    }
     if (ui.targetType === "svg") {
-      compactList.appendChild(el("div", { className: "tool-flow-stage anim-flow-card anim-svg-card" }, [
-        el("div", { className: "tool-flow-stage-title", textContent: `${ui.selector} · ${ui.svgKind}.${ui.svgName}` }),
-        el("div", { className: "anim-endpoints" }, [
-          row("Start", numericInput(ui, "from", "SVG start")),
-          el("span", { className: "anim-arrow", textContent: "→", "aria-hidden": "true" }),
-          row("End", numericInput(ui, "to", "SVG end", 1)),
-        ]),
+      // Older SVG saves remain playable and editable through JSON.
+      targetsList.appendChild(el("div", { className: "tool-flow-stage anim-flow-card anim-svg-card" }, [
+        el("div", { className: "tool-flow-stage-title", textContent: ui.selector + " \u00b7 " + ui.svgKind + "." + ui.svgName }),
+        endpoints(ui, "SVG"),
       ]));
+      return;
     }
-  };
-  const applyEndpoint = (target, key) => {
-    rt.stop({ snap: false });
-    setByPath(state, target.key, target[key]);
-    onChange?.(target.key, target[key], state);
-    ui.progress01 = key === "from" ? 0 : 1;
-    markDirty();
-    refreshTransport();
+    ui.paramTargets.forEach((target, index) => {
+      const name = el("div", { className: "tool-flow-stage-title", textContent: target.key, title: target.key });
+      const remove = button("\u00d7", () => {
+        ui.paramTargets.splice(index, 1);
+        edited();
+        refreshEditors();
+      }, "Remove animation property");
+      remove.setAttribute("aria-label", "Remove " + target.key);
+      targetsList.appendChild(el("div", { className: "tool-flow-stage anim-flow-card" }, [
+        name, endpoints(target, target.key), remove,
+      ]));
+    });
+    if (!ui.paramTargets.length) targetsList.appendChild(el("p", {
+      className: "anim-help", textContent: "Add a numeric property to set its Start and End values. Vector x, y, and z components are supported.",
+    }));
   };
 
   const jsonBox = el("textarea", { rows: 16, className: "anim-json-editor", "aria-label": "Animation JSON" });
@@ -659,16 +591,18 @@ export function buildAnimatePanel({ mountEl, state, spec, onChange, onStateChang
       if (!next || typeof next !== "object" || Array.isArray(next)) throw new Error("Expected an animation settings object.");
       if (next.targetType != null && !["param", "params", "svg"].includes(next.targetType)) throw new Error("targetType must be params or svg.");
       if (next.paramTargets != null && (!Array.isArray(next.paramTargets) || next.paramTargets.some((target) =>
-        !target || typeof target.key !== "string" || !target.key.trim() || !Number.isFinite(target.from) || !Number.isFinite(target.to)
-      ))) throw new Error("Each parameter needs a key and numeric from/to values.");
+        !target || typeof target.key !== "string" || !target.key.trim() || !safeParamKey(target.key.trim())
+        || (target.from != null && !Number.isFinite(target.from)) || !Number.isFinite(target.to)
+      ))) throw new Error("Each property needs a key and numeric to value; from may be omitted to use its current value.");
       for (const key of ["durationSec", "fps"]) {
-        if (next[key] != null && (!Number.isFinite(next[key]) || next[key] <= 0)) throw new Error(`${key} must be greater than zero.`);
+        if (next[key] != null && (!Number.isFinite(next[key]) || next[key] <= 0)) throw new Error(key + " must be greater than zero.");
       }
       for (const key of ["from", "to", "progress01"]) {
-        if (next[key] != null && !Number.isFinite(next[key])) throw new Error(`${key} must be numeric.`);
+        if (next[key] != null && !Number.isFinite(next[key])) throw new Error(key + " must be numeric.");
       }
       if (next.selector != null) mountEl.querySelector(next.selector);
       rt.stop({ snap: false });
+      rt.initialized = false;
       const view = ui.view;
       // Keep panel references and the current editor view stable.
       mergeInto(ui, next);
@@ -680,7 +614,7 @@ export function buildAnimatePanel({ mountEl, state, spec, onChange, onStateChang
       refreshEditors();
       jsonMessage.textContent = "Applied JSON.";
     } catch (error) {
-      jsonMessage.textContent = `Invalid JSON: ${error.message || error}`;
+      jsonMessage.textContent = "Invalid JSON: " + (error.message || error);
     }
   };
   jsonPanel.append(jsonBox, el("div", { className: "tool-flow-actions" }, [
@@ -695,33 +629,34 @@ export function buildAnimatePanel({ mountEl, state, spec, onChange, onStateChang
   const viewTabs = createSubTabs({
     label: "Animation view", value: ui.view,
     options: [
-      { value: "edit", label: "Edit", panel: editPanel },
       { value: "flow", label: "Flow", panel: flowPanel },
       { value: "json", label: "JSON", panel: jsonPanel },
     ],
     onChange: (value) => { ui.view = value; markDirty(); refreshEditors(); },
   });
-  const play = button("Play", () => {
+  const run = (restart = false) => {
     try {
       if (ui.targetType === "svg") mountEl.querySelector(ui.selector);
-      else if (!cleanTargets(ui).length) { status.textContent = "Add a parameter before playing."; return; }
+      else if (!cleanTargets(ui).length) { status.textContent = "Add a property before playing."; return; }
       xfRuntime?.rebuildNow?.();
-      rt.play();
+      restart ? rt.restart() : rt.play();
       markDirty();
-    } catch (error) { rt.stop({ snap: false }); status.textContent = `Cannot play: ${error.message || error}`; }
-  });
-  const pause = button("Pause", () => { rt.pause(); markDirty(); });
-  const stop = button("Stop", () => { rt.stop({ snap: ui.snapToEndOnStop }); markDirty(); });
-  const restart = button("To start", () => { scrub(0); });
+    } catch (error) { rt.stop({ snap: false }); status.textContent = "Cannot play: " + (error.message || error); }
+  };
+  const play = button("Play", () => run(), "Play or resume animation (P)");
+  const pause = button("Pause", () => { rt.pause(); markDirty(); }, "Pause animation (P)");
+  const stop = button("Stop", () => { rt.stop({ snap: false }); markDirty(); }, "Stop and keep current values");
+  const restart = button("Restart", () => run(true), "Restart animation from its configured Start values (R)");
   const progress = el("input", { type: "range", min: "0", max: "1", step: "0.001", "aria-label": "Animation progress" });
   const scrub = (value) => {
-    try { rt.stop({ snap: false }); rt.scrubTo(value); markDirty(); }
-    catch (error) { status.textContent = `Cannot scrub: ${error.message || error}`; }
+    try { rt.scrubTo(value); markDirty(); }
+    catch (error) { status.textContent = "Cannot scrub: " + (error.message || error); }
   };
   progress.oninput = () => scrub(clampNum(progress.value, 0));
   const transport = el("div", { className: "anim-transport" }, [
-    el("div", { className: "tool-flow-actions" }, [restart, play, pause, stop]),
+    el("div", { className: "tool-flow-actions" }, [play, pause, restart, stop]),
     row("Progress", progress), status,
+    el("p", { className: "anim-help", textContent: "P: play/pause animation \u00b7 R: restart animation \u00b7 Space: pause/resume simulation" }),
   ]);
   const refreshTransport = () => {
     progress.value = String(ui.progress01 ?? 0);
@@ -729,16 +664,15 @@ export function buildAnimatePanel({ mountEl, state, spec, onChange, onStateChang
     play.disabled = rt.playing;
     pause.disabled = !rt.playing;
     stop.disabled = !rt.playing && !rt.paused;
-    status.textContent = `${rt.playing ? "Playing" : rt.paused ? "Paused" : "Stopped"} · ${(clampNum(ui.progress01, 0) * 100).toFixed(1)}%`;
+    status.textContent = (rt.playing ? "Playing" : rt.paused ? "Paused" : "Stopped") + " \u00b7 " + (clampNum(ui.progress01, 0) * 100).toFixed(1) + "%";
   };
   function refreshEditors() {
     bindings.forEach((sync) => sync());
-    targetTabs.setValue(ui.targetType);
     renderTargets();
     if (ui.view === "json" && editor.draft == null) syncJson();
     refreshTransport();
   }
-  root.append(viewTabs.root, editPanel, flowPanel, jsonPanel, transport, dl);
+  root.append(viewTabs.root, flowPanel, jsonPanel, transport, dl);
   root._onShow = refreshTransport;
   root._destroy = rt.subscribe(refreshTransport);
   refreshEditors();

@@ -1,0 +1,203 @@
+{
+  "cellPx": 32,
+  "tickMs": 16,
+  "running": true,
+  "wrapEdges": true,
+  "randomFill": 0,
+  "mode": "protofield",
+  "denseRadius": 2,
+  "denseBirth": 0,
+  "denseSurviveMin": 18,
+  "denseSurviveMax": 24,
+  "protoAlpha": 0.94,
+  "protoBeta": 0.006,
+  "protoThreshMin": -0.6,
+  "protoThreshMax": 1.1,
+  "protoNoise": 2.7,
+  "paintColor": "#111111",
+  "shiftColorOnSurvive": false,
+  "strokeColor": "#111111",
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0,
+      "preset": "",
+      "splitMode": "screen",
+      "applyToAll": false,
+      "tileTargets": "0",
+      "zoomFactor": 1.25,
+      "matrix": {
+        "a": 1,
+        "b": 0,
+        "c": 0,
+        "d": 1,
+        "e": 0,
+        "f": 0
+      },
+      "zoomCenter": {
+        "x": null,
+        "y": null
+      },
+      "translateVec": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCount": 3,
+      "planeBaseScale": 1,
+      "planeScaleStep": -0.12,
+      "planeOpacity": 0.7,
+      "planeOpacityFalloff": 0.12,
+      "planeOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCenter": {
+        "x": null,
+        "y": null
+      },
+      "groupOpen": {}
+    },
+    "stack": [
+      {
+        "kind": "rotate",
+        "deg": -3.2
+      },
+      {
+        "kind": "zoom",
+        "factor": 0.96
+      }
+    ]
+  },
+  "__propOps": {
+    "ui": {
+      "ruleText": "{\n  \"selector\": {\n    \"rect\": {\n      \"fill\": {\n        \"eq\": \"#111111\"\n      }\n    }\n  },\n  \"apply\": {\n    \"$delete\": true\n  }\n}",
+      "showDocs": false
+    },
+    "stack": [
+      {
+        "kind": "propRule",
+        "selector": {
+          "rect": {
+            "fill": {
+              "eq": "#111111"
+            }
+          }
+        },
+        "apply": {
+          "$delete": true
+        }
+      }
+    ]
+  },
+  "__toolFlows": {
+    "ui": {
+      "flowName": "Complement Population",
+      "selectedId": "builtin-grayscale",
+      "autoRun": true,
+      "groupsOpen": {}
+    },
+    "stages": [
+      {
+        "id": "stage-mues67b3-x2p2si7",
+        "kind": "effect",
+        "label": "rect becomes circle",
+        "enabled": true,
+        "config": {
+          "effectType": "convert",
+          "selector": "rect",
+          "convertFrom": "rect",
+          "convertTo": "circle",
+          "pathSamplePoints": 24,
+          "convertScaleMode": "center",
+          "convertScaleFactor": 0.63
+        }
+      },
+      {
+        "id": "stage-mues67b3-vg1z9zt",
+        "kind": "effect",
+        "label": "choose ink on circle",
+        "enabled": true,
+        "config": {
+          "effectType": "paint",
+          "selector": "circle",
+          "paintFill": "none",
+          "paintStroke": "#777777"
+        }
+      },
+      {
+        "id": "stage-mues67b3-hwfr1ep",
+        "kind": "effect",
+        "label": "tangent spline differential",
+        "enabled": true,
+        "config": {
+          "effectType": "splineLines",
+          "splineSource": "circle",
+          "splineSelector": "circle",
+          "splinePointCount": 9,
+          "splineStepsPerSegment": 4,
+          "splineTension": -0.45,
+          "splineLineOrientation": "tangent",
+          "splineLineHeight": 46,
+          "splineLineScale": 1,
+          "splineStrokeWidth": 0.42,
+          "splineScaleMode": "none",
+          "splineScaleFactor": 1
+        }
+      },
+      {
+        "id": "stage-mues67b3-naorkoo",
+        "kind": "effect",
+        "label": "monochrome luminance palette",
+        "enabled": true,
+        "config": {
+          "effectType": "color",
+          "color": {
+            "selector": "*",
+            "sourceProp": "each",
+            "targetProp": "both",
+            "mode": "byLuminance",
+            "colorSort": "luminance",
+            "paletteText": "#777777, #fafafa",
+            "paletteSteps": 48,
+            "useComputed": true,
+            "skipNone": true
+          }
+        }
+      },
+      {
+        "id": "stage-mues67b3-ewf19ir",
+        "kind": "transform",
+        "label": "small final affine change",
+        "enabled": true,
+        "config": {
+          "stack": [
+            {
+              "kind": "rotate",
+              "deg": -3.2
+            },
+            {
+              "kind": "zoom",
+              "factor": 0.96
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "__scriptOps": {
+    "ui": {
+      "codeText": "// ctx.root is the <g> subtree being processed\n// ctx.svg is the owning <svg>\n// ctx.create(tag) creates an SVG element\n//\n// Example: circle -> 6-gon (polygon)\n// for (const c of ctx.root.querySelectorAll(\"circle\")) {\n//   const cx = Number(c.getAttribute(\"cx\") || 0);\n//   const cy = Number(c.getAttribute(\"cy\") || 0);\n//   const r = Number(c.getAttribute(\"r\") || 0);\n//   const n = 6;\n//   const pts = Array.from({length:n}, (_,i) => {\n//     const a = (Math.PI*2*i)/n;\n//     return [cx + r*Math.cos(a), cy + r*Math.sin(a)].join(\",\");\n//   }).join(\" \");\n//   const p = ctx.create(\"polygon\");\n//   p.setAttribute(\"points\", pts);\n//   for (const {name,value} of Array.from(c.attributes)) {\n//     if (name === \"cx\" || name === \"cy\" || name === \"r\") continue;\n//     p.setAttribute(name, value);\n//   }\n//   c.replaceWith(p);\n// }",
+      "fileName": "",
+      "selectedCacheKey": "",
+      "autoRunSelected": false,
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": [],
+    "cache": {}
+  }
+}

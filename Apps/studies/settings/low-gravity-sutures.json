@@ -1,0 +1,23 @@
+{
+  "sigma": 6.5,
+  "rho": 35,
+  "beta": 3.8,
+  "steps": 12000,
+  "dt": 0.006,
+  "trailCount": 5,
+  "trailSpread": 0.19,
+  "fitMode": "stretch",
+  "padding": 90,
+  "strokeWidth": 0.85,
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0
+    },
+    "stack": []
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "fractal": "burningShip",
+  "maxIterBase": 550,
+  "minCellPx": 1.5,
+  "startCellPx": 32,
+  "showBoundaryPixels": true,
+  "shapeType": "square",
+  "nSides": 6,
+  "maxCircles": 100000,
+  "view": {
+    "centerRe": -1.76,
+    "centerIm": -0.025,
+    "spanRe": 0.066
+  },
+  "julia": {
+    "Re": -0.8,
+    "Im": 0.156
+  },
+  "multibrot": {
+    "Power": 3
+  },
+  "ford": {
+    "maxDenom": 35,
+    "gaussianMaxNorm": 25
+  },
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0
+    },
+    "stack": []
+  }
+}

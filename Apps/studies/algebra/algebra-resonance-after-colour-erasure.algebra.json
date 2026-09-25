@@ -1,0 +1,128 @@
+{
+  "title": "Resonance After Colour Erasure",
+  "source": "LissajousFigures/LissajousFigures_visual.js",
+  "visualId": "lissajousFigures",
+  "seed": 925310,
+  "frames": 0,
+  "algebra": {
+    "expression": "A o C2 o N o Q o C1 o D o G",
+    "interpretation": "The deletion acts on original RGB stroke values before either palette operation. Q and N replace selected shapes; untouched paths survive beside them.",
+    "convention": "Compose right to left."
+  },
+  "propertyPrefix": [
+    {
+      "kind": "propRule",
+      "selector": {
+        "path": {
+          "stroke": {
+            "range": [
+              [
+                100,
+                0,
+                130
+              ],
+              [
+                255,
+                85,
+                255
+              ]
+            ]
+          }
+        }
+      },
+      "apply": {
+        "$delete": true
+      }
+    }
+  ],
+  "nativeFlow": "../flows/algebra-resonance-after-colour-erasure.flow.json",
+  "nativeSettings": "../settings/algebra-resonance-after-colour-erasure.json",
+  "observedStages": [
+    {
+      "label": "Native property-rule prefix",
+      "kind": "property",
+      "changed": true,
+      "beforeShapes": 21,
+      "afterShapes": 10,
+      "rules": [
+        {
+          "kind": "propRule",
+          "selector": {
+            "path": {
+              "stroke": {
+                "range": [
+                  [
+                    100,
+                    0,
+                    130
+                  ],
+                  [
+                    255,
+                    85,
+                    255
+                  ]
+                ]
+              }
+            }
+          },
+          "apply": {
+            "$delete": true
+          }
+        }
+      ]
+    },
+    {
+      "label": "Two temporary colour classes",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 10,
+      "afterShapes": 10,
+      "messages": [
+        "color applied: 10 elements, 10 mapped colors."
+      ]
+    },
+    {
+      "label": "Every third survivor becomes a polygon",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 10,
+      "afterShapes": 10,
+      "messages": [
+        "convert applied: 3 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "Polygon edges become normal combs",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 10,
+      "afterShapes": 226,
+      "messages": [
+        "spline lines applied: 3 shapes, 219 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "Final monochrome lineage",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 226,
+      "afterShapes": 226,
+      "messages": [
+        "color applied: 226 elements, 2 mapped colors."
+      ]
+    },
+    {
+      "label": "Small oblique displacement",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 226,
+      "afterShapes": 226,
+      "messages": []
+    }
+  ]
+}

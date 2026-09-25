@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 1,
+  "name": "Territory at the Event Horizon",
+  "stages": [
+    {
+      "id": "stage-mues68e3-007lviw",
+      "kind": "effect",
+      "label": "P: paint",
+      "enabled": true,
+      "config": {
+        "effectType": "paint",
+        "selector": "path",
+        "paintStroke": "#c4dfef",
+        "paintFill": "none"
+      }
+    },
+    {
+      "id": "stage-mues68e3-eiimj6i",
+      "kind": "effect",
+      "label": "Q: convert",
+      "enabled": true,
+      "config": {
+        "effectType": "convert",
+        "selector": "path:nth-of-type(5n)",
+        "convertFrom": "path",
+        "convertTo": "polygon",
+        "pathSamplePoints": 9,
+        "convertScaleMode": "center",
+        "convertScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues68e3-m12rig5",
+      "kind": "effect",
+      "label": "N: splineLines",
+      "enabled": true,
+      "config": {
+        "effectType": "splineLines",
+        "splineSource": "polygon",
+        "splineSelector": "polygon",
+        "splinePointCount": 9,
+        "splineStepsPerSegment": 3,
+        "splineTension": -1.4,
+        "splineExtrapolateTension": true,
+        "splineAngleOffset": 137.507,
+        "splineLineOrientation": "normal",
+        "splineLineHeight": 8,
+        "splineLineScale": 7.7,
+        "splineStrokeWidth": 0.65,
+        "splineScaleMode": "none",
+        "splineScaleFactor": 1
+      }
+    },
+    {
+      "id": "stage-mues68e3-crq9s42",
+      "kind": "effect",
+      "label": "E: scale",
+      "enabled": true,
+      "config": {
+        "effectType": "scale",
+        "elementType": "path",
+        "selector": "path:nth-of-type(7n)",
+        "rangeMin": 0.2,
+        "rangeMax": 1.8,
+        "count": 4,
+        "spacing": "logarithmic",
+        "opacityMode": "fixed",
+        "opacityFixed": 0.82,
+        "equation": "sum(backward):opacity *0.72"
+      }
+    },
+    {
+      "id": "stage-mues68e3-mrb2yky",
+      "kind": "effect",
+      "label": "C: color",
+      "enabled": true,
+      "config": {
+        "effectType": "color",
+        "color": {
+          "selector": "path,polygon,circle,rect,line",
+          "sourceProp": "each",
+          "targetProp": "stroke",
+          "mode": "bySize",
+          "colorSort": "appearance",
+          "paletteText": "#481778,#ef3b56,#ffa32d,#f6ffb4",
+          "paletteSteps": 7,
+          "useComputed": true,
+          "skipNone": true,
+          "sizeSource": "bboxArea",
+          "sizeAttr": "r"
+        }
+      }
+    },
+    {
+      "id": "stage-mues68e3-uf6s6jg",
+      "kind": "transform",
+      "label": "A: folded presentation",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "zoom",
+            "factor": 0.72
+          },
+          {
+            "kind": "planes3d",
+            "count": 2,
+            "baseScale": 0.8,
+            "scaleStep": 0.17,
+            "offset": {
+              "x": 34,
+              "y": -29
+            },
+            "opacity": 0.8,
+            "opacityFalloff": 0.14
+          }
+        ]
+      }
+    }
+  ]
+}
