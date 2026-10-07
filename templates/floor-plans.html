@@ -1,0 +1,144 @@
+<!doctype html>
+<!--
+Copyright (c) 2026 Reside Here LLC. All rights reserved.
+No AI training, fine-tuning, or inclusion in AI/ML training datasets without prior written permission.
+See LICENSE.txt for terms. Third-party materials retain their own licenses.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#016f4c" />
+    <meta
+      name="description"
+      content="Reside Here rental unit floor plans and property information for apartments in Belleville, Illinois. Search available rentals or submit a maintenance request."
+    />
+    <title>{{RENTAL_INFO_TITLE}}</title>
+    <link rel="icon" href="assets/chairsimpler.png" type="image/png" sizes="1254x1254" />
+    <link rel="stylesheet" href="fonts.css" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="resources.css" />
+    <link rel="stylesheet" href="navigation.css" />
+    <link rel="stylesheet" href="accessibility.css" />
+    <script src="accessibility.js"></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body class="resource-page direct-site">
+    <svg class="svg-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6" /></symbol>
+      <symbol id="icon-chair" viewBox="0 0 64 70">
+        <path d="M17 36V12c0-5 4-8 8-8h14c5 0 8 3 8 8v24" />
+        <path d="M14 32c-5-5-11-2-10 4l4 17h48l4-17c1-6-5-9-10-4l-3 9H17l-3-9Z" />
+        <path d="m13 53-3 12m41-12 3 12M17 41h30" />
+      </symbol>
+      <symbol id="icon-photo" viewBox="0 0 40 40">
+        <rect x="5" y="6" width="30" height="28" rx="2" />
+        <circle cx="14" cy="15" r="3" />
+        <path d="m6 29 9-9 7 7 5-5 8 8" />
+      </symbol>
+    </svg>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="topbar">
+      <div class="container topbar-inner">
+        <button
+          type="button"
+          class="accessibility-trigger"
+          data-accessibility-open
+          aria-haspopup="dialog"
+          aria-controls="accessibility-dialog"
+          hidden
+        >
+          Accessibility
+        </button>
+        <a href="tel:+16182358400">(618) 235-8400</a
+        ><a class="topbar-maintenance-link" href="{{TENANT_LOGIN_URL}}"
+          >Maintenance Request <span aria-hidden="true">↗</span></a
+        >
+      </div>
+    </div>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="index.html" aria-label="Reside Here home"
+          ><img
+            class="brand-chair"
+            src="assets/resideHereLogoSmaller.png"
+            width="350"
+            height="350"
+            alt=""
+          /><span class="brand-name"
+            ><span class="brand-wordmark">Reside <span class="brand-here">Here</span></span
+            ><span class="brand-small">APARTMENT &amp; HOME RENTALS</span></span
+          ></a
+        >
+        <button
+          id="navigation-toggle"
+          class="mobile-nav-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="secondary-navigation"
+          hidden
+        >
+          Menu
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </button>
+        <nav id="site-nav" class="site-nav" aria-label="Main navigation">
+          <a class="button button-small nav-cta" href="{{RENTAL_SEARCH_URL}}"
+            >Rental Search <svg class="icon" aria-hidden="true"><use href="#icon-arrow" /></svg
+          ></a>
+          <div id="secondary-navigation" class="nav-secondary">
+            <a class="nav-tenant-login" href="{{TENANT_LOGIN_URL}}">Tenant Login</a>
+            <a href="{{RENTAL_CRITERIA_URL}}">Rental Criteria</a>
+            <a href="{{RENTAL_INFO_URL}}" aria-current="page">Rental Info</a>
+            <a href="{{CONTACT_URL}}">Contact Us</a>
+          </div>
+        </nav>
+      </div>
+    </header>
+    <main id="main" tabindex="-1" class="resource-main">
+      {{RENTAL_INFO_HEADER}} {{PROPERTY_INDEX}}
+      <section
+        class="container property-list"
+        id="floorplans"
+        aria-label="Rental properties and floor plans"
+      >
+        {{PROPERTY_CARDS}}
+      </section>
+      <div class="container"><p class="plan-note">{{PLAN_NOTE}}</p></div>
+      {{RENTAL_INFO_CONTACT}}
+    </main>
+    <footer class="site-footer">
+      <div class="container resource-footer">
+        <a class="resource-footer-name" href="index.html" aria-label="Reside Here home"
+          ><img
+            class="brand-chair"
+            src="assets/resideHereLogoSmaller.png"
+            width="350"
+            height="350"
+            alt=""
+          />Reside Here</a
+        >
+        <nav aria-label="Footer navigation">
+          <a href="{{RENTAL_SEARCH_URL}}">Rental Search</a>
+          <a href="{{RENTAL_CRITERIA_URL}}">Rental Criteria</a>
+          <a href="{{RENTAL_INFO_URL}}" aria-current="page">Rental Info</a>
+          <a href="{{CONTACT_URL}}">Contact Us</a>
+          <a href="{{TENANT_LOGIN_URL}}">Tenant Login</a>
+        </nav>
+        <p>© <span id="current-year">2026</span> Reside Here. Equal Housing Opportunity.</p>
+      </div>
+      <div class="container accessibility-footer">
+        <button
+          type="button"
+          data-accessibility-open
+          aria-haspopup="dialog"
+          aria-controls="accessibility-dialog"
+          hidden
+        >
+          Accessibility settings
+        </button>
+      </div>
+    </footer>
+  </body>
+</html>

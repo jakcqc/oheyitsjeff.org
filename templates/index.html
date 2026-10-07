@@ -1,0 +1,213 @@
+<!doctype html>
+<!--
+Copyright (c) 2026 Reside Here LLC. All rights reserved.
+No AI training, fine-tuning, or inclusion in AI/ML training datasets without prior written permission.
+See LICENSE.txt for terms. Third-party materials retain their own licenses.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#016f4c" />
+    <meta
+      name="description"
+      content="Owner-managed apartments and homes in Belleville, O'Fallon, Swansea, and Decatur, Illinois. In business since 1998. 24 hour emergency maintenance. Search available rentals."
+    />
+    <title>Reside Here</title>
+    <link rel="icon" href="assets/chairsimpler.png" type="image/png" sizes="1254x1254" />
+    <link rel="stylesheet" href="fonts.css" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="property-gallery.css" />
+    <link rel="stylesheet" href="navigation.css" />
+    <link rel="stylesheet" href="accessibility.css" />
+    <script src="accessibility.js"></script>
+    <script src="app.js" defer></script>
+    <script src="property-gallery.js" defer></script>
+  </head>
+  <body class="direct-site">
+    <svg class="svg-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6" /></symbol>
+      <symbol id="icon-diagonal" viewBox="0 0 24 24"><path d="M6 18 18 6M6 6h12v12" /></symbol>
+      <symbol id="icon-pin" viewBox="0 0 24 24">
+        <path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z" />
+        <circle cx="12" cy="10" r="2.5" />
+      </symbol>
+      <symbol id="icon-photo" viewBox="0 0 40 40">
+        <rect x="5" y="6" width="30" height="28" rx="2" />
+        <circle cx="14" cy="15" r="3" />
+        <path d="m6 29 9-9 7 7 5-5 8 8" />
+      </symbol>
+      <symbol id="icon-house" viewBox="0 0 32 32">
+        <path d="m4 14 12-10 12 10M7 12v15h18V12M13 27V17h6v10" />
+      </symbol>
+      <symbol id="icon-key" viewBox="0 0 32 32">
+        <circle cx="11" cy="11" r="7" />
+        <path d="m16 16 12 12m-6-6 4-4m-8 0 4-4" />
+      </symbol>
+      <symbol id="icon-care" viewBox="0 0 32 32">
+        <path d="M16 27S3 19 3 11a7 7 0 0 1 13-3 7 7 0 0 1 13 3c0 8-13 16-13 16Z" />
+        <path d="M11 16h10m-5-5v10" />
+      </symbol>
+      <symbol id="icon-chair" viewBox="0 0 64 70">
+        <path d="M17 36V12c0-5 4-8 8-8h14c5 0 8 3 8 8v24" />
+        <path d="M14 32c-5-5-11-2-10 4l4 17h48l4-17c1-6-5-9-10-4l-3 9H17l-3-9Z" />
+        <path d="m13 53-3 12m41-12 3 12M17 41h30" />
+      </symbol>
+      <symbol id="icon-phone" viewBox="0 0 24 24">
+        <path d="m7 3 4 5-3 3c1 3 2 4 5 5l3-3 5 4c-1 4-3 5-6 4C8 19 5 16 3 9 2 6 3 4 7 3Z" />
+      </symbol>
+    </svg>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="topbar">
+      <div class="container topbar-inner">
+        <button
+          type="button"
+          class="accessibility-trigger"
+          data-accessibility-open
+          aria-haspopup="dialog"
+          aria-controls="accessibility-dialog"
+          hidden
+        >
+          Accessibility
+        </button>
+        <a href="tel:+16182358400">Call (618) 235-8400</a>
+        <a class="topbar-maintenance-link" href="{{TENANT_LOGIN_URL}}"
+          >Maintenance Request <span aria-hidden="true">&nearr;</span></a
+        >
+      </div>
+    </div>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="index.html" aria-label="Reside Here home"
+          ><img
+            class="brand-chair"
+            src="assets/resideHereLogoSmaller.png"
+            width="350"
+            height="350"
+            alt=""
+          /><span class="brand-name"
+            ><span class="brand-wordmark">Reside <span class="brand-here">Here</span></span
+            ><span class="brand-small">APARTMENT &amp; HOME RENTALS</span></span
+          ></a
+        >
+        <button
+          id="navigation-toggle"
+          class="mobile-nav-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="secondary-navigation"
+          hidden
+        >
+          Menu
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </button>
+        <nav id="site-nav" class="site-nav" aria-label="Main navigation">
+          <a class="button button-small nav-cta" href="{{RENTAL_SEARCH_URL}}"
+            >Rental Search <svg class="icon" aria-hidden="true"><use href="#icon-arrow" /></svg
+          ></a>
+          <div id="secondary-navigation" class="nav-secondary">
+            <a class="nav-tenant-login" href="{{TENANT_LOGIN_URL}}">Tenant Login</a>
+            <a href="{{RENTAL_CRITERIA_URL}}">Rental Criteria</a>
+            <a href="{{RENTAL_INFO_URL}}">Rental Info</a>
+            <a href="{{HOME_CONTACT_URL}}">Contact Us</a>
+          </div>
+        </nav>
+      </div>
+    </header>
+    <main id="main" tabindex="-1">
+      <section class="hero direct-hero container" aria-labelledby="hero-heading">
+        {{HOME_HERO_COPY}}
+        <div class="hero-visual">
+          {{PROPERTY_GALLERY}}
+          <p class="source-tagline">{{HOME_TAGLINE}}</p>
+        </div>
+      </section>
+      {{RENTAL_OVERVIEW}}
+      <section
+        class="contact-section container section-space"
+        id="contact"
+        tabindex="-1"
+        aria-labelledby="contact-heading"
+      >
+        <div class="contact-banner">
+          <div class="contact-copy">
+            <h2 id="contact-heading">Contact Us</h2>
+            <p>Reside Here Office Hours &amp; Location</p>
+            <p>Open Monday-Friday 9:00-5:30</p>
+            <div class="contact-actions">
+              <a class="button button-cream" href="tel:+16182358400"
+                ><svg class="icon" aria-hidden="true"><use href="#icon-phone" /></svg> (618)
+                235-8400</a
+              >
+              <a class="contact-email" href="mailto:rent@residehere.net"
+                >rent@residehere.net
+                <svg class="icon" aria-hidden="true"><use href="#icon-diagonal" /></svg
+              ></a>
+            </div>
+            <p class="office-fax">Fax (618) 235-8445</p>
+          </div>
+          <div class="office-details">
+            <h3>Office Location</h3>
+            <address>1528 Lebanon Avenue<br />Belleville, IL 62221</address>
+            <a
+              href="https://www.google.com/maps/search/?api=1&amp;query=1528+Lebanon+Avenue+Belleville+IL+62221"
+              >Get directions
+              <svg class="icon" aria-hidden="true"><use href="#icon-diagonal" /></svg
+            ></a>
+            <a href="{{TENANT_LOGIN_URL}}"
+              >Tenant Login / Maintenance Request
+              <svg class="icon" aria-hidden="true"><use href="#icon-diagonal" /></svg
+            ></a>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-main">
+          <a class="brand" href="index.html" aria-label="Reside Here home"
+            ><img
+              class="brand-chair"
+              src="assets/resideHereLogoSmaller.png"
+              width="350"
+              height="350"
+              alt=""
+            /><span class="brand-name"
+              ><span class="brand-wordmark">Reside <span class="brand-here">Here</span></span
+              ><span class="brand-small">APARTMENT &amp; HOME RENTALS</span></span
+            ></a
+          >
+          <nav aria-label="Footer navigation">
+            <a href="{{RENTAL_SEARCH_URL}}">Rental Search</a>
+            <a href="{{RENTAL_CRITERIA_URL}}">Rental Criteria</a>
+            <a href="{{RENTAL_INFO_URL}}">Rental Info</a>
+            <a href="{{HOME_CONTACT_URL}}">Contact Us</a>
+            <a href="{{TENANT_LOGIN_URL}}">Tenant Login</a>
+          </nav>
+        </div>
+        <div class="footer-bottom">
+          <span
+            >&copy; <span id="current-year">2026</span> Kerley Properties, LLC. All Rights
+            Reserved.</span
+          ><span class="housing"
+            ><svg class="icon" aria-hidden="true"><use href="#icon-house" /></svg> Equal Housing
+            Opportunity</span
+          ><a href="#">Back to top &uarr;</a>
+        </div>
+      </div>
+      <div class="container accessibility-footer">
+        <button
+          type="button"
+          data-accessibility-open
+          aria-haspopup="dialog"
+          aria-controls="accessibility-dialog"
+          hidden
+        >
+          Accessibility settings
+        </button>
+      </div>
+    </footer>
+  </body>
+</html>

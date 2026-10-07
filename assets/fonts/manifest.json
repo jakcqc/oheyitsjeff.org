@@ -1,0 +1,170 @@
+{
+    "downloaded":  "2026-10-07",
+    "provider":  "Google Fonts",
+    "stylesheet":  "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..700,50,1;1,9..144,400..700,50,1\u0026family=Nunito+Sans:ital,opsz,wght@0,6..12,400..800;1,6..12,400..800\u0026family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700\u0026display=swap",
+    "requestUserAgent":  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
+    "subset":  "latin",
+    "notes":  [
+                  "Latin subset only; other characters use the site font fallback stacks.",
+                  "The original Atkinson Hyperlegible is an optional reading preference, not the Next family.",
+                  "Fraunces SOFT=50 and WONK=1 are fixed; optical size and weight remain variable."
+              ],
+    "files":  [
+                  {
+                      "file":  "atkinson-hyperlegible-latin-italic-400.woff2",
+                      "family":  "Atkinson Hyperlegible",
+                      "style":  "italic",
+                      "weight":  "400",
+                      "subset":  "latin",
+                      "source":  "https://fonts.gstatic.com/s/atkinsonhyperlegible/v12/9Bt43C1KxNDXMspQ1lPyU89-1h6ONRlW45G056IqUwA.woff2",
+                      "bytes":  18292,
+                      "sha256":  "bc8825fd435d4aa8e31449937826d583a7daaae15a83832c91b38375131ebf08",
+                      "requestedAxes":  {
+                                            "wght":  400
+                                        }
+                  },
+                  {
+                      "file":  "atkinson-hyperlegible-latin-italic-700.woff2",
+                      "family":  "Atkinson Hyperlegible",
+                      "style":  "italic",
+                      "weight":  "700",
+                      "subset":  "latin",
+                      "source":  "https://fonts.gstatic.com/s/atkinsonhyperlegible/v12/9Bt93C1KxNDXMspQ1lPyU89-1h6ONRlW45G056qRdhWNTFg.woff2",
+                      "bytes":  18484,
+                      "sha256":  "73e0c9e1e284128dda599558f7c15bd5f3c056442c31dfae950528a16b3835cf",
+                      "requestedAxes":  {
+                                            "wght":  700
+                                        }
+                  },
+                  {
+                      "file":  "atkinson-hyperlegible-latin-normal-400.woff2",
+                      "family":  "Atkinson Hyperlegible",
+                      "style":  "normal",
+                      "weight":  "400",
+                      "subset":  "latin",
+                      "source":  "https://fonts.gstatic.com/s/atkinsonhyperlegible/v12/9Bt23C1KxNDXMspQ1lPyU89-1h6ONRlW45G04pIo.woff2",
+                      "bytes":  17208,
+                      "sha256":  "d64ba838ef5472bba248620ec4fd8b5aa7cf0db2908e0bb230600caf279ba7bc",
+                      "requestedAxes":  {
+                                            "wght":  400
+                                        }
+                  },
+                  {
+                      "file":  "atkinson-hyperlegible-latin-normal-700.woff2",
+                      "family":  "Atkinson Hyperlegible",
+                      "style":  "normal",
+                      "weight":  "700",
+                      "subset":  "latin",
+                      "source":  "https://fonts.gstatic.com/s/atkinsonhyperlegible/v12/9Bt73C1KxNDXMspQ1lPyU89-1h6ONRlW45G8Wbc9dCWP.woff2",
+                      "bytes":  17524,
+                      "sha256":  "140e2bd25a7315c8a062508391426b0d8c3297400c947b8d847be28f73a199f0",
+                      "requestedAxes":  {
+                                            "wght":  700
+                                        }
+                  },
+                  {
+                      "file":  "fraunces-latin-italic.woff2",
+                      "family":  "Fraunces",
+                      "style":  "italic",
+                      "weight":  "400 700",
+                      "subset":  "latin",
+                      "source":  "https://fonts.gstatic.com/s/fraunces/v38/6NU58FyLNQOQZAnv9ZwNjucMHVn85Ni7emBWtFKqZTnbB-gzTK0KVBdjeveQ.woff2",
+                      "bytes":  82156,
+                      "sha256":  "5bd578d6200e790e7e1b6d8a9ec6df1a4d1ceac98da600c3714394b1ec962d48",
+                      "requestedAxes":  {
+                                            "wght":  [
+                                                         400,
+                                                         700
+                                                     ],
+                                            "SOFT":  50,
+                                            "opsz":  [
+                                                         9,
+                                                         144
+                                                     ],
+                                            "WONK":  1
+                                        }
+                  },
+                  {
+                      "file":  "fraunces-latin-normal.woff2",
+                      "family":  "Fraunces",
+                      "style":  "normal",
+                      "weight":  "400 700",
+                      "subset":  "latin",
+                      "source":  "https://fonts.gstatic.com/s/fraunces/v38/6NU78FyLNQOQZAnv9bYEvDiIdE9Ea92uMiIk_WBq8U_9v0c2WS01xC9TeA.woff2",
+                      "bytes":  66700,
+                      "sha256":  "e7d14704a1d6d6f7220fcbf185ea563dcce3184864d07522f58da50f43c4d8c9",
+                      "requestedAxes":  {
+                                            "wght":  [
+                                                         400,
+                                                         700
+                                                     ],
+                                            "SOFT":  50,
+                                            "opsz":  [
+                                                         9,
+                                                         144
+                                                     ],
+                                            "WONK":  1
+                                        }
+                  },
+                  {
+                      "file":  "nunito-sans-latin-italic.woff2",
+                      "family":  "Nunito Sans",
+                      "style":  "italic",
+                      "weight":  "400 800",
+                      "subset":  "latin",
+                      "source":  "https://fonts.gstatic.com/s/nunitosans/v19/pe0OMImSLYBIv1o4X1M8cce4OdVisMz5nZRqy6cmmmU3t3NeCAAFOvV9SNjBznuB.woff2",
+                      "bytes":  47308,
+                      "sha256":  "5705f01019fbc265ef1873a9a0636dc0b350761e10d42f451df5427f4788eb7a",
+                      "requestedAxes":  {
+                                            "wght":  [
+                                                         400,
+                                                         800
+                                                     ],
+                                            "opsz":  [
+                                                         6,
+                                                         12
+                                                     ]
+                                        }
+                  },
+                  {
+                      "file":  "nunito-sans-latin-normal.woff2",
+                      "family":  "Nunito Sans",
+                      "style":  "normal",
+                      "weight":  "400 800",
+                      "subset":  "latin",
+                      "source":  "https://fonts.gstatic.com/s/nunitosans/v19/pe0AMImSLYBIv1o4X1M8ce2xCx3yop4tQpF_MeTm0lfUVwoNnq4CLz0_kJ3xzA.woff2",
+                      "bytes":  49648,
+                      "sha256":  "c9746ad68c8a1a94e9d8981ae5093fd4df05b6809e8b5afecd08df1a3bdb7e62",
+                      "requestedAxes":  {
+                                            "wght":  [
+                                                         400,
+                                                         800
+                                                     ],
+                                            "opsz":  [
+                                                         6,
+                                                         12
+                                                     ]
+                                        }
+                  }
+              ],
+    "licenses":  [
+                     {
+                         "family":  "Fraunces",
+                         "file":  "fraunces-OFL.txt",
+                         "source":  "https://raw.githubusercontent.com/google/fonts/main/ofl/fraunces/OFL.txt",
+                         "license":  "SIL Open Font License 1.1"
+                     },
+                     {
+                         "family":  "Nunito Sans",
+                         "file":  "nunito-sans-OFL.txt",
+                         "source":  "https://raw.githubusercontent.com/google/fonts/main/ofl/nunitosans/OFL.txt",
+                         "license":  "SIL Open Font License 1.1"
+                     },
+                     {
+                         "family":  "Atkinson Hyperlegible",
+                         "file":  "atkinson-hyperlegible-OFL.txt",
+                         "source":  "https://raw.githubusercontent.com/google/fonts/main/ofl/atkinsonhyperlegible/OFL.txt",
+                         "license":  "SIL Open Font License 1.1"
+                     }
+                 ]
+}

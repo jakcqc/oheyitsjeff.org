@@ -1,0 +1,28 @@
+RESIDE HERE LLC PROPRIETARY LICENSE - NO AI TRAINING
+
+Copyright (c) 2026 Reside Here LLC. All rights reserved.
+
+This license applies to the source code, designs, text, images, and other
+materials in this project to the extent owned by Reside Here LLC (the
+"Materials"). Third-party materials, including dependencies and fonts, remain
+subject to their own copyright notices and licenses.
+
+Permission is granted to access and use the website through ordinary browsing,
+including downloading, executing, and caching the site files as reasonably
+necessary for that use.
+
+Except for this permission, separate written authorization, or uses permitted
+by applicable law, no permission is granted to copy, modify, distribute,
+republish, sublicense, or commercially exploit the Materials.
+
+Without prior written permission from Reside Here LLC, the Materials may not
+be used to train or fine-tune artificial intelligence or machine learning
+models, or to create, compile, augment, or distribute datasets for those
+purposes. This restriction includes collecting or scraping the Materials for
+those purposes.
+
+Retain applicable copyright and license notices in authorized copies. All
+rights not expressly granted are reserved.
+
+Nothing in this license limits rights or exceptions available under applicable
+law, including fair use or fair dealing, or modifies any third-party license.

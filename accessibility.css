@@ -1,0 +1,873 @@
+/*
+ * Copyright (c) 2026 Reside Here LLC. All rights reserved.
+ * No AI training, fine-tuning, or inclusion in AI/ML training datasets without prior written permission.
+ * See LICENSE.txt for terms. Third-party materials retain their own licenses.
+ */
+/* Preferences layer: keep text scalable and controls usable without changing content. */
+:root {
+  font-size: var(--text-size, 100%);
+  --a11y-page: #f8f7f2;
+  --a11y-surface: #ffffff;
+  --a11y-text: #173f32;
+  --a11y-muted: #46594e;
+  --a11y-accent: #016f4c;
+  --a11y-on-accent: #ffffff;
+  --a11y-border: #657667;
+  --a11y-focus: #005fcc;
+}
+
+/* Reflow is preferable to clipping when text or browser zoom is increased. */
+body {
+  overflow-wrap: anywhere;
+}
+
+:where(main, section, article, nav, form, header, footer, div) {
+  min-width: 0;
+}
+
+:where(button, select, input, a) {
+  max-width: 100%;
+}
+
+:where(button, .button, .menu-toggle, .filters button, .round-link, select) {
+  min-height: 44px;
+}
+
+.round-link {
+  min-width: 44px;
+}
+
+:focus-visible {
+  outline: 3px solid var(--a11y-focus);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px var(--a11y-surface);
+}
+
+.topbar-inner {
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  padding-block: 0.25rem;
+}
+
+.topbar-inner > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.topbar-inner > a {
+  padding-block: 0.5rem;
+}
+
+.header-inner {
+  height: auto;
+  min-height: 98px;
+  padding-block: 1rem;
+  flex-wrap: wrap;
+}
+
+.site-nav {
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.site-nav [aria-current='page'],
+.filters button[aria-pressed='true'] {
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+  text-decoration-thickness: 0.12em;
+}
+
+.filters button[aria-pressed='true'] {
+  border: 2px solid currentColor;
+}
+
+.hero-actions,
+.contact-actions,
+.local-links,
+.office-details p,
+.footer-main,
+.footer-main nav,
+.footer-bottom,
+.resource-footer,
+.resource-footer nav,
+.resource-next {
+  flex-wrap: wrap;
+}
+
+.button,
+.text-link,
+.contact-email,
+.resource-email {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.button {
+  flex-wrap: wrap;
+}
+
+.location-control,
+.location-control > div {
+  min-width: 0;
+}
+
+.location-control select {
+  max-width: 100%;
+}
+
+.office-details,
+.contact-copy,
+.plan-copy,
+.resource-help,
+.compact-card > div {
+  min-width: 0;
+}
+
+.resource-next .button {
+  flex-shrink: 1;
+}
+
+#community-count {
+  white-space: normal;
+}
+
+/* Keep small reading and control text legible in the original design, too. */
+.hero-note,
+.compact-card p:last-child,
+.availability-note,
+.contact-email,
+.office-details > a,
+.office-details p,
+.footer-main nav,
+.footer-bottom,
+.housing,
+#community-count,
+.topbar,
+.topbar-inner {
+  font-size: 0.875rem;
+}
+
+.hero-description,
+.section-intro > p:last-child,
+.benefit p,
+.section-heading-aside p,
+.community-card-body > p:last-child,
+.local-copy > p:not(.eyebrow),
+.resources-intro,
+.resource p,
+.faq details p,
+.contact-copy > p:not(.eyebrow),
+.office-details address {
+  font-size: 0.9375rem;
+}
+
+.hero .eyebrow,
+.community-card-body .eyebrow,
+.compact-card .eyebrow,
+.resource-top .eyebrow,
+.contact-banner .eyebrow,
+.location-control label,
+.finder-intro .eyebrow {
+  font-size: 0.75rem;
+}
+
+.photo-tag,
+.hero-photo .photo-tag,
+.community-photo .photo-tag,
+.local-photo .photo-tag,
+.placeholder-center > span,
+.placeholder-center small,
+.placeholder-bottom,
+.placeholder-bottom > span:last-child,
+.community-photo .card-placeholder,
+.local-photo > .card-placeholder,
+.photo-location,
+.hero-caption {
+  font-size: 0.75rem;
+}
+
+/* Image placeholders use normal flow so their labels cannot collide. */
+.hero-photo,
+.community-photo,
+.local-photo,
+.plan-placeholder {
+  height: auto;
+  min-height: 16rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.5rem;
+}
+
+.hero-photo {
+  min-height: 28rem;
+  padding-top: 3rem;
+}
+
+.local-photo {
+  min-height: 22rem;
+}
+
+.placeholder-top,
+.placeholder-center,
+.placeholder-bottom,
+.card-placeholder,
+.photo-location,
+.local-photo-caption,
+.community-photo .photo-tag,
+.local-photo .photo-tag {
+  position: static;
+  inset: auto;
+  width: auto;
+  max-width: 100%;
+}
+
+.placeholder-top,
+.placeholder-bottom {
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.placeholder-center,
+.card-placeholder {
+  flex: 1;
+  text-align: center;
+  padding-block: 1rem;
+}
+
+.placeholder-center small {
+  margin-top: 0;
+}
+
+.community-photo .photo-tag,
+.local-photo .photo-tag {
+  align-self: flex-start;
+}
+
+.local-photo-caption {
+  font-size: 1.375rem;
+}
+
+.plan-placeholder {
+  text-align: center;
+}
+
+.plan-placeholder span {
+  max-width: 100%;
+}
+
+.chair-note em {
+  white-space: normal;
+}
+
+/* Settings launchers are ordinary buttons, available independently of the menu. */
+.accessibility-trigger,
+.accessibility-footer button {
+  min-height: 32px;
+  min-width: 44px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid currentColor;
+  border-radius: 0.3rem;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.accessibility-trigger:hover,
+.accessibility-footer button:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.accessibility-footer {
+  padding-block: 0.5rem 1.5rem;
+}
+
+.a11y-dialog {
+  width: min(36rem, calc(100vw - 1rem));
+  max-width: calc(100vw - 1rem);
+  max-height: calc(100vh - 1rem);
+  max-height: calc(100dvh - 1rem);
+  margin: auto;
+  padding: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 2px solid var(--a11y-border);
+  border-radius: 0.5rem;
+  background: var(--a11y-surface);
+  color: var(--a11y-text);
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.a11y-dialog::backdrop {
+  background: rgb(0 0 0 / 65%);
+}
+
+.a11y-panel {
+  padding: clamp(0.5rem, 3vw, 1.5rem);
+}
+
+.a11y-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.a11y-header h2 {
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 1.5rem;
+  line-height: 1.25;
+  letter-spacing: normal;
+  font-weight: 700;
+}
+
+.a11y-close,
+.a11y-reset {
+  min-height: 44px;
+  min-width: 44px;
+  max-width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 2px solid var(--a11y-border);
+  border-radius: 0.3rem;
+  background: var(--a11y-surface);
+  color: var(--a11y-text);
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: normal;
+}
+
+.a11y-reset {
+  border-color: var(--a11y-accent);
+  background: var(--a11y-accent);
+  color: var(--a11y-on-accent);
+}
+
+.a11y-close:hover,
+.a11y-reset:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.a11y-description,
+.a11y-status {
+  margin: 0 0 1.25rem;
+  color: var(--a11y-muted);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.a11y-field {
+  display: grid;
+  gap: 0.5rem;
+  min-width: 0;
+  margin-block: 1.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.a11y-field select {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 44px;
+  padding: 0.5rem;
+  border: 2px solid var(--a11y-border);
+  border-radius: 0.3rem;
+  background: var(--a11y-surface);
+  color: var(--a11y-text);
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.a11y-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  min-height: 44px;
+  padding-block: 0.5rem;
+  font-size: 1rem;
+  line-height: 1.6;
+  cursor: pointer;
+}
+
+.a11y-check input {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: 0 0 1.25rem;
+  margin: 0.2rem 0 0;
+  accent-color: var(--a11y-accent);
+}
+
+.a11y-check span {
+  min-width: 0;
+}
+
+.a11y-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--a11y-border);
+}
+
+.a11y-status {
+  flex-basis: 100%;
+  margin: 0;
+}
+
+/* A roomier layout is opt-in with larger text or increased text spacing. */
+:root:is([data-text-size]:not([data-text-size='100']), [data-text-spacing='true']) {
+  scroll-padding-top: 1rem;
+}
+
+:root:is([data-text-size]:not([data-text-size='100']), [data-text-spacing='true']) .site-header {
+  position: static;
+}
+
+:root:is([data-text-size]:not([data-text-size='100']), [data-text-spacing='true'])
+  :is(
+    .hero,
+    .difference,
+    .community-grid,
+    .local-section,
+    .resource-grid,
+    .faq,
+    .contact-banner,
+    .guide-layout,
+    .plans-grid
+  ) {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+}
+
+:root:is([data-text-size]:not([data-text-size='100']), [data-text-spacing='true'])
+  :is(
+    .section-heading-row,
+    .community-toolbar,
+    .home-finder,
+    .footer-main,
+    .footer-bottom,
+    .resource-next
+  ) {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1rem;
+}
+
+:root:is([data-text-size]:not([data-text-size='100']), [data-text-spacing='true'])
+  :is(
+    .hero-description,
+    .section-intro > p:last-child,
+    .benefit p,
+    .local-copy > p,
+    .resources-intro,
+    .resource p,
+    .faq > h3,
+    .resource-lead,
+    .resource-help > p
+  ) {
+  max-width: 100%;
+}
+
+:root:is([data-text-size]:not([data-text-size='100']), [data-text-spacing='true']) .finder-intro {
+  border-right: 0;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 1rem;
+}
+
+:root:is([data-text-size]:not([data-text-size='100']), [data-text-spacing='true']) .chair-note {
+  position: static;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 1rem;
+  transform: none;
+}
+
+:root:is([data-text-size]:not([data-text-size='100']), [data-text-spacing='true']) .hero-caption {
+  position: static;
+  display: block;
+  margin-top: 0.75rem;
+}
+
+:root:is([data-text-size]:not([data-text-size='100']), [data-text-spacing='true']) .office-details {
+  border-left: 0;
+  border-top: 1px solid currentColor;
+  padding: 1rem 0 0;
+}
+
+:root:is([data-text-size]:not([data-text-size='100']), [data-text-spacing='true']) .office-chair {
+  position: static;
+  margin-bottom: 1rem;
+}
+
+:root:is([data-text-size]:not([data-text-size='100']), [data-text-spacing='true'])
+  .resource
+  + .resource {
+  border-left: 0;
+  border-top: 1px solid var(--line);
+}
+
+:root:is([data-text-size]:not([data-text-size='100']), [data-text-spacing='true']) .guide-steps li {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.5rem;
+}
+
+:root:is([data-text-size]:not([data-text-size='100']), [data-text-spacing='true']) .brand {
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+:root:is([data-text-size]:not([data-text-size='100']), [data-text-spacing='true']) .brand > span {
+  min-width: 0;
+  line-height: 1.15;
+}
+
+:root:is([data-text-size]:not([data-text-size='100']), [data-text-spacing='true']) .brand-chair {
+  flex-shrink: 0;
+}
+
+:root[data-font-family='atkinson'] {
+  --a11y-reading-family: 'Atkinson Hyperlegible', Arial, sans-serif;
+}
+
+:root[data-font-family='system'] {
+  --a11y-reading-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+}
+
+:root:is([data-font-family='atkinson'], [data-font-family='system']) {
+  --sans: var(--a11y-reading-family);
+  --serif: var(--a11y-reading-family);
+}
+
+:root:is([data-font-family='atkinson'], [data-font-family='system']) :where(body, body *) {
+  font-family: var(--a11y-reading-family) !important;
+}
+
+/* Alternate reading fonts use their natural spacing, unless wider spacing was chosen. */
+:root:is([data-font-family='atkinson'], [data-font-family='system']):not([data-text-spacing='true'])
+  :is(h1, h2, h3, h4, h5, h6, .brand, .resource-footer-name),
+:root:is([data-font-family='atkinson'], [data-font-family='system']):not([data-text-spacing='true'])
+  :is(h1, h2, h3, h4, h5, h6, .brand, .resource-footer-name) * {
+  letter-spacing: normal !important;
+}
+
+:root[data-heavier-text='true'] :where(body, body *) {
+  font-weight: 600 !important;
+}
+
+/* Keep headings and emphasized words distinct when the surrounding text is heavier. */
+:root[data-heavier-text='true']
+  :is(h1, h2, h3, h4, h5, h6, strong, b, .brand, .resource-footer-name, .eyebrow,
+    .location-control label, .site-nav [aria-current='page'], .filters button[aria-pressed='true']),
+:root[data-heavier-text='true']
+  :is(h1, h2, h3, h4, h5, h6, strong, b, .brand, .resource-footer-name, .eyebrow,
+    .location-control label, .site-nav [aria-current='page'], .filters button[aria-pressed='true']) * {
+  font-weight: 700 !important;
+}
+
+:root[data-text-spacing='true'] :where(body, body *) {
+  line-height: 1.7 !important;
+  letter-spacing: 0.12em !important;
+  word-spacing: 0.16em !important;
+}
+
+:root[data-text-spacing='true'] p {
+  margin-block-end: 2em !important;
+}
+
+:root[data-text-spacing='true'] :is(h1, h2, h3, h4, h5, h6) {
+  line-height: 1.5 !important;
+}
+
+:root[data-line-height='relaxed'] {
+  --a11y-reading-line-height: 1.8;
+}
+
+:root[data-line-height='roomy'] {
+  --a11y-reading-line-height: 2;
+}
+
+/* Apply the explicit reading choice after text spacing so the two controls combine. */
+:root:is([data-line-height='relaxed'], [data-line-height='roomy'])
+  :is(p, li, dd, dt, blockquote, address, figcaption),
+:root:is([data-line-height='relaxed'], [data-line-height='roomy'])
+  :is(p, li, dd, dt, blockquote, address, figcaption) :is(a, span, em, strong, b, i, small) {
+  line-height: var(--a11y-reading-line-height) !important;
+}
+
+:root[data-underline-links='true'] a:not(.brand) {
+  text-decoration: underline !important;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 0.1em;
+}
+
+/* Contrast modes use distinct luminance, never color-vision simulation filters. */
+:root[data-contrast='light'] {
+  color-scheme: light;
+  --a11y-page: #ffffff;
+  --a11y-surface: #ffffff;
+  --a11y-text: #111111;
+  --a11y-muted: #303030;
+  --a11y-accent: #0645ad;
+  --a11y-on-accent: #ffffff;
+  --a11y-border: #444444;
+  --a11y-focus: #0645ad;
+}
+
+:root[data-contrast='dark'] {
+  color-scheme: dark;
+  --a11y-page: #10151c;
+  --a11y-surface: #1b2430;
+  --a11y-text: #ffffff;
+  --a11y-muted: #e2e8f0;
+  --a11y-accent: #ffe36d;
+  --a11y-on-accent: #10151c;
+  --a11y-border: #d1d9e2;
+  --a11y-focus: #ffe36d;
+}
+
+:root:is([data-contrast='light'], [data-contrast='dark']) {
+  --green: var(--a11y-accent);
+  --forest: var(--a11y-text);
+  --ink: var(--a11y-text);
+  --muted: var(--a11y-muted);
+  --cream: var(--a11y-page);
+  --sage: var(--a11y-surface);
+  --line: var(--a11y-border);
+  background: var(--a11y-page);
+  color: var(--a11y-text);
+}
+
+:root:is([data-contrast='light'], [data-contrast='dark']) body {
+  background: var(--a11y-page) !important;
+  color: var(--a11y-text) !important;
+}
+
+/* Clear hardcoded nested colors so a component's text follows its own surface. */
+:root:is([data-contrast='light'], [data-contrast='dark']) body * {
+  color: inherit !important;
+  background-color: transparent !important;
+  border-color: var(--a11y-border) !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* Photo position markers remain legible over either light or dark photographs. */
+:root:is([data-contrast='light'], [data-contrast='dark']) .gallery-dots {
+  background-color: var(--a11y-surface) !important;
+  color: var(--a11y-text) !important;
+  border: 1px solid var(--a11y-border);
+}
+
+:root:is([data-contrast='light'], [data-contrast='dark'])
+  :is(
+    .topbar,
+    .site-header,
+    .site-nav,
+    .nav-secondary,
+    .home-finder,
+    .communities-section,
+    .resources-section,
+    .resource,
+    .contact-banner,
+    .photo-placeholder,
+    .plan-placeholder,
+    .chair-note,
+    .resource-help,
+    .a11y-dialog
+  ) {
+  background: var(--a11y-surface) !important;
+  color: var(--a11y-text) !important;
+}
+
+:root:is([data-contrast='light'], [data-contrast='dark'])
+  :is(a, .eyebrow, .brand, .resource-footer-name) {
+  color: var(--a11y-accent) !important;
+}
+
+:root:is([data-contrast='light'], [data-contrast='dark']) :is(button, select, input, .round-link) {
+  background: var(--a11y-surface) !important;
+  color: var(--a11y-text) !important;
+  border-color: var(--a11y-border) !important;
+}
+
+:root:is([data-contrast='light'], [data-contrast='dark'])
+  :is(.button, .a11y-reset, .skip-link, .filters button[aria-pressed='true']) {
+  background: var(--a11y-accent) !important;
+  color: var(--a11y-on-accent) !important;
+  border-color: var(--a11y-accent) !important;
+}
+
+:root:is([data-contrast='light'], [data-contrast='dark'])
+  :is(.button, .a11y-reset, .skip-link, .filters button[aria-pressed='true'])
+  * {
+  color: inherit !important;
+}
+
+:root:is([data-contrast='light'], [data-contrast='dark']) select option {
+  background: var(--a11y-surface) !important;
+  color: var(--a11y-text) !important;
+}
+
+:root:is([data-contrast='light'], [data-contrast='dark']) :focus-visible {
+  outline: 3px solid var(--a11y-focus) !important;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px var(--a11y-page) !important;
+}
+
+:root:is([data-contrast='light'], [data-contrast='dark']) ::selection {
+  background: var(--a11y-accent);
+  color: var(--a11y-on-accent);
+}
+
+:root[data-reduce-motion='true'] {
+  scroll-behavior: auto !important;
+}
+
+:root[data-reduce-motion='true'] *,
+:root[data-reduce-motion='true'] *::before,
+:root[data-reduce-motion='true'] *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+:root[data-reduce-motion='true'] .button:hover {
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html,
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+  .button:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 900px) {
+  :root:not([data-font-family]) {
+    --sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    --serif: var(--sans);
+  }
+
+  .chair-note {
+    position: static;
+    transform: none;
+    width: fit-content;
+    max-width: 100%;
+    margin-block: 1rem;
+  }
+  .hero-caption {
+    position: static;
+  }
+  .header-inner {
+    min-height: 75px;
+    padding-block: 1rem;
+  }
+  .site-nav {
+    max-height: none;
+    overflow: visible;
+  }
+  .site-header:has(.site-nav.is-open) {
+    max-height: 100vh;
+    max-height: 100dvh;
+    overflow: auto;
+    overscroll-behavior: contain;
+  }
+}
+
+@media (max-width: 620px) {
+  .topbar-inner {
+    justify-content: flex-start;
+    column-gap: 0.75rem;
+  }
+  .topbar-inner > a {
+    flex: 1 1 10rem;
+  }
+  .footer-bottom {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .footer-bottom > * {
+    max-width: 100%;
+  }
+  .contact-banner,
+  .resource,
+  .resource-help,
+  .home-finder {
+    padding-inline: 1rem;
+  }
+}
+
+@media (forced-colors: active) {
+  :root,
+  :root[data-contrast] {
+    --a11y-page: Canvas;
+    --a11y-surface: Canvas;
+    --a11y-text: CanvasText;
+    --a11y-muted: CanvasText;
+    --a11y-accent: LinkText;
+    --a11y-on-accent: Canvas;
+    --a11y-border: ButtonText;
+    --a11y-focus: Highlight;
+  }
+  .a11y-dialog,
+  .photo-placeholder,
+  .plan-placeholder,
+  .resource,
+  .contact-banner,
+  .home-finder {
+    border: 1px solid CanvasText;
+  }
+  :is(button, input, select, .button, .round-link) {
+    border: 2px solid ButtonText;
+  }
+  .filters button[aria-pressed='true'],
+  .site-nav [aria-current='page'] {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+  }
+  :focus-visible {
+    outline: 3px solid Highlight !important;
+    outline-offset: 3px;
+  }
+  .a11y-check input {
+    accent-color: auto;
+  }
+}
+
+@media print {
+  .accessibility-trigger,
+  .accessibility-footer,
+  .a11y-dialog {
+    display: none !important;
+  }
+}

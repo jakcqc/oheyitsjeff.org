@@ -1,0 +1,357 @@
+{
+  "schemaVersion": 1,
+  "links": {
+    "rentalSearch": "https://residehere.appfolio.com/listings/",
+    "tenantLogin": "https://residehere.appfolio.com/connect/users/sign_in",
+    "rentalCriteria": "rental-guide.html",
+    "rentalInfo": "floor-plans.html",
+    "contact": "index.html#contact"
+  },
+  "home": {
+    "eyebrow": "APARTMENT & RESIDENTIAL HOUSING RENTALS",
+    "heading": "Owner Managed Units",
+    "maintenance": "Reside Here offers 24 hour emergency maintenance.",
+    "ownerManaged": "We have been in business since 1998 and self-managed since 2007. Our rental properties are owner managed and we are always actively involved in the management. We take pride in our tenant relationships and property rentals. Our friendly and experienced staff are long-term employees.",
+    "vacancyIntro": "You have the ability to search our vacancies online below.",
+    "searchLabel": "Search Available Rentals",
+    "criteriaLabel": "Rental Criteria",
+    "maintenanceLabel": "Maintenance Request",
+    "tagline": "You know you're there when you see the green chair!",
+    "galleryLabel": "Rental property photos",
+    "galleryLinkLabel": "Rental info",
+    "overview": {
+      "heading": "Apartment & Residential Housing Rentals",
+      "locations": "Belleville · O'Fallon · Swansea · Decatur, Illinois",
+      "citywide": {
+        "heading": "Citywide & Beyond",
+        "paragraphs": [
+          "Reside Here residential rentals are housing rentals located in Belleville, O'Fallon, and Swansea, IL.",
+          "We provide Illinois residential housing tenants a full-range of one to four bedroom rentals from homes to apartments, along with apartments in Decatur, IL."
+        ]
+      },
+      "wellMaintained": {
+        "heading": "Well-Maintained Rentals",
+        "paragraphs": [
+          "We are proud of the condition and features in our apartment rentals and do our best to keep them desirable."
+        ],
+        "listIntro": "Our rental properties:"
+      }
+    }
+  },
+  "rentalInfo": {
+    "title": "Reside Here",
+    "heading": "Rental Unit Floor Plans",
+    "label": "Rental Info",
+    "intro": "View our properties and sample floor plans. Search available rentals for current vacancies.",
+    "maintenanceLabel": "Maintenance Request",
+    "propertyIndexLabel": "Choose a property",
+    "planNote": "These are sample floor plans. Original PDFs may include older office details or terms; contact our office for current rental information.",
+    "contact": {
+      "heading": "Contact Us",
+      "paragraphs": [
+        "Please call 618-235-8400 for further information or to schedule a showing.",
+        "Monday–Friday, 9 a.m.–5:30 p.m."
+      ],
+      "label": "(618) 235-8400",
+      "href": "tel:+16182358400"
+    }
+  },
+  "properties": [
+    {
+      "id": "east-a-street",
+      "name": "500 East A Street Apartments",
+      "descriptions": [
+        "The property includes an on-site laundry facility and individual storage units for each apartment."
+      ],
+      "links": [
+        {
+          "label": "Search Available Rentals",
+          "href": "https://residehere.appfolio.com/listings/"
+        }
+      ],
+      "showInOverview": true,
+      "photos": [
+        {
+          "src": "assets/properties/east-a-street/photo-6.jpg",
+          "alt": "Brick exterior and upper walkway at 500 East A Street Apartments.",
+          "width": 900,
+          "height": 375,
+          "sourceUrl": "https://rentandresidehere.net/Library/sliders/default-slider/images/portfolio-very-large-6.jpg"
+        }
+      ],
+      "floorPlans": [
+        {
+          "src": "assets/properties/east-a-street/floor-plan.png",
+          "alt": "One-bedroom sample floor plan for 500 East A Street Apartments",
+          "width": 580,
+          "height": 1180,
+          "label": "One-bedroom sample floor plan",
+          "description": "A living room leads to a dining area beside the kitchen. The bedroom has a 5-by-5-foot walk-in closet, with a bathroom between the bedroom and kitchen. A utility closet is beside the kitchen. The plan labels the living room as 15 by 11 feet 6 inches and the bedroom as 10 by 13 feet.",
+          "href": "assets/properties/east-a-street/floor-plan.pdf",
+          "sourceUrl": "https://rentandresidehere.net/Site/floorplans/500EastASteet.pdf"
+        }
+      ]
+    },
+    {
+      "id": "court-royal",
+      "name": "Court Royal Apartments",
+      "descriptions": [
+        "The laundry is located in a utility room accessible from the kitchen. Upper units feature a balcony with an atrium door."
+      ],
+      "links": [
+        {
+          "label": "Search Available Rentals",
+          "href": "https://residehere.appfolio.com/listings/"
+        }
+      ],
+      "showInOverview": true,
+      "photos": [
+        {
+          "src": "assets/properties/court-royal/photo-1.jpg",
+          "alt": "Court Royal Apartments entrance, balconies, and property sign.",
+          "width": 900,
+          "height": 375,
+          "sourceUrl": "https://rentandresidehere.net/Library/sliders/default-slider/images/portfolio-very-large-1.jpg"
+        },
+        {
+          "src": "assets/properties/court-royal/photo-7.jpg",
+          "alt": "Covered balcony and apartment entrance at Court Royal Apartments.",
+          "width": 900,
+          "height": 375,
+          "sourceUrl": "https://rentandresidehere.net/Library/sliders/default-slider/images/portfolio-very-large-7.jpg"
+        },
+        {
+          "src": "assets/properties/court-royal/photo-10.jpg",
+          "alt": "Court Royal living area with ceiling fan and an open doorway to the kitchen.",
+          "width": 900,
+          "height": 375,
+          "sourceUrl": "https://rentandresidehere.net/Library/sliders/default-slider/images/portfolio-very-large-10.jpg"
+        }
+      ],
+      "floorPlans": [
+        {
+          "src": "assets/properties/court-royal/floor-plan.png",
+          "alt": "Two-bedroom sample floor plan for Court Royal Apartments",
+          "width": 1275,
+          "height": 1650,
+          "label": "Two-bedroom sample floor plan",
+          "description": "Two bedrooms are beside the living and dining areas. The kitchen adjoins a utility space with washer and dryer hookups. Two bathroom areas share a tub and shower room. The drawing shows an entry foyer and stairs, bedroom closets, and an upper-unit balcony. The bedrooms measure 13 feet 10 inches square and 11 feet 10 inches square.",
+          "href": "assets/properties/court-royal/floor-plan.pdf",
+          "sourceUrl": "https://rentandresidehere.net/Site/floorplans/CourtRoyal.pdf"
+        }
+      ]
+    },
+    {
+      "id": "erna-street",
+      "name": "Erna Street Apartments",
+      "descriptions": [
+        "A special feature is the door wall leading to a 6' by 15' private balcony that contains a storage room. On-site laundry is also available."
+      ],
+      "links": [
+        {
+          "label": "Search Available Rentals",
+          "href": "https://residehere.appfolio.com/listings/"
+        }
+      ],
+      "showInOverview": true,
+      "photos": [],
+      "floorPlans": [
+        {
+          "src": "assets/properties/erna-street/floor-plan.png",
+          "alt": "Two-bedroom sample floor plan for Erna Street Apartments",
+          "width": 1275,
+          "height": 1650,
+          "label": "Two-bedroom sample floor plan",
+          "description": "The entry opens into a 12-by-19-foot living room with a balcony or patio alongside it. A separate dining area connects to the kitchen. Two bedrooms, one bathroom, bedroom closets, and linen storage occupy the other end of the apartment. A storage room is accessed from the balcony or patio.",
+          "href": "assets/properties/erna-street/floor-plan.pdf",
+          "sourceUrl": "https://rentandresidehere.net/Site/floorplans/4220Erna.pdf"
+        }
+      ]
+    },
+    {
+      "id": "orchard",
+      "name": "Orchard Apartments",
+      "descriptions": [
+        "Large Picture Window, Marble Window Sills, Carpeted. Dual Sink, Garbage Disposal, Refrigerator, Stove."
+      ],
+      "links": [
+        {
+          "label": "Search Available Rentals",
+          "href": "https://residehere.appfolio.com/listings/"
+        }
+      ],
+      "showInOverview": true,
+      "photos": [
+        {
+          "src": "assets/properties/orchard/photo-2.jpg",
+          "alt": "Orchard Apartments exterior with building number 44 and covered walkways.",
+          "width": 900,
+          "height": 375,
+          "sourceUrl": "https://rentandresidehere.net/Library/sliders/default-slider/images/portfolio-very-large-2.jpg"
+        }
+      ],
+      "floorPlans": [
+        {
+          "src": "assets/properties/orchard/floor-plan.png",
+          "alt": "One-bedroom sample floor plan for Orchard Apartments",
+          "width": 580,
+          "height": 1180,
+          "label": "One-bedroom sample floor plan",
+          "description": "The living room connects to a dining area and kitchen. The bedroom is at the rear of the apartment with a 5-by-5-foot walk-in closet. A bathroom sits between the bedroom and kitchen, and a utility closet is beside the kitchen.",
+          "href": "assets/properties/orchard/floor-plan.pdf",
+          "sourceUrl": "https://rentandresidehere.net/Site/floorplans/44Orchard.pdf"
+        }
+      ]
+    },
+    {
+      "id": "74th-street",
+      "name": "74th Street Apartments",
+      "descriptions": [
+        "Owner Managed, Wood Floors In Foyer, On Site Laundry & Storage Rooms, Dual Sink, Dishwasher, Garbage Disposal, All Electric Units."
+      ],
+      "links": [
+        {
+          "label": "Search Available Rentals",
+          "href": "https://residehere.appfolio.com/listings/"
+        }
+      ],
+      "showInOverview": true,
+      "photos": [],
+      "floorPlans": [
+        {
+          "src": "assets/properties/74th-street/floor-plan.png",
+          "alt": "One-bedroom sample floor plan for 74th Street Apartments",
+          "width": 580,
+          "height": 1180,
+          "label": "One-bedroom sample floor plan",
+          "description": "The living room leads into a dining area next to the kitchen. A utility closet is beside the kitchen. The bedroom measures 10 by 13 feet and includes a 5-by-5-foot walk-in closet. A bathroom sits alongside the bedroom, and the plan shows large bedroom and living-room windows.",
+          "href": "assets/properties/74th-street/floor-plan.pdf",
+          "sourceUrl": "https://rentandresidehere.net/Site/floorplans/109N74th.pdf"
+        }
+      ]
+    },
+    {
+      "id": "sangamon",
+      "name": "The Sangamon Apartments",
+      "descriptions": [
+        "Meals are easily prepared in a horseshoe style kitchen with wrap around cabinets and a pantry. Most units include washer and dryer hook-ups."
+      ],
+      "links": [
+        {
+          "label": "Search Available Rentals",
+          "href": "https://residehere.appfolio.com/listings/"
+        }
+      ],
+      "showInOverview": true,
+      "photos": [
+        {
+          "src": "assets/properties/sangamon/photo-3.jpg",
+          "alt": "Sangamon Apartments exterior and lawn along the apartment buildings.",
+          "width": 900,
+          "height": 375,
+          "sourceUrl": "https://rentandresidehere.net/Library/sliders/default-slider/images/portfolio-very-large-3.jpg"
+        },
+        {
+          "src": "assets/properties/sangamon/photo-13.jpg",
+          "alt": "Sangamon apartment kitchen with wood cabinets, a range, and refrigerator.",
+          "width": 900,
+          "height": 375,
+          "sourceUrl": "https://rentandresidehere.net/Library/sliders/default-slider/images/portfolio-very-large-13.jpg"
+        },
+        {
+          "src": "assets/properties/sangamon/photo-14.jpg",
+          "alt": "Another view of a Sangamon apartment kitchen with wraparound cabinets.",
+          "width": 900,
+          "height": 375,
+          "sourceUrl": "https://rentandresidehere.net/Library/sliders/default-slider/images/portfolio-very-large-14.jpg"
+        },
+        {
+          "src": "assets/properties/sangamon/photo-15.jpg",
+          "alt": "Sangamon apartment living and dining space beside the kitchen counter.",
+          "width": 900,
+          "height": 375,
+          "sourceUrl": "https://rentandresidehere.net/Library/sliders/default-slider/images/portfolio-very-large-15.jpg"
+        }
+      ],
+      "floorPlans": [
+        {
+          "src": "assets/properties/sangamon/floor-plan.png",
+          "alt": "Two-bedroom sample floor plan for The Sangamon Apartments",
+          "width": 1275,
+          "height": 1650,
+          "label": "Two-bedroom sample floor plan",
+          "description": "The living and dining areas connect to a kitchen with a pantry and a balcony. The primary bedroom measures 11 by 15 feet and includes a bathroom, vanity, and walk-in closet. A second bedroom measures 11 by 13 feet 6 inches. A separate three-quarter bathroom and several hall closets are shown, together with the building stairs and landing.",
+          "href": "assets/properties/sangamon/floor-plan.pdf",
+          "sourceUrl": "https://rentandresidehere.net/Site/floorplans/SangamonApartments.pdf"
+        }
+      ]
+    },
+    {
+      "id": "ben-louis-drive",
+      "name": "Ben Louis Drive Apartments",
+      "descriptions": ["Apartment rentals in Belleville, Illinois."],
+      "links": [
+        {
+          "label": "Search Available Rentals",
+          "href": "https://residehere.appfolio.com/listings/"
+        }
+      ],
+      "showInOverview": true,
+      "photos": [
+        {
+          "src": "assets/properties/ben-louis-drive/photo-5.jpg",
+          "alt": "Ben Louis Drive Apartments brick exterior with trees along the front lawn.",
+          "width": 900,
+          "height": 375,
+          "sourceUrl": "https://rentandresidehere.net/Library/sliders/default-slider/images/portfolio-very-large-5.jpg"
+        },
+        {
+          "src": "assets/properties/ben-louis-drive/property-overview.jpg",
+          "alt": "Front lawn and entrance at Ben Louis Drive Apartments.",
+          "width": 200,
+          "height": 149,
+          "sourceUrl": "https://rentandresidehere.net/Site/floorplans/ben_louis_apts.jpg",
+          "showInGallery": false
+        }
+      ],
+      "floorPlans": []
+    },
+    {
+      "id": "express-drive",
+      "name": "Express Drive Apartments",
+      "descriptions": ["Apartment rentals in Belleville, Illinois."],
+      "links": [
+        {
+          "label": "Search Available Rentals",
+          "href": "https://residehere.appfolio.com/listings/"
+        }
+      ],
+      "showInOverview": true,
+      "photos": [
+        {
+          "src": "assets/properties/express-drive/property-overview.jpg",
+          "alt": "Express Drive Apartments brick exterior and front entrance.",
+          "width": 200,
+          "height": 150,
+          "sourceUrl": "https://rentandresidehere.net/Site/floorplans/express_apts.jpg",
+          "showInGallery": false
+        },
+        {
+          "src": "assets/properties/express-drive/photo-9.jpg",
+          "alt": "Express Drive apartment kitchen with wood cabinets, a range, and tile backsplash.",
+          "width": 900,
+          "height": 375,
+          "sourceUrl": "https://rentandresidehere.net/Library/sliders/default-slider/images/portfolio-very-large-9.jpg"
+        },
+        {
+          "src": "assets/properties/express-drive/photo-11.jpg",
+          "alt": "Express Drive apartment interior views showing closets, the kitchen, and a room with blue walls.",
+          "width": 900,
+          "height": 375,
+          "sourceUrl": "https://rentandresidehere.net/Library/sliders/default-slider/images/portfolio-very-large-11.jpg"
+        }
+      ],
+      "floorPlans": []
+    }
+  ]
+}

@@ -1,96 +1,129 @@
+/*
+ * Copyright (c) 2026 Reside Here LLC. All rights reserved.
+ * No AI training, fine-tuning, or inclusion in AI/ML training datasets without prior written permission.
+ * See LICENSE.txt for terms. Third-party materials retain their own licenses.
+ */
 (() => {
   'use strict';
 
-  const menuToggle = document.querySelector('#menu-toggle');
-  const siteNav = document.querySelector('#site-nav');
-  const desktop = window.matchMedia('(min-width: 901px)');
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const navigation = document.querySelector('#site-nav');
+  const toggle = document.querySelector('#navigation-toggle');
+  const secondary = document.querySelector('#secondary-navigation');
+  const mobile = window.matchMedia('(max-width: 900px)');
+  let expanded = false;
 
-  const closeMenu = (restoreFocus = false) => {
-    if (!menuToggle || !siteNav) return;
-    menuToggle.setAttribute('aria-expanded', 'false');
-    siteNav.classList.remove('is-open');
-    if (restoreFocus) menuToggle.focus();
-  };
-
-  if (menuToggle && siteNav) {
-    menuToggle.setAttribute('aria-expanded', 'false');
-    menuToggle.addEventListener('click', () => {
-      const isOpen = menuToggle.getAttribute('aria-expanded') === 'true';
-      menuToggle.setAttribute('aria-expanded', String(!isOpen));
-      siteNav.classList.toggle('is-open', !isOpen);
+  const header = document.querySelector('.site-header');
+  const topbar = document.querySelector('.topbar');
+  if (header && topbar) {
+    let updatePending = false;
+    const updateStickyHeader = () => {
+      updatePending = false;
+      const stuck =
+        getComputedStyle(header).position === 'sticky' &&
+        topbar.getBoundingClientRect().bottom <= 0;
+      const state = String(stuck);
+      if (header.dataset.stuck !== state) header.dataset.stuck = state;
+      document.documentElement.style.setProperty('--header-height', `${header.getBoundingClientRect().height}px`);
+    };
+    const scheduleStickyUpdate = () => {
+      if (updatePending) return;
+      updatePending = true;
+      requestAnimationFrame(updateStickyHeader);
+    };
+    window.addEventListener('scroll', scheduleStickyUpdate, { passive: true });
+    window.addEventListener('resize', scheduleStickyUpdate);
+    window.addEventListener('pageshow', scheduleStickyUpdate);
+    new MutationObserver(scheduleStickyUpdate).observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-text-size', 'data-text-spacing'],
     });
+    if ('ResizeObserver' in window) {
+      const headerObserver = new ResizeObserver(scheduleStickyUpdate);
+      headerObserver.observe(topbar);
+      headerObserver.observe(header);
+    }
+    updateStickyHeader();
+  }
 
-    siteNav.addEventListener('click', (event) => {
-      if (event.target.closest('a')) closeMenu();
-    });
+  function setExpanded(value, animate = true) {
+    if (!toggle || !secondary) return;
+    expanded = mobile.matches && value;
+    const hideSecondary = mobile.matches && !expanded;
+    if (hideSecondary && secondary.contains(document.activeElement)) toggle.focus();
+    toggle.setAttribute('aria-expanded', String(expanded));
+    // Keep the panel rendered for its exit animation, but remove closed links from
+    // keyboard navigation and the accessibility tree immediately.
+    secondary.hidden = false;
+    secondary.inert = hideSecondary;
+    secondary.setAttribute('aria-hidden', String(hideSecondary));
+    navigation.dataset.menuAnimated = String(animate);
+    navigation.dataset.expanded = String(expanded);
+  }
 
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && menuToggle.getAttribute('aria-expanded') === 'true') {
-        closeMenu(true);
+  if (navigation && toggle && secondary) {
+    const updateViewport = () => {
+      const activeElement = document.activeElement;
+      if (mobile.matches) {
+        toggle.hidden = false;
+        if (activeElement?.matches('.nav-cta, .topbar-maintenance-link')) toggle.focus();
+      } else {
+        secondary.hidden = false;
+        if (activeElement === toggle) navigation.querySelector('a')?.focus();
+        toggle.hidden = true;
+      }
+      setExpanded(false, false);
+    };
+
+    toggle.addEventListener('click', () => setExpanded(!expanded));
+    navigation.closest('.site-header')?.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && expanded) {
+        event.preventDefault();
+        setExpanded(false);
+        toggle.focus();
       }
     });
-
     document.addEventListener('click', (event) => {
-      if (!siteNav.contains(event.target) && !menuToggle.contains(event.target)) closeMenu();
+      if (expanded && !navigation.contains(event.target) && !toggle.contains(event.target)) {
+        setExpanded(false);
+      }
     });
-
-    desktop.addEventListener('change', () => closeMenu());
+    document.addEventListener('focusin', (event) => {
+      if (expanded && !navigation.contains(event.target) && !toggle.contains(event.target)) {
+        setExpanded(false);
+      }
+    });
+    mobile.addEventListener('change', updateViewport);
+    navigation.dataset.navigationReady = 'true';
+    updateViewport();
   }
 
-  const filters = [...document.querySelectorAll('[data-filter]')];
-  const communities = [...document.querySelectorAll('[data-community]')];
-  const communityCount = document.querySelector('#community-count');
-  const locationSelect = document.querySelector('#location');
-  const cityLabels = {
-    belleville: 'Belleville',
-    ofallon: "O'Fallon",
-    swansea: 'Swansea',
-    decatur: 'Decatur',
-  };
-
-  function filterCommunities(city) {
-    const selectedCity = Object.hasOwn(cityLabels, city) ? city : 'all';
-    let visibleCount = 0;
-
-    communities.forEach((community) => {
-      const show = selectedCity === 'all' || community.dataset.city === selectedCity;
-      community.hidden = !show;
-      if (show) visibleCount += 1;
-    });
-
-    filters.forEach((filter) => {
-      const isActive = filter.dataset.filter === selectedCity;
-      filter.setAttribute('aria-pressed', String(isActive));
-      filter.classList.toggle('is-active', isActive);
-    });
-
-    if (locationSelect) locationSelect.value = selectedCity;
-    if (communityCount) {
-      const noun = visibleCount === 1 ? 'community' : 'communities';
-      communityCount.textContent = selectedCity === 'all'
-        ? `Showing all ${visibleCount} ${noun}`
-        : `Showing ${visibleCount} ${noun} in ${cityLabels[selectedCity]}`;
+  // Close the disclosure before navigating; same-page links also move focus.
+  navigation?.addEventListener('click', (event) => {
+    if (!(event.target instanceof Element)) return;
+    const link = event.target.closest('a');
+    if (!link) return;
+    if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) {
+      return;
     }
-  }
-
-  filters.forEach((filter) => {
-    filter.addEventListener('click', () => filterCommunities(filter.dataset.filter));
+    setExpanded(false);
+    const destination = new URL(link.href, window.location.href);
+    if (
+      destination.origin === window.location.origin &&
+      destination.pathname === window.location.pathname &&
+      destination.hash
+    ) {
+      let target;
+      try {
+        target = document.getElementById(decodeURIComponent(destination.hash.slice(1)));
+      } catch {
+        return;
+      }
+      if (target) {
+        if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+        target.focus({ preventScroll: true });
+      }
+    }
   });
-
-  document.querySelector('#reset-filter')?.addEventListener('click', () => filterCommunities('all'));
-
-  document.querySelector('#home-finder')?.addEventListener('submit', (event) => {
-    event.preventDefault();
-    filterCommunities(locationSelect?.value ?? 'all');
-    document.querySelector('#communities-heading')?.focus({ preventScroll: true });
-    document.querySelector('#communities')?.scrollIntoView({
-      behavior: reducedMotion.matches ? 'auto' : 'smooth',
-      block: 'start',
-    });
-  });
-
-  if (communities.length) filterCommunities('all');
 
   const currentYear = document.querySelector('#current-year');
   if (currentYear) currentYear.textContent = String(new Date().getFullYear());
