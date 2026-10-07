@@ -21,6 +21,7 @@ import { registerAnimateTab, maybeAutoplayAnimation, controlAnimation } from "..
 import { registerLLMTab } from "../helper/llmTab.js";
 import { registerEffectsTab, applyEffectsToSubtree } from "../helper/effectsHelp.js";
 import { registerAutoExportTab } from "../helper/autoExportHelp.js";
+import { registerTimeTab } from "./timeHelp.js";
 import { registerToolFlowTab, applyToolFlowToSubtree } from "../helper/toolFlowHelp.js";
 import { createSubTabs } from "./subTabs.js";
 import { mountDockTabs } from "./tabDock.js";
@@ -28,6 +29,7 @@ import { activateDockTab, normalizeDockLayout } from "./tabDockModel.js";
 import { acceptTypedNumber, getParamRange } from "./paramRanges.js";
 import { matchesParamVisibility } from "./paramVisibility.js";
 import { consumeLinkedSettings } from "./linkedSettings.js";
+import { getOdysseyClientRequest, attachOdysseyClient } from "./odysseyClientBridge.js";
 
 const TAB_BUILDERS = new Map();
 let ACTIVE_UNDO_CONTEXT = null;
@@ -156,6 +158,7 @@ registerTransformTab();
 registerPropOpsTab();
 //registerScriptOpsTab();
 registerAnimateTab();
+registerTimeTab();
 registerLLMTab();
 registerEffectsTab();
 registerToolFlowTab();
@@ -764,7 +767,7 @@ export function mountVisualUI({
   let syncNavLabel = () => {};
   let resizeHandle = null;
   let isResizingConfig = false;
-  let persistEnabled = loadPersistFlag(visualId);
+  let persistEnabled = !getOdysseyClientRequest() && loadPersistFlag(visualId);
   const persistUiNow = () => {
     if (!persistEnabled) return;
     if (!state?.__ui) return;
@@ -1250,6 +1253,9 @@ export function mountVisualUI({
   return {
     rebuildAutoUI,
     refresh: rerender,
+    // Capture can flush tools after a native SVG update without rerendering
+    // (and potentially resetting) the source simulation.
+    applyTools: () => applyRenderedTools(runtimeRef?.xfRuntime ?? xfRuntime),
     // App shortcuts use the same history, persistence and render path as controls,
     // including when their parameter panel has not been mounted yet.
     setParam,
@@ -1280,8 +1286,23 @@ export function runVisualApp({
   if (!spec) throw new Error(`Unknown visualId "${visualId}"`);
 
   const state = makeDefaultState(spec);
-  const linkedJSON = consumeLinkedSettings(visualId);
-  if (linkedJSON !== null) {
+  // Odyssey supplies state only for an explicitly requested capture context.
+  const odyssey = globalThis.__ODYSSEY_REQUEST__ || getOdysseyClientRequest();
+  if (odyssey?.mode === "index") {
+    const indexed = { spec, state, refresh() {}, setParam() {} };
+    globalThis.__ODYSSEY_APP__ = indexed;
+    attachOdysseyClient(indexed, visualId, mountEl);
+    return indexed;
+  }
+  const linkedJSON = odyssey ? null : consumeLinkedSettings(visualId);
+  if (odyssey?.mode === "run") {
+    if (providedState) mergeInto(state, providedState);
+    mergeInto(state, odyssey.state || {});
+    state.shouldRender = true;
+    state.overrideMinMax = true;
+    state.__ui = { ...state.__ui, configPinned: false, navHidden: true };
+    if (state.__anim?.ui) state.__anim.ui.autoPlay = false;
+  } else if (linkedJSON !== null) {
     // A study is a complete save: stale cache/preset flows must not leak into it.
     importStateFromJSON(linkedJSON, state, spec);
   } else {
@@ -1317,7 +1338,7 @@ export function runVisualApp({
     return runtimeRef;
   };
 
-  const { setParam, refresh, toggleSimulation } = mountVisualUI({
+  const { setParam, refresh, toggleSimulation, applyTools, rebuildAutoUI } = mountVisualUI({
     uiEl,
     spec,
     state,
@@ -1358,12 +1379,14 @@ export function runVisualApp({
     syncPinnedLayout();
   };
 
-  return {
+  const app = {
     spec,
     state,
     setParam,
     refresh,
     toggleSimulation,
+    applyTools,
+    rebuildUI: rebuildAutoUI,
     get instance() {
       return runtimeRef.instance;
     },
@@ -1378,6 +1401,9 @@ export function runVisualApp({
       return runVisualApp({ visualId: nextId, mountEl, uiEl });
     },
   };
+  if (odyssey?.mode === "run") globalThis.__ODYSSEY_APP__ = app;
+  attachOdysseyClient(app, visualId, mountEl);
+  return app;
 }
 
 /** Update conditional rows without rebuilding editors or changing their values. */

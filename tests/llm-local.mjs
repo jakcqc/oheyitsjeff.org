@@ -13,6 +13,10 @@ import test from 'node:test';
 import { readFile } from 'node:fs/promises';
 import vm from 'node:vm';
 import { LocalLLMClient } from '../helper/llmLocal.js';
+import {
+  LOCAL_MODELS, MODEL_CONTEXT_TOKENS, MAX_MODEL_VRAM_MB, WEBLLM_URL, WEBLLM_VERSION,
+  formatQuantization, isModelWithinBudget, recommendLocalModel, recommendModelVariant,
+} from '../helper/llmModels.js';
 
 const schema = { type: 'object', properties: { message: { type: 'string' } }, required: ['message'], additionalProperties: false };
 const messages = [{ role: 'system', content: 'Use JSON.' }, { role: 'user', content: 'Make it blue.' }];
@@ -46,6 +50,66 @@ function localClient() {
   return { client, workers };
 }
 
+test('model estimates must fit the 30 GB cap and the available GPU memory', () => {
+  assert.equal(MAX_MODEL_VRAM_MB, 30 * 1024);
+  assert.equal(MODEL_CONTEXT_TOKENS, 4096);
+  assert.equal(WEBLLM_VERSION, '0.2.85');
+  assert.equal(WEBLLM_URL, `https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@${WEBLLM_VERSION}/+esm`);
+  assert.equal(isModelWithinBudget(MAX_MODEL_VRAM_MB), true);
+  assert.equal(isModelWithinBudget(MAX_MODEL_VRAM_MB, MAX_MODEL_VRAM_MB), true);
+  assert.equal(isModelWithinBudget(MAX_MODEL_VRAM_MB + 0.01), false);
+  assert.equal(isModelWithinBudget(2048, 2048), true);
+  assert.equal(isModelWithinBudget(2048, 2047), false);
+  for (const invalid of [undefined, null, NaN, Infinity, -Infinity, 0, -1, '2048', {}, []]) {
+    assert.equal(isModelWithinBudget(invalid), false, `Invalid memory estimate: ${String(invalid)}`);
+  }
+  assert.ok(LOCAL_MODELS.length > 12);
+  assert.equal(new Set(LOCAL_MODELS.map(model => model.id)).size, LOCAL_MODELS.length);
+  assert.ok(LOCAL_MODELS.every(model => isModelWithinBudget(model.vramMB)));
+  for (const model of LOCAL_MODELS) {
+    assert.ok(model.familyId && model.id === `${model.familyId}-${model.quantization}-MLC`);
+    assert.ok([4, 16, 32].includes(model.weightBits));
+    assert.ok([16, 32].includes(model.precision));
+    assert.equal(model.contextTokens, MODEL_CONTEXT_TOKENS);
+    assert.equal(model.requiredFeatures.includes('shader-f16'), model.precision === 16);
+    assert.ok(Number.isInteger(model.requiredBufferBytes) && model.requiredBufferBytes > 0);
+    assert.match(formatQuantization(model), new RegExp(String(model.weightBits)));
+  }
+});
+
+test('catalog quantizations represent distinct published formats and memory footprints', () => {
+  const family = LOCAL_MODELS.filter(model => model.familyId === 'Qwen3-0.6B');
+  assert.deepEqual(family.map(model => model.quantization).sort(), ['q0f16', 'q0f32', 'q4f16_1', 'q4f32_1']);
+  const get = quantization => family.find(model => model.quantization === quantization);
+  assert.equal(get('q4f16_1').weightBits, 4);
+  assert.equal(get('q4f32_1').weightBits, 4);
+  assert.equal(get('q0f16').weightBits, 16);
+  assert.equal(get('q0f32').weightBits, 32);
+  assert.ok(get('q0f16').vramMB > get('q4f16_1').vramMB);
+  assert.ok(get('q0f32').vramMB > get('q0f16').vramMB);
+  assert.ok(get('q0f32').requiredBufferBytes > get('q4f16_1').requiredBufferBytes);
+  assert.equal(LOCAL_MODELS.filter(model => model.quantization.startsWith('q0')).length, 11);
+});
+
+test('small full-precision models remain available on GPUs with limited buffers', async () => {
+  const client = new LocalLLMClient({ navigatorObject: navigatorGPU({ f16: false, limit: 128 * 2 ** 20 }) });
+  const result = await client.getLocalModels({ budgetMB: 4096 });
+  const tiny = result.models.find(model => model.id === 'SmolLM2-135M-Instruct-q0f32-MLC');
+  assert.equal(tiny?.weightBits, 32);
+  assert.equal(tiny?.vramMB, 720);
+  assert.ok(!result.models.some(model => model.id === 'SmolLM2-360M-Instruct-q0f32-MLC'));
+  assert.match(result.variants.find(model => model.id === 'SmolLM2-360M-Instruct-q0f32-MLC').unavailableReason, /buffer/);
+  assert.ok(!LOCAL_MODELS.some(model => model.familyId === 'SmolLM2-135M-Instruct' && model.weightBits === 4));
+});
+
+test('variant recommendation favors compact weights independent of catalog order', () => {
+  const variants = LOCAL_MODELS.filter(model => model.familyId === 'Qwen3-0.6B').reverse();
+  assert.equal(recommendModelVariant(variants)?.id, 'Qwen3-0.6B-q4f16_1-MLC');
+  assert.equal(recommendModelVariant(variants.filter(model => model.precision === 32))?.id, 'Qwen3-0.6B-q4f32_1-MLC');
+  assert.equal(recommendModelVariant(variants.filter(model => model.weightBits !== 4))?.id, 'Qwen3-0.6B-q0f16-MLC');
+  assert.equal(recommendModelVariant([]), undefined);
+});
+
 test('model discovery reserves memory, probes capabilities, and downloads nothing', async () => {
   let workerCount = 0;
   const client = new LocalLLMClient({ navigatorObject: navigatorGPU(), workerFactory: () => workerCount++ });
@@ -53,25 +117,98 @@ test('model discovery reserves memory, probes capabilities, and downloads nothin
   assert.equal(result.reservedMB, 1024);
   assert.equal(result.availableMB, 3072);
   assert.equal(result.gpu.label, 'Test GPU');
-  assert.ok(result.models.every(model => model.vramMB <= 3072 && model.id.includes('q4f16')));
+  assert.ok(result.models.every(model => model.vramMB <= 3072));
+  assert.ok(result.models.some(model => model.quantization === 'q4f16_1'));
+  assert.ok(result.models.some(model => model.quantization === 'q4f32_1'));
+  assert.equal(result.variants.length, LOCAL_MODELS.length);
+  assert.deepEqual(result.variants.filter(model => model.compatible).map(model => model.id), result.models.map(model => model.id));
+  assert.ok(result.variants.filter(model => !model.compatible).every(model => typeof model.unavailableReason === 'string' && model.unavailableReason.length > 0));
+  assert.ok(result.models.some(model => model.id.startsWith('Qwen3.5-2B-')));
+  assert.equal(recommendLocalModel(result.models)?.id, 'Qwen3.5-2B-q4f16_1-MLC');
   assert.ok(!result.models.some(model => model.id.includes('-7B-')));
   assert.ok((await client.getLocalModels({ budgetMB: 12288 })).models.some(model => model.id.includes('-7B-')));
   assert.equal(workerCount, 0);
   assert.equal(client.isLocalLoaded, false);
 });
 
+test('recommendations use modern models that fit the GPU budget', async () => {
+  const client = new LocalLLMClient({ navigatorObject: navigatorGPU() });
+  const larger = await client.getLocalModels({ budgetMB: 12288 });
+  assert.equal(recommendLocalModel(larger.models)?.id, 'Qwen3.5-4B-q4f16_1-MLC');
+  const withoutLarger = larger.models.filter(model => !/^Qwen3\.5-(?:2|4)B-/.test(model.id));
+  assert.equal(recommendLocalModel(withoutLarger)?.id, 'Qwen3.5-0.8B-q4f16_1-MLC');
+  const withoutQwen35 = larger.models.filter(model => !model.id.startsWith('Qwen3.5-'));
+  assert.ok(recommendLocalModel(withoutQwen35)?.id.startsWith('Qwen3-'));
+  assert.equal(recommendLocalModel([]), undefined);
+});
+
+test('a 192 GB GPU still discovers only models at or below the 30 GB cap', async () => {
+  const client = new LocalLLMClient({
+    heapProperties: { DEVICE_LOCAL: 1 },
+    navigatorObject: navigatorGPU({ info: {
+      type: 'discrete GPU', memoryHeaps: [{ size: 192 * 2 ** 30, properties: 1 }],
+    } }),
+  });
+  const result = await client.getLocalModels();
+  assert.equal(result.budgetMB, 192 * 1024);
+  assert.equal(result.availableMB, 30 * 1024);
+  assert.equal(result.reservedMB, 48 * 1024);
+  assert.ok(result.models.length > 6);
+  assert.ok(result.models.every(model => model.vramMB <= 30 * 1024));
+  assert.ok(result.models.some(model => model.id.startsWith('Qwen3.5-9B-')));
+});
+
+test('model discovery checks each model tensor buffer against the adapter limits', async () => {
+  const discover = async limitMB => {
+    const client = new LocalLLMClient({ navigatorObject: navigatorGPU({ limit: limitMB * 2 ** 20 }) });
+    return (await client.getLocalModels({ budgetMB: 196608 })).models;
+  };
+  const standard = await discover(128);
+  assert.ok(standard.some(model => model.id.startsWith('Qwen3.5-0.8B-')));
+  assert.ok(standard.some(model => model.id.startsWith('Qwen3-0.6B-')));
+  assert.ok(!standard.some(model => /^Qwen3\.5-(?:2|4|9)B-/.test(model.id)));
+  const medium = await discover(256);
+  assert.ok(medium.some(model => model.id.startsWith('Qwen3.5-2B-')));
+  assert.ok(!medium.some(model => /^Qwen3\.5-(?:4|9)B-/.test(model.id) || model.id.startsWith('Phi-4-mini-')));
+  const large = await discover(512);
+  assert.deepEqual(large.map(model => model.id), LOCAL_MODELS.filter(model => model.requiredBufferBytes <= 512 * 2 ** 20).map(model => model.id));
+});
+
+test('GPU buffer limits reject the larger tensor of an unquantized variant independently', async () => {
+  const client = new LocalLLMClient({ navigatorObject: navigatorGPU({ limit: 128 * 2 ** 20 }) });
+  const result = await client.getLocalModels({ budgetMB: 196608 });
+  assert.ok(result.models.some(model => model.id === 'Qwen3-0.6B-q4f16_1-MLC'));
+  const fullPrecision = result.variants.find(model => model.id === 'Qwen3-0.6B-q0f32-MLC');
+  assert.ok(fullPrecision.vramMB < result.availableMB);
+  assert.equal(fullPrecision.compatible, false);
+  assert.match(fullPrecision.unavailableReason, /buffer/i);
+  assert.ok(!result.models.some(model => model.id === fullPrecision.id));
+});
+
 test('f32 fallback and unavailable GPU do not mistake RAM or buffer limits for VRAM', async () => {
   const fallback = new LocalLLMClient({ navigatorObject: navigatorGPU({ f16: false }) });
   const result = await fallback.getLocalModels();
-  assert.ok(result.models.every(model => model.id.includes('q4f32')));
+  assert.ok(result.models.every(model => model.precision === 32));
+  assert.ok(result.variants.filter(model => model.precision === 16).every(model => !model.compatible && /fp?16|16.bit/i.test(model.unavailableReason)));
   assert.equal(result.budgetMB, 4096);
   assert.equal(result.gpu.capacityMB, null);
   assert.equal(result.gpu.memorySource, 'fallback');
   assert.match(result.gpu.note, /not a memory measurement/);
+  assert.equal(recommendLocalModel(result.models)?.id, 'Qwen3.5-2B-q4f32_1-MLC');
+  const largeFallback = await fallback.getLocalModels({ budgetMB: 196608 });
+  assert.ok(largeFallback.models.every(model => model.precision === 32));
+  assert.ok(largeFallback.models.some(model => model.quantization === 'q0f32'));
+  assert.ok(largeFallback.models.some(model => model.id.startsWith('Qwen3.5-')));
+  assert.ok(largeFallback.models.some(model => model.id.startsWith('Qwen3-')));
+  assert.ok(largeFallback.models.some(model => /Phi-?4-mini/i.test(model.id)));
+  assert.ok(largeFallback.models.some(model => /Ministral/i.test(model.id)));
+  assert.ok(largeFallback.models.every(model => LOCAL_MODELS.some(record => record.id === model.id)));
   const limited = new LocalLLMClient({ navigatorObject: navigatorGPU({ limit: 2 ** 26 }) });
   assert.deepEqual((await limited.getLocalModels()).models, []);
   const unavailable = new LocalLLMClient({ navigatorObject: { deviceMemory: 128 } });
-  assert.equal((await unavailable.getLocalModels()).gpu.supported, false);
+  const missingGPU = await unavailable.getLocalModels();
+  assert.equal(missingGPU.gpu.supported, false);
+  assert.deepEqual(missingGPU.models, []);
   await assert.rejects(unavailable.getLocalModels({ budgetMB: NaN }), /budget/);
 });
 
@@ -146,6 +283,18 @@ test('loading a model rechecks automatic memory capacity before creating its wor
   assert.equal(workers, 0);
 });
 
+test('an unquantized model cannot load when only its 4-bit variant fits the GPU budget', async () => {
+  let workers = 0;
+  const client = new LocalLLMClient({ navigatorObject: navigatorGPU(), workerFactory: () => { workers++; return new FakeWorker(); } });
+  const result = await client.getLocalModels({ budgetMB: 4096 });
+  const fullPrecision = result.variants.find(model => model.id === 'Qwen3-0.6B-q0f32-MLC');
+  assert.ok(result.models.some(model => model.id === 'Qwen3-0.6B-q4f16_1-MLC'));
+  assert.equal(fullPrecision.compatible, false);
+  assert.ok(fullPrecision.vramMB > result.availableMB);
+  await assert.rejects(client.loadLocal(fullPrecision.id), /compatible model/);
+  assert.equal(workers, 0);
+});
+
 test('completion requires the selected model to be ready', async () => {
   const { client, workers } = localClient();
   await assert.rejects(client.complete(request), /Load the selected local model/);
@@ -216,6 +365,80 @@ test('worker load progress, completion and unload use one worker and release it'
   assert.equal((await pending).content, content);
   await client.unloadLocal();
   assert.equal(worker.terminated, true);
+  assert.equal(client.isLocalLoaded, false);
+});
+
+test('completion streams tokens before settling and ignores callback failures and stale chunks', async () => {
+  const { client, workers } = localClient();
+  const model = (await client.getLocalModels()).models[0].id;
+  const loaded = client.loadLocal(model);
+  await tick();
+  const worker = workers[0];
+  worker.reply({ loaded: true });
+  await loaded;
+  const tokens = [];
+  let settled = false;
+  const pending = client.complete({ ...request, onToken: delta => {
+    tokens.push(delta);
+    if (tokens.length === 1) throw new Error('Display callback failed');
+  } });
+  pending.then(() => { settled = true; });
+  const { id } = worker.messages.at(-1);
+  const token = delta => worker.onmessage({ data: { id, kind: 'token', delta } });
+  token('{"message":');
+  await tick();
+  assert.equal(settled, false);
+  assert.deepEqual(tokens, ['{"message":']);
+  token(null);
+  token('');
+  token('"Done"}');
+  assert.equal(settled, false);
+  worker.reply({ content, usage: { inputTokens: 30, outputTokens: 8 } });
+  assert.deepEqual(await pending, { content, usage: { inputTokens: 30, outputTokens: 8 } });
+  assert.equal(tokens.join(''), content);
+  token('stale after completion');
+  assert.equal(tokens.join(''), content);
+  await client.unloadLocal();
+});
+
+test('aborting a streamed completion ignores late tokens and final replies from its worker', async () => {
+  const { client, workers } = localClient();
+  const model = (await client.getLocalModels()).models[0].id;
+  const loaded = client.loadLocal(model);
+  await tick();
+  workers[0].reply({ loaded: true });
+  await loaded;
+  const tokens = [];
+  const controller = new AbortController();
+  const pending = client.complete({ ...request, signal: controller.signal, onToken: delta => tokens.push(delta) });
+  const rejected = assert.rejects(pending, { name: 'AbortError' });
+  const staleCallback = workers[0].onmessage;
+  const { id } = workers[0].messages.at(-1);
+  staleCallback({ data: { id, kind: 'token', delta: '{"message":' } });
+  controller.abort();
+  await rejected;
+  staleCallback({ data: { id, kind: 'token', delta: '"Done"}' } });
+  staleCallback({ data: { id, result: { content } } });
+  assert.deepEqual(tokens, ['{"message":']);
+  assert.equal(client.isLocalLoaded, false);
+  assert.equal(workers[0].terminated, true);
+});
+
+test('streamed output is bounded before a display callback receives excessive text', async () => {
+  const { client, workers } = localClient();
+  const model = (await client.getLocalModels()).models[0].id;
+  const loaded = client.loadLocal(model);
+  await tick();
+  workers[0].reply({ loaded: true });
+  await loaded;
+  const tokens = [];
+  const pending = client.complete({ ...request, onToken: delta => tokens.push(delta) });
+  const rejected = assert.rejects(pending, /too large/);
+  const { id } = workers[0].messages.at(-1);
+  workers[0].onmessage({ data: { id, kind: 'token', delta: 'x'.repeat(65537) } });
+  await rejected;
+  assert.deepEqual(tokens, []);
+  assert.equal(workers[0].terminated, true);
   assert.equal(client.isLocalLoaded, false);
 });
 
@@ -314,6 +537,11 @@ test('fatal worker failures clear loaded state while incomplete output permits a
   await rejected;
   assert.equal(client.isLocalLoaded, true);
   pending = client.complete({ model, messages, schema });
+  rejected = assert.rejects(pending, /invalid structured response/);
+  workers[0].onmessage({ data: { id: workers[0].messages.at(-1).id, error: 'invalid' } });
+  await rejected;
+  assert.equal(client.isLocalLoaded, true);
+  pending = client.complete({ model, messages, schema });
   rejected = assert.rejects(pending, /Local model failed/);
   workers[0].onmessage({ data: { id: workers[0].messages.at(-1).id, error: 'failed' } });
   await rejected;
@@ -338,40 +566,176 @@ test('replacing a pending load cannot unload the newer worker when the old load 
   await client.unloadLocal();
 });
 
-test('local worker supplies the schema as model instructions and grammar without mutating messages', async () => {
+async function workerHarness({ modelId = 'test-model', vramMB = 2048, recordOverrides = {} } = {}) {
   const replies = [];
   const completions = [];
   const loads = [];
+  const engineOptions = [];
+  let responseContent = content;
+  let streamChunks = null;
   class StubEngine {
+    constructor(options) { engineOptions.push(options); }
     async reload(model, options) { loads.push({ model, options }); }
     chat = { completions: { create: async request => {
       completions.push(request);
-      return { choices: [{ finish_reason: 'stop', message: { content } }], usage: { prompt_tokens: 50, completion_tokens: 8 } };
+      const chunks = streamChunks || [
+        { choices: [{ delta: { content: responseContent }, finish_reason: null }] },
+        { choices: [{ delta: {}, finish_reason: 'stop' }] },
+        { choices: [], usage: { prompt_tokens: 50, completion_tokens: 8 } },
+      ];
+      return (async function* () {
+        for (const chunk of chunks) {
+          if (typeof chunk === 'function') await chunk();
+          else yield chunk;
+        }
+      })();
     } } };
   }
   const workerSelf = { postMessage: value => replies.push(value) };
   const source = await readFile(new URL('../helper/llmWorker.js', import.meta.url), 'utf8');
-  // Substitute only the external module loader. Execute the real worker message
-  // handler against a stub engine; no model download or WebGPU is required.
-  vm.runInNewContext(source.replace('import(WEBLLM_URL)', 'loadWebLLM(WEBLLM_URL)'), {
+  // Inject the real catalog helpers and substitute the external runtime loader.
+  // Execute the worker's message handler without downloading models or using GPU.
+  const executable = source
+    .replace(/import\s*\{[\s\S]*?\}\s*from\s*['"]\.\/llmModels\.js['"];?/, '')
+    .replace('import(WEBLLM_URL)', 'loadWebLLM(WEBLLM_URL)');
+  vm.runInNewContext(executable, {
     self: workerSelf,
+    WEBLLM_URL, MODEL_CONTEXT_TOKENS, isModelWithinBudget,
     loadWebLLM: async url => {
-      assert.equal(url, 'https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.85/+esm');
-      return { MLCEngine: StubEngine, prebuiltAppConfig: { model_list: [{ model_id: 'test-model' }] } };
+      assert.equal(url, WEBLLM_URL);
+      return { MLCEngine: StubEngine, prebuiltAppConfig: { model_list: [
+        { model_id: modelId, vram_required_MB: vramMB, ...recordOverrides },
+      ] } };
     },
   });
-  await workerSelf.onmessage({ data: { id: 1, kind: 'load', modelId: 'test-model' } });
+  return {
+    replies, completions, loads, engineOptions,
+    send: data => workerSelf.onmessage({ data }),
+    setContent: value => { responseContent = value; streamChunks = null; },
+    setStream: value => { streamChunks = value; },
+  };
+}
+
+test('local worker supplies the schema as model instructions and grammar without mutating messages', async () => {
+  const { replies, completions, loads, send, engineOptions } = await workerHarness({
+    recordOverrides: { overrides: { max_history_size: 0, sliding_window_size: -1 } },
+  });
+  await send({ id: 1, kind: 'load', modelId: 'test-model' });
   assert.equal(loads[0].options.context_window_size, 4096);
+  assert.equal(engineOptions[0].appConfig.model_list[0].overrides.max_history_size, 0);
+  assert.equal(engineOptions[0].appConfig.model_list[0].overrides.sliding_window_size, -1);
   for (const original of [messages, [{ role: 'user', content: 'Make it blue.' }]]) {
     const before = structuredClone(original);
-    await workerSelf.onmessage({ data: { id: 2, kind: 'complete', messages: original, schema, maxTokens: 768 } });
+    await send({ id: 2, kind: 'complete', messages: original, schema, maxTokens: 768 });
     const sent = completions.at(-1);
     assert.equal(sent.messages[0].role, 'system');
     assert.ok(sent.messages[0].content.includes(JSON.stringify(schema)));
     assert.equal(sent.response_format.schema, JSON.stringify(schema));
+    assert.equal(sent.stream, true);
+    assert.equal(sent.stream_options.include_usage, true);
     assert.equal(sent.messages.at(-1).content, 'Make it blue.');
     assert.deepEqual(original, before);
     assert.equal(replies.at(-1).result.content, content);
+    assert.equal(sent.extra_body?.enable_thinking, undefined);
   }
   assert.ok(completions[0].messages[0].content.startsWith('Use JSON.\n'));
+});
+
+test('local worker rejects missing, malformed, and over-cap runtime memory estimates before creating an engine', async () => {
+  for (const vramMB of [null, NaN, Infinity, 0, -1, '2048', MAX_MODEL_VRAM_MB + 0.01]) {
+    const { replies, loads, engineOptions, send } = await workerHarness({ vramMB });
+    await send({ id: 1, kind: 'load', modelId: 'test-model' });
+    assert.equal(replies.at(-1).error, 'failed', `Rejected memory estimate: ${String(vramMB)}`);
+    assert.equal(engineOptions.length, 0);
+    assert.equal(loads.length, 0);
+  }
+  const missing = await workerHarness({ recordOverrides: { vram_required_MB: undefined } });
+  await missing.send({ id: 1, kind: 'load', modelId: 'test-model' });
+  assert.equal(missing.replies.at(-1).error, 'failed');
+  assert.equal(missing.engineOptions.length, 0);
+  const boundary = await workerHarness({ vramMB: MAX_MODEL_VRAM_MB });
+  await boundary.send({ id: 1, kind: 'load', modelId: 'test-model' });
+  assert.equal(boundary.replies.at(-1).result.loaded, true);
+  assert.equal(boundary.loads.length, 1);
+});
+
+test('Qwen3 models disable thinking, remove an empty prefix across chunks, and never stream reasoning', async () => {
+  for (const modelId of ['Qwen3.5-2B-q4f16_1-MLC', 'Qwen3-1.7B-q4f32_1-MLC']) {
+    const { replies, completions, send, setContent, setStream } = await workerHarness({ modelId });
+    await send({ id: 1, kind: 'load', modelId });
+    setStream([
+      ...[...`<think>\n\n</think>\n\n${content}`].map(character => ({ choices: [{ delta: { content: character } }] })),
+      { choices: [{ delta: {}, finish_reason: 'stop' }] },
+    ]);
+    await send({ id: 2, kind: 'complete', messages, schema, maxTokens: 768 });
+    assert.equal(completions.at(-1).extra_body.enable_thinking, false);
+    assert.equal(replies.at(-1).result.content, content);
+    assert.equal(replies.filter(reply => reply.id === 2 && reply.kind === 'token').map(reply => reply.delta).join(''), content);
+    const reasoning = `<think>Unwanted reasoning</think>\n${content}`;
+    setContent(reasoning);
+    await send({ id: 3, kind: 'complete', messages, schema, maxTokens: 768 });
+    assert.equal(replies.at(-1).error, 'invalid');
+    assert.equal(replies.some(reply => reply.id === 3 && reply.kind === 'token'), false);
+    const embedded = '{"message":"<think></think>"}';
+    setContent(embedded);
+    await send({ id: 4, kind: 'complete', messages, schema, maxTokens: 768 });
+    assert.equal(replies.at(-1).result.content, embedded);
+  }
+  const other = await workerHarness();
+  await other.send({ id: 1, kind: 'load', modelId: 'test-model' });
+  const prefixed = `<think>\n\n</think>\n\n${content}`;
+  other.setContent(prefixed);
+  await other.send({ id: 2, kind: 'complete', messages, schema, maxTokens: 768 });
+  assert.equal(other.completions[0].extra_body?.enable_thinking, undefined);
+  assert.equal(other.replies.at(-1).error, 'invalid');
+  assert.equal(other.replies.some(reply => reply.kind === 'token'), false);
+});
+
+test('local worker emits deltas before generation ends and collects usage after the finish chunk', async () => {
+  const { send, setStream, replies } = await workerHarness();
+  await send({ id: 1, kind: 'load', modelId: 'test-model' });
+  let continueStream;
+  const blocked = new Promise(resolve => { continueStream = resolve; });
+  setStream([
+    { choices: [{ delta: { role: 'assistant' } }] },
+    { choices: [{ delta: { content: '{"message":' }, finish_reason: null }] },
+    () => blocked,
+    { choices: [{ delta: { content: '"Done"}' }, finish_reason: null }] },
+    { choices: [{ delta: {}, finish_reason: 'stop' }] },
+    { choices: [], usage: { prompt_tokens: 42, completion_tokens: 9 } },
+  ]);
+  const completion = send({ id: 2, kind: 'complete', messages, schema, maxTokens: 768 });
+  await tick();
+  assert.equal(replies.at(-1).kind, 'token');
+  assert.equal(replies.at(-1).delta, '{"message":');
+  assert.equal(replies.some(reply => reply.id === 2 && reply.result), false);
+  continueStream();
+  await completion;
+  assert.equal(replies.filter(reply => reply.id === 2 && reply.kind === 'token').map(reply => reply.delta).join(''), content);
+  assert.equal(replies.at(-1).result.content, content);
+  assert.equal(replies.at(-1).result.usage.inputTokens, 42);
+  assert.equal(replies.at(-1).result.usage.outputTokens, 9);
+});
+
+test('local worker never returns a completed proposal for interrupted or unfinished streams', async () => {
+  const { send, setStream, replies } = await workerHarness();
+  await send({ id: 1, kind: 'load', modelId: 'test-model' });
+  for (const [index, finishReason] of ['length', 'abort', undefined].entries()) {
+    const id = index + 2;
+    setStream([
+      { choices: [{ delta: { content }, finish_reason: null }] },
+      { choices: [{ delta: {}, finish_reason: finishReason }] },
+      { choices: [], usage: { prompt_tokens: 50, completion_tokens: 8 } },
+    ]);
+    await send({ id, kind: 'complete', messages, schema, maxTokens: 768 });
+    assert.equal(replies.at(-1).error, 'incomplete');
+    assert.equal(replies.some(reply => reply.id === id && reply.result), false);
+  }
+  setStream([
+    { choices: [{ delta: { content: '{"message":' } }] },
+    () => { throw new Error('GPU stream failed'); },
+  ]);
+  await send({ id: 5, kind: 'complete', messages, schema, maxTokens: 768 });
+  assert.equal(replies.at(-1).error, 'failed');
+  assert.equal(replies.some(reply => reply.id === 5 && reply.result), false);
 });

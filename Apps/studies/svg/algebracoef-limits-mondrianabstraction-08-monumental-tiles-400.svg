@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" touch-action="none" preserveAspectRatio="xMinYMin meet" style="-webkit-tap-highlight-color: transparent; background: rgb(8, 11, 22);" width="1200" height="1000" viewBox="0 -133.33333333333337 800 666.6666666666667" color="#f1eee6"><metadata id="abstract-study">{"title":"Monumental Tiles 400","app":"MondrianAbstraction","source":"MondrianAbstraction/mondrian.js","visualId":"mondrianAbstraction","concept":"Oversize tiles reduce the field to a few slabs. grid.cellSize = 400.","seed":2026092560,"width":1200,"height":1000,"frames":0,"nativeRenderer":true,"collection":"algebraCOEF","monochrome":false,"flowStats":{"engine":"native toolbar tool flow / headless Edge","stages":[{"label":"rect becomes circle","kind":"effect","effect":"convert","changed":true,"beforeShapes":2,"afterShapes":2,"messages":["convert applied: 2 converted, 0 skipped."]},{"label":"choose ink on circle","kind":"effect","effect":"paint","changed":true,"beforeShapes":2,"afterShapes":2,"messages":["paint applied: 2 elements."]},{"label":"E: 2 echoes, scale 0.62 to 1.25","kind":"effect","effect":"scale","changed":true,"beforeShapes":2,"afterShapes":4,"messages":["scale applied: 2 groups, 4 clones."]},{"label":"C: enumerate current marks through four colors","kind":"effect","effect":"color","changed":true,"beforeShapes":4,"afterShapes":4,"messages":["color applied: 4 elements, 4 mapped colors."]},{"label":"N1: normal vectors, coefficient 0.65","kind":"effect","effect":"splineLines","changed":true,"beforeShapes":4,"afterShapes":52,"messages":["spline lines applied: 2 shapes, 50 lines, 0 skipped."]},{"label":"N2: tangent vectors, coefficient 1.35","kind":"effect","effect":"splineLines","changed":true,"beforeShapes":52,"afterShapes":100,"messages":["spline lines applied: 2 shapes, 50 lines, 0 skipped."]},{"label":"A^2: repeated rotation and contraction","kind":"transform","effect":null,"changed":true,"beforeShapes":100,"afterShapes":100,"messages":[]}],"detachedBackgrounds":1,"beforeShapes":2,"afterShapes":100,"appliedStages":7,"monochrome":false},"sourceSha256":"c2f71efd34c1a1f058fb6e72e2c1ffc9385ed94fe65f38bb28180511636516a6","exportedAt":"2026-09-25T21:35:40.246Z","renderMs":494}</metadata><title>Monumental Tiles 400</title><desc>Oversize tiles reduce the field to a few slabs. grid.cellSize = 400.</desc><metadata id="ohey-settings" data-format="json" data-owner="ohey-settings">{
+  "grid": {
+    "cellSize": 400,
+    "snapTo5": false,
+    "strokeWidth": 0.6,
+    "strokeOpacity": 0.85
+  },
+  "color": {
+    "startHue": 0,
+    "hueStep": 9,
+    "saturation": 1,
+    "lightness": 0.6,
+    "fillOpacity": 0.45,
+    "burstFillOpacity": 0.1
+  },
+  "motion": {
+    "enabled": false,
+    "running": false,
+    "tickMs": 220,
+    "triggersPerTick": 1,
+    "hoverCooldownMs": 80,
+    "durationMs": 600,
+    "delayMs": 1200,
+    "rotateDeg": 180,
+    "scaleBurst": 1,
+    "scaleMin": 1,
+    "scaleMax": 3.6
+  },
+  "shouldRender": true,
+  "overrideMinMax": true,
+  "__paramRanges": {},
+  "__xf": {
+    "ui": {
+      "splitCount": 1,
+      "activeTile": "0",
+      "rotateDeg": 0,
+      "preset": "",
+      "splitMode": "screen",
+      "applyToAll": false,
+      "tileTargets": "0",
+      "zoomFactor": 1.25,
+      "matrix": {
+        "a": 1,
+        "b": 0,
+        "c": 0,
+        "d": 1,
+        "e": 0,
+        "f": 0
+      },
+      "zoomCenter": {
+        "x": null,
+        "y": null
+      },
+      "translateVec": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCount": 3,
+      "planeBaseScale": 1,
+      "planeScaleStep": -0.12,
+      "planeOpacity": 0.7,
+      "planeOpacityFalloff": 0.12,
+      "planeOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "planeCenter": {
+        "x": null,
+        "y": null
+      },
+      "groupOpen": {}
+    },
+    "stack": [
+      {
+        "kind": "rotate",
+        "deg": 1.4
+      },
+      {
+        "kind": "zoom",
+        "factor": 0.98
+      },
+      {
+        "kind": "rotate",
+        "deg": 1.4
+      },
+      {
+        "kind": "zoom",
+        "factor": 0.98
+      }
+    ]
+  },
+  "__toolFlows": {
+    "ui": {
+      "flowName": "Monumental Tiles 400",
+      "selectedId": "builtin-grayscale",
+      "autoRun": true,
+      "groupsOpen": {}
+    },
+    "stages": [
+      {
+        "id": "stage-mvc9wkcw-s4ly5d3",
+        "kind": "effect",
+        "label": "rect becomes circle",
+        "enabled": true,
+        "config": {
+          "effectType": "convert",
+          "selector": "rect",
+          "convertFrom": "rect",
+          "convertTo": "circle",
+          "pathSamplePoints": 24,
+          "convertScaleMode": "center",
+          "convertScaleFactor": 0.9
+        }
+      },
+      {
+        "id": "stage-mvc9wkcw-2lg0yab",
+        "kind": "effect",
+        "label": "choose ink on circle",
+        "enabled": true,
+        "config": {
+          "effectType": "paint",
+          "selector": "circle",
+          "paintFill": "none",
+          "paintStroke": "#ef8d30"
+        }
+      },
+      {
+        "id": "stage-mvc9wkcw-fxji11j",
+        "kind": "effect",
+        "label": "E: 2 echoes, scale 0.62 to 1.25",
+        "enabled": true,
+        "config": {
+          "effectType": "scale",
+          "selector": "circle",
+          "elementType": "circle",
+          "rangeMin": 0.62,
+          "rangeMax": 1.25,
+          "count": 2,
+          "spacing": "linear",
+          "opacityMode": "fixed",
+          "opacityFixed": 0.72,
+          "equation": ""
+        }
+      },
+      {
+        "id": "stage-mvc9wkcw-fettusb",
+        "kind": "effect",
+        "label": "C: enumerate current marks through four colors",
+        "enabled": true,
+        "config": {
+          "effectType": "color",
+          "color": {
+            "selector": "circle,line[data-spline-lines-run]",
+            "sourceProp": "stroke",
+            "targetProp": "stroke",
+            "mode": "byIndex",
+            "colorSort": "appearance",
+            "paletteText": "#67dbd2,#7686ec,#ed85b2,#ffcd83",
+            "paletteSteps": 0,
+            "useComputed": true,
+            "skipNone": true
+          }
+        }
+      },
+      {
+        "id": "stage-mvc9wkcw-py6q6qo",
+        "kind": "effect",
+        "label": "N1: normal vectors, coefficient 0.65",
+        "enabled": true,
+        "config": {
+          "effectType": "splineLines",
+          "splineSource": "circle",
+          "splineSelector": "circle:nth-of-type(2n)",
+          "splinePointCount": 12,
+          "splineStepsPerSegment": 2,
+          "splineTension": 0.2,
+          "splineLineOrientation": "normal",
+          "splineLineHeight": 49,
+          "splineLineScale": 0.65,
+          "splineStrokeWidth": 0.7,
+          "splineScaleMode": "none",
+          "splineScaleFactor": 1
+        }
+      },
+      {
+        "id": "stage-mvc9wkcw-ic9cfnb",
+        "kind": "effect",
+        "label": "N2: tangent vectors, coefficient 1.35",
+        "enabled": true,
+        "config": {
+          "effectType": "splineLines",
+          "splineSource": "circle",
+          "splineSelector": "circle",
+          "splinePointCount": 12,
+          "splineStepsPerSegment": 2,
+          "splineTension": 0.2,
+          "splineLineOrientation": "tangent",
+          "splineLineHeight": 49,
+          "splineLineScale": 1.35,
+          "splineStrokeWidth": 0.7,
+          "splineScaleMode": "none",
+          "splineScaleFactor": 1
+        }
+      },
+      {
+        "id": "stage-mvc9wkcw-vxjertu",
+        "kind": "transform",
+        "label": "A^2: repeated rotation and contraction",
+        "enabled": true,
+        "config": {
+          "stack": [
+            {
+              "kind": "rotate",
+              "deg": 1.4
+            },
+            {
+              "kind": "zoom",
+              "factor": 0.98
+            },
+            {
+              "kind": "rotate",
+              "deg": 1.4
+            },
+            {
+              "kind": "zoom",
+              "factor": 0.98
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "__propOps": {
+    "ui": {
+      "ruleText": "{\n        \"selector\": {\"circle\":{\"r\":{\"range\":[20,100]}}},\n        \"apply\": {\"stroke\": null}\n        }",
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": []
+  },
+  "__scriptOps": {
+    "ui": {
+      "codeText": "// ctx.root is the &lt;g&gt; subtree being processed\n// ctx.svg is the owning &lt;svg&gt;\n// ctx.create(tag) creates an SVG element\n//\n// Example: circle -&gt; 6-gon (polygon)\n// for (const c of ctx.root.querySelectorAll(\"circle\")) {\n//   const cx = Number(c.getAttribute(\"cx\") || 0);\n//   const cy = Number(c.getAttribute(\"cy\") || 0);\n//   const r = Number(c.getAttribute(\"r\") || 0);\n//   const n = 6;\n//   const pts = Array.from({length:n}, (_,i) =&gt; {\n//     const a = (Math.PI*2*i)/n;\n//     return [cx + r*Math.cos(a), cy + r*Math.sin(a)].join(\",\");\n//   }).join(\" \");\n//   const p = ctx.create(\"polygon\");\n//   p.setAttribute(\"points\", pts);\n//   for (const {name,value} of Array.from(c.attributes)) {\n//     if (name === \"cx\" || name === \"cy\" || name === \"r\") continue;\n//     p.setAttribute(name, value);\n//   }\n//   c.replaceWith(p);\n// }",
+      "fileName": "",
+      "selectedCacheKey": "",
+      "autoRunSelected": false,
+      "lastPreview": "",
+      "showDocs": false
+    },
+    "stack": [],
+    "cache": {}
+  }
+}</metadata><rect x="0" y="-133.33333333333337" width="800" height="666.6666666666667" fill="#080b16" data-export-background="true"/><g data-native-flow-artwork="1" data-xf-source="1" transform="rotate(1.4 400 200.00001525878906) translate(400 200.00001525878906) scale(0.98) translate(-400 -200.00001525878906) rotate(1.4 400 200.00001525878906) translate(400 200.00001525878906) scale(0.98) translate(-400 -200.00001525878906)"><g><g data-scale-stack="1" data-scale-run="fx-1792234092560-6a4c86f9"><g data-spline-lines-group="1" data-spline-lines-clone="1" data-spline-lines-run="fx-1792234092560-6744feab" data-scale-clone="1" data-scale-factor="0.62" data-scale-run="fx-1792234092560-6a4c86f9" fill="none" stroke="rgb(103, 219, 210)" class="mondrian-tile" data-idx="0" style="stroke-width: 0.6px; stroke-opacity: 0.85; fill: none; stroke: rgb(103, 219, 210); opacity: 0.72;" data-convert-clone="1" data-convert-run="fx-1792234092560-21256703" transform="translate(200 200) scale(0.9) translate(-200 -200)"><line x1="323.99999999999994" y1="166.925" x2="324.00000000000006" y2="233.075" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="327.3540149514011" y1="199.88264579202556" x2="310.2331351178694" y2="263.77863920104744" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="323.92465006927046" y1="233.3562097698297" x2="290.8496500692704" y2="290.6437902301703" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="310.35048932584385" y1="263.57537575035366" x2="263.57537575035366" y2="310.35048932584374" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="290.64379023017034" y1="290.8496500692704" x2="233.3562097698297" y2="323.92465006927034" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="263.77863920104744" y1="310.2331351178693" x2="199.88264579202556" y2="327.35401495140104" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="233.075" y1="323.99999999999994" x2="166.925" y2="324.00000000000006" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="200.11735420797447" y1="327.3540149514011" x2="136.22136079895262" y2="310.2331351178694" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="166.64379023017034" y1="323.92465006927046" x2="109.35620976982972" y2="290.8496500692704" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="136.42462424964637" y1="310.3504893258438" x2="89.64951067415623" y2="263.5753757503537" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="109.1503499307296" y1="290.6437902301703" x2="76.07534993072959" y2="233.3562097698297" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="89.76686488213066" y1="263.77863920104744" x2="72.64598504859892" y2="199.88264579202553" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="75.99999999999999" y1="233.07500000000005" x2="76.00000000000001" y2="166.925" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="72.64598504859894" y1="200.11735420797447" x2="89.76686488213069" y2="136.22136079895262" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="76.07534993072963" y1="166.64379023017034" x2="109.15034993072959" y2="109.35620976982968" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="89.6495106741562" y1="136.42462424964637" x2="136.4246242496463" y2="89.64951067415623" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="109.35620976982963" y1="109.15034993072965" x2="166.64379023017025" y2="76.07534993072963" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="136.22136079895253" y1="89.7668648821307" x2="200.1173542079744" y2="72.64598504859893" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="166.92499999999995" y1="76" x2="233.075" y2="76" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="199.88264579202553" y1="72.64598504859894" x2="263.7786392010474" y2="89.76686488213069" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="233.35620976982966" y1="76.07534993072963" x2="290.64379023017034" y2="109.15034993072959" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="263.5753757503536" y1="89.6495106741562" x2="310.3504893258438" y2="136.4246242496463" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="290.84965006927035" y1="109.35620976982963" x2="323.9246500692704" y2="166.64379023017025" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="310.2331351178693" y1="136.2213607989526" x2="327.35401495140104" y2="200.11735420797444" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="323.99999999999994" y1="166.925" x2="324.00000000000006" y2="233.075" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/></g><g data-spline-lines-group="1" data-spline-lines-clone="1" data-spline-lines-run="fx-1792234092560-2e3b6b5d" data-scale-clone="1" data-scale-factor="1.25" data-scale-run="fx-1792234092560-6a4c86f9" fill="none" stroke="rgb(118, 134, 236)" class="mondrian-tile" data-idx="0" style="stroke-width: 0.6px; stroke-opacity: 0.85; fill: none; stroke: rgb(118, 134, 236); opacity: 0.72;" data-convert-clone="1" data-convert-run="fx-1792234092560-21256703" transform="translate(200 200) scale(0.9) translate(-200 -200)"><line x1="465.925" y1="200" x2="434.075" y2="200" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="454.8855442567083" y1="268.29637574595216" x2="424.12080668940143" y2="260.0529891594369" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="430.2978055013769" y1="332.9625" x2="402.7148963908425" y2="317.0375" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="386.5891685107561" y1="386.58916851075605" x2="364.06781752996454" y2="364.0678175299645" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="332.96250000000003" y1="430.29780550137684" x2="317.03749999999997" y2="402.71489639084245" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="268.29637574595216" y1="454.8855442567083" x2="260.0529891594369" y2="424.12080668940143" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="200.00000000000003" y1="465.925" x2="200.00000000000003" y2="434.075" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="131.7036242540479" y1="454.8855442567083" x2="139.94701084056317" y2="424.12080668940143" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="67.03750000000005" y1="430.2978055013769" x2="82.96250000000006" y2="402.7148963908425" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="13.410831489243938" y1="386.5891685107561" x2="35.93218247003547" y2="364.06781752996454" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="-30.297805501376864" y1="332.9625" x2="-2.714896390842492" y2="317.0375" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="-54.88554425670825" y1="268.29637574595216" x2="-24.120806689401427" y2="260.0529891594369" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="-65.925" y1="200.00000000000003" x2="-34.075" y2="200.00000000000003" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="-54.88554425670823" y1="131.70362425404784" x2="-24.120806689401405" y2="139.9470108405631" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="-30.29780550137684" y1="67.03749999999998" x2="-2.7148963908424584" y2="82.96249999999996" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="13.41083148924386" y1="13.410831489243941" x2="35.9321824700354" y2="35.93218247003548" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="67.03749999999988" y1="-30.29780550137678" x2="82.96249999999989" y2="-2.714896390842407" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="131.70362425404775" y1="-54.88554425670821" x2="139.94701084056302" y2="-24.120806689401384" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="199.99999999999994" y1="-65.925" x2="199.99999999999994" y2="-34.075" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="268.29637574595216" y1="-54.88554425670823" x2="260.0529891594369" y2="-24.120806689401405" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="332.9625" y1="-30.297805501376835" x2="317.0375" y2="-2.714896390842462" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="386.58916851075605" y1="13.410831489243856" x2="364.0678175299645" y2="35.93218247003541" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="430.2978055013768" y1="67.03749999999988" x2="402.7148963908424" y2="82.96249999999989" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="454.8855442567082" y1="131.70362425404778" x2="424.1208066894014" y2="139.94701084056305" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="465.925" y1="200" x2="434.075" y2="200" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/></g></g><g data-scale-stack="1" data-scale-run="fx-1792234092560-6a4c86f9"><g data-spline-lines-group="1" data-spline-lines-clone="1" data-spline-lines-run="fx-1792234092560-6744feab" data-scale-clone="1" data-scale-factor="0.62" data-scale-run="fx-1792234092560-6a4c86f9" fill="none" stroke="rgb(237, 133, 178)" class="mondrian-tile" data-idx="1" style="stroke-width: 0.6px; stroke-opacity: 0.85; fill: none; stroke: rgb(237, 133, 178); opacity: 0.72;" data-convert-clone="1" data-convert-run="fx-1792234092560-21256703" transform="translate(600 200) scale(0.9) translate(-600 -200)"><line x1="724" y1="166.925" x2="724" y2="233.075" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="727.354014951401" y1="199.88264579202556" x2="710.2331351178693" y2="263.77863920104744" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="723.9246500692705" y1="233.35620976982966" x2="690.8496500692704" y2="290.64379023017034" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="710.3504893258439" y1="263.57537575035366" x2="663.5753757503537" y2="310.35048932584374" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="690.6437902301703" y1="290.8496500692704" x2="633.3562097698297" y2="323.92465006927034" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="663.7786392010474" y1="310.2331351178693" x2="599.8826457920255" y2="327.35401495140104" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="633.075" y1="323.99999999999994" x2="566.925" y2="324.00000000000006" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="600.1173542079745" y1="327.3540149514011" x2="536.2213607989526" y2="310.2331351178694" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="566.6437902301703" y1="323.92465006927046" x2="509.3562097698297" y2="290.8496500692704" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="536.4246242496464" y1="310.3504893258438" x2="489.64951067415626" y2="263.5753757503537" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="509.1503499307296" y1="290.64379023017034" x2="476.07534993072954" y2="233.3562097698297" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="489.7668648821307" y1="263.77863920104744" x2="472.64598504859896" y2="199.88264579202553" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="476" y1="233.07500000000005" x2="476" y2="166.925" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="472.64598504859896" y1="200.11735420797447" x2="489.7668648821307" y2="136.22136079895262" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="476.07534993072966" y1="166.64379023017034" x2="509.1503499307296" y2="109.35620976982966" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="489.64951067415615" y1="136.42462424964634" x2="536.4246242496463" y2="89.64951067415625" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="509.35620976982966" y1="109.15034993072962" x2="566.6437902301703" y2="76.07534993072966" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="536.2213607989526" y1="89.7668648821307" x2="600.1173542079745" y2="72.64598504859893" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="566.925" y1="76" x2="633.075" y2="76" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="599.8826457920255" y1="72.64598504859894" x2="663.7786392010474" y2="89.76686488213069" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="633.3562097698297" y1="76.07534993072962" x2="690.6437902301703" y2="109.1503499307296" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="663.5753757503536" y1="89.6495106741562" x2="710.3504893258438" y2="136.4246242496463" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="690.8496500692703" y1="109.35620976982963" x2="723.9246500692703" y2="166.64379023017025" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="710.2331351178693" y1="136.2213607989526" x2="727.354014951401" y2="200.11735420797444" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/><line x1="724" y1="166.925" x2="724" y2="233.075" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-6744feab"/></g><g data-spline-lines-group="1" data-spline-lines-clone="1" data-spline-lines-run="fx-1792234092560-2e3b6b5d" data-scale-clone="1" data-scale-factor="1.25" data-scale-run="fx-1792234092560-6a4c86f9" fill="none" stroke="rgb(255, 205, 131)" class="mondrian-tile" data-idx="1" style="stroke-width: 0.6px; stroke-opacity: 0.85; fill: none; stroke: rgb(255, 205, 131); opacity: 0.72;" data-convert-clone="1" data-convert-run="fx-1792234092560-21256703" transform="translate(600 200) scale(0.9) translate(-600 -200)"><line x1="865.925" y1="200" x2="834.075" y2="200" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="854.8855442567083" y1="268.29637574595216" x2="824.1208066894014" y2="260.0529891594369" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="830.2978055013768" y1="332.9625" x2="802.7148963908426" y2="317.0375" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="786.5891685107562" y1="386.58916851075605" x2="764.0678175299646" y2="364.0678175299645" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="732.9625" y1="430.29780550137684" x2="717.0375" y2="402.71489639084245" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="668.2963757459521" y1="454.8855442567083" x2="660.0529891594368" y2="424.12080668940143" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="600" y1="465.925" x2="600" y2="434.075" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="531.7036242540479" y1="454.8855442567083" x2="539.9470108405632" y2="424.12080668940143" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="467.0375000000001" y1="430.2978055013769" x2="482.96250000000003" y2="402.7148963908425" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="413.41083148924395" y1="386.5891685107561" x2="435.9321824700355" y2="364.06781752996454" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="369.7021944986231" y1="332.96250000000003" x2="397.2851036091575" y2="317.03749999999997" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="345.1144557432917" y1="268.29637574595216" x2="375.87919331059857" y2="260.0529891594369" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="334.075" y1="200.00000000000003" x2="365.925" y2="200.00000000000003" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="345.1144557432917" y1="131.70362425404784" x2="375.87919331059857" y2="139.9470108405631" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="369.70219449862316" y1="67.03749999999997" x2="397.28510360915755" y2="82.96249999999998" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="413.4108314892439" y1="13.410831489243941" x2="435.93218247003546" y2="35.93218247003548" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="467.0374999999999" y1="-30.297805501376775" x2="482.96249999999986" y2="-2.7148963908424086" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="531.7036242540478" y1="-54.88554425670821" x2="539.947010840563" y2="-24.120806689401384" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="600" y1="-65.925" x2="600" y2="-34.075" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="668.2963757459521" y1="-54.88554425670823" x2="660.0529891594368" y2="-24.120806689401405" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="732.9625" y1="-30.29780550137684" x2="717.0375" y2="-2.7148963908424584" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="786.589168510756" y1="13.410831489243856" x2="764.0678175299645" y2="35.93218247003541" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="830.2978055013767" y1="67.03749999999988" x2="802.7148963908425" y2="82.96249999999989" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="854.8855442567083" y1="131.70362425404778" x2="824.1208066894014" y2="139.94701084056305" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/><line x1="865.925" y1="200" x2="834.075" y2="200" stroke-width="0.7" stroke-linecap="round" data-spline-lines-run="fx-1792234092560-2e3b6b5d"/></g></g></g></g><g data-xf-layer="1" style="pointer-events: none;"/></svg>

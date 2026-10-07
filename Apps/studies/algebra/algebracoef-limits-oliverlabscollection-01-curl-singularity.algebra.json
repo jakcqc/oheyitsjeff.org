@@ -1,0 +1,78 @@
+{
+  "title": "Curl Singularity",
+  "source": "OliverLabsCollection/OliverLabsCollection_visual.js",
+  "visualId": "oliverLabsCollection",
+  "seed": 2026092561,
+  "frames": 0,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o splineLines o color o scale (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "curl",
+      "baseline": -21.7,
+      "value": 320,
+      "direction": "max"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        -21.7,
+        343.919
+      ],
+      "event": "X >= threshold",
+      "threshold": 320,
+      "value": 0.0654205607476635,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "Currents change direction sharply",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-oliverlabscollection-01-curl-singularity.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-oliverlabscollection-01-curl-singularity.json",
+  "observedStages": [
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 100,
+      "afterShapes": 160,
+      "messages": [
+        "scale applied: 20 groups, 80 clones."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 160,
+      "afterShapes": 160,
+      "messages": [
+        "color applied: 160 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 160,
+      "afterShapes": 517,
+      "messages": [
+        "spline lines applied: 7 shapes, 364 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 517,
+      "afterShapes": 517,
+      "messages": []
+    }
+  ]
+}

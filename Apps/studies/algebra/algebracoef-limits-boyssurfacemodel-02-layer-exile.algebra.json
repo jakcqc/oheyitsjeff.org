@@ -1,0 +1,67 @@
+{
+  "title": "Layer Exile",
+  "source": "BoysSurfaceModel/BoysSurfaceModel_visual.js",
+  "visualId": "boysSurfaceModel",
+  "seed": 2026092517,
+  "frames": 0,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o color o scale (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "layerSpread",
+      "baseline": 3.9,
+      "value": 40,
+      "direction": "max"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        0,
+        42.527
+      ],
+      "event": "X >= threshold",
+      "threshold": 40,
+      "value": 0.059421073670844426,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "Large spacing opens gaps between sheets",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-boyssurfacemodel-02-layer-exile.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-boyssurfacemodel-02-layer-exile.json",
+  "observedStages": [
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 96,
+      "afterShapes": 224,
+      "messages": [
+        "scale applied: 32 groups, 160 clones."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 224,
+      "afterShapes": 224,
+      "messages": [
+        "color applied: 224 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 224,
+      "afterShapes": 896,
+      "messages": []
+    }
+  ]
+}

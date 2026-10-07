@@ -1,0 +1,78 @@
+{
+  "title": "Three Remnants",
+  "source": "InnerLight/index.js",
+  "visualId": "innerLight",
+  "seed": 2026092536,
+  "frames": 0,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o color o splineLines o scale (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "custom.numElements",
+      "baseline": 37,
+      "value": 3,
+      "direction": "min"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        0.6199999999999997,
+        37
+      ],
+      "event": "X <= threshold",
+      "threshold": 3,
+      "value": 0.06542056074766356,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "Few elements expose the grammar",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-innerlight-02-three-remnants.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-innerlight-02-three-remnants.json",
+  "observedStages": [
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 3,
+      "afterShapes": 8,
+      "messages": [
+        "scale applied: 1 groups, 6 clones."
+      ]
+    },
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 8,
+      "afterShapes": 140,
+      "messages": [
+        "spline lines applied: 4 shapes, 136 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 140,
+      "afterShapes": 140,
+      "messages": [
+        "color applied: 140 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 140,
+      "afterShapes": 140,
+      "messages": []
+    }
+  ]
+}

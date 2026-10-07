@@ -223,6 +223,13 @@ export function mountStudiesViewer(container, { createViewSelector } = {}) {
       complexity.title = 'Complexity is the number of vector shapes in the saved SVG.';
       meta.append(complexity);
     }
+    if (record.batch === 'limits' && Number.isFinite(record.rateCoefficient)) {
+      const rate = document.createElement('span');
+      rate.className = 'study-rate';
+      rate.textContent = `rho ${(record.rateCoefficient * 100).toFixed(1)}%`;
+      rate.title = 'Exact chance of reaching this stressed parameter value under the stated uniform exploration interval. See the formal recipe for its interval and formula.';
+      meta.append(rate);
+    }
     const actions = document.createElement('div');
     actions.className = 'study-actions';
     for (const [folder, extension, label] of [['svg', 'svg', 'SVG ↓'], ['settings', 'json', 'Settings']]) {
@@ -275,7 +282,11 @@ export function mountStudiesViewer(container, { createViewSelector } = {}) {
     releaseImages();
     pageObserver?.disconnect();
     activeTrigger = null;
-    filtered = search(searchInput.value).filter(record =>
+    const batchQuery = /^(wild|limits)$/i.exec(searchInput.value.trim())?.[1]?.toLowerCase();
+    const matches = batchQuery && collectionFilter.value === 'algebraCOEF'
+      ? records.filter(record => record.batch === batchQuery)
+      : search(searchInput.value);
+    filtered = matches.filter(record =>
       (appFilter.value === 'all' || record.app === appFilter.value) &&
       (kindFilter.value === 'all' || record.kind === kindFilter.value) &&
       (collectionFilter.value === 'all' || record.collection === collectionFilter.value) &&

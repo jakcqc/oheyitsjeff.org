@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "name": "Giant Cells",
+  "stages": [
+    {
+      "id": "stage-mvc9wkbw-z350cn2",
+      "kind": "effect",
+      "label": "E: sparse cell echoes",
+      "enabled": true,
+      "config": {
+        "effectType": "scale",
+        "elementType": "rect",
+        "selector": "rect:nth-of-type(7n)",
+        "rangeMin": 0.65,
+        "rangeMax": 1.3,
+        "count": 2,
+        "spacing": "linear",
+        "opacityMode": "fixed",
+        "opacityFixed": 0.7
+      }
+    },
+    {
+      "id": "stage-mvc9wkbw-u7ms0ef",
+      "kind": "transform",
+      "label": "A^2: repeated rotation and contraction",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": 1.4
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.98
+          },
+          {
+            "kind": "rotate",
+            "deg": 1.4
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.98
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -155,15 +155,16 @@ try {
   await prepare(['circle']);
   await page.locator('.vr-tabsToggle').click();
   await page.getByRole('button', { name: 'transforms', exact: true }).click();
-  const splitRow = page.locator('.vr-row').filter({ has: page.locator('.vr-label', { hasText: /^split copies$/ }) });
+  await page.locator('.xf-panel [data-xf-key="arrangeAction"]').selectOption('split');
+  const splitInput = page.locator('.xf-panel [data-xf-key="splitCount"]');
   const cloneSelector = '[data-xf-layer="1"] .circle';
   for (const copies of [4, 16]) {
-    await page.getByRole('button', { name: 'reset', exact: true }).click();
+    const reset = page.getByRole('button', { name: 'reset', exact: true });
+    if (await reset.isEnabled()) await reset.click();
     await prepare(['circle']);
-    await splitRow.locator('xpath=ancestor::details').evaluateAll((nodes) => nodes.forEach((node) => { node.open = true; }));
-    await splitRow.locator('input[type="number"]').fill(String(copies));
-    await splitRow.locator('input[type="number"]').dispatchEvent('change');
-    await page.getByRole('button', { name: 'apply split', exact: true }).click();
+    await splitInput.fill(String(copies));
+    await splitInput.dispatchEvent('change');
+    await page.locator('.xf-panel [data-xf-action="apply"]').click();
     await page.waitForSelector(cloneSelector);
     origin = await center(cloneSelector);
     const scale = 1 / Math.sqrt(copies);

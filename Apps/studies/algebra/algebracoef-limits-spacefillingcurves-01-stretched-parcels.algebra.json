@@ -1,0 +1,89 @@
+{
+  "title": "Stretched Parcels",
+  "source": "SpaceFillingCurves/SpaceFillingCurves_visual.js",
+  "visualId": "spaceFillingCurves",
+  "seed": 2026092569,
+  "frames": 0,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o paint o convert o color o scale (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "maxRectAspect",
+      "baseline": 77,
+      "value": 2200,
+      "direction": "max"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        0,
+        2348.61
+      ],
+      "event": "X >= threshold",
+      "threshold": 2200,
+      "value": 0.063275724790408,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "Parcels become needle thin",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-spacefillingcurves-01-stretched-parcels.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-spacefillingcurves-01-stretched-parcels.json",
+  "observedStages": [
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 28,
+      "afterShapes": 64,
+      "messages": [
+        "scale applied: 9 groups, 45 clones."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 64,
+      "afterShapes": 64,
+      "messages": [
+        "color applied: 64 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "Q: convert",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 64,
+      "afterShapes": 64,
+      "messages": [
+        "convert applied: 12 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "P: paint",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 64,
+      "afterShapes": 64,
+      "messages": [
+        "paint applied: 12 elements."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 64,
+      "afterShapes": 320,
+      "messages": []
+    }
+  ]
+}

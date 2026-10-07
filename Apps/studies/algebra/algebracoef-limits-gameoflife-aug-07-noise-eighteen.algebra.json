@@ -1,0 +1,56 @@
+{
+  "title": "Noise Eighteen",
+  "source": "GameOfLife_aug/gameOfLife.js",
+  "visualId": "gameOfLifeSVG",
+  "seed": 2026092529,
+  "frames": 12,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o scale (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "protoNoise",
+      "baseline": 3.25,
+      "value": 18,
+      "direction": "max"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        0,
+        19.0325
+      ],
+      "event": "X >= threshold",
+      "threshold": 18,
+      "value": 0.0542493103901221,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "Extreme noise fragments the threshold field",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-gameoflife-aug-07-noise-eighteen.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-gameoflife-aug-07-noise-eighteen.json",
+  "observedStages": [
+    {
+      "label": "E: sparse cell echoes",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 500,
+      "afterShapes": 571,
+      "messages": [
+        "scale applied: 71 groups, 142 clones."
+      ]
+    },
+    {
+      "label": "A^2: repeated rotation and contraction",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 571,
+      "afterShapes": 571,
+      "messages": []
+    }
+  ]
+}

@@ -10,13 +10,16 @@
 
 import { el, registerTab } from "./visualHelp.js";
 import { LocalLLMClient } from "./llmLocal.js";
+import { LOCAL_MODELS, MAX_MODEL_VRAM_MB, recommendLocalModel, recommendModelVariant, formatQuantization } from "./llmModels.js";
 import { buildAssistantRequest, applyAssistantActions } from "./llmTools.js";
+import { streamedAssistantMessage } from "./llmStream.js";
 
 // Conversation stays in memory, separate from exported/saved visual state.
 const sessions = new WeakMap();
 const HISTORY_LIMIT = 12;
 const CHAT_LIMIT = 24;
 const HISTORY_CHAR_LIMIT = 12000;
+let nextQuantizationGroup = 0;
 
 function trimHistory(history) {
   let total = 0;
@@ -51,29 +54,47 @@ export function buildLLMTab(ctx) {
   let destroyed = false;
   let controller = null;
   let modelsFound = false;
+  let checkedVariants = [];
+  let selectedModelId = "";
+  const quantizationGroup = `llm-quantization-${++nextQuantizationGroup}`;
 
   const root = el("section", { className: "llm-tab", "aria-label": "Visual assistant" });
-  const budget = el("select", {}, [option("auto", "Auto · check GPU memory"), ...[2, 4, 6, 8, 12, 16, 24, 32].map(gb => option(String(gb), `${gb} GB`))]);
+  const budget = el("select", {}, [option("auto", "Auto · check GPU memory"), ...[2, 4, 6, 8, 12, 16, 24, 32, 48, 64].map(gb => option(String(gb), `${gb} GB`))]);
   budget.value = "auto";
   const findBtn = button("Check GPU / Find models");
   const gpuNote = el("p", {
     className: "llm-help",
     textContent: "Checking GPU capabilities and memory information…",
   });
+  const gpuSummary = el("summary", { textContent: "Checking GPU…" });
+  const gpuDetails = el("details", { className: "llm-gpu-details" }, [gpuSummary, gpuNote]);
+  const quantizationLevel = el("select", { disabled: true }, [option("all", "All levels that fit")]);
+  const levelSummary = el("p", { className: "llm-help", "aria-live": "polite" });
   const localModel = el("select", { disabled: true }, [option("", "Checking GPU…")]);
+  const quantizationChoices = el("div", { className: "llm-quantization-choices" });
+  const quantizationNote = el("p", { className: "llm-help llm-quantization-note" });
+  const quantizationHelp = el("p", { className: "llm-help", textContent: "4-bit compresses model weights. FP16 / FP32 on a 4-bit option is compute precision. 16-bit and 32-bit weight options are unquantized. Only formats that pass the GPU check are shown." });
+  const quantization = el("fieldset", { className: "llm-quantization", "aria-label": "Quantization", disabled: true }, [
+    el("legend", { className: "llm-label", textContent: "Quantization · estimated GPU memory" }),
+    quantizationChoices,
+    quantizationNote,
+    quantizationHelp,
+  ]);
   const loadBtn = button("Load / download model");
   const unloadBtn = button("Unload model");
   const progress = el("progress", { max: 1, value: 0, hidden: true, "aria-label": "Model download and initialization" });
   const modelStatus = el("p", { className: "llm-help", textContent: "No model loaded. Downloads only start when you choose Load / download model." });
   const localSettings = el("div", { className: "llm-settings" }, [
-    field("GPU memory budget", budget), findBtn, gpuNote,
-    field("Local model · estimated GPU memory", localModel),
+    field("GPU memory budget", budget), findBtn, gpuDetails,
+    field("Quantization level", quantizationLevel, "Choose a smaller full-precision model or a larger compressed model. Each level lists only models that fit your GPU."), levelSummary,
+    field("Local model · estimated GPU memory", localModel), quantization,
+    el("p", { className: "llm-help", textContent: `Estimates include a 4,096-token context. Models up to ${MAX_MODEL_VRAM_MB / 1024} GB are considered; the GPU check reserves memory for rendering. Downloads start only when you load a model.` }),
     el("div", { className: "llm-actions" }, [loadBtn, unloadBtn]), progress, modelStatus,
   ]);
 
   const scope = el("select", {}, [
     option("auto", "Auto · relevant controls only"), option("params", "Parameters"),
-    option("animation", "Animation"), option("effects", "Effects"), option("flows", "Flows"),
+    option("animation", "Animation"), option("transforms", "Transforms"), option("effects", "Effects"), option("flows", "Flows"),
   ]);
   const chat = el("div", { className: "llm-chat", role: "log", "aria-label": "Assistant conversation", "aria-live": "polite", "aria-relevant": "additions" });
   const input = el("textarea", {
@@ -90,7 +111,7 @@ export function buildLLMTab(ctx) {
   });
   const contextInfo = el("p", { className: "llm-help llm-context", textContent: "The assistant reads current controls when you send. Validated changes apply immediately; use Undo to revert. Only a short recent history is included." });
   const examples = el("div", { className: "llm-examples", "aria-label": "Example prompts" });
-  for (const text of ["What can I change?", "Animate one parameter slowly", "Apply a grayscale color effect", "Create a rotate-and-color flow"]) {
+  for (const text of ["What can I change?", "Animate one parameter slowly", "Rotate the visual 30 degrees", "Apply a grayscale color effect", "Create a rotate-and-color flow"]) {
     examples.append(button(text, { onclick: () => { input.value = text; syncControls(); input.focus(); } }));
   }
 
@@ -138,22 +159,85 @@ export function buildLLMTab(ctx) {
     renderChat();
   }
 
+  function modelsAtSelectedLevel() {
+    return checkedVariants.filter(model => quantizationLevel.value === "all"
+      || String(model.weightBits) === quantizationLevel.value);
+  }
+
+  function renderModelChoices(previousFamily = localModel.value, previousVariant = selectedModelId) {
+    const models = modelsAtSelectedLevel();
+    const recommended = recommendLocalModel(models);
+    const families = new Map();
+    for (const model of models) {
+      if (!families.has(model.familyId)) families.set(model.familyId, []);
+      families.get(model.familyId).push(model);
+    }
+    modelsFound = families.size > 0;
+    localModel.replaceChildren(option("", modelsFound ? "Choose a model" : "No compatible models for this budget"));
+    for (const [familyId, variants] of families) {
+      const smallest = Math.min(...variants.map(model => model.vramMB));
+      const largest = Math.max(...variants.map(model => model.vramMB));
+      const memory = smallest === largest ? `~${(smallest / 1024).toFixed(2)} GB`
+        : `~${(smallest / 1024).toFixed(2)}–${(largest / 1024).toFixed(2)} GB`;
+      localModel.append(option(familyId, `${variants[0].label} · ${memory}${familyId === recommended?.familyId ? " · suggested" : ""}`));
+    }
+    if (modelsFound) localModel.value = families.has(previousFamily) ? previousFamily : recommended.familyId;
+    renderQuantization(previousVariant);
+  }
+
+  function renderQuantization(preferredId = "") {
+    const variants = modelsAtSelectedLevel().filter(model => model.familyId === localModel.value);
+    const published = LOCAL_MODELS.filter(model => model.familyId === localModel.value);
+    quantizationNote.textContent = published.length && published.every(model => model.weightBits === 4)
+      ? `${published[0].label} has 4-bit weights in the supported browser builds. FP16 and FP32 describe compute precision. Choose the 16-bit or 32-bit weight level above to see full-precision models that fit your GPU.`
+      : "";
+    quantizationNote.hidden = !quantizationNote.textContent;
+    quantizationHelp.hidden = !quantizationNote.hidden;
+    const suggested = recommendModelVariant(variants);
+    selectedModelId = variants.find(model => model.id === preferredId)?.id || suggested?.id || "";
+    quantizationChoices.replaceChildren();
+    if (!variants.length) {
+      quantizationChoices.append(el("p", { className: "llm-help", textContent: "Choose a compatible model to compare memory footprints." }));
+    }
+    for (const variant of variants) {
+      const radio = el("input", {
+        type: "radio", name: quantizationGroup, value: variant.id,
+        checked: variant.id === selectedModelId,
+      });
+      radio.addEventListener("change", () => {
+        if (busy || !radio.checked || !variant.compatible) return;
+        selectedModelId = variant.id;
+        syncControls();
+      });
+      quantizationChoices.append(el("label", { className: "llm-quantization-option" }, [
+        radio,
+        el("span", { className: "llm-quantization-detail" }, [
+          el("span", { className: "llm-quantization-format", textContent: formatQuantization(variant) }),
+          el("strong", { className: "llm-quantization-memory", textContent: `~${(variant.vramMB / 1024).toFixed(2)} GB` }),
+          el("span", { className: "llm-help", textContent: `Fits GPU budget${variant.id === suggested?.id ? " · suggested" : ""}` }),
+        ]),
+      ]));
+    }
+  }
+
   function syncControls() {
     if (destroyed) return;
     const pending = !!busy;
     budget.disabled = pending;
     findBtn.disabled = pending;
+    quantizationLevel.disabled = pending || !checkedVariants.length;
     localModel.disabled = pending || !modelsFound;
-    loadBtn.disabled = pending || !localModel.value || client.loadedModel === localModel.value;
+    quantization.disabled = pending || !modelsFound;
+    loadBtn.disabled = pending || !selectedModelId || client.loadedModel === selectedModelId;
     unloadBtn.disabled = pending || !client.isLocalLoaded;
     scope.disabled = pending;
-    sendBtn.disabled = pending || !input.value.trim() || !client.isLocalLoaded;
+    sendBtn.disabled = pending || !input.value.trim() || !client.isLocalLoaded || client.loadedModel !== selectedModelId;
     stopBtn.disabled = !pending || controller?.signal.aborted;
     clearBtn.disabled = pending || !session.chat.length;
     undoBtn.disabled = pending || typeof ctx.undo !== "function";
     root.setAttribute("aria-busy", String(pending));
     if (busy !== "loading") modelStatus.textContent = client.isLocalLoaded
-      ? `Loaded locally: ${client.loadedModel}. Model weights may stay in the browser cache after unloading.`
+      ? `Loaded locally: ${client.loadedModel}.${client.loadedModel !== selectedModelId ? " Load the selected format to chat with it." : ""} Model weights may stay in the browser cache after unloading.`
       : "No model loaded. Downloads only start when you choose Load / download model.";
   }
 
@@ -188,34 +272,44 @@ export function buildLLMTab(ctx) {
   function findModels() { return runJob("finding", async signal => {
     setStatus("Checking WebGPU and available local models…");
     const previousModel = localModel.value;
+    const previousVariant = selectedModelId;
+    const previousLevel = quantizationLevel.value;
     modelsFound = false;
+    selectedModelId = "";
+    checkedVariants = [];
+    quantizationChoices.replaceChildren(el("p", { className: "llm-help", textContent: "Checking available formats…" }));
     localModel.replaceChildren(option("", "Checking GPU…"));
     const result = await client.getLocalModels({ budgetMB: budget.value === "auto" ? null : Number(budget.value) * 1024 });
     signal.throwIfAborted();
     if (destroyed) return;
-    localModel.replaceChildren();
-    modelsFound = !!result.gpu?.supported && result.models.length > 0;
-    localModel.append(option("", modelsFound ? "Choose a model" : "No compatible models for this budget"));
-    const recommended = result.models.find(model => model.id.startsWith("Qwen2.5-3B-Instruct"))
-      || result.models.find(model => model.id.startsWith("Qwen2.5-1.5B-Instruct")) || result.models[0];
-    for (const model of result.models) localModel.append(option(model.id, `${model.label} · ~${(model.vramMB / 1024).toFixed(1)} GB${model === recommended ? " · suggested start" : ""}`));
+    checkedVariants = result.gpu?.supported ? result.models : [];
+    const levels = [...new Set(checkedVariants.map(model => model.weightBits))].sort((a, b) => a - b);
+    quantizationLevel.replaceChildren(option("all", "All levels that fit"), ...levels.map(bits =>
+      option(String(bits), `${bits}-bit · ${bits < 16 ? "compressed weights" : "unquantized weights"}`)));
+    levelSummary.textContent = levels.length ? `Available weight levels: ${levels.map(bits => `${bits}-bit`).join(", ")}.`
+      : "No weight precision level fits this GPU budget.";
+    quantizationLevel.value = levels.some(bits => String(bits) === previousLevel) ? previousLevel : "all";
+    renderModelChoices(previousModel, previousVariant);
     const allowance = Number.isFinite(result.availableMB)
       ? ` Model allowance: ${(result.availableMB / 1024).toFixed(1)} GB; ${(result.reservedMB / 1024).toFixed(1)} GB reserved for rendering.` : "";
     gpuNote.textContent = [result.gpu?.label, result.gpu?.note].filter(Boolean).join(". ") + allowance;
-    if (modelsFound) localModel.value = result.models.some(model => model.id === previousModel) ? previousModel : recommended.id;
-    setStatus(modelsFound ? "Choose a model, then load it. Start with 3B when it fits; larger models can follow complex requests better. The smallest models may miss requested changes." : "No compatible local model found. Use a browser with WebGPU enabled on HTTPS or localhost, check your GPU drivers, and choose a memory budget your GPU supports.");
+    gpuSummary.textContent = result.gpu?.supported
+      ? `GPU details · ${(result.availableMB / 1024).toFixed(2)} GB for models`
+      : "GPU unavailable · view details";
+    setStatus(modelsFound ? "Choose a quantization level and model, then load the selected format. Higher bit counts preserve more weight precision and use more memory. Only GPU-compatible choices are listed." : "No compatible local model found. Use a browser with WebGPU enabled on HTTPS or localhost, check your GPU drivers, and choose a memory budget your GPU supports.");
   }); }
 
   findBtn.addEventListener("click", findModels);
 
   budget.addEventListener("change", findModels);
-  localModel.addEventListener("change", syncControls);
+  quantizationLevel.addEventListener("change", () => { renderModelChoices(); syncControls(); });
+  localModel.addEventListener("change", () => { renderQuantization(); syncControls(); });
   loadBtn.addEventListener("click", () => runJob("loading", async signal => {
     progress.hidden = false;
     progress.removeAttribute("value");
     setStatus("Loading local model. The first download can be large; initialization may take a few minutes.");
     modelStatus.textContent = "Downloading / initializing…";
-    await client.loadLocal(localModel.value, {
+    await client.loadLocal(selectedModelId, {
       onProgress: report => {
         if (destroyed || signal.aborted) return;
         const fraction = typeof report === "number" ? report : report?.progress;
@@ -247,11 +341,34 @@ export function buildLLMTab(ctx) {
       input.value = "";
       addChat({ role: "user", content: prompt });
       contextInfo.textContent = `Scope: ${request.scope}. Estimated input: ~${request.estimatedTokens.toLocaleString()} tokens; reply limit: 768 tokens. Current controls and a short recent history are included.`;
-      setStatus("Generating a structured response…");
-      const result = await client.complete({
-        model: client.loadedModel,
-        messages: request.messages, schema: request.schema, maxTokens: 768, signal,
-      });
+      setStatus("Streaming response… Changes apply after the complete reply is checked.");
+      const streamedText = el("div", { className: "llm-message-text llm-stream-text" });
+      const streamStatus = el("p", { className: "llm-help llm-stream-status", textContent: "Generating… No changes applied yet." });
+      const liveReply = el("div", { className: "llm-message llm-message-assistant llm-stream", "aria-busy": "true" }, [
+        el("strong", { textContent: "Assistant" }), streamedText, streamStatus,
+      ]);
+      chat.append(liveReply);
+      chat.scrollTop = chat.scrollHeight;
+      let streamed = "";
+      let result;
+      try {
+        result = await client.complete({
+          model: client.loadedModel,
+          messages: request.messages, schema: request.schema, maxTokens: 768, signal,
+          onToken: delta => {
+            if (destroyed || signal.aborted) return;
+            const nearBottom = chat.scrollHeight - chat.scrollTop - chat.clientHeight < 48;
+            streamed += delta;
+            streamedText.textContent = streamedAssistantMessage(streamed);
+            streamStatus.textContent = streamedText.textContent
+              ? "Receiving reply and preparing changes… No changes applied yet."
+              : "Preparing changes… No changes applied yet.";
+            if (nearBottom) chat.scrollTop = chat.scrollHeight;
+          },
+        });
+      } finally {
+        liveReply.remove();
+      }
       signal.throwIfAborted();
       if (destroyed) return;
       let parsed;

@@ -1,0 +1,89 @@
+{
+  "title": "Pole Frequency",
+  "source": "DomainColoring/domainColoring.js",
+  "visualId": "domainColoring",
+  "seed": 2026092520,
+  "frames": 0,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o color o splineLines o convert o paint (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "ringDensity",
+      "baseline": 71.3,
+      "value": 450,
+      "direction": "max"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        0,
+        476.509
+      ],
+      "event": "X >= threshold",
+      "threshold": 450,
+      "value": 0.05563168796392096,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "Tight rings radiate from singularities",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-domaincoloring-03-pole-frequency.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-domaincoloring-03-pole-frequency.json",
+  "observedStages": [
+    {
+      "label": "P: paint",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 7500,
+      "afterShapes": 7500,
+      "messages": [
+        "paint applied: 7448 elements."
+      ]
+    },
+    {
+      "label": "Q: convert",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 7500,
+      "afterShapes": 7500,
+      "messages": [
+        "convert applied: 1064 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 7500,
+      "afterShapes": 29844,
+      "messages": [
+        "spline lines applied: 1064 shapes, 23408 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 29844,
+      "afterShapes": 29844,
+      "messages": [
+        "color applied: 29844 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 29844,
+      "afterShapes": 29844,
+      "messages": []
+    }
+  ]
+}

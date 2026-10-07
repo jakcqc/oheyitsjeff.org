@@ -1,0 +1,78 @@
+{
+  "title": "Needle Wall",
+  "source": "kakeya/collatz.js",
+  "visualId": "kakeyaBesicovitchNeedle",
+  "seed": 2026092578,
+  "frames": 0,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o color o functionRects o scale (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "needleThickPx",
+      "baseline": 0.55,
+      "value": 160,
+      "direction": "max"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        0,
+        171.1615
+      ],
+      "event": "X >= threshold",
+      "threshold": 160,
+      "value": 0.06521034227907556,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "Wide tubes become opaque slabs",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-kakeya-02-needle-wall.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-kakeya-02-needle-wall.json",
+  "observedStages": [
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 2106,
+      "afterShapes": 2349,
+      "messages": [
+        "scale applied: 81 groups, 324 clones."
+      ]
+    },
+    {
+      "label": "F: functionRects",
+      "kind": "effect",
+      "effect": "functionRects",
+      "changed": true,
+      "beforeShapes": 2349,
+      "afterShapes": 2726,
+      "messages": [
+        "function rects applied: 377 rects."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 2726,
+      "afterShapes": 2726,
+      "messages": [
+        "color applied: 1430 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 2726,
+      "afterShapes": 2726,
+      "messages": []
+    }
+  ]
+}

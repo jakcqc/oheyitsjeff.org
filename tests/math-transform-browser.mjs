@@ -1,0 +1,126 @@
+/* Copyright (c) 2026 Jeffrey Kerley. See ../LICENSE.md. */
+import assert from 'node:assert/strict';
+import { createRequire } from 'node:module';
+import { existsSync, mkdirSync } from 'node:fs';
+const { chromium } = createRequire(new URL('../TheOdyssey/package.json', import.meta.url))('playwright');
+const executablePath = process.env.CHROME_EXECUTABLE || ['C:/Program Files/Google/Chrome/Application/chrome.exe', 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'].find(existsSync);
+const browser = await chromium.launch({ headless: true, ...(executablePath ? { executablePath } : {}) });
+const page = await browser.newPage({ ignoreHTTPSErrors: true, viewport: { width: 1160, height: 900 } });
+const errors = [];
+page.on('pageerror', error => errors.push(error.message));
+try {
+  await page.route('**/__math-transform-test__', route => route.fulfill({ contentType: 'text/html', body: '<!doctype html><html><head><link rel="stylesheet" href="/helper/uiHelper.css"></head><body style="background:#171717;color:#eee;margin:20px;overflow:auto"><div id="panel" class="vr-tabBody" style="width:420px"></div><div id="vis" style="position:absolute;left:480px;top:30px"></div></body></html>' }));
+  await page.goto(`${process.env.TRANSFORM_TEST_URL || 'https://127.0.0.1:5500'}/__math-transform-test__`);
+  const checks = await page.evaluate(async () => {
+    const { initTransformRuntime, buildTransformPanel } = await import('/helper/transformHelp.js');
+    const { createMathMapper, MATH_TRANSFORM_TYPES } = await import('/helper/mathTransformMath.js');
+    const passed = [];
+    const check = (value, label) => { if (!value) throw new Error(label); passed.push(label); };
+    const mount = document.getElementById('vis');
+    const paths = [];
+    for (let i = -80; i <= 80; i += 20) paths.push(`<path d="M${i} -80L${i} 80 M-80 ${i}L80 ${i}"/>`);
+    mount.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200" width="600" height="600"><g fill="none" stroke="#73d5ed" stroke-width="1.2">${paths.join('')}<path id="curve" d="M-70 -40 C-20 -80 35 90 70 25 Q40 0 25 55 A20 13 35 0 1 -25 60 M-70 50L-65 60L-55 48Z"/><circle cx="38" cy="27" r="7" fill="#ffcb60"/><ellipse cx="-40" cy="-20" rx="12" ry="7"/><rect x="-25" y="25" width="12" height="8" rx="2"/><line x1="-30" y1="-60" x2="40" y2="-30"/><polygon points="15,-65 35,-45 40,-70"/><polyline points="-70,5 -40,10 -55,25"/><g transform="translate(9 12) scale(1.3)"><path id="nested" d="M12 17L22 27"/></g></g></svg>`;
+    const svg = mount.querySelector('svg');
+    const source = svg.querySelector('g');
+    const state = {};
+    const runtime = initTransformRuntime({ mountEl: mount, state });
+    const original = source.innerHTML;
+    const panel = buildTransformPanel({ mountEl: mount, state, xfRuntime: runtime, onStateChange() {} });
+    document.getElementById('panel').append(panel);
+    const tab = name => [...panel.querySelectorAll('[role="tab"]')].find(node => node.textContent === name);
+    const button = text => [...panel.querySelectorAll('button')].find(node => node.textContent.trim() === text);
+    const input = (key, value) => {
+      const node = panel.querySelector(`[data-xf-key="${key}"]`);
+      if (node.type === 'checkbox') node.checked = value; else node.value = value;
+      node.dispatchEvent(new Event('change', { bubbles: true }));
+      return node;
+    };
+    const output = () => [...svg.querySelectorAll('[data-xf-layer] path[data-xf-math]')].map(node => node.getAttribute('d')).join(' ');
+    const raster = async (target = svg) => {
+      const url = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(target)], { type: 'image/svg+xml' }));
+      try {
+        const image = new Image(); image.src = url; await image.decode();
+        const canvas = document.createElement('canvas'); canvas.width = canvas.height = 600;
+        const ctx = canvas.getContext('2d'); ctx.drawImage(image, 0, 0, 600, 600);
+        return ctx.getImageData(0, 0, 600, 600).data;
+      } finally { URL.revokeObjectURL(url); }
+    };
+    tab('Math').click();
+    check(tab('Math').getAttribute('aria-selected') === 'true', 'Math subtab opens');
+    check(panel.querySelector('[data-xf-key="math.type"]').options.length === 7, 'all seven candidates selectable');
+    const results = new Map();
+    for (const type of MATH_TRANSFORM_TYPES) {
+      if (!button('reset').disabled) button('reset').click();
+      input('math.type', type);
+      button('apply').click();
+      const d = output();
+      check(d.length > 100 && !/NaN|Infinity/.test(d), `${type}: finite mapped geometry`);
+      check(runtime.getMathStatus().transformed >= 8, `${type}: paths and primitive shapes mapped`);
+      check(source.innerHTML === original, `${type}: live source geometry preserved`);
+      const pixels = await raster();
+      check(pixels.some((value, index) => index % 4 === 3 && value > 0), `${type}: exported SVG paints visible pixels`);
+      results.set(type, d);
+    }
+    check(new Set(results.values()).size === MATH_TRANSFORM_TYPES.length, 'transform candidates produce distinct geometry');
+    button('reset').click(); input('math.type', 'vortex'); button('apply').click();
+    const first = output();
+    const mapped = svg.querySelector('[data-xf-layer] [id^="nested__"]');
+    const p = mapped.getPointAtLength(0);
+    const local = new DOMPoint(p.x, p.y).matrixTransform(mapped.transform.baseVal.consolidate()?.matrix || new DOMMatrix());
+    const transformed = new DOMPoint(local.x, local.y).matrixTransform(mapped.parentNode.transform.baseVal.consolidate().matrix);
+    const expected = createMathMapper(state.__xf.stack[0], { x: -100, y: -100, w: 200, h: 200 }).sample(9 + 12 * 1.3, 12 + 17 * 1.3).point;
+    check(Math.hypot(transformed.x - expected[0], transformed.y - expected[1]) < .05, 'nested SVG matrices map in scene coordinates');
+    input('math.strength', 2); button('apply').click();
+    check(output() !== first, 'multiple math operations compose');
+    button('undo').click(); check(output() === first, 'undo reconstructs previous math result from source');
+    state.__xf = JSON.parse(JSON.stringify(state.__xf)); runtime.rebuildNow(); panel._onShow?.();
+    check(output() === first, 'math settings survive JSON round trip');
+    source.querySelector('circle').setAttribute('r', '10');
+    await new Promise(resolve => setTimeout(resolve, 100));
+    check(output() !== first, 'source animation updates warped display');
+    button('reset').click(); input('math.type', 'root'); input('math.power', 3); input('math.allBranches', true); button('apply').click();
+    const branches = new Set([...svg.querySelectorAll('[data-xf-math-branch]')].map(node => node.getAttribute('data-xf-math-branch')));
+    check(branches.has('0') && branches.has('1') && branches.has('2'), 'all root sheets render separately');
+    state.__xf.stack.push({ kind: 'split', count: 2 }, { kind: 'kaleidoscope', count: 3, targets: [1] }, { kind: 'planes3d', count: 2, targets: [1], scaleStep: -.1 });
+    runtime.rebuildNow();
+    check(svg.querySelectorAll('use[data-xf-sector]').length === 12 && output().length > 100, 'math composes with split tiles, kaleidoscope and planes');
+    const ids = [...svg.querySelectorAll('[id]')].map(node => node.id);
+    check(new Set(ids).size === ids.length, 'branch and tile copies retain unique IDs');
+    panel._onShow?.(); button('reset').click();
+    check(!svg.querySelector('[data-xf-layer]').children.length && source.style.display === '', 'reset removes all generated math geometry');
+    // A filled strip maps to a ring with an actually empty center.
+    const strip = document.createElement('div'); document.body.append(strip);
+    strip.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="600" height="600"><g><rect width="200" height="200" fill="orange"/></g></svg>';
+    const ringState = { __xf: { stack: [{ kind: 'warp', type: 'annulus', innerRadius: .35, outerRadius: .9 }] } };
+    const ringRuntime = initTransformRuntime({ mountEl: strip, state: ringState }); ringRuntime.rebuildNow();
+    const ring = await raster(strip.querySelector('svg'));
+    check(ring[(300 * 600 + 300) * 4 + 3] === 0, 'annulus keeps its central hole empty');
+    check(ring[(300 * 600 + 480) * 4 + 3] > 0, 'annulus keeps the surrounding filled band');
+    ringRuntime.destroy(); strip.remove();
+    const { applyMathTransforms } = await import('/helper/mathTransformGeometry.js');
+    const seamFixture = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    seamFixture.innerHTML = '<path d="M45 20L55 20" stroke="red" fill="none"/>';
+    applyMathTransforms(seamFixture, { operations: [{ kind: 'warp', type: 'wrap' }], viewBox: { x: -100, y: -100, w: 200, h: 200 } });
+    const seamPath = seamFixture.querySelector('[data-xf-math]');
+    check((seamPath.getAttribute('d').match(/M/g) || []).length === 2 && seamPath.getTotalLength() < 11, 'torus seam splits a short trail without a cross-screen chord');
+    const limited = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    limited.innerHTML = '<path d="M20 20L21 21"/><path d="M-100 0L100 0"/>';
+    const beforeLimit = limited.innerHTML;
+    const limitReport = applyMathTransforms(limited, { operations: [{ kind: 'warp', type: 'vortex', strength: 20 }], viewBox: { x: -100, y: -100, w: 200, h: 200 }, maxPoints: 100 });
+    check(limitReport.limited && limited.innerHTML === beforeLimit, 'sample-limit failure retains the whole prior drawing without a partial warp');
+    const dense = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    dense.innerHTML = '<path d="M10 10L11 11"/>'.repeat(16667);
+    const firstDense = dense.firstChild;
+    const copyReport = applyMathTransforms(dense, { operations: [{ kind: 'warp', type: 'root', power: 12, allBranches: true }], viewBox: { x: -100, y: -100, w: 200, h: 200 } });
+    check(copyReport.limited && copyReport.warnings.some(text => text.includes('copy limit')) && dense.firstChild === firstDense && dense.childNodes.length === 16667, 'root copy limit stops excessive DOM expansion before mutating artwork');
+    input('math.type', 'vortex'); input('math.strength', 2.3); button('apply').click();
+    return passed;
+  });
+  mkdirSync(new URL('../.local/transform-review/', import.meta.url), { recursive: true });
+  await page.screenshot({ path: new URL('../.local/transform-review/math-desktop.png', import.meta.url).pathname.replace(/^\/(\w:)/, '$1'), fullPage: true });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.locator('#panel').evaluate(node => { node.style.width = '350px'; });
+  assert.equal(await page.locator('.xf-panel').evaluate(node => node.scrollWidth > node.clientWidth + 1), false);
+  assert.deepEqual(errors, []);
+  console.log(`${checks.length + 2} math browser checks passed.\n${checks.join('\n')}`);
+} finally { await browser.close(); }

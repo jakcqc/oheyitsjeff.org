@@ -1,0 +1,78 @@
+{
+  "title": "Full Circle Jitter",
+  "source": "LSystemGarden/lsystem_visual.js",
+  "visualId": "lsystemGarden",
+  "seed": 2026092544,
+  "frames": 0,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o color o splineLines o scale (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "jitterAngle",
+      "baseline": 109,
+      "value": 360,
+      "direction": "max"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        0,
+        377.57
+      ],
+      "event": "X >= threshold",
+      "threshold": 360,
+      "value": 0.0465344174590142,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "Jitter scatters all branch headings",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-lsystemgarden-02-full-circle-jitter.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-lsystemgarden-02-full-circle-jitter.json",
+  "observedStages": [
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 5,
+      "afterShapes": 9,
+      "messages": [
+        "scale applied: 1 groups, 5 clones."
+      ]
+    },
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 9,
+      "afterShapes": 1629,
+      "messages": [
+        "spline lines applied: 9 shapes, 1629 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 1629,
+      "afterShapes": 1629,
+      "messages": [
+        "color applied: 1629 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 1629,
+      "afterShapes": 6516,
+      "messages": []
+    }
+  ]
+}

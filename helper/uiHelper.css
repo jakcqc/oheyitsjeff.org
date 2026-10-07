@@ -1,4 +1,5 @@
 @import url("./tabDock.css");
+@import url("./animationParamPicker.css");
 
     /* #background{
       background-color: white;
@@ -732,6 +733,74 @@ input[type="range"] {
   margin: 0;
   max-width: none;
 }
+
+/* Animation render controls and the review surface inside the simulation area. */
+.anim-render-options {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.anim-render progress { width: 100%; }
+.anim-render-estimates {
+  padding: 10px;
+  border: 1px solid #676767;
+  border-radius: 6px;
+  background: #222;
+  color: #e6e6e6;
+}
+.anim-render-preview {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: clamp(10px, 2vw, 24px);
+  overflow: auto;
+  background: #111;
+  color: #eee;
+  font: 14px/1.5 system-ui, sans-serif;
+}
+.anim-render-preview[hidden], .anim-render[hidden],
+.anim-render-preview [hidden], .anim-render [hidden] { display: none !important; }
+.anim-render-preview header {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.anim-render-preview button {
+  padding: 8px 12px;
+  border: 1px solid #666;
+  border-radius: 5px;
+  color: #eee;
+  background: #303030;
+  cursor: pointer;
+}
+.anim-render-preview button:focus-visible { outline: 2px solid #fffeb4; outline-offset: 2px; }
+.anim-render-preview button:disabled { opacity: .55; cursor: default; }
+.anim-render-media {
+  display: flex;
+  flex: 1 1 180px;
+  min-height: 120px;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #000;
+}
+.anim-render-media video, .anim-render-media img, .anim-render-media canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-height: 65vh;
+  object-fit: contain;
+}
+.anim-render-preview-status { margin: 0; overflow-wrap: anywhere; }
+.anim-render-svg-controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.anim-render-svg-controls input { flex: 1 1 120px; min-width: 0; }
 .anim-json-editor {
   min-height: 240px;
   resize: vertical;
@@ -821,6 +890,81 @@ input[type="range"] {
   border-radius: 7px;
   background: #202225;
   min-width: 0;
+}
+.llm-tab .llm-quantization {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.llm-tab .llm-gpu-details {
+  min-width: 0;
+  font-size: 11px;
+  color: #c1c5ca;
+  overflow-wrap: anywhere;
+}
+.llm-tab .llm-gpu-details summary {
+  cursor: pointer;
+  color: #e0e0e0;
+}
+.llm-tab .llm-gpu-details[open] summary {
+  margin-bottom: 6px;
+}
+.llm-tab .llm-quantization legend {
+  margin-bottom: 6px;
+  padding: 0;
+}
+.llm-tab .llm-quantization-choices {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 7px;
+}
+.llm-tab .llm-quantization-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  padding: 8px;
+  border: 1px solid #535960;
+  border-radius: 5px;
+  background: #1b1d20;
+  cursor: pointer;
+}
+.llm-tab .llm-quantization-option:has(input:checked) {
+  border-color: #fffeb4;
+  background: #303126;
+}
+.llm-tab .llm-quantization-option:has(input:disabled) {
+  cursor: not-allowed;
+}
+.llm-tab .llm-quantization-option input[type="radio"] {
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+  margin: 3px 0 0;
+  padding: 0;
+  accent-color: #fffeb4;
+}
+.llm-tab .llm-quantization-detail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 8px;
+  min-width: 0;
+  width: 100%;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.llm-tab .llm-quantization-format {
+  flex: 1 1 130px;
+}
+.llm-tab .llm-quantization-memory {
+  color: #fffeb4;
+  white-space: nowrap;
+}
+.llm-tab .llm-quantization-detail .llm-help {
+  flex-basis: 100%;
 }
 .llm-tab [hidden] {
   display: none !important;
@@ -917,6 +1061,15 @@ input[type="range"] {
   white-space: pre-wrap;
   font-size: 12px;
 }
+.llm-tab .llm-stream {
+  border-left: 2px solid #a7c69b;
+}
+.llm-tab .llm-stream-status {
+  margin-top: 6px;
+}
+.llm-tab .llm-quantization-note:not([hidden]) {
+  margin-bottom: 6px;
+}
 .llm-tab .llm-receipt {
   margin: 6px 0 0;
   padding-left: 18px;
@@ -944,4 +1097,207 @@ input[type="range"] {
   width: 100%;
   height: 8px;
   accent-color: #fffeb4;
+}
+
+/* Transform editors keep their inputs mounted while subtabs change. */
+.xf-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  color: #eceff2;
+}
+.xf-panel [hidden] {
+  display: none !important;
+}
+.xf-panel .vr-subTabs {
+  gap: 5px;
+  margin: 0;
+  padding: 0 0 10px;
+}
+.xf-panel .vr-subTab {
+  flex: 1 1 auto;
+}
+.xf-panel .xf-targets,
+.xf-panel .xf-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #4d5259;
+  border-radius: 8px;
+  background: #202328;
+}
+.xf-panel .xf-targets {
+  gap: 8px;
+  background: #282b30;
+}
+.xf-panel .xf-tabPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+.xf-panel .xf-heading {
+  margin: 0;
+  color: #fffeb4;
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 600;
+}
+.xf-panel .xf-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+.xf-panel .xf-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  margin: 0;
+}
+.xf-panel .xf-label {
+  color: #e0e4ea;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.xf-panel .xf-help,
+.xf-panel .xf-status {
+  margin: 0;
+  color: #bfc6d0;
+  font-size: 11px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+.xf-panel input,
+.xf-panel select {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  padding: 8px;
+  border: 1px solid #656d78;
+  border-radius: 5px;
+  background: #171a1e;
+  color: #f2f3f5;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.xf-panel .xf-check {
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  cursor: pointer;
+}
+.xf-panel input[type="range"] {
+  min-height: 26px;
+  padding: 0;
+  border: 0;
+  accent-color: #fffeb4;
+  cursor: pointer;
+}
+.xf-panel .xf-rangeValue {
+  color: #e0e4ea;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.xf-panel .xf-check input {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  accent-color: #fffeb4;
+}
+.xf-panel .xf-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.xf-panel .xf-action {
+  box-sizing: border-box;
+  flex: 1 1 auto;
+  min-height: 34px;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  padding: 7px 12px;
+  border: 1px solid #666e79;
+  border-radius: 5px;
+  background: #30363f;
+  color: #eef1f6;
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+.xf-panel .xf-primary {
+  border-color: #fffeb4;
+  background: #fffeb4;
+  color: #202219;
+  font-weight: 600;
+}
+.xf-panel .xf-action:hover:not(:disabled) {
+  border-color: #fffeb4;
+  filter: brightness(1.1);
+}
+.xf-panel :disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.xf-panel :focus-visible {
+  outline: 2px solid #8dc9ff;
+  outline-offset: 2px;
+}
+.xf-panel .xf-formula {
+  margin: 0;
+  padding: 9px;
+  border-radius: 5px;
+  background: #191d22;
+  color: #dce8f7;
+  font-size: 12px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+.xf-panel .xf-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid #555c65;
+  border-radius: 7px;
+  background: #25292e;
+  box-shadow: 0 -4px 14px #0003;
+}
+.xf-panel .xf-footer .xf-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.xf-panel .xf-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  padding-left: 22px;
+}
+.xf-panel .xf-historyItem {
+  padding: 8px 10px;
+  border-radius: 5px;
+  background: #191d22;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.xf-panel .xf-historyItem strong,
+.xf-panel .xf-historyItem .xf-help {
+  display: block;
 }

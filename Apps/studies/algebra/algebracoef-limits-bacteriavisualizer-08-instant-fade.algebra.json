@@ -1,0 +1,100 @@
+{
+  "title": "Instant Fade",
+  "source": "BacteriaVisualizer/bacteriaVisualizer.js",
+  "visualId": "bacteriaMinimal",
+  "seed": 2026092507,
+  "frames": 20,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o splineLines o splineLines o color o scale o paint (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "multiRingFade",
+      "baseline": 0.018,
+      "value": 0.4,
+      "direction": "max"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        0,
+        0.42674
+      ],
+      "event": "X >= threshold",
+      "threshold": 0.4,
+      "value": 0.06266110512255703,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "Fast decay favors earliest rings",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-bacteriavisualizer-08-instant-fade.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-bacteriavisualizer-08-instant-fade.json",
+  "observedStages": [
+    {
+      "label": "Q: suppress cellular scaffolding",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 120,
+      "afterShapes": 120,
+      "messages": [
+        "paint applied: 72 elements."
+      ]
+    },
+    {
+      "label": "E: 2 echoes, scale 0.62 to 1.25",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 120,
+      "afterShapes": 162,
+      "messages": [
+        "scale applied: 42 groups, 84 clones."
+      ]
+    },
+    {
+      "label": "C: enumerate current marks through four colors",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 162,
+      "afterShapes": 162,
+      "messages": [
+        "color applied: 84 elements, 4 mapped colors."
+      ]
+    },
+    {
+      "label": "N1: normal vectors, coefficient 0.65",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 162,
+      "afterShapes": 1170,
+      "messages": [
+        "spline lines applied: 42 shapes, 1050 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "N2: tangent vectors, coefficient 1.35",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 1170,
+      "afterShapes": 2178,
+      "messages": [
+        "spline lines applied: 42 shapes, 1050 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "A^2: repeated rotation and contraction",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 2178,
+      "afterShapes": 2178,
+      "messages": []
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+/* Copyright (c) 2026 Jeffrey Kerley. SPDX-License-Identifier: LicenseRef-Jeffrey-Kerley-NC-NoAI-1.0 */
+html, body { height: 100%; }
+body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
+#infoBar { color: CanvasText; }
+#background { flex: 1; min-height: 0; background: #090e17; }
+#outer, #vis { width: 100%; height: 100%; }
+#vis { overflow: auto; overscroll-behavior: contain; }
+#vis > svg { display: block; }
+#vis .pa-disk[role="button"] { cursor: pointer; outline: none; }
+#vis .pa-disk[role="button"]:focus-visible { outline: 1px solid #a7bbc9; outline-offset: 4px; }
+#vis .pa-disk[role="button"]:hover .pa-rim,
+#vis .pa-disk[role="button"]:focus .pa-rim { stroke: #a7bbc9; stroke-width: 1.5; }
+#vis svg, #vis svg * { touch-action: pan-y; }
+.pa-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  #vis .pa-rim { transition: stroke 160ms ease; }
+}

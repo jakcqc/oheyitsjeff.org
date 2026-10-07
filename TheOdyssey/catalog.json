@@ -1,0 +1,7136 @@
+{
+  "version": 1,
+  "indexedAt": "2026-09-26T00:22:22.941Z",
+  "apps": [
+    {
+      "id": "bacteriaMinimal",
+      "title": "Bacteria Outline",
+      "description": "Multiple ring-shaped bacteria with controllable outline halos, trails, and ring sizes.",
+      "params": [
+        {
+          "key": "running",
+          "type": "boolean",
+          "default": true,
+          "category": "Simulation",
+          "description": "Start/pause animation."
+        },
+        {
+          "key": "tickMs",
+          "type": "number",
+          "default": 40,
+          "min": 16,
+          "max": 200,
+          "step": 1,
+          "category": "Simulation",
+          "description": "Frame interval (ms)."
+        },
+        {
+          "key": "speed",
+          "type": "number",
+          "default": 1.35,
+          "min": 0.5,
+          "max": 12,
+          "step": 0.1,
+          "category": "Simulation",
+          "description": "Movement speed of each cell."
+        },
+        {
+          "key": "outlinePad",
+          "type": "number",
+          "default": 0,
+          "min": 0,
+          "max": 40,
+          "step": 1,
+          "category": "Outline",
+          "description": "Padding between cluster and outline."
+        },
+        {
+          "key": "outlineLag",
+          "type": "number",
+          "default": 0.36,
+          "min": 0.01,
+          "max": 0.6,
+          "step": 0.01,
+          "category": "Outline",
+          "description": "How much the outline lags/smooths behind movement."
+        },
+        {
+          "key": "outlineScale",
+          "type": "number",
+          "default": 1.5,
+          "min": 0.2,
+          "max": 3,
+          "step": 0.05,
+          "category": "Outline",
+          "description": "Scale multiplier applied to base outline size."
+        },
+        {
+          "key": "outlineShape",
+          "type": "select",
+          "default": "ellipse",
+          "options": [
+            "auto",
+            "ellipse",
+            "rect"
+          ],
+          "category": "Outline",
+          "description": "Force outline shape or let formation decide."
+        },
+        {
+          "key": "outlineStrokeWidth",
+          "type": "number",
+          "default": 0.05,
+          "min": 0,
+          "max": 8,
+          "step": 0.1,
+          "category": "Outline",
+          "description": "Stroke width applied to outlines."
+        },
+        {
+          "key": "lineColor",
+          "type": "text",
+          "default": "#000000",
+          "category": "Colors",
+          "description": "Stroke color for outlines, dots, and overlays."
+        },
+        {
+          "key": "backgroundColor",
+          "type": "text",
+          "default": "#ffffff",
+          "category": "Colors",
+          "description": "Canvas background color (CSS color)."
+        },
+        {
+          "key": "dotStrokeWidth",
+          "type": "number",
+          "default": 0.05,
+          "min": 0,
+          "max": 8,
+          "step": 0.1,
+          "category": "Dots",
+          "description": "Stroke width for cluster dots."
+        },
+        {
+          "key": "collisionPush",
+          "type": "number",
+          "default": 0,
+          "min": 0,
+          "max": 2,
+          "step": 0.05,
+          "category": "Collision",
+          "description": "Strength of collision separation between cells."
+        },
+        {
+          "key": "showMergePaths",
+          "type": "boolean",
+          "default": false,
+          "category": "Merge",
+          "description": "Draw merged contact paths where circles touch."
+        },
+        {
+          "key": "mergeContactRatio",
+          "type": "number",
+          "default": 0.97,
+          "min": 0.8,
+          "max": 1.1,
+          "step": 0.01,
+          "category": "Merge",
+          "description": "Contact tightness for merges (ratio of radii sum)."
+        },
+        {
+          "key": "mergeMaxPairs",
+          "type": "number",
+          "default": 72,
+          "min": 1,
+          "max": 500,
+          "step": 1,
+          "category": "Merge",
+          "description": "Maximum merge overlays to display simultaneously."
+        },
+        {
+          "key": "mergeSmoothing",
+          "type": "number",
+          "default": 0.99,
+          "min": 0,
+          "max": 0.99,
+          "step": 0.01,
+          "category": "Merge",
+          "description": "Smoothing factor for merge appearance/disappearance (higher = faster response)."
+        },
+        {
+          "key": "mergeFalloff",
+          "type": "number",
+          "default": 0,
+          "min": 0,
+          "max": 0.99,
+          "step": 0.01,
+          "category": "Merge",
+          "description": "Soft falloff band and decay rate for merges."
+        },
+        {
+          "key": "mergeEffectStyle",
+          "type": "select",
+          "default": "ring",
+          "options": [
+            "ring",
+            "blend",
+            "solid"
+          ],
+          "category": "Merge",
+          "description": "Merge color style: match halo color, blend outline colors, or force a solid fill."
+        },
+        {
+          "key": "mergeEffectColor",
+          "type": "text",
+          "default": "#aa0000",
+          "category": "Merge",
+          "description": "Fill/stroke color when merge effect style is set to solid."
+        },
+        {
+          "key": "ringCount",
+          "type": "number",
+          "default": 40,
+          "min": 1,
+          "max": 50,
+          "step": 1,
+          "category": "Population",
+          "description": "How many ring bacteria to spawn."
+        },
+        {
+          "key": "fitCells",
+          "type": "boolean",
+          "default": true,
+          "category": "Population",
+          "description": "Clamp spawned cells to fit the viewport area."
+        },
+        {
+          "key": "fitFillRatio",
+          "type": "number",
+          "default": 0.35,
+          "min": 0.05,
+          "max": 1,
+          "step": 0.01,
+          "category": "Population",
+          "description": "Max fill ratio of viewport area when clamping cells."
+        },
+        {
+          "key": "ringMinRadius",
+          "type": "number",
+          "default": 10,
+          "min": 1,
+          "max": 500,
+          "step": 1,
+          "category": "Population",
+          "description": "Minimum radius for randomly sized rings."
+        },
+        {
+          "key": "ringMaxRadius",
+          "type": "number",
+          "default": 88,
+          "min": 1,
+          "max": 500,
+          "step": 1,
+          "category": "Population",
+          "description": "Maximum radius for randomly sized rings."
+        },
+        {
+          "key": "showMultiRing",
+          "type": "boolean",
+          "default": true,
+          "category": "Halo",
+          "description": "Render multi-ring halo component."
+        },
+        {
+          "key": "multiRingCount",
+          "type": "number",
+          "default": 20,
+          "min": 0,
+          "max": 50,
+          "step": 1,
+          "category": "Halo",
+          "description": "How many halo rings to draw."
+        },
+        {
+          "key": "multiRingStart",
+          "type": "number",
+          "default": 0.7,
+          "min": 0.4,
+          "max": 3,
+          "step": 0.05,
+          "category": "Halo",
+          "description": "Scale multiplier for the innermost halo ring."
+        },
+        {
+          "key": "multiRingGap",
+          "type": "number",
+          "default": 14.5,
+          "min": 0,
+          "max": 200,
+          "step": 0.5,
+          "category": "Halo",
+          "description": "Additional radius (px) added per successive halo ring."
+        },
+        {
+          "key": "multiRingStrokeWidth",
+          "type": "number",
+          "default": 7.75,
+          "min": 0.2,
+          "max": 10,
+          "step": 0.05,
+          "category": "Halo",
+          "description": "Stroke width for halo rings."
+        },
+        {
+          "key": "multiRingOpacity",
+          "type": "number",
+          "default": 0.26,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Halo",
+          "description": "Opacity of the inner-most halo ring."
+        },
+        {
+          "key": "multiRingFade",
+          "type": "number",
+          "default": 0.01,
+          "min": 0,
+          "max": 0.5,
+          "step": 0.01,
+          "category": "Halo",
+          "description": "Opacity falloff per halo ring."
+        },
+        {
+          "key": "multiRingColor",
+          "type": "text",
+          "default": "#5a4feeff",
+          "category": "Halo",
+          "description": "Stroke color for halo rings."
+        },
+        {
+          "key": "ringColorMode",
+          "type": "select",
+          "default": "uniform",
+          "options": [
+            "uniform",
+            "radius",
+            "random"
+          ],
+          "category": "Halo",
+          "description": "Halo color mode: uniform, size-based gradient, or random palette."
+        },
+        {
+          "key": "ringColorA",
+          "type": "text",
+          "default": "#ffffff",
+          "category": "Halo",
+          "description": "Gradient start color (used in radius mode)."
+        },
+        {
+          "key": "ringColorB",
+          "type": "text",
+          "default": "#000000",
+          "category": "Halo",
+          "description": "Gradient end color (used in radius mode)."
+        },
+        {
+          "key": "multiRingPalette",
+          "type": "text",
+          "default": "#aa0000,#0088ff,#00aa44,#ffa500",
+          "category": "Halo",
+          "description": "Comma-separated palette used when color mode is random."
+        },
+        {
+          "key": "showCircleRect",
+          "type": "boolean",
+          "default": false,
+          "category": "Circle Overlay",
+          "description": "Render circle overlay component."
+        },
+        {
+          "key": "circleStrokeWidth",
+          "type": "number",
+          "default": 0.2,
+          "min": 0.05,
+          "max": 5,
+          "step": 0.05,
+          "category": "Circle Overlay",
+          "description": "Stroke width for the circle overlay."
+        },
+        {
+          "key": "circleRectColor",
+          "type": "text",
+          "default": "#000000",
+          "category": "Circle Overlay",
+          "description": "Stroke color for circle overlays."
+        },
+        {
+          "key": "showTrail",
+          "type": "boolean",
+          "default": false,
+          "category": "Trail",
+          "description": "Render trailing filled circles."
+        },
+        {
+          "key": "trailEveryN",
+          "type": "number",
+          "default": 1,
+          "min": 1,
+          "max": 10,
+          "step": 1,
+          "category": "Trail",
+          "description": "Drop a trail dot every N frames."
+        },
+        {
+          "key": "trailLength",
+          "type": "number",
+          "default": 200,
+          "min": 0,
+          "max": 400,
+          "step": 1,
+          "category": "Trail",
+          "description": "How many trail nodes to keep."
+        },
+        {
+          "key": "trailOpacity",
+          "type": "number",
+          "default": 0.01,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Trail",
+          "description": "Opacity of trail nodes."
+        },
+        {
+          "key": "trailRadius",
+          "type": "number",
+          "default": 100,
+          "min": 1,
+          "max": 200,
+          "step": 0.5,
+          "category": "Trail",
+          "description": "Radius of each trail dot."
+        },
+        {
+          "key": "trailColor",
+          "type": "text",
+          "default": "#aa0000",
+          "category": "Trail",
+          "description": "Fill color for trail dots (CSS color)."
+        },
+        {
+          "key": "trailStrokeColor",
+          "type": "text",
+          "default": "#000000",
+          "category": "Trail",
+          "description": "Stroke color for trail dots (CSS color)."
+        },
+        {
+          "key": "trailStrokeWidth",
+          "type": "number",
+          "default": 0,
+          "min": 0,
+          "max": 20,
+          "step": 0.5,
+          "category": "Trail",
+          "description": "Stroke width applied to trail dots (0 disables stroke)."
+        }
+      ],
+      "simulation": {
+        "param": "running"
+      },
+      "url": "/BacteriaVisualizer/",
+      "folder": "BacteriaVisualizer"
+    },
+    {
+      "id": "bacterialConstructs",
+      "title": "Bacterial Constructs",
+      "description": "Layered SVG colonies generated from Gray-Scott, Keller-Segel, and Fisher-KPP equations.",
+      "params": [
+        {
+          "key": "model",
+          "type": "select",
+          "default": "Gray-Scott",
+          "category": "Equation",
+          "options": [
+            "Gray-Scott",
+            "Keller-Segel",
+            "Fisher-KPP"
+          ]
+        },
+        {
+          "key": "feed",
+          "label": "feed F",
+          "type": "number",
+          "default": 0.0545,
+          "category": "Equation",
+          "min": 0.01,
+          "max": 0.09,
+          "step": 0.0001,
+          "description": "Gray-Scott replenishment rate.",
+          "shouldShowWhen": {
+            "model": "Gray-Scott"
+          }
+        },
+        {
+          "key": "kill",
+          "label": "kill k",
+          "type": "number",
+          "default": 0.062,
+          "category": "Equation",
+          "min": 0.03,
+          "max": 0.08,
+          "step": 0.0001,
+          "description": "Gray-Scott removal rate.",
+          "shouldShowWhen": {
+            "model": "Gray-Scott"
+          }
+        },
+        {
+          "key": "diffusionA",
+          "label": "cell / U diffusion",
+          "type": "number",
+          "default": 0.16,
+          "category": "Equation",
+          "min": 0.01,
+          "max": 1,
+          "step": 0.01
+        },
+        {
+          "key": "diffusionB",
+          "label": "signal / V diffusion",
+          "type": "number",
+          "default": 0.08,
+          "category": "Equation",
+          "min": 0.01,
+          "max": 1,
+          "step": 0.01,
+          "shouldShowWhen": {
+            "model": [
+              "Gray-Scott",
+              "Keller-Segel"
+            ]
+          }
+        },
+        {
+          "key": "chemotaxis",
+          "label": "chemotactic pull",
+          "type": "number",
+          "default": 0.62,
+          "category": "Equation",
+          "min": 0,
+          "max": 1.5,
+          "step": 0.01,
+          "shouldShowWhen": {
+            "model": "Keller-Segel"
+          }
+        },
+        {
+          "key": "growth",
+          "label": "logistic growth",
+          "type": "number",
+          "default": 0.19,
+          "category": "Equation",
+          "min": 0,
+          "max": 0.5,
+          "step": 0.005,
+          "shouldShowWhen": {
+            "model": [
+              "Keller-Segel",
+              "Fisher-KPP"
+            ]
+          }
+        },
+        {
+          "key": "steps",
+          "type": "number",
+          "default": 520,
+          "category": "Simulation",
+          "min": 20,
+          "max": 1200,
+          "step": 10
+        },
+        {
+          "key": "resolution",
+          "type": "number",
+          "default": 105,
+          "category": "Simulation",
+          "min": 45,
+          "max": 180,
+          "step": 5
+        },
+        {
+          "key": "seedCount",
+          "label": "inoculation sites",
+          "type": "number",
+          "default": 7,
+          "category": "Simulation",
+          "min": 1,
+          "max": 40,
+          "step": 1
+        },
+        {
+          "key": "seed",
+          "type": "number",
+          "default": 42817,
+          "category": "Simulation",
+          "min": 0,
+          "max": 999999,
+          "step": 1
+        },
+        {
+          "key": "newSeed",
+          "type": "button",
+          "label": "New inoculation",
+          "category": "Simulation"
+        },
+        {
+          "key": "contourLevels",
+          "label": "SVG contour layers",
+          "type": "number",
+          "default": 8,
+          "category": "SVG Styling",
+          "min": 2,
+          "max": 16,
+          "step": 1
+        },
+        {
+          "key": "cellMarks",
+          "label": "show individual cells",
+          "type": "boolean",
+          "default": true,
+          "category": "SVG Styling"
+        },
+        {
+          "key": "markDensity",
+          "label": "cell mark density",
+          "type": "number",
+          "default": 0.15,
+          "category": "SVG Styling",
+          "min": 0.01,
+          "max": 0.5,
+          "step": 0.01,
+          "shouldShowWhen": {
+            "cellMarks": true
+          }
+        },
+        {
+          "key": "palette",
+          "type": "select",
+          "default": "agar",
+          "category": "SVG Styling",
+          "options": [
+            "agar",
+            "fluorescent",
+            "petri",
+            "violet",
+            "monochrome"
+          ]
+        },
+        {
+          "key": "backgroundColor",
+          "type": "text",
+          "default": "#07100e",
+          "category": "SVG Styling"
+        }
+      ],
+      "url": "/BacterialConstructs/",
+      "folder": "BacterialConstructs"
+    },
+    {
+      "id": "boysSurfaceModel",
+      "title": "Boys Surface Model",
+      "description": "Twisted ribbon immersions inspired by the projective plane.",
+      "params": [
+        {
+          "key": "lobes",
+          "type": "number",
+          "default": 3,
+          "min": 1,
+          "max": 6,
+          "step": 1,
+          "category": "Shape"
+        },
+        {
+          "key": "twist",
+          "type": "number",
+          "default": 1.4,
+          "min": 0,
+          "max": 4,
+          "step": 0.05,
+          "category": "Shape"
+        },
+        {
+          "key": "ribbonWidth",
+          "type": "number",
+          "default": 10,
+          "min": 2,
+          "max": 30,
+          "step": 1,
+          "category": "Styling"
+        },
+        {
+          "key": "detail",
+          "type": "number",
+          "default": 1200,
+          "min": 300,
+          "max": 2400,
+          "step": 100,
+          "category": "Styling"
+        },
+        {
+          "key": "layers",
+          "type": "number",
+          "default": 2,
+          "min": 1,
+          "max": 4,
+          "step": 1,
+          "category": "Shape"
+        },
+        {
+          "key": "layerSpread",
+          "type": "number",
+          "default": 0.4,
+          "min": 0,
+          "max": 1,
+          "step": 0.05,
+          "category": "Shape"
+        },
+        {
+          "key": "fitMode",
+          "type": "select",
+          "default": "contain",
+          "options": [
+            "contain",
+            "cover",
+            "stretch"
+          ],
+          "category": "Layout"
+        },
+        {
+          "key": "padding",
+          "type": "number",
+          "default": 36,
+          "min": 0,
+          "max": 200,
+          "step": 2,
+          "category": "Layout"
+        }
+      ],
+      "url": "/BoysSurfaceModel/",
+      "folder": "BoysSurfaceModel"
+    },
+    {
+      "id": "domainColoring",
+      "title": "Domain Coloring",
+      "description": "Domain coloring rendered with SVG dots for popular complex functions.",
+      "params": [
+        {
+          "key": "renderMode",
+          "type": "select",
+          "default": "color",
+          "category": "Render",
+          "options": [
+            "color",
+            "mono"
+          ],
+          "description": "Color mode or monochrome density mode."
+        },
+        {
+          "key": "function",
+          "type": "select",
+          "default": "((z^2 - 1) * (z - 2 - i)^2) / (z^2 + 2 + 2i)",
+          "category": "Function",
+          "options": [
+            "((z^2 - 1) * (z - 2 - i)^2) / (z^2 + 2 + 2i)",
+            "z^2",
+            "z + 1/z",
+            "1/z",
+            "tan(z)",
+            "exp(z)",
+            "sin(z)",
+            "z^3",
+            "(z^3 - 1) / (z^3 + 1)"
+          ],
+          "description": "Choose which complex function to color."
+        },
+        {
+          "key": "view.centerRe",
+          "type": "number",
+          "default": 0,
+          "min": -4,
+          "max": 4,
+          "step": 0.01,
+          "category": "View",
+          "description": "Real axis center of the view."
+        },
+        {
+          "key": "view.centerIm",
+          "type": "number",
+          "default": 0,
+          "min": -4,
+          "max": 4,
+          "step": 0.01,
+          "category": "View",
+          "description": "Imaginary axis center of the view."
+        },
+        {
+          "key": "view.spanRe",
+          "type": "number",
+          "default": 4,
+          "min": 0.1,
+          "max": 12,
+          "step": 0.05,
+          "category": "View",
+          "description": "Width of the complex plane (real axis)."
+        },
+        {
+          "key": "renderScale",
+          "type": "number",
+          "default": 1,
+          "min": 0.2,
+          "max": 1.5,
+          "step": 0.05,
+          "category": "Render",
+          "description": "Internal render scale (lower is faster)."
+        },
+        {
+          "key": "dotSpacing",
+          "type": "number",
+          "default": 6,
+          "min": 2,
+          "max": 24,
+          "step": 0.5,
+          "category": "Dots",
+          "description": "Pixel spacing between dots."
+        },
+        {
+          "key": "dotMinRadius",
+          "type": "number",
+          "default": 1.2,
+          "min": 0.2,
+          "max": 12,
+          "step": 0.1,
+          "category": "Dots",
+          "description": "Minimum dot radius."
+        },
+        {
+          "key": "dotMaxRadius",
+          "type": "number",
+          "default": 3.5,
+          "min": 0.5,
+          "max": 18,
+          "step": 0.1,
+          "category": "Dots",
+          "description": "Maximum dot radius."
+        },
+        {
+          "key": "dotStrokeStrength",
+          "type": "number",
+          "default": 0.55,
+          "min": 0,
+          "max": 1,
+          "step": 0.05,
+          "category": "Dots",
+          "description": "Stroke darkening multiplier for dot outlines."
+        },
+        {
+          "key": "monoDensity",
+          "type": "number",
+          "default": 2,
+          "min": 0,
+          "max": 6,
+          "step": 0.5,
+          "category": "Mono",
+          "description": "Extra dot overlap in monochrome mode."
+        },
+        {
+          "key": "monoJitter",
+          "type": "number",
+          "default": 0.35,
+          "min": 0,
+          "max": 1,
+          "step": 0.05,
+          "category": "Mono",
+          "description": "Jitter applied to overlapping dots (fraction of spacing)."
+        },
+        {
+          "key": "monoSizeBias",
+          "type": "number",
+          "default": 1,
+          "min": 0.2,
+          "max": 3,
+          "step": 0.1,
+          "category": "Mono",
+          "description": "Boost dot size response to magnitude in monochrome mode."
+        },
+        {
+          "key": "showContours",
+          "type": "boolean",
+          "default": true,
+          "category": "Contours",
+          "description": "Show magnitude/angle contour lines."
+        },
+        {
+          "key": "contourStep",
+          "type": "number",
+          "default": 18,
+          "min": 6,
+          "max": 60,
+          "step": 1,
+          "category": "Contours",
+          "description": "Sampling step for contour lines (px)."
+        },
+        {
+          "key": "contourCount",
+          "type": "number",
+          "default": 8,
+          "min": 0,
+          "max": 30,
+          "step": 1,
+          "category": "Contours",
+          "description": "Number of magnitude contour rings."
+        },
+        {
+          "key": "angleContourCount",
+          "type": "number",
+          "default": 10,
+          "min": 0,
+          "max": 36,
+          "step": 1,
+          "category": "Contours",
+          "description": "Number of angle contour rays."
+        },
+        {
+          "key": "contourOpacity",
+          "type": "number",
+          "default": 0.45,
+          "min": 0,
+          "max": 1,
+          "step": 0.05,
+          "category": "Contours",
+          "description": "Opacity of contour lines."
+        },
+        {
+          "key": "contourStroke",
+          "type": "text",
+          "default": "#777777",
+          "category": "Contours",
+          "description": "Stroke color for contour lines."
+        },
+        {
+          "key": "hueOffset",
+          "type": "number",
+          "default": 0,
+          "min": -1,
+          "max": 1,
+          "step": 0.01,
+          "category": "Color",
+          "description": "Hue rotation applied to the argument color wheel."
+        },
+        {
+          "key": "saturation",
+          "type": "number",
+          "default": 0.85,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Color",
+          "description": "Overall color saturation."
+        },
+        {
+          "key": "lightness",
+          "type": "number",
+          "default": 0.55,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Color",
+          "description": "Base lightness for the domain coloring."
+        },
+        {
+          "key": "ringDensity",
+          "type": "number",
+          "default": 6,
+          "min": 0,
+          "max": 20,
+          "step": 0.1,
+          "category": "Guides",
+          "description": "Density of magnitude rings."
+        },
+        {
+          "key": "ringStrength",
+          "type": "number",
+          "default": 0.25,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Guides",
+          "description": "Contrast of magnitude rings."
+        },
+        {
+          "key": "angleLines",
+          "type": "number",
+          "default": 12,
+          "min": 0,
+          "max": 48,
+          "step": 1,
+          "category": "Guides",
+          "description": "How many angle rays are emphasized."
+        },
+        {
+          "key": "angleStrength",
+          "type": "number",
+          "default": 0.2,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Guides",
+          "description": "Contrast of angle rays."
+        }
+      ],
+      "url": "/DomainColoring/",
+      "folder": "DomainColoring"
+    },
+    {
+      "id": "equationVisualizerGrid",
+      "title": "Equation Visualizer (Starter)",
+      "description": "Starter SVG grid visual to build equation-driven rendering + neighborhood transforms.",
+      "params": [
+        {
+          "key": "grid.cols",
+          "type": "number",
+          "default": 48,
+          "min": 1,
+          "max": 240,
+          "step": 1,
+          "category": "Grid"
+        },
+        {
+          "key": "grid.rows",
+          "type": "number",
+          "default": 30,
+          "min": 1,
+          "max": 160,
+          "step": 1,
+          "category": "Grid"
+        },
+        {
+          "key": "grid.cellSize",
+          "type": "number",
+          "default": 18,
+          "min": 4,
+          "max": 80,
+          "step": 1,
+          "category": "Grid"
+        },
+        {
+          "key": "grid.gap",
+          "type": "number",
+          "default": 1,
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "category": "Grid"
+        },
+        {
+          "key": "grid.showGridLines",
+          "type": "boolean",
+          "default": true,
+          "category": "Grid"
+        },
+        {
+          "key": "equationId",
+          "type": "select",
+          "default": "sineRipple",
+          "options": [
+            "sineRipple",
+            "checker",
+            "ring"
+          ],
+          "description": "Pick a starter equation function (replace with your own set).",
+          "category": "Equation"
+        },
+        {
+          "key": "time",
+          "type": "number",
+          "default": 0,
+          "min": 0,
+          "max": 1000,
+          "step": 0.01,
+          "category": "Animation"
+        },
+        {
+          "key": "neighborhood.enabled",
+          "type": "boolean",
+          "default": true,
+          "category": "Neighborhood"
+        },
+        {
+          "key": "neighborhood.radius",
+          "type": "number",
+          "default": 1,
+          "min": 0,
+          "max": 6,
+          "step": 1,
+          "category": "Neighborhood"
+        },
+        {
+          "key": "neighborhood.wrap",
+          "type": "boolean",
+          "default": false,
+          "category": "Neighborhood"
+        },
+        {
+          "key": "neighborhood.mode",
+          "type": "select",
+          "default": "avg",
+          "options": [
+            "avg",
+            "sum"
+          ],
+          "category": "Neighborhood"
+        },
+        {
+          "key": "neighborhood.strength",
+          "type": "number",
+          "default": 0.65,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Neighborhood"
+        }
+      ],
+      "url": "/EquationVisualizer/",
+      "folder": "EquationVisualizer"
+    },
+    {
+      "id": "fractalPolyhedra",
+      "title": "Fractal Polyhedra",
+      "description": "Recursive polyhedral forms with crystalline self-similarity.",
+      "params": [
+        {
+          "key": "depth",
+          "type": "number",
+          "default": 3,
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "category": "Structure"
+        },
+        {
+          "key": "size",
+          "type": "number",
+          "default": 0.22,
+          "min": 0.1,
+          "max": 0.4,
+          "step": 0.01,
+          "category": "Structure"
+        },
+        {
+          "key": "spread",
+          "type": "number",
+          "default": 0.72,
+          "min": 0.4,
+          "max": 1.2,
+          "step": 0.01,
+          "category": "Structure"
+        },
+        {
+          "key": "branchCount",
+          "type": "number",
+          "default": 3,
+          "min": 2,
+          "max": 6,
+          "step": 1,
+          "category": "Structure"
+        },
+        {
+          "key": "spin",
+          "type": "number",
+          "default": 0.4,
+          "min": 0,
+          "max": 2,
+          "step": 0.05,
+          "category": "Structure"
+        },
+        {
+          "key": "fitMode",
+          "type": "select",
+          "default": "contain",
+          "options": [
+            "contain",
+            "cover",
+            "stretch"
+          ],
+          "category": "Layout"
+        },
+        {
+          "key": "padding",
+          "type": "number",
+          "default": 36,
+          "min": 0,
+          "max": 200,
+          "step": 2,
+          "category": "Layout"
+        },
+        {
+          "key": "palette",
+          "type": "select",
+          "default": "crystal",
+          "options": [
+            "crystal",
+            "ember",
+            "mineral"
+          ],
+          "category": "Styling"
+        },
+        {
+          "key": "seed",
+          "type": "number",
+          "default": 55133,
+          "min": 0,
+          "max": 999999,
+          "step": 1,
+          "category": "Styling"
+        }
+      ],
+      "url": "/FractalPolyhedra/",
+      "folder": "FractalPolyhedra"
+    },
+    {
+      "id": "gameOfLifeSVG",
+      "title": "Game of Life (SVG)",
+      "description": "Clickable SVG grid + 3 rule modes: classic, dense neighborhood, color replication.",
+      "params": [
+        {
+          "key": "cellPx",
+          "type": "number",
+          "default": 8,
+          "category": "Grid",
+          "min": 1,
+          "max": 30,
+          "step": 1,
+          "description": "Size of each cell in pixels. Larger values make the grid coarser and easier to see."
+        },
+        {
+          "key": "tickMs",
+          "type": "number",
+          "default": 120,
+          "category": "Simulation",
+          "min": 16,
+          "max": 1000,
+          "step": 1,
+          "description": "Time between simulation steps in milliseconds. Lower values run faster."
+        },
+        {
+          "key": "running",
+          "type": "boolean",
+          "default": true,
+          "category": "Simulation",
+          "description": "Start or pause the simulation."
+        },
+        {
+          "key": "wrapEdges",
+          "type": "boolean",
+          "default": false,
+          "category": "Grid",
+          "description": "If enabled, the grid wraps around at the edges (toroidal space)."
+        },
+        {
+          "key": "randomFill",
+          "type": "number",
+          "default": 0,
+          "category": "Simulation",
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "description": "Initial probability that a cell starts alive when the grid is randomized. Alt/option + click to trigger."
+        },
+        {
+          "key": "mode",
+          "type": "select",
+          "default": "dense",
+          "category": "Rules",
+          "options": [
+            "classic",
+            "dense",
+            "protofield",
+            "color"
+          ],
+          "description": "Rule set to use: classic Life, dense high-neighbor rules, protofield operator, or color-based behavior."
+        },
+        {
+          "key": "denseRadius",
+          "type": "number",
+          "default": 2,
+          "category": "Dense Rules",
+          "min": 1,
+          "max": 3,
+          "step": 1,
+          "description": "Neighborhood radius for dense mode. Radius 2 includes 24 neighbors."
+        },
+        {
+          "key": "denseBirth",
+          "type": "number",
+          "default": 0,
+          "category": "Dense Rules",
+          "min": 0,
+          "max": 48,
+          "step": 1,
+          "description": "Exact neighbor count required for a dead cell to become alive in dense mode."
+        },
+        {
+          "key": "denseSurviveMin",
+          "type": "number",
+          "default": 18,
+          "category": "Dense Rules",
+          "min": 0,
+          "max": 48,
+          "step": 1,
+          "description": "Minimum neighbors required for a live cell to survive in dense mode."
+        },
+        {
+          "key": "denseSurviveMax",
+          "type": "number",
+          "default": 24,
+          "category": "Dense Rules",
+          "min": 0,
+          "max": 48,
+          "step": 1,
+          "description": "Maximum neighbors allowed for a live cell to survive in dense mode."
+        },
+        {
+          "key": "protoAlpha",
+          "type": "number",
+          "default": 0.7,
+          "category": "Protofield",
+          "min": -2,
+          "max": 2,
+          "step": 0.05,
+          "description": "Self-influence factor for the protofield update."
+        },
+        {
+          "key": "protoBeta",
+          "type": "number",
+          "default": 0.05,
+          "category": "Protofield",
+          "min": -2,
+          "max": 2,
+          "step": 0.05,
+          "description": "Neighbor influence factor for the protofield update."
+        },
+        {
+          "key": "protoThreshMin",
+          "type": "number",
+          "default": 1,
+          "category": "Protofield",
+          "min": -10,
+          "max": 10,
+          "step": 0.1,
+          "description": "Lower threshold for projecting protofield values to alive."
+        },
+        {
+          "key": "protoThreshMax",
+          "type": "number",
+          "default": 2.6,
+          "category": "Protofield",
+          "min": -10,
+          "max": 10,
+          "step": 0.1,
+          "description": "Upper threshold for projecting protofield values to alive."
+        },
+        {
+          "key": "protoNoise",
+          "type": "number",
+          "default": 1.3,
+          "category": "Protofield",
+          "min": 0,
+          "max": 5,
+          "step": 0.1,
+          "description": "Random jitter added when seeding the protofield."
+        },
+        {
+          "key": "paintColor",
+          "type": "color",
+          "default": "#00c2ff",
+          "category": "Color",
+          "description": "Base color used when painting or spawning cells in color mode."
+        },
+        {
+          "key": "shiftColorOnSurvive",
+          "type": "boolean",
+          "default": false,
+          "category": "Color",
+          "description": "If enabled, surviving cells gradually shift hue over time."
+        },
+        {
+          "key": "strokeColor",
+          "type": "color",
+          "default": "#000010",
+          "category": "Color",
+          "description": "What color for the stroke of the squares"
+        }
+      ],
+      "simulation": {
+        "param": "running"
+      },
+      "url": "/GameOfLife_aug/",
+      "folder": "GameOfLife_aug"
+    },
+    {
+      "id": "herwigHauserClassicCollection",
+      "title": "Herwig Hauser Classic Collection",
+      "description": "Algebraic curves with cusps, folds, and smooth manifolds.",
+      "params": [
+        {
+          "key": "layers",
+          "type": "number",
+          "default": 5,
+          "min": 2,
+          "max": 10,
+          "step": 1,
+          "category": "Structure"
+        },
+        {
+          "key": "petals",
+          "type": "number",
+          "default": 6,
+          "min": 3,
+          "max": 12,
+          "step": 1,
+          "category": "Structure"
+        },
+        {
+          "key": "warp",
+          "type": "number",
+          "default": 0.35,
+          "min": 0.1,
+          "max": 0.9,
+          "step": 0.01,
+          "category": "Structure"
+        },
+        {
+          "key": "twist",
+          "type": "number",
+          "default": 0.35,
+          "min": 0,
+          "max": 1.5,
+          "step": 0.05,
+          "category": "Structure"
+        },
+        {
+          "key": "detail",
+          "type": "number",
+          "default": 360,
+          "min": 180,
+          "max": 900,
+          "step": 30,
+          "category": "Structure"
+        },
+        {
+          "key": "fitMode",
+          "type": "select",
+          "default": "contain",
+          "options": [
+            "contain",
+            "cover",
+            "stretch"
+          ],
+          "category": "Layout"
+        },
+        {
+          "key": "padding",
+          "type": "number",
+          "default": 36,
+          "min": 0,
+          "max": 200,
+          "step": 2,
+          "category": "Layout"
+        },
+        {
+          "key": "fillOpacity",
+          "type": "number",
+          "default": 0.55,
+          "min": 0.1,
+          "max": 0.9,
+          "step": 0.01,
+          "category": "Styling"
+        },
+        {
+          "key": "strokeWidth",
+          "type": "number",
+          "default": 1.4,
+          "min": 0.2,
+          "max": 4,
+          "step": 0.1,
+          "category": "Styling"
+        }
+      ],
+      "url": "/HerwigHauserClassicCollection/",
+      "folder": "HerwigHauserClassicCollection"
+    },
+    {
+      "id": "imageToSVG",
+      "title": "Image to SVG",
+      "description": "Local image-to-SVG conversion with 22 methods, continuous line drawings, fine controls, and palette limits.",
+      "params": [
+        {
+          "key": "chooseImage",
+          "label": "Choose image",
+          "type": "button",
+          "category": "Image"
+        },
+        {
+          "key": "sample",
+          "label": "Built-in sample",
+          "type": "select",
+          "default": "landscape",
+          "options": [
+            "landscape",
+            "logo",
+            "spectrum"
+          ],
+          "displayOptions": [
+            "landscape",
+            "logo",
+            "spectrum"
+          ],
+          "category": "Image"
+        },
+        {
+          "key": "useSample",
+          "label": "Use sample",
+          "type": "button",
+          "category": "Image"
+        },
+        {
+          "key": "imageTools",
+          "label": "Image previews & filters",
+          "type": "button",
+          "category": "Image"
+        },
+        {
+          "key": "method",
+          "label": "Conversion method",
+          "type": "select",
+          "default": "simplified-contours",
+          "options": [
+            "contours",
+            "simplified-contours",
+            "smooth-contours",
+            "pixels",
+            "runs",
+            "quadtree",
+            "triangles",
+            "hexagons",
+            "dots",
+            "squares",
+            "stipple",
+            "horizontal-lines",
+            "vertical-lines",
+            "hatching",
+            "crosshatching",
+            "edges",
+            "voronoi",
+            "wave-squiggles",
+            "serpentine-squiggles",
+            "spiral-squiggles",
+            "flow-squiggles",
+            "hilbert-squiggles"
+          ],
+          "displayOptions": [
+            {
+              "value": "contours",
+              "label": "Region contours"
+            },
+            {
+              "value": "simplified-contours",
+              "label": "Simplified contours"
+            },
+            {
+              "value": "smooth-contours",
+              "label": "Smooth contours"
+            },
+            {
+              "value": "pixels",
+              "label": "Pixel tiles"
+            },
+            {
+              "value": "runs",
+              "label": "Merged horizontal runs"
+            },
+            {
+              "value": "quadtree",
+              "label": "Adaptive quadtree"
+            },
+            {
+              "value": "triangles",
+              "label": "Triangle mosaic"
+            },
+            {
+              "value": "hexagons",
+              "label": "Hexagon mosaic"
+            },
+            {
+              "value": "dots",
+              "label": "Dot halftone"
+            },
+            {
+              "value": "squares",
+              "label": "Square halftone"
+            },
+            {
+              "value": "stipple",
+              "label": "Seeded stippling"
+            },
+            {
+              "value": "horizontal-lines",
+              "label": "Horizontal scanlines"
+            },
+            {
+              "value": "vertical-lines",
+              "label": "Vertical scanlines"
+            },
+            {
+              "value": "hatching",
+              "label": "Diagonal hatching"
+            },
+            {
+              "value": "crosshatching",
+              "label": "Crosshatching"
+            },
+            {
+              "value": "edges",
+              "label": "Color edge strokes"
+            },
+            {
+              "value": "voronoi",
+              "label": "Voronoi mosaic"
+            },
+            {
+              "value": "wave-squiggles",
+              "label": "Parallel squiggles"
+            },
+            {
+              "value": "serpentine-squiggles",
+              "label": "Serpentine ribbons"
+            },
+            {
+              "value": "spiral-squiggles",
+              "label": "Spiral squiggles"
+            },
+            {
+              "value": "flow-squiggles",
+              "label": "Flowing scribbles"
+            },
+            {
+              "value": "hilbert-squiggles",
+              "label": "Hilbert line drawing"
+            }
+          ],
+          "category": "Conversion",
+          "description": "22 tracing, mosaic, halftone, and continuous-line methods. Image previews and ordered filters are in the image tab."
+        },
+        {
+          "key": "complexity",
+          "label": "Detail / complexity",
+          "type": "number",
+          "default": 45,
+          "min": 1,
+          "max": 100,
+          "step": 1,
+          "category": "Conversion"
+        },
+        {
+          "key": "maxShapes",
+          "label": "Maximum shapes",
+          "type": "number",
+          "default": 8000,
+          "min": 100,
+          "max": 30000,
+          "step": 100,
+          "category": "Conversion",
+          "description": "Caps drawing elements across the whole image. Transparency may add one shared clip path."
+        },
+        {
+          "key": "samplingCount",
+          "label": "Sampling cells (0 = automatic)",
+          "type": "number",
+          "default": 0,
+          "min": 0,
+          "max": 30000,
+          "step": 1,
+          "category": "Conversion",
+          "shouldShowWhen": {
+            "method": [
+              "contours",
+              "simplified-contours",
+              "smooth-contours",
+              "pixels",
+              "runs",
+              "quadtree",
+              "triangles",
+              "hexagons",
+              "dots",
+              "squares",
+              "stipple",
+              "horizontal-lines",
+              "vertical-lines",
+              "hatching",
+              "crosshatching",
+              "edges"
+            ]
+          },
+          "description": "Set a sampling target directly, independently of Detail. Zero uses automatic density. Maximum shapes and image resolution still bound the result."
+        },
+        {
+          "key": "gridAspect",
+          "label": "Sample cell aspect ratio",
+          "type": "number",
+          "default": 1,
+          "min": 0.1,
+          "max": 10,
+          "step": 0.05,
+          "category": "Conversion",
+          "shouldShowWhen": {
+            "method": [
+              "contours",
+              "simplified-contours",
+              "smooth-contours",
+              "pixels",
+              "runs",
+              "quadtree",
+              "triangles",
+              "dots",
+              "squares",
+              "stipple",
+              "horizontal-lines",
+              "vertical-lines",
+              "hatching",
+              "crosshatching",
+              "edges"
+            ]
+          },
+          "description": "Relative width of sampling cells: above 1 favors wider cells; below 1 favors taller cells."
+        },
+        {
+          "key": "simplify",
+          "label": "Boundary simplification",
+          "type": "number",
+          "default": 1,
+          "min": 0,
+          "max": 5,
+          "step": 0.05,
+          "category": "Conversion",
+          "shouldShowWhen": {
+            "method": [
+              "simplified-contours",
+              "smooth-contours"
+            ]
+          },
+          "description": "Reduces contour vertices while preserving closed paths."
+        },
+        {
+          "key": "contourMinArea",
+          "label": "Minimum region / hole area (px²)",
+          "type": "number",
+          "default": 0,
+          "min": 0,
+          "max": 4096,
+          "step": 1,
+          "category": "Conversion",
+          "shouldShowWhen": {
+            "method": [
+              "contours",
+              "simplified-contours",
+              "smooth-contours"
+            ]
+          },
+          "description": "Remove tiny contour islands and holes below this area in prepared-image pixels. Zero keeps all regions."
+        },
+        {
+          "key": "cornerRounding",
+          "label": "Corner rounding",
+          "type": "number",
+          "default": 1,
+          "min": 0,
+          "max": 3,
+          "step": 0.1,
+          "category": "Conversion",
+          "shouldShowWhen": {
+            "method": [
+              "smooth-contours"
+            ]
+          },
+          "description": "Scales the local rounding of smooth contour corners. Zero keeps sharp corners."
+        },
+        {
+          "key": "quadtreeTolerance",
+          "label": "Quadtree color tolerance",
+          "type": "number",
+          "default": 1,
+          "min": 0,
+          "max": 3,
+          "step": 0.05,
+          "category": "Conversion",
+          "shouldShowWhen": {
+            "method": [
+              "quadtree"
+            ]
+          },
+          "description": "Higher values allow more color variation inside each unsplit block. Detail and the shape budget still limit subdivision."
+        },
+        {
+          "key": "quadtreeMinSize",
+          "label": "Minimum block size (px)",
+          "type": "number",
+          "default": 1,
+          "min": 1,
+          "max": 128,
+          "step": 1,
+          "category": "Conversion",
+          "shouldShowWhen": {
+            "method": [
+              "quadtree"
+            ]
+          },
+          "description": "Stop subdividing blocks at this size in prepared-image pixels."
+        },
+        {
+          "key": "triangleDirection",
+          "label": "Triangle diagonal",
+          "type": "select",
+          "default": "alternating",
+          "options": [
+            "alternating",
+            "forward",
+            "backward"
+          ],
+          "displayOptions": [
+            {
+              "value": "alternating",
+              "label": "Alternating"
+            },
+            {
+              "value": "forward",
+              "label": "Forward"
+            },
+            {
+              "value": "backward",
+              "label": "Backward"
+            }
+          ],
+          "category": "Conversion",
+          "shouldShowWhen": {
+            "method": [
+              "triangles"
+            ]
+          }
+        },
+        {
+          "key": "mosaicInset",
+          "label": "Tile inset",
+          "type": "number",
+          "default": 0,
+          "min": 0,
+          "max": 0.45,
+          "step": 0.01,
+          "category": "Conversion",
+          "shouldShowWhen": {
+            "method": [
+              "pixels",
+              "runs",
+              "triangles",
+              "hexagons",
+              "voronoi"
+            ]
+          },
+          "description": "Shrinks each tile inward by this fraction, leaving gaps between tiles."
+        },
+        {
+          "key": "markScale",
+          "label": "Mark size",
+          "type": "number",
+          "default": 1,
+          "min": 0.05,
+          "max": 5,
+          "step": 0.05,
+          "category": "Conversion",
+          "shouldShowWhen": {
+            "method": [
+              "dots",
+              "squares",
+              "stipple"
+            ]
+          },
+          "description": "Scales dot radii or square sides. Large marks can overlap."
+        },
+        {
+          "key": "toneResponse",
+          "label": "Darkness response",
+          "type": "number",
+          "default": 1,
+          "min": 0.1,
+          "max": 5,
+          "step": 0.05,
+          "category": "Conversion",
+          "shouldShowWhen": {
+            "method": [
+              "dots",
+              "squares",
+              "stipple",
+              "horizontal-lines",
+              "vertical-lines",
+              "hatching",
+              "crosshatching",
+              "wave-squiggles",
+              "serpentine-squiggles",
+              "spiral-squiggles",
+              "flow-squiggles",
+              "hilbert-squiggles"
+            ]
+          },
+          "description": "Changes how source darkness affects mark coverage. Higher values leave more space in midtones."
+        },
+        {
+          "key": "toneCutoff",
+          "label": "Minimum darkness",
+          "type": "number",
+          "default": 0,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Conversion",
+          "shouldShowWhen": {
+            "method": [
+              "dots",
+              "squares",
+              "stipple",
+              "horizontal-lines",
+              "vertical-lines",
+              "hatching",
+              "crosshatching"
+            ]
+          },
+          "description": "Skip marks in areas lighter than this darkness. Zero includes the full tonal range."
+        },
+        {
+          "key": "stippleDensity",
+          "label": "Stipple density multiplier",
+          "type": "number",
+          "default": 1,
+          "min": 0.05,
+          "max": 4,
+          "step": 0.05,
+          "category": "Conversion",
+          "shouldShowWhen": {
+            "method": [
+              "stipple"
+            ]
+          },
+          "description": "Control how many candidate dots survive tone-weighted sampling. Sampling cells sets the candidate count."
+        },
+        {
+          "key": "stippleJitter",
+          "label": "Stipple scatter",
+          "type": "number",
+          "default": 0.72,
+          "min": 0,
+          "max": 1,
+          "step": 0.02,
+          "category": "Conversion",
+          "shouldShowWhen": {
+            "method": [
+              "stipple"
+            ]
+          }
+        },
+        {
+          "key": "hatchAngle",
+          "label": "Hatch angle",
+          "type": "number",
+          "default": 45,
+          "min": 0,
+          "max": 180,
+          "step": 1,
+          "category": "Conversion",
+          "shouldShowWhen": {
+            "method": [
+              "hatching",
+              "crosshatching"
+            ]
+          },
+          "description": "Rotates hatch strokes; crosshatching adds a second direction in dark areas."
+        },
+        {
+          "key": "crosshatchThreshold",
+          "label": "Crosshatch darkness threshold",
+          "type": "number",
+          "default": 0.2,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Conversion",
+          "shouldShowWhen": {
+            "method": [
+              "crosshatching"
+            ]
+          },
+          "description": "Only areas darker than this value get the second hatch direction."
+        },
+        {
+          "key": "crosshatchAngle",
+          "label": "Crosshatch crossing angle",
+          "type": "number",
+          "default": 90,
+          "min": 0,
+          "max": 180,
+          "step": 1,
+          "category": "Conversion",
+          "shouldShowWhen": {
+            "method": [
+              "crosshatching"
+            ]
+          },
+          "description": "Angle between the two hatch directions, independently of the base hatch angle."
+        },
+        {
+          "key": "strokeLength",
+          "label": "Stroke length multiplier",
+          "type": "number",
+          "default": 1,
+          "min": 0.05,
+          "max": 3,
+          "step": 0.05,
+          "category": "Conversion",
+          "shouldShowWhen": {
+            "method": [
+              "horizontal-lines",
+              "vertical-lines",
+              "hatching",
+              "crosshatching"
+            ]
+          },
+          "description": "Change stroke length without changing its width or the sample grid."
+        },
+        {
+          "key": "edgeThreshold",
+          "label": "Edge contrast threshold",
+          "type": "number",
+          "default": 12,
+          "min": 0,
+          "max": 442,
+          "step": 1,
+          "category": "Conversion",
+          "shouldShowWhen": {
+            "method": [
+              "edges"
+            ]
+          },
+          "description": "Suppress boundaries whose RGB color distance falls below this threshold."
+        },
+        {
+          "key": "strokeWidth",
+          "label": "Stroke width",
+          "type": "number",
+          "default": 1,
+          "min": 0.05,
+          "max": 20,
+          "step": 0.05,
+          "category": "Conversion",
+          "shouldShowWhen": {
+            "method": [
+              "horizontal-lines",
+              "vertical-lines",
+              "hatching",
+              "crosshatching",
+              "edges",
+              "wave-squiggles",
+              "serpentine-squiggles",
+              "spiral-squiggles",
+              "flow-squiggles",
+              "hilbert-squiggles"
+            ]
+          },
+          "description": "Width in prepared-image pixels for continuous lines; a width multiplier for the short-stroke methods."
+        },
+        {
+          "key": "voronoiSites",
+          "label": "Voronoi cell count",
+          "type": "number",
+          "default": 768,
+          "min": 1,
+          "max": 30000,
+          "step": 1,
+          "category": "Conversion",
+          "shouldShowWhen": {
+            "method": [
+              "voronoi"
+            ]
+          },
+          "description": "Request 1–30,000 cells. The default direct-count mode does not reduce this with Detail. Increase Maximum shapes for counts above its limit. Transparent cells may be absent."
+        },
+        {
+          "key": "voronoiCountMode",
+          "label": "Voronoi count mode",
+          "type": "select",
+          "default": "exact",
+          "options": [
+            "exact",
+            "detail"
+          ],
+          "displayOptions": [
+            {
+              "value": "exact",
+              "label": "Use cell count directly"
+            },
+            {
+              "value": "detail",
+              "label": "Scale count with Detail"
+            }
+          ],
+          "category": "Conversion",
+          "shouldShowWhen": {
+            "method": [
+              "voronoi"
+            ]
+          },
+          "description": "Direct count uses the requested cell count; the other mode scales it with Detail."
+        },
+        {
+          "key": "voronoiJitter",
+          "label": "Voronoi site jitter",
+          "type": "number",
+          "default": 0.7,
+          "min": 0,
+          "max": 1,
+          "step": 0.02,
+          "category": "Conversion",
+          "shouldShowWhen": {
+            "method": [
+              "voronoi"
+            ]
+          },
+          "description": "Zero uses regular cell centers; higher values create more irregular cells using Random seed."
+        },
+        {
+          "key": "voronoiAspect",
+          "label": "Voronoi cell aspect",
+          "type": "number",
+          "default": 1,
+          "min": 0.1,
+          "max": 10,
+          "step": 0.05,
+          "category": "Conversion",
+          "shouldShowWhen": {
+            "method": [
+              "voronoi"
+            ]
+          },
+          "description": "Stretch the initial site distribution into wider or taller cells."
+        },
+        {
+          "key": "voronoiRelaxation",
+          "label": "Voronoi relaxation passes",
+          "type": "number",
+          "default": 0,
+          "min": 0,
+          "max": 5,
+          "step": 1,
+          "category": "Conversion",
+          "shouldShowWhen": {
+            "method": [
+              "voronoi"
+            ]
+          },
+          "description": "Move sites toward their cell centroids for more even spacing. Extra passes take longer."
+        },
+        {
+          "key": "seed",
+          "label": "Random seed",
+          "type": "number",
+          "default": 42,
+          "min": 0,
+          "max": 999999,
+          "step": 1,
+          "category": "Conversion",
+          "shouldShowWhen": {
+            "method": [
+              "stipple",
+              "voronoi",
+              "wave-squiggles",
+              "serpentine-squiggles",
+              "spiral-squiggles",
+              "flow-squiggles",
+              "hilbert-squiggles"
+            ]
+          }
+        },
+        {
+          "key": "lineCount",
+          "label": "Continuous line count",
+          "type": "number",
+          "default": 48,
+          "min": 1,
+          "max": 512,
+          "step": 1,
+          "category": "Continuous lines",
+          "shouldShowWhen": {
+            "method": [
+              "wave-squiggles",
+              "serpentine-squiggles",
+              "spiral-squiggles",
+              "flow-squiggles",
+              "hilbert-squiggles"
+            ]
+          },
+          "description": "Total continuous paths, capped by Maximum shapes. Each path uses one ink color. Fully transparent paths are omitted."
+        },
+        {
+          "key": "lineColors",
+          "label": "Total line colors (maximum)",
+          "type": "number",
+          "default": 4,
+          "min": 1,
+          "max": 64,
+          "step": 1,
+          "category": "Continuous lines",
+          "shouldShowWhen": {
+            "method": [
+              "wave-squiggles",
+              "serpentine-squiggles",
+              "spiral-squiggles",
+              "flow-squiggles",
+              "hilbert-squiggles"
+            ]
+          },
+          "description": "Maximum distinct colors across all lines, limited by Color bins, available image colors, and line count. One makes a single-ink drawing."
+        },
+        {
+          "key": "lineColorMode",
+          "label": "Line color assignment",
+          "type": "select",
+          "default": "layered",
+          "options": [
+            "layered",
+            "dominant"
+          ],
+          "displayOptions": [
+            {
+              "value": "layered",
+              "label": "Distribute palette across lines"
+            },
+            {
+              "value": "dominant",
+              "label": "Dominant color along each line"
+            }
+          ],
+          "category": "Continuous lines",
+          "shouldShowWhen": {
+            "method": [
+              "wave-squiggles",
+              "serpentine-squiggles",
+              "spiral-squiggles",
+              "flow-squiggles",
+              "hilbert-squiggles"
+            ]
+          },
+          "description": "Distributed colors use squiggle density to emphasize each ink’s image regions. Dominant mode picks the strongest local color for each path."
+        },
+        {
+          "key": "lineSamples",
+          "label": "Samples per line",
+          "type": "number",
+          "default": 1200,
+          "min": 64,
+          "max": 8192,
+          "step": 16,
+          "category": "Continuous lines",
+          "shouldShowWhen": {
+            "method": [
+              "wave-squiggles",
+              "serpentine-squiggles",
+              "spiral-squiggles",
+              "flow-squiggles",
+              "hilbert-squiggles"
+            ]
+          },
+          "description": "More samples retain finer waves. Detail scales this value; a total limit of 250,000 samples bounds SVG size."
+        },
+        {
+          "key": "lineAmplitude",
+          "label": "Squiggle amplitude",
+          "type": "number",
+          "default": 1,
+          "min": 0,
+          "max": 5,
+          "step": 0.05,
+          "category": "Continuous lines",
+          "shouldShowWhen": {
+            "method": [
+              "wave-squiggles",
+              "serpentine-squiggles",
+              "spiral-squiggles",
+              "flow-squiggles",
+              "hilbert-squiggles"
+            ]
+          },
+          "description": "Width of the sideways waves. Zero follows the underlying route without waves."
+        },
+        {
+          "key": "lineFrequency",
+          "label": "Base wave frequency",
+          "type": "number",
+          "default": 32,
+          "min": 1,
+          "max": 160,
+          "step": 1,
+          "category": "Continuous lines",
+          "shouldShowWhen": {
+            "method": [
+              "wave-squiggles",
+              "serpentine-squiggles",
+              "spiral-squiggles",
+              "flow-squiggles",
+              "hilbert-squiggles"
+            ]
+          },
+          "description": "Base oscillations along each path. Increase Samples per line when using very tight waves."
+        },
+        {
+          "key": "lineDensity",
+          "label": "Extra density in dark areas",
+          "type": "number",
+          "default": 2,
+          "min": 0,
+          "max": 8,
+          "step": 0.1,
+          "category": "Continuous lines",
+          "shouldShowWhen": {
+            "method": [
+              "wave-squiggles",
+              "serpentine-squiggles",
+              "spiral-squiggles",
+              "flow-squiggles",
+              "hilbert-squiggles"
+            ]
+          },
+          "description": "Add more oscillations in dark regions; zero keeps wave frequency constant."
+        },
+        {
+          "key": "lineDensityFloor",
+          "label": "Minimum wave coverage",
+          "type": "number",
+          "default": 0.08,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Continuous lines",
+          "shouldShowWhen": {
+            "method": [
+              "wave-squiggles",
+              "serpentine-squiggles",
+              "spiral-squiggles",
+              "flow-squiggles",
+              "hilbert-squiggles"
+            ]
+          },
+          "description": "Residual wave amplitude in light or off-color regions. The path stays connected even at zero."
+        },
+        {
+          "key": "lineAngle",
+          "label": "Drawing angle",
+          "type": "number",
+          "default": 0,
+          "min": 0,
+          "max": 180,
+          "step": 1,
+          "category": "Continuous lines",
+          "shouldShowWhen": {
+            "method": [
+              "wave-squiggles",
+              "serpentine-squiggles",
+              "spiral-squiggles",
+              "flow-squiggles",
+              "hilbert-squiggles"
+            ]
+          },
+          "description": "Rotate the drawing around the image center; coordinates remain inside the image."
+        },
+        {
+          "key": "lineSmoothing",
+          "label": "Curve smoothing",
+          "type": "number",
+          "default": 0.65,
+          "min": 0,
+          "max": 1,
+          "step": 0.05,
+          "category": "Continuous lines",
+          "shouldShowWhen": {
+            "method": [
+              "wave-squiggles",
+              "serpentine-squiggles",
+              "spiral-squiggles",
+              "flow-squiggles",
+              "hilbert-squiggles"
+            ]
+          },
+          "description": "Round path corners with quadratic curves. Zero exports straight segments."
+        },
+        {
+          "key": "serpentineRows",
+          "label": "Rows per ribbon",
+          "type": "number",
+          "default": 6,
+          "min": 1,
+          "max": 64,
+          "step": 1,
+          "category": "Continuous lines",
+          "shouldShowWhen": {
+            "method": [
+              "serpentine-squiggles"
+            ]
+          },
+          "description": "Back-and-forth traversals within each continuous ribbon."
+        },
+        {
+          "key": "spiralTurns",
+          "label": "Total spiral turns",
+          "type": "number",
+          "default": 24,
+          "min": 1,
+          "max": 160,
+          "step": 1,
+          "category": "Continuous lines",
+          "shouldShowWhen": {
+            "method": [
+              "spiral-squiggles"
+            ]
+          },
+          "description": "Total turns across the whole spiral, divided among the requested lines."
+        },
+        {
+          "key": "flowLength",
+          "label": "Flow travel distance",
+          "type": "number",
+          "default": 4,
+          "min": 0.25,
+          "max": 20,
+          "step": 0.25,
+          "category": "Continuous lines",
+          "shouldShowWhen": {
+            "method": [
+              "flow-squiggles"
+            ]
+          },
+          "description": "Travel distance of each thread in multiples of the image’s short edge."
+        },
+        {
+          "key": "flowInfluence",
+          "label": "Follow image edges",
+          "type": "number",
+          "default": 1,
+          "min": 0,
+          "max": 4,
+          "step": 0.1,
+          "category": "Continuous lines",
+          "shouldShowWhen": {
+            "method": [
+              "flow-squiggles"
+            ]
+          },
+          "description": "Steer flow along local image edges. Zero uses only the seeded flow field."
+        },
+        {
+          "key": "hilbertOrder",
+          "label": "Hilbert subdivision level",
+          "type": "number",
+          "default": 5,
+          "min": 1,
+          "max": 7,
+          "step": 1,
+          "category": "Continuous lines",
+          "shouldShowWhen": {
+            "method": [
+              "hilbert-squiggles"
+            ]
+          },
+          "description": "Each level doubles the traversal grid width and height. Increase Samples per line to resolve higher levels."
+        },
+        {
+          "key": "colorMode",
+          "label": "Color mode",
+          "type": "select",
+          "default": "rgb",
+          "options": [
+            "rgb",
+            "grayscale",
+            "monochrome",
+            "duotone"
+          ],
+          "displayOptions": [
+            {
+              "value": "rgb",
+              "label": "RGB color"
+            },
+            {
+              "value": "grayscale",
+              "label": "Grayscale"
+            },
+            {
+              "value": "monochrome",
+              "label": "Black & white"
+            },
+            {
+              "value": "duotone",
+              "label": "Duotone"
+            }
+          ],
+          "category": "Palette"
+        },
+        {
+          "key": "colors",
+          "label": "Color bins (maximum)",
+          "type": "number",
+          "default": 8,
+          "min": 2,
+          "max": 64,
+          "step": 1,
+          "category": "Palette",
+          "description": "Maximum total palette colors (2–64). Black and white uses at most two; sparse outputs may use fewer."
+        },
+        {
+          "key": "quantizer",
+          "label": "Palette algorithm",
+          "type": "select",
+          "default": "median-cut",
+          "options": [
+            "median-cut",
+            "kmeans",
+            "uniform"
+          ],
+          "displayOptions": [
+            {
+              "value": "median-cut",
+              "label": "Median cut"
+            },
+            {
+              "value": "kmeans",
+              "label": "K-means"
+            },
+            {
+              "value": "uniform",
+              "label": "Uniform RGB"
+            }
+          ],
+          "category": "Palette",
+          "shouldShowWhen": {
+            "colorMode": [
+              "rgb",
+              "grayscale",
+              "duotone"
+            ]
+          }
+        },
+        {
+          "key": "dither",
+          "label": "Dithering",
+          "type": "select",
+          "default": "none",
+          "options": [
+            "none",
+            "ordered",
+            "floyd-steinberg"
+          ],
+          "displayOptions": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "ordered",
+              "label": "Ordered Bayer"
+            },
+            {
+              "value": "floyd-steinberg",
+              "label": "Floyd–Steinberg"
+            }
+          ],
+          "category": "Palette"
+        },
+        {
+          "key": "darkColor",
+          "label": "Duotone dark",
+          "type": "text",
+          "default": "#132a40",
+          "category": "Palette",
+          "shouldShowWhen": {
+            "colorMode": "duotone"
+          }
+        },
+        {
+          "key": "lightColor",
+          "label": "Duotone light",
+          "type": "text",
+          "default": "#f6d8a0",
+          "category": "Palette",
+          "shouldShowWhen": {
+            "colorMode": "duotone"
+          }
+        },
+        {
+          "key": "maxDimension",
+          "label": "Working resolution (long edge)",
+          "type": "number",
+          "default": 320,
+          "min": 32,
+          "max": 1024,
+          "step": 16,
+          "category": "Preparation",
+          "description": "Long edge after cropping, up to 1024 pixels. Small images are not enlarged."
+        },
+        {
+          "key": "resample",
+          "label": "Downsampling",
+          "type": "select",
+          "default": "area",
+          "options": [
+            "area",
+            "bilinear",
+            "nearest"
+          ],
+          "displayOptions": [
+            {
+              "value": "area",
+              "label": "Area average"
+            },
+            {
+              "value": "bilinear",
+              "label": "Bilinear"
+            },
+            {
+              "value": "nearest",
+              "label": "Nearest neighbor"
+            }
+          ],
+          "category": "Preparation"
+        },
+        {
+          "key": "crop.x",
+          "label": "Crop left (0–1)",
+          "type": "number",
+          "default": 0,
+          "min": 0,
+          "max": 0.99,
+          "step": 0.01,
+          "category": "Preparation",
+          "description": "Crop values are fractions of the original image: 0.25 = 25%. Crops stop at the image edges."
+        },
+        {
+          "key": "crop.y",
+          "label": "Crop top (0–1)",
+          "type": "number",
+          "default": 0,
+          "min": 0,
+          "max": 0.99,
+          "step": 0.01,
+          "category": "Preparation"
+        },
+        {
+          "key": "crop.width",
+          "label": "Crop width (0–1)",
+          "type": "number",
+          "default": 1,
+          "min": 0.01,
+          "max": 1,
+          "step": 0.01,
+          "category": "Preparation"
+        },
+        {
+          "key": "crop.height",
+          "label": "Crop height (0–1)",
+          "type": "number",
+          "default": 1,
+          "min": 0.01,
+          "max": 1,
+          "step": 0.01,
+          "category": "Preparation"
+        },
+        {
+          "key": "transparency",
+          "label": "Transparency",
+          "type": "select",
+          "default": "preserve",
+          "options": [
+            "preserve",
+            "white",
+            "black"
+          ],
+          "displayOptions": [
+            {
+              "value": "preserve",
+              "label": "Preserve transparent areas"
+            },
+            {
+              "value": "white",
+              "label": "Flatten onto white"
+            },
+            {
+              "value": "black",
+              "label": "Flatten onto black"
+            }
+          ],
+          "category": "Preparation"
+        },
+        {
+          "key": "alphaThreshold",
+          "label": "Alpha cutoff",
+          "type": "number",
+          "default": 16,
+          "min": 1,
+          "max": 255,
+          "step": 1,
+          "category": "Preparation",
+          "shouldShowWhen": {
+            "transparency": "preserve"
+          }
+        },
+        {
+          "key": "autoConvert",
+          "label": "Convert automatically",
+          "type": "boolean",
+          "default": true,
+          "category": "Conversion"
+        },
+        {
+          "key": "convertImage",
+          "label": "Convert to SVG",
+          "type": "button",
+          "category": "Conversion"
+        },
+        {
+          "key": "cancelConversion",
+          "label": "Cancel conversion",
+          "type": "button",
+          "category": "Conversion"
+        },
+        {
+          "key": "resetCrop",
+          "label": "Reset crop",
+          "type": "button",
+          "category": "Preparation"
+        }
+      ],
+      "url": "/imageToSVG/",
+      "folder": "imageToSVG"
+    },
+    {
+      "id": "innerLight",
+      "title": "Inner Light",
+      "description": "Paint with light by moving across layered shapes, or send a color wave through them.",
+      "params": [
+        {
+          "key": "shapes.circle",
+          "label": "Circles",
+          "type": "boolean",
+          "default": true,
+          "category": "Shapes",
+          "cssClass": "innerlight-shapes-circle"
+        },
+        {
+          "key": "shapes.square",
+          "label": "Diamonds",
+          "type": "boolean",
+          "default": false,
+          "category": "Shapes",
+          "cssClass": "innerlight-shapes-square"
+        },
+        {
+          "key": "shapes.rect",
+          "label": "Rectangles",
+          "type": "boolean",
+          "default": true,
+          "category": "Shapes",
+          "cssClass": "innerlight-shapes-rect"
+        },
+        {
+          "key": "shapes.prism",
+          "label": "Packed circles",
+          "type": "boolean",
+          "default": false,
+          "category": "Shapes",
+          "cssClass": "innerlight-shapes-prism"
+        },
+        {
+          "key": "shapes.user",
+          "label": "Custom shapes",
+          "type": "boolean",
+          "default": false,
+          "category": "Shapes",
+          "cssClass": "innerlight-shapes-user"
+        },
+        {
+          "key": "motionEnabled",
+          "label": "Enable motion",
+          "type": "boolean",
+          "default": true,
+          "category": "Interaction",
+          "description": "Move your pointer or drag across the drawing to add color. Press Space to pause or resume motion.",
+          "cssClass": "innerlight-motionEnabled"
+        },
+        {
+          "key": "forwardWave",
+          "label": "Forward wave",
+          "type": "button",
+          "category": "Interaction",
+          "cssClass": "innerlight-forwardWave"
+        },
+        {
+          "key": "reverseWave",
+          "label": "Reverse wave",
+          "type": "button",
+          "category": "Interaction",
+          "cssClass": "innerlight-reverseWave"
+        },
+        {
+          "key": "custom.shapeType",
+          "label": "Shape type",
+          "type": "select",
+          "default": "circle",
+          "options": [
+            "circle",
+            "rect",
+            "polygon"
+          ],
+          "category": "Custom shape",
+          "description": "Custom shape settings update live when Custom shapes is enabled.",
+          "cssClass": "innerlight-custom-shapeType"
+        },
+        {
+          "key": "custom.numElements",
+          "label": "Number of elements",
+          "type": "number",
+          "default": 50,
+          "min": 1,
+          "max": 500,
+          "step": 1,
+          "category": "Custom shape",
+          "cssClass": "innerlight-custom-numElements"
+        },
+        {
+          "key": "custom.numSides",
+          "label": "Polygon sides",
+          "type": "number",
+          "default": 6,
+          "min": 3,
+          "max": 32,
+          "step": 1,
+          "category": "Custom shape",
+          "cssClass": "innerlight-custom-numSides"
+        },
+        {
+          "key": "custom.radius",
+          "label": "Radius",
+          "type": "number",
+          "default": 50,
+          "min": 1,
+          "max": 1000,
+          "step": 1,
+          "category": "Custom shape",
+          "cssClass": "innerlight-custom-radius"
+        },
+        {
+          "key": "custom.incrementSize",
+          "label": "Size increment",
+          "type": "number",
+          "default": 10,
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "category": "Custom shape",
+          "cssClass": "innerlight-custom-incrementSize"
+        },
+        {
+          "key": "custom.dynamicSize",
+          "label": "Hover width / grid variation",
+          "type": "number",
+          "default": 10,
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "category": "Custom shape",
+          "cssClass": "innerlight-custom-dynamicSize"
+        },
+        {
+          "key": "custom.strokeWidth",
+          "label": "Stroke width",
+          "type": "text",
+          "default": "2px",
+          "category": "Custom style",
+          "description": "Use an SVG width such as 2px or 0.5vh.",
+          "cssClass": "innerlight-custom-strokeWidth"
+        },
+        {
+          "key": "custom.strokeColor",
+          "label": "Stroke color",
+          "type": "text",
+          "default": "#ffffff",
+          "category": "Custom style",
+          "description": "Use a color name or hex value.",
+          "cssClass": "innerlight-custom-strokeColor"
+        },
+        {
+          "key": "custom.fillColor",
+          "label": "Fill color",
+          "type": "text",
+          "default": "none",
+          "category": "Custom style",
+          "description": "Use a color name, hex value, or none for outlines.",
+          "cssClass": "innerlight-custom-fillColor"
+        },
+        {
+          "key": "custom.fillOpacity",
+          "label": "Fill opacity",
+          "type": "number",
+          "default": 1,
+          "min": 0,
+          "max": 1,
+          "step": 0.1,
+          "category": "Custom style",
+          "cssClass": "innerlight-custom-fillOpacity"
+        },
+        {
+          "key": "custom.xDivisions",
+          "label": "Columns",
+          "type": "number",
+          "default": 10,
+          "min": 1,
+          "max": 100,
+          "step": 1,
+          "category": "Rectangle grid",
+          "cssClass": "innerlight-custom-xDivisions"
+        },
+        {
+          "key": "custom.yDivisions",
+          "label": "Rows",
+          "type": "number",
+          "default": 10,
+          "min": 1,
+          "max": 100,
+          "step": 1,
+          "category": "Rectangle grid",
+          "cssClass": "innerlight-custom-yDivisions"
+        },
+        {
+          "key": "updateShape",
+          "label": "Update shape",
+          "type": "button",
+          "category": "Custom shape",
+          "description": "Apply these settings and enable Custom shapes.",
+          "cssClass": "innerlight-updateShape"
+        }
+      ],
+      "simulation": {
+        "param": "motionEnabled"
+      },
+      "url": "/InnerLight/",
+      "folder": "InnerLight"
+    },
+    {
+      "id": "kakeyaBesicovitchNeedle",
+      "title": "Kakeya / Besicovitch Needle (Perron-Tree Approx, Rectangles)",
+      "description": "Finite Perron-tree-style construction. Shows where a unit 'needle' can sit for many directions, using thin rectangles. ",
+      "params": [
+        {
+          "key": "levels",
+          "type": "number",
+          "default": 6,
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "category": "Construction",
+          "description": "Tree recursion depth (more = more directions / pieces)."
+        },
+        {
+          "key": "splitK",
+          "type": "number",
+          "default": 2,
+          "min": 2,
+          "max": 10,
+          "step": 1,
+          "category": "Construction",
+          "description": "How many base slices each triangle splits into per level (2 is classic)."
+        },
+        {
+          "key": "overlap",
+          "type": "number",
+          "default": 0.78,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Construction",
+          "description": "How strongly slices are pulled toward center (higher = more overlap / smaller footprint)."
+        },
+        {
+          "key": "copies",
+          "type": "number",
+          "default": 6,
+          "min": 1,
+          "max": 16,
+          "step": 1,
+          "category": "Construction",
+          "description": "Rotate the whole tree into multiple orientations (helps fill many directions)."
+        },
+        {
+          "key": "baseWidth",
+          "type": "number",
+          "default": 2,
+          "min": 0.2,
+          "max": 4,
+          "step": 0.01,
+          "category": "Construction",
+          "description": "Width of the starting triangle base (normalized units)."
+        },
+        {
+          "key": "height",
+          "type": "number",
+          "default": 1,
+          "min": 0.2,
+          "max": 2.5,
+          "step": 0.01,
+          "category": "Construction",
+          "description": "Height of the starting triangle (normalized units)."
+        },
+        {
+          "key": "needleLen",
+          "type": "number",
+          "default": 1,
+          "min": 0.05,
+          "max": 2,
+          "step": 0.01,
+          "category": "Needles",
+          "description": "Needle length (normalized units)."
+        },
+        {
+          "key": "needleThickPx",
+          "type": "number",
+          "default": 3,
+          "min": 0.25,
+          "max": 30,
+          "step": 0.25,
+          "category": "Needles",
+          "description": "Needle rectangle thickness in pixels."
+        },
+        {
+          "key": "needlePadPx",
+          "type": "number",
+          "default": 0,
+          "min": 0,
+          "max": 30,
+          "step": 0.25,
+          "category": "Needles",
+          "description": "Shorten each needle rectangle at both ends (visual spacing)."
+        },
+        {
+          "key": "needleAlpha",
+          "type": "number",
+          "default": 0.25,
+          "min": 0.01,
+          "max": 1,
+          "step": 0.01,
+          "category": "Needles",
+          "description": "Opacity for the full needle set footprint."
+        },
+        {
+          "key": "maxNeedles",
+          "type": "number",
+          "default": 4000,
+          "min": 50,
+          "max": 30000,
+          "step": 50,
+          "category": "Needles",
+          "description": "Safety cap for number of needles drawn."
+        },
+        {
+          "key": "showTriangles",
+          "type": "boolean",
+          "default": false,
+          "category": "Display",
+          "description": "Draw construction triangles (the 'set')."
+        },
+        {
+          "key": "triFillAlpha",
+          "type": "number",
+          "default": 0.1,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Display",
+          "description": "Triangle fill opacity."
+        },
+        {
+          "key": "triStrokeAlpha",
+          "type": "number",
+          "default": 0.18,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Display",
+          "description": "Triangle stroke opacity."
+        },
+        {
+          "key": "showAllNeedles",
+          "type": "boolean",
+          "default": true,
+          "category": "Display",
+          "description": "Draw all needles (footprint)."
+        },
+        {
+          "key": "colorMode",
+          "type": "select",
+          "default": "angle",
+          "options": [
+            "angle",
+            "level",
+            "copy",
+            "mono"
+          ],
+          "category": "Color",
+          "description": "How needles are colored."
+        },
+        {
+          "key": "palette",
+          "type": "select",
+          "default": "turbo",
+          "options": [
+            "turbo",
+            "viridis",
+            "plasma",
+            "magma",
+            "cividis",
+            "spectral"
+          ],
+          "category": "Color",
+          "description": "Palette for numeric color modes."
+        },
+        {
+          "key": "monoColor",
+          "type": "text",
+          "default": "#111111",
+          "category": "Color",
+          "description": "Mono mode color."
+        },
+        {
+          "key": "showBoundsCircle",
+          "type": "boolean",
+          "default": false,
+          "category": "Guides",
+          "description": "Draw a faint outer circle showing the fit-to-view bound."
+        },
+        {
+          "key": "showStats",
+          "type": "boolean",
+          "default": false,
+          "category": "Guides",
+          "description": "Draw stats text."
+        }
+      ],
+      "url": "/kakeya/",
+      "folder": "kakeya"
+    },
+    {
+      "id": "lsystemGarden",
+      "title": "L-System Garden",
+      "description": "Recursive L-system plants drawn in SVG. Tweak grammar, angle, and styling to grow new species.",
+      "params": [
+        {
+          "key": "preset",
+          "label": "preset",
+          "type": "select",
+          "default": "Fractal Plant",
+          "category": "Grammar",
+          "options": [
+            "Classic Tree",
+            "Fractal Plant",
+            "Fern",
+            "Symmetric Bush",
+            "Seaweed"
+          ]
+        },
+        {
+          "key": "axiom",
+          "label": "axiom",
+          "type": "text",
+          "default": "X",
+          "category": "Grammar"
+        },
+        {
+          "key": "ruleF",
+          "label": "rule F",
+          "type": "text",
+          "default": "FF",
+          "category": "Grammar"
+        },
+        {
+          "key": "ruleX",
+          "label": "rule X",
+          "type": "text",
+          "default": "F-[[X]+X]+F[+FX]-X",
+          "category": "Grammar"
+        },
+        {
+          "key": "ruleY",
+          "label": "rule Y",
+          "type": "text",
+          "default": "",
+          "category": "Grammar"
+        },
+        {
+          "key": "ruleG",
+          "label": "rule G",
+          "type": "text",
+          "default": "",
+          "category": "Grammar"
+        },
+        {
+          "key": "iterations",
+          "type": "number",
+          "default": 5,
+          "category": "Grammar",
+          "min": 0,
+          "max": 7,
+          "step": 1
+        },
+        {
+          "key": "maxChars",
+          "label": "max string size",
+          "type": "number",
+          "default": 50000,
+          "category": "Grammar",
+          "min": 1000,
+          "max": 200000,
+          "step": 1000
+        },
+        {
+          "key": "angle",
+          "label": "turn angle",
+          "type": "number",
+          "default": 25,
+          "category": "Turtle",
+          "min": 1,
+          "max": 90,
+          "step": 0.5
+        },
+        {
+          "key": "startAngle",
+          "label": "start angle",
+          "type": "number",
+          "default": -90,
+          "category": "Turtle",
+          "min": -180,
+          "max": 180,
+          "step": 1
+        },
+        {
+          "key": "step",
+          "label": "segment length",
+          "type": "number",
+          "default": 8,
+          "category": "Turtle",
+          "min": 1,
+          "max": 40,
+          "step": 0.5
+        },
+        {
+          "key": "lengthDecay",
+          "label": "length decay",
+          "type": "number",
+          "default": 0.7,
+          "category": "Turtle",
+          "min": 0.5,
+          "max": 1,
+          "step": 0.01
+        },
+        {
+          "key": "autoFit",
+          "label": "auto fit",
+          "type": "boolean",
+          "default": true,
+          "category": "Layout"
+        },
+        {
+          "key": "margin",
+          "label": "fit margin",
+          "type": "number",
+          "default": 0.08,
+          "category": "Layout",
+          "min": 0,
+          "max": 0.3,
+          "step": 0.01
+        },
+        {
+          "key": "originX",
+          "label": "origin x",
+          "type": "number",
+          "default": 0.5,
+          "category": "Layout",
+          "min": 0,
+          "max": 1,
+          "step": 0.01
+        },
+        {
+          "key": "originY",
+          "label": "origin y",
+          "type": "number",
+          "default": 0.95,
+          "category": "Layout",
+          "min": 0,
+          "max": 1,
+          "step": 0.01
+        },
+        {
+          "key": "forestMode",
+          "label": "mode",
+          "type": "select",
+          "default": "single",
+          "category": "Forest",
+          "options": [
+            "single",
+            "forest"
+          ]
+        },
+        {
+          "key": "forestCount",
+          "label": "count",
+          "type": "number",
+          "default": 6,
+          "category": "Forest",
+          "min": 1,
+          "max": 30,
+          "step": 1
+        },
+        {
+          "key": "forestSpacing",
+          "label": "spacing",
+          "type": "number",
+          "default": 24,
+          "category": "Forest",
+          "min": 0,
+          "max": 240,
+          "step": 2
+        },
+        {
+          "key": "forestScale",
+          "label": "scale",
+          "type": "number",
+          "default": 1,
+          "category": "Forest",
+          "min": 0.4,
+          "max": 1.6,
+          "step": 0.05
+        },
+        {
+          "key": "forestAnchor",
+          "label": "anchor",
+          "type": "select",
+          "default": "center",
+          "category": "Forest",
+          "options": [
+            "center",
+            "bottom"
+          ]
+        },
+        {
+          "type": "button",
+          "key": "randomForest",
+          "label": "Generate Random Forest",
+          "category": "Forest"
+        },
+        {
+          "key": "lineWidth",
+          "label": "line width",
+          "type": "number",
+          "default": 1.6,
+          "category": "Styling",
+          "min": 0.2,
+          "max": 6,
+          "step": 0.1
+        },
+        {
+          "key": "widthDecay",
+          "label": "width decay",
+          "type": "number",
+          "default": 0.8,
+          "category": "Styling",
+          "min": 0.3,
+          "max": 1,
+          "step": 0.02
+        },
+        {
+          "key": "strokeHueStart",
+          "label": "hue start",
+          "type": "number",
+          "default": 115,
+          "category": "Styling",
+          "min": 0,
+          "max": 360,
+          "step": 1
+        },
+        {
+          "key": "strokeHueEnd",
+          "label": "hue end",
+          "type": "number",
+          "default": 60,
+          "category": "Styling",
+          "min": 0,
+          "max": 360,
+          "step": 1
+        },
+        {
+          "key": "strokeSaturation",
+          "label": "saturation",
+          "type": "number",
+          "default": 48,
+          "category": "Styling",
+          "min": 0,
+          "max": 100,
+          "step": 1
+        },
+        {
+          "key": "strokeLightness",
+          "label": "lightness",
+          "type": "number",
+          "default": 32,
+          "category": "Styling",
+          "min": 0,
+          "max": 100,
+          "step": 1
+        },
+        {
+          "key": "strokeOpacity",
+          "label": "stroke opacity",
+          "type": "number",
+          "default": 0.9,
+          "category": "Styling",
+          "min": 0,
+          "max": 1,
+          "step": 0.01
+        },
+        {
+          "key": "background",
+          "type": "select",
+          "default": "paper",
+          "category": "Styling",
+          "options": [
+            "paper",
+            "night",
+            "ink"
+          ]
+        },
+        {
+          "key": "drawLeaves",
+          "label": "draw leaves",
+          "type": "boolean",
+          "default": true,
+          "category": "Leaves"
+        },
+        {
+          "key": "leafSize",
+          "label": "leaf size",
+          "type": "number",
+          "default": 3.5,
+          "category": "Leaves",
+          "min": 0.5,
+          "max": 10,
+          "step": 0.1
+        },
+        {
+          "key": "leafDensity",
+          "label": "leaf density",
+          "type": "number",
+          "default": 0.6,
+          "category": "Leaves",
+          "min": 0,
+          "max": 1,
+          "step": 0.01
+        },
+        {
+          "key": "leafDepthMin",
+          "label": "leaf depth min",
+          "type": "number",
+          "default": 2,
+          "category": "Leaves",
+          "min": 0,
+          "max": 8,
+          "step": 1
+        },
+        {
+          "key": "leafHue",
+          "label": "leaf hue",
+          "type": "number",
+          "default": 110,
+          "category": "Leaves",
+          "min": 0,
+          "max": 360,
+          "step": 1
+        },
+        {
+          "key": "leafSaturation",
+          "label": "leaf saturation",
+          "type": "number",
+          "default": 55,
+          "category": "Leaves",
+          "min": 0,
+          "max": 100,
+          "step": 1
+        },
+        {
+          "key": "leafLightness",
+          "label": "leaf lightness",
+          "type": "number",
+          "default": 45,
+          "category": "Leaves",
+          "min": 0,
+          "max": 100,
+          "step": 1
+        },
+        {
+          "key": "seed",
+          "label": "seed",
+          "type": "number",
+          "default": 42,
+          "category": "Randomness",
+          "min": 0,
+          "max": 999999,
+          "step": 1
+        },
+        {
+          "key": "jitterAngle",
+          "label": "angle jitter",
+          "type": "number",
+          "default": 1,
+          "category": "Randomness",
+          "min": 0,
+          "max": 20,
+          "step": 0.2
+        },
+        {
+          "key": "jitterLength",
+          "label": "length jitter",
+          "type": "number",
+          "default": 0.08,
+          "category": "Randomness",
+          "min": 0,
+          "max": 0.5,
+          "step": 0.01
+        },
+        {
+          "type": "button",
+          "key": "randomizeSeed",
+          "label": "Randomize Seed",
+          "category": "Randomness"
+        }
+      ],
+      "url": "/LSystemGarden/",
+      "folder": "LSystemGarden"
+    },
+    {
+      "id": "lissajousFigures",
+      "title": "Lissajous Figures",
+      "description": "Layered parametric curves that weave into flower-like loops.",
+      "params": [
+        {
+          "key": "curveCount",
+          "type": "number",
+          "default": 6,
+          "min": 1,
+          "max": 20,
+          "step": 1,
+          "category": "Curves"
+        },
+        {
+          "key": "freqA",
+          "label": "frequency a",
+          "type": "number",
+          "default": 3,
+          "min": 1,
+          "max": 12,
+          "step": 1,
+          "category": "Curves"
+        },
+        {
+          "key": "freqB",
+          "label": "frequency b",
+          "type": "number",
+          "default": 2,
+          "min": 1,
+          "max": 12,
+          "step": 1,
+          "category": "Curves"
+        },
+        {
+          "key": "phase",
+          "type": "number",
+          "default": 0.6,
+          "min": 0,
+          "max": 6.283,
+          "step": 0.01,
+          "category": "Curves"
+        },
+        {
+          "key": "samples",
+          "type": "number",
+          "default": 800,
+          "min": 100,
+          "max": 2000,
+          "step": 50,
+          "category": "Curves"
+        },
+        {
+          "key": "amplitude",
+          "type": "number",
+          "default": 0.42,
+          "min": 0.1,
+          "max": 0.9,
+          "step": 0.01,
+          "category": "Layout"
+        },
+        {
+          "key": "strokeWidth",
+          "type": "number",
+          "default": 2,
+          "min": 0.2,
+          "max": 8,
+          "step": 0.1,
+          "category": "Styling"
+        },
+        {
+          "key": "animate",
+          "type": "boolean",
+          "default": true,
+          "category": "Animation"
+        },
+        {
+          "key": "speed",
+          "type": "number",
+          "default": 0.6,
+          "min": 0.05,
+          "max": 2.5,
+          "step": 0.05,
+          "category": "Animation"
+        }
+      ],
+      "simulation": {
+        "param": "animate"
+      },
+      "url": "/LissajousFigures/",
+      "folder": "LissajousFigures"
+    },
+    {
+      "id": "lorenzAttractor",
+      "title": "Lorenz Attractor",
+      "description": "Chaotic butterfly trajectories traced through phase space.",
+      "params": [
+        {
+          "key": "sigma",
+          "type": "number",
+          "default": 10,
+          "min": 4,
+          "max": 20,
+          "step": 0.5,
+          "category": "System"
+        },
+        {
+          "key": "rho",
+          "type": "number",
+          "default": 28,
+          "min": 10,
+          "max": 40,
+          "step": 0.5,
+          "category": "System"
+        },
+        {
+          "key": "beta",
+          "type": "number",
+          "default": 2.666,
+          "min": 1,
+          "max": 4,
+          "step": 0.05,
+          "category": "System"
+        },
+        {
+          "key": "steps",
+          "type": "number",
+          "default": 4000,
+          "min": 500,
+          "max": 12000,
+          "step": 500,
+          "category": "System"
+        },
+        {
+          "key": "dt",
+          "type": "number",
+          "default": 0.008,
+          "min": 0.002,
+          "max": 0.02,
+          "step": 0.001,
+          "category": "System"
+        },
+        {
+          "key": "trailCount",
+          "type": "number",
+          "default": 3,
+          "min": 1,
+          "max": 8,
+          "step": 1,
+          "category": "System"
+        },
+        {
+          "key": "trailSpread",
+          "type": "number",
+          "default": 0.08,
+          "min": 0,
+          "max": 0.4,
+          "step": 0.01,
+          "category": "System"
+        },
+        {
+          "key": "fitMode",
+          "type": "select",
+          "default": "contain",
+          "options": [
+            "contain",
+            "cover",
+            "stretch"
+          ],
+          "category": "Layout"
+        },
+        {
+          "key": "padding",
+          "type": "number",
+          "default": 32,
+          "min": 0,
+          "max": 200,
+          "step": 2,
+          "category": "Layout"
+        },
+        {
+          "key": "strokeWidth",
+          "type": "number",
+          "default": 1.4,
+          "min": 0.4,
+          "max": 4,
+          "step": 0.1,
+          "category": "Styling"
+        }
+      ],
+      "url": "/LorenzAttractor/",
+      "folder": "LorenzAttractor"
+    },
+    {
+      "id": "mandelTilingZoomable",
+      "title": "Mandel Tiling (Zoomable)",
+      "description": "Adaptive tiled Mandelbrot renderer with animated zoom.",
+      "params": [
+        {
+          "type": "button",
+          "key": "resetView",
+          "label": "Reset View",
+          "category": "View"
+        },
+        {
+          "key": "fractal",
+          "type": "select",
+          "default": "mandelbrot",
+          "category": "Fractal",
+          "options": [
+            "mandelbrot",
+            "julia",
+            "burningShip",
+            "tricorn",
+            "multibrot",
+            "fordSpheres",
+            "gaussianFordSpheres"
+          ],
+          "description": "Which fractal formula to use for iteration."
+        },
+        {
+          "key": "maxIterBase",
+          "type": "number",
+          "default": 50,
+          "category": "Fractal",
+          "min": 10,
+          "max": 5000,
+          "step": 10,
+          "description": "Base iteration count; higher values reveal more detail but cost performance."
+        },
+        {
+          "key": "minCellPx",
+          "type": "number",
+          "default": 6,
+          "category": "Tiling",
+          "min": 1,
+          "max": 64,
+          "step": 1,
+          "description": "Smallest subdivision size in pixels before stopping recursion."
+        },
+        {
+          "key": "startCellPx",
+          "type": "number",
+          "default": 180,
+          "category": "Tiling",
+          "min": 32,
+          "max": 800,
+          "step": 10,
+          "description": "Initial tiling cell size used for adaptive subdivision."
+        },
+        {
+          "key": "showBoundaryPixels",
+          "type": "boolean",
+          "default": true,
+          "category": "Tiling",
+          "description": "Render boundary cells at minimum resolution for detail near edges."
+        },
+        {
+          "key": "shapeType",
+          "type": "select",
+          "default": "circle",
+          "category": "Rendering",
+          "options": [
+            "square",
+            "circle",
+            "ngon"
+          ],
+          "description": "Geometric primitive used to render each fractal cell."
+        },
+        {
+          "key": "nSides",
+          "type": "number",
+          "default": 6,
+          "category": "Rendering",
+          "min": 3,
+          "max": 12,
+          "step": 1,
+          "description": "Number of sides for ngon rendering mode."
+        },
+        {
+          "key": "maxCircles",
+          "type": "number",
+          "default": 40000,
+          "category": "Rendering",
+          "min": 100,
+          "max": 200000,
+          "step": 200,
+          "description": "Maximum number of shapes rendered per frame."
+        },
+        {
+          "key": "view.centerRe",
+          "type": "number",
+          "default": -0.5,
+          "category": "View",
+          "min": -3,
+          "max": 3,
+          "step": 0.001,
+          "description": "Real component of the viewport center."
+        },
+        {
+          "key": "view.centerIm",
+          "type": "number",
+          "default": 0,
+          "category": "View",
+          "min": -3,
+          "max": 3,
+          "step": 0.001,
+          "description": "Imaginary component of the viewport center."
+        },
+        {
+          "key": "view.spanRe",
+          "type": "number",
+          "default": 2.5,
+          "category": "View",
+          "min": 1e-05,
+          "max": 6,
+          "step": 0.001,
+          "description": "Width of the complex-plane view in the real axis."
+        },
+        {
+          "key": "julia.Re",
+          "type": "number",
+          "default": -0.8,
+          "category": "Julia",
+          "min": -1.5,
+          "max": 1.5,
+          "step": 0.001,
+          "description": "Real component of constant c used in the Julia set."
+        },
+        {
+          "key": "julia.Im",
+          "type": "number",
+          "default": 0.156,
+          "category": "Julia",
+          "min": -1.5,
+          "max": 1.5,
+          "step": 0.001,
+          "description": "Imaginary component of constant c used in the Julia set."
+        },
+        {
+          "key": "multibrot.Power",
+          "type": "number",
+          "default": 3,
+          "category": "Multibrot",
+          "min": 2,
+          "max": 8,
+          "step": 0.25,
+          "description": "Exponent used in the Multibrot iteration (power > 2)."
+        },
+        {
+          "key": "ford.maxDenom",
+          "type": "number",
+          "default": 35,
+          "category": "Ford",
+          "min": 3,
+          "max": 200,
+          "step": 1,
+          "description": "Largest denominator used for Ford circle sampling."
+        },
+        {
+          "key": "ford.gaussianMaxNorm",
+          "type": "number",
+          "default": 25,
+          "category": "Ford",
+          "min": 2,
+          "max": 120,
+          "step": 1,
+          "description": "Max norm (a^2 + b^2) for Gaussian denominators."
+        }
+      ],
+      "url": "/Generic/",
+      "folder": "Generic"
+    },
+    {
+      "id": "marbledPatterns",
+      "title": "Marbled Patterns",
+      "description": "Flowing, marbled ribbons shaped by swirls and sine-driven veins.",
+      "params": [
+        {
+          "key": "bandCount",
+          "label": "bands",
+          "type": "number",
+          "default": 261,
+          "min": 6,
+          "max": 800,
+          "step": 1,
+          "category": "Structure"
+        },
+        {
+          "key": "bandWidth",
+          "label": "band width",
+          "type": "number",
+          "default": 4,
+          "min": 2,
+          "max": 48,
+          "step": 1,
+          "category": "Structure"
+        },
+        {
+          "key": "bandJitter",
+          "label": "band jitter",
+          "type": "number",
+          "default": 80,
+          "min": 0,
+          "max": 80,
+          "step": 1,
+          "category": "Structure"
+        },
+        {
+          "key": "amplitude",
+          "label": "wave amplitude",
+          "type": "number",
+          "default": 9,
+          "min": 0,
+          "max": 300,
+          "step": 1,
+          "category": "Flow"
+        },
+        {
+          "key": "frequency",
+          "label": "wave frequency",
+          "type": "number",
+          "default": 0.4,
+          "min": 0.4,
+          "max": 16,
+          "step": 0.1,
+          "category": "Flow"
+        },
+        {
+          "key": "noise",
+          "label": "noise",
+          "type": "number",
+          "default": 0,
+          "min": 0,
+          "max": 80,
+          "step": 1,
+          "category": "Flow"
+        },
+        {
+          "key": "detail",
+          "label": "detail",
+          "type": "number",
+          "default": 12,
+          "min": 4,
+          "max": 50,
+          "step": 1,
+          "category": "Flow"
+        },
+        {
+          "key": "swirlCount",
+          "label": "swirl count",
+          "type": "number",
+          "default": 4,
+          "min": 0,
+          "max": 8,
+          "step": 1,
+          "category": "Flow"
+        },
+        {
+          "key": "swirlStrength",
+          "label": "swirl strength",
+          "type": "number",
+          "default": 1.8,
+          "min": 0,
+          "max": 2.4,
+          "step": 0.05,
+          "category": "Flow"
+        },
+        {
+          "key": "swirlRadius",
+          "label": "swirl radius",
+          "type": "number",
+          "default": 360,
+          "min": 60,
+          "max": 520,
+          "step": 5,
+          "category": "Flow"
+        },
+        {
+          "key": "strokeOpacity",
+          "label": "stroke opacity",
+          "type": "number",
+          "default": 0.59,
+          "min": 0.2,
+          "max": 1,
+          "step": 0.01,
+          "category": "Styling"
+        },
+        {
+          "key": "strokeMode",
+          "label": "stroke mode",
+          "type": "boolean",
+          "default": true,
+          "category": "Styling",
+          "description": "Use a single stroke color for every band."
+        },
+        {
+          "key": "strokeColor",
+          "label": "stroke color",
+          "type": "text",
+          "default": "#f2f2f2",
+          "category": "Styling"
+        },
+        {
+          "key": "seed",
+          "type": "number",
+          "default": 603430,
+          "min": 0,
+          "max": 999999,
+          "step": 1,
+          "category": "Styling"
+        },
+        {
+          "key": "palette",
+          "type": "select",
+          "default": "noir",
+          "options": [
+            "ink",
+            "rose",
+            "jade",
+            "ember",
+            "tide",
+            "citrus",
+            "mono",
+            "noir"
+          ],
+          "category": "Styling"
+        }
+      ],
+      "url": "/MarbledPatterns/",
+      "folder": "MarbledPatterns"
+    },
+    {
+      "id": "mondrianAbstraction",
+      "title": "Mondrian Abstraction",
+      "description": "Pointer over tiles to animate color + transform; parameters are editable in the UI.",
+      "params": [
+        {
+          "key": "grid.cellSize",
+          "type": "number",
+          "default": 60,
+          "min": 10,
+          "max": 220,
+          "step": 5,
+          "category": "Grid",
+          "description": "Square size in px."
+        },
+        {
+          "key": "grid.snapTo5",
+          "type": "boolean",
+          "default": true,
+          "category": "Grid",
+          "description": "Snap cellSize to 5px."
+        },
+        {
+          "key": "grid.strokeWidth",
+          "type": "number",
+          "default": 1,
+          "min": 0,
+          "max": 8,
+          "step": 0.25,
+          "category": "Grid",
+          "description": "Tile outline width."
+        },
+        {
+          "key": "grid.strokeOpacity",
+          "type": "number",
+          "default": 1,
+          "min": 0,
+          "max": 1,
+          "step": 0.05,
+          "category": "Grid",
+          "description": "Tile outline opacity."
+        },
+        {
+          "key": "color.startHue",
+          "type": "number",
+          "default": 0,
+          "min": 0,
+          "max": 360,
+          "step": 1,
+          "category": "Color",
+          "description": "Starting hue."
+        },
+        {
+          "key": "color.hueStep",
+          "type": "number",
+          "default": 9,
+          "min": 0,
+          "max": 60,
+          "step": 1,
+          "category": "Color",
+          "description": "Hue increment per interaction."
+        },
+        {
+          "key": "color.saturation",
+          "type": "number",
+          "default": 1,
+          "min": 0,
+          "max": 1,
+          "step": 0.05,
+          "category": "Color",
+          "description": "0 = gray, 1 = vivid."
+        },
+        {
+          "key": "color.lightness",
+          "type": "number",
+          "default": 0.6,
+          "min": 0,
+          "max": 1,
+          "step": 0.05,
+          "category": "Color",
+          "description": "Perceived brightness."
+        },
+        {
+          "key": "color.fillOpacity",
+          "type": "number",
+          "default": 0.45,
+          "min": 0,
+          "max": 1,
+          "step": 0.05,
+          "category": "Color",
+          "description": "Opacity after settle."
+        },
+        {
+          "key": "color.burstFillOpacity",
+          "type": "number",
+          "default": 0.1,
+          "min": 0,
+          "max": 1,
+          "step": 0.05,
+          "category": "Color",
+          "description": "Opacity during burst."
+        },
+        {
+          "key": "motion.enabled",
+          "type": "boolean",
+          "default": true,
+          "category": "Motion",
+          "description": "Enable pointer interactions."
+        },
+        {
+          "key": "motion.running",
+          "type": "boolean",
+          "default": true,
+          "category": "Motion",
+          "description": "Run the auto-simulation loop."
+        },
+        {
+          "key": "motion.tickMs",
+          "type": "number",
+          "default": 220,
+          "min": 16,
+          "max": 4000,
+          "step": 1,
+          "category": "Motion",
+          "description": "Time between automatic tile triggers."
+        },
+        {
+          "key": "motion.triggersPerTick",
+          "type": "number",
+          "default": 1,
+          "min": 1,
+          "max": 12,
+          "step": 1,
+          "category": "Motion",
+          "description": "How many tiles trigger per tick."
+        },
+        {
+          "key": "motion.hoverCooldownMs",
+          "type": "number",
+          "default": 80,
+          "min": 0,
+          "max": 1000,
+          "step": 5,
+          "category": "Motion",
+          "description": "Minimum time between hover-triggered animations."
+        },
+        {
+          "key": "motion.durationMs",
+          "type": "number",
+          "default": 600,
+          "min": 0,
+          "max": 4000,
+          "step": 25,
+          "category": "Motion",
+          "description": "Burst transition duration."
+        },
+        {
+          "key": "motion.delayMs",
+          "type": "number",
+          "default": 1200,
+          "min": 0,
+          "max": 8000,
+          "step": 25,
+          "category": "Motion",
+          "description": "Delay before settling."
+        },
+        {
+          "key": "motion.rotateDeg",
+          "type": "number",
+          "default": 180,
+          "min": -720,
+          "max": 720,
+          "step": 5,
+          "category": "Motion",
+          "description": "Rotation during burst."
+        },
+        {
+          "key": "motion.scaleBurst",
+          "type": "number",
+          "default": 1,
+          "min": 0.1,
+          "max": 6,
+          "step": 0.05,
+          "category": "Motion",
+          "description": "Scale during burst."
+        },
+        {
+          "key": "motion.scaleMin",
+          "type": "number",
+          "default": 1,
+          "min": 0.1,
+          "max": 6,
+          "step": 0.05,
+          "category": "Motion",
+          "description": "Min settle scale."
+        },
+        {
+          "key": "motion.scaleMax",
+          "type": "number",
+          "default": 3.6,
+          "min": 0.1,
+          "max": 8,
+          "step": 0.05,
+          "category": "Motion",
+          "description": "Max settle scale."
+        }
+      ],
+      "simulation": {
+        "param": "motion.running"
+      },
+      "url": "/MondrianAbstraction/",
+      "folder": "MondrianAbstraction"
+    },
+    {
+      "id": "oliverLabsCollection",
+      "title": "Oliver Labs Collection",
+      "description": "Procedural flow fields and algorithmic structures.",
+      "params": [
+        {
+          "key": "paths",
+          "type": "number",
+          "default": 120,
+          "min": 20,
+          "max": 300,
+          "step": 10,
+          "category": "Flow"
+        },
+        {
+          "key": "steps",
+          "type": "number",
+          "default": 160,
+          "min": 40,
+          "max": 400,
+          "step": 10,
+          "category": "Flow"
+        },
+        {
+          "key": "fieldScale",
+          "type": "number",
+          "default": 0.006,
+          "min": 0.002,
+          "max": 0.02,
+          "step": 0.001,
+          "category": "Flow"
+        },
+        {
+          "key": "stepSize",
+          "type": "number",
+          "default": 6,
+          "min": 2,
+          "max": 16,
+          "step": 1,
+          "category": "Flow"
+        },
+        {
+          "key": "passes",
+          "type": "number",
+          "default": 2,
+          "min": 1,
+          "max": 4,
+          "step": 1,
+          "category": "Flow"
+        },
+        {
+          "key": "curl",
+          "type": "number",
+          "default": 0.6,
+          "min": 0,
+          "max": 1,
+          "step": 0.05,
+          "category": "Flow"
+        },
+        {
+          "key": "fitMode",
+          "type": "select",
+          "default": "contain",
+          "options": [
+            "contain",
+            "cover",
+            "stretch"
+          ],
+          "category": "Layout"
+        },
+        {
+          "key": "padding",
+          "type": "number",
+          "default": 36,
+          "min": 0,
+          "max": 200,
+          "step": 2,
+          "category": "Layout"
+        },
+        {
+          "key": "strokeWidth",
+          "type": "number",
+          "default": 1.2,
+          "min": 0.4,
+          "max": 3,
+          "step": 0.1,
+          "category": "Styling"
+        },
+        {
+          "key": "seed",
+          "type": "number",
+          "default": 19321,
+          "min": 0,
+          "max": 999999,
+          "step": 1,
+          "category": "Styling"
+        }
+      ],
+      "url": "/OliverLabsCollection/",
+      "folder": "OliverLabsCollection"
+    },
+    {
+      "id": "pinkallSchmittGunnHoffmannCollection",
+      "title": "Pinkall, Schmitt, Gunn, Hoffmann Collection",
+      "description": "Mesh-based curvature and surface parametrization studies.",
+      "params": [
+        {
+          "key": "grid",
+          "type": "number",
+          "default": 28,
+          "min": 8,
+          "max": 60,
+          "step": 2,
+          "category": "Surface"
+        },
+        {
+          "key": "frequency",
+          "type": "number",
+          "default": 2.6,
+          "min": 0.5,
+          "max": 5,
+          "step": 0.1,
+          "category": "Surface"
+        },
+        {
+          "key": "amplitude",
+          "type": "number",
+          "default": 0.35,
+          "min": 0.1,
+          "max": 0.8,
+          "step": 0.01,
+          "category": "Surface"
+        },
+        {
+          "key": "depth",
+          "type": "number",
+          "default": 120,
+          "min": 20,
+          "max": 200,
+          "step": 5,
+          "category": "Surface"
+        },
+        {
+          "key": "warp",
+          "type": "number",
+          "default": 0.2,
+          "min": 0,
+          "max": 0.8,
+          "step": 0.02,
+          "category": "Surface"
+        },
+        {
+          "key": "tilt",
+          "type": "number",
+          "default": 0.25,
+          "min": 0,
+          "max": 1,
+          "step": 0.05,
+          "category": "Surface"
+        },
+        {
+          "key": "fitMode",
+          "type": "select",
+          "default": "contain",
+          "options": [
+            "contain",
+            "cover",
+            "stretch"
+          ],
+          "category": "Layout"
+        },
+        {
+          "key": "padding",
+          "type": "number",
+          "default": 32,
+          "min": 0,
+          "max": 200,
+          "step": 2,
+          "category": "Layout"
+        },
+        {
+          "key": "strokeWidth",
+          "type": "number",
+          "default": 1,
+          "min": 0.3,
+          "max": 3,
+          "step": 0.1,
+          "category": "Styling"
+        }
+      ],
+      "url": "/PinkallSchmittGunnHoffmannCollection/",
+      "folder": "PinkallSchmittGunnHoffmannCollection"
+    },
+    {
+      "id": "plantCells",
+      "title": "Plant Cells",
+      "description": "Voronoi cells packed in a circle with site circles and outer rectangle stacks.",
+      "params": [
+        {
+          "key": "pointCount",
+          "label": "cell count",
+          "type": "number",
+          "default": 90,
+          "category": "Cells",
+          "min": 5,
+          "max": 400,
+          "step": 1
+        },
+        {
+          "key": "minDist",
+          "label": "minimum spacing",
+          "type": "number",
+          "default": 10,
+          "category": "Cells",
+          "min": 0,
+          "max": 120,
+          "step": 1
+        },
+        {
+          "key": "radiusScale",
+          "label": "circle scale",
+          "type": "number",
+          "default": 0.38,
+          "category": "Cells",
+          "min": 0.2,
+          "max": 0.48,
+          "step": 0.01
+        },
+        {
+          "key": "cellCircleScale",
+          "label": "cell circle scale",
+          "type": "number",
+          "default": 0.96,
+          "category": "Cells",
+          "min": 0.5,
+          "max": 1,
+          "step": 0.01
+        },
+        {
+          "key": "circleSegments",
+          "label": "circle segments",
+          "type": "number",
+          "default": 96,
+          "category": "Cells",
+          "min": 24,
+          "max": 240,
+          "step": 1
+        },
+        {
+          "key": "seed",
+          "type": "number",
+          "default": 42,
+          "category": "Randomness",
+          "min": 0,
+          "max": 999999,
+          "step": 1
+        },
+        {
+          "type": "button",
+          "key": "randomizeSeed",
+          "label": "Randomize Seed",
+          "category": "Randomness"
+        },
+        {
+          "key": "rectSpacing",
+          "label": "rect spacing",
+          "type": "number",
+          "default": 26,
+          "category": "Rectangles",
+          "min": 6,
+          "max": 120,
+          "step": 1
+        },
+        {
+          "key": "rectLevels",
+          "label": "rect levels",
+          "type": "number",
+          "default": 4,
+          "category": "Rectangles",
+          "min": 1,
+          "max": 10,
+          "step": 1
+        },
+        {
+          "key": "rectWidth",
+          "label": "rect width",
+          "type": "number",
+          "default": 14,
+          "category": "Rectangles",
+          "min": 2,
+          "max": 80,
+          "step": 1
+        },
+        {
+          "key": "rectHeight",
+          "label": "rect height",
+          "type": "number",
+          "default": 7,
+          "category": "Rectangles",
+          "min": 2,
+          "max": 60,
+          "step": 1
+        },
+        {
+          "key": "rectGap",
+          "label": "rect gap",
+          "type": "number",
+          "default": 3,
+          "category": "Rectangles",
+          "min": 0,
+          "max": 30,
+          "step": 1
+        },
+        {
+          "key": "rectOffset",
+          "label": "rect offset",
+          "type": "number",
+          "default": 10,
+          "category": "Rectangles",
+          "min": 0,
+          "max": 80,
+          "step": 1
+        },
+        {
+          "key": "strokeColor",
+          "label": "stroke color",
+          "type": "text",
+          "default": "#1b1712",
+          "category": "Style"
+        },
+        {
+          "key": "strokeWidth",
+          "label": "stroke width",
+          "type": "number",
+          "default": 1.1,
+          "category": "Style",
+          "min": 0.2,
+          "max": 6,
+          "step": 0.1
+        },
+        {
+          "key": "outerStrokeWidth",
+          "label": "outer stroke width",
+          "type": "number",
+          "default": 1.8,
+          "category": "Style",
+          "min": 0.2,
+          "max": 8,
+          "step": 0.1
+        },
+        {
+          "key": "strokeOpacity",
+          "label": "stroke opacity",
+          "type": "number",
+          "default": 0.9,
+          "category": "Style",
+          "min": 0,
+          "max": 1,
+          "step": 0.01
+        },
+        {
+          "key": "background",
+          "type": "select",
+          "default": "paper",
+          "category": "Style",
+          "options": [
+            "paper",
+            "night",
+            "none"
+          ]
+        }
+      ],
+      "url": "/plantCells/",
+      "folder": "plantCells"
+    },
+    {
+      "id": "proceduralGrassField",
+      "title": "Procedural Grass Field",
+      "description": "Editable SVG blades grown through deterministic patches, layered wind, and nadir-to-oblique projection.",
+      "params": [
+        {
+          "key": "growth",
+          "label": "growth stage",
+          "type": "number",
+          "default": 0.88,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Growth",
+          "description": "Controls sprout count and blade height; animate this from 0 to 1 to grow the field."
+        },
+        {
+          "key": "density",
+          "label": "blade density",
+          "type": "number",
+          "default": 1450,
+          "min": 12,
+          "max": 3200,
+          "step": 1,
+          "category": "Growth"
+        },
+        {
+          "key": "bladeHeight",
+          "label": "blade height",
+          "type": "number",
+          "default": 52,
+          "min": 2,
+          "max": 180,
+          "step": 1,
+          "category": "Growth"
+        },
+        {
+          "key": "heightVariation",
+          "label": "height variation",
+          "type": "number",
+          "default": 0.52,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Growth"
+        },
+        {
+          "key": "bladeWidth",
+          "label": "blade width",
+          "type": "number",
+          "default": 4.2,
+          "min": 0.25,
+          "max": 18,
+          "step": 0.05,
+          "category": "Growth"
+        },
+        {
+          "key": "widthVariation",
+          "label": "width variation",
+          "type": "number",
+          "default": 0.35,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Growth"
+        },
+        {
+          "key": "taper",
+          "label": "tip taper",
+          "type": "number",
+          "default": 1.35,
+          "min": 0.2,
+          "max": 4,
+          "step": 0.05,
+          "category": "Growth"
+        },
+        {
+          "key": "seedHeads",
+          "label": "seed head amount",
+          "type": "number",
+          "default": 0.04,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Growth"
+        },
+        {
+          "key": "distribution",
+          "type": "select",
+          "default": "clumps",
+          "options": [
+            "uniform",
+            "clumps",
+            "oval",
+            "rows",
+            "radial"
+          ],
+          "category": "Distribution"
+        },
+        {
+          "key": "clumping",
+          "type": "number",
+          "default": 0.58,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Distribution"
+        },
+        {
+          "key": "clumpCount",
+          "label": "clump count",
+          "type": "number",
+          "default": 19,
+          "min": 1,
+          "max": 80,
+          "step": 1,
+          "category": "Distribution"
+        },
+        {
+          "key": "clumpRadius",
+          "label": "clump radius",
+          "type": "number",
+          "default": 0.1,
+          "min": 0.01,
+          "max": 0.5,
+          "step": 0.005,
+          "category": "Distribution"
+        },
+        {
+          "key": "barePatches",
+          "label": "bare patches",
+          "type": "number",
+          "default": 0.08,
+          "min": 0,
+          "max": 0.82,
+          "step": 0.01,
+          "category": "Distribution"
+        },
+        {
+          "key": "patchScale",
+          "label": "patch scale",
+          "type": "number",
+          "default": 0.16,
+          "min": 0.02,
+          "max": 0.5,
+          "step": 0.005,
+          "category": "Distribution"
+        },
+        {
+          "key": "rowSpacing",
+          "label": "row / ring spacing",
+          "type": "number",
+          "default": 0.052,
+          "min": 0.012,
+          "max": 0.25,
+          "step": 0.002,
+          "category": "Distribution"
+        },
+        {
+          "key": "rowJitter",
+          "label": "row / ring jitter",
+          "type": "number",
+          "default": 0.2,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Distribution"
+        },
+        {
+          "key": "bend",
+          "label": "blade bend",
+          "type": "number",
+          "default": 0.52,
+          "min": 0,
+          "max": 1.8,
+          "step": 0.01,
+          "category": "Blade Form"
+        },
+        {
+          "key": "bendVariation",
+          "label": "bend variation",
+          "type": "number",
+          "default": 0.4,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Blade Form"
+        },
+        {
+          "key": "directionCoherence",
+          "label": "direction coherence",
+          "type": "number",
+          "default": 0.46,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Blade Form",
+          "description": "Makes nearby blades share their clump's growing direction."
+        },
+        {
+          "key": "twist",
+          "label": "blade twist",
+          "type": "number",
+          "default": 0.18,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Blade Form"
+        },
+        {
+          "key": "windStrength",
+          "label": "wind strength",
+          "type": "number",
+          "default": 0.26,
+          "min": 0,
+          "max": 1.5,
+          "step": 0.01,
+          "category": "Wind"
+        },
+        {
+          "key": "windDirection",
+          "label": "wind direction",
+          "type": "number",
+          "default": 38,
+          "min": 0,
+          "max": 360,
+          "step": 1,
+          "category": "Wind"
+        },
+        {
+          "key": "gustScale",
+          "label": "gust field scale",
+          "type": "number",
+          "default": 0.28,
+          "min": 0.02,
+          "max": 0.7,
+          "step": 0.01,
+          "category": "Wind"
+        },
+        {
+          "key": "turbulence",
+          "type": "number",
+          "default": 0.28,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Wind"
+        },
+        {
+          "key": "windPhase",
+          "label": "wind phase",
+          "type": "number",
+          "default": 0.16,
+          "min": 0,
+          "max": 1,
+          "step": 0.005,
+          "category": "Wind",
+          "description": "Animate 0 to 1 for a seamless moving gust field."
+        },
+        {
+          "key": "viewTilt",
+          "label": "off-nadir tilt",
+          "type": "number",
+          "default": 8,
+          "min": 0,
+          "max": 72,
+          "step": 1,
+          "category": "Camera",
+          "description": "0° is nadir; higher values reveal blade height and compress field depth."
+        },
+        {
+          "key": "viewYaw",
+          "label": "field yaw",
+          "type": "number",
+          "default": 12,
+          "min": 0,
+          "max": 360,
+          "step": 1,
+          "category": "Camera"
+        },
+        {
+          "key": "perspective",
+          "type": "number",
+          "default": 0.12,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Camera"
+        },
+        {
+          "key": "fieldScale",
+          "label": "field scale",
+          "type": "number",
+          "default": 0.96,
+          "min": 0.25,
+          "max": 1.8,
+          "step": 0.01,
+          "category": "Camera"
+        },
+        {
+          "key": "verticalOffset",
+          "label": "vertical offset",
+          "type": "number",
+          "default": 0,
+          "min": -0.35,
+          "max": 0.35,
+          "step": 0.01,
+          "category": "Camera"
+        },
+        {
+          "key": "palette",
+          "type": "select",
+          "default": "emerald",
+          "options": [
+            "emerald",
+            "bluegrass",
+            "moss",
+            "straw",
+            "frost",
+            "noir",
+            "storm",
+            "neon"
+          ],
+          "category": "Surface"
+        },
+        {
+          "key": "colorVariation",
+          "label": "color variation",
+          "type": "number",
+          "default": 0.66,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Surface"
+        },
+        {
+          "key": "lightAngle",
+          "label": "light direction",
+          "type": "number",
+          "default": 320,
+          "min": 0,
+          "max": 360,
+          "step": 1,
+          "category": "Surface"
+        },
+        {
+          "key": "bladeOpacity",
+          "label": "blade opacity",
+          "type": "number",
+          "default": 0.94,
+          "min": 0.05,
+          "max": 1,
+          "step": 0.01,
+          "category": "Surface"
+        },
+        {
+          "key": "outlineWidth",
+          "label": "outline width",
+          "type": "number",
+          "default": 0.16,
+          "min": 0,
+          "max": 2.5,
+          "step": 0.02,
+          "category": "Surface"
+        },
+        {
+          "key": "shadowStrength",
+          "label": "shadow strength",
+          "type": "number",
+          "default": 0.14,
+          "min": 0,
+          "max": 0.8,
+          "step": 0.01,
+          "category": "Surface"
+        },
+        {
+          "key": "groundTexture",
+          "label": "ground texture",
+          "type": "number",
+          "default": 0.38,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Surface"
+        },
+        {
+          "key": "groundTextureScale",
+          "label": "texture scale",
+          "type": "number",
+          "default": 0.12,
+          "min": 0.02,
+          "max": 0.4,
+          "step": 0.005,
+          "category": "Surface"
+        },
+        {
+          "key": "seed",
+          "type": "number",
+          "default": 621734,
+          "min": 0,
+          "max": 999999,
+          "step": 1,
+          "category": "System",
+          "description": "Deterministic seed used by placement, form, color, and texture."
+        },
+        {
+          "key": "regenerate",
+          "label": "new seed",
+          "type": "button",
+          "category": "System"
+        }
+      ],
+      "url": "/ProceduralGrass/",
+      "folder": "ProceduralGrass"
+    },
+    {
+      "id": "quasicrystallineWickerwork",
+      "title": "Quasicrystalline Wickerwork",
+      "description": "Aperiodic lattice strands woven with golden-angle symmetry.",
+      "params": [
+        {
+          "key": "strands",
+          "type": "number",
+          "default": 42,
+          "min": 8,
+          "max": 120,
+          "step": 2,
+          "category": "Structure"
+        },
+        {
+          "key": "rings",
+          "type": "number",
+          "default": 18,
+          "min": 6,
+          "max": 40,
+          "step": 1,
+          "category": "Structure"
+        },
+        {
+          "key": "twist",
+          "type": "number",
+          "default": 0.18,
+          "min": 0,
+          "max": 0.6,
+          "step": 0.01,
+          "category": "Structure"
+        },
+        {
+          "key": "radialWarp",
+          "type": "number",
+          "default": 0.25,
+          "min": 0,
+          "max": 0.8,
+          "step": 0.01,
+          "category": "Structure"
+        },
+        {
+          "key": "weftCount",
+          "type": "number",
+          "default": 6,
+          "min": 0,
+          "max": 24,
+          "step": 1,
+          "category": "Structure"
+        },
+        {
+          "key": "fitMode",
+          "type": "select",
+          "default": "contain",
+          "options": [
+            "contain",
+            "cover",
+            "stretch"
+          ],
+          "category": "Layout"
+        },
+        {
+          "key": "padding",
+          "type": "number",
+          "default": 36,
+          "min": 0,
+          "max": 200,
+          "step": 2,
+          "category": "Layout"
+        },
+        {
+          "key": "strokeWidth",
+          "type": "number",
+          "default": 2.2,
+          "min": 0.6,
+          "max": 6,
+          "step": 0.1,
+          "category": "Styling"
+        },
+        {
+          "key": "seed",
+          "type": "number",
+          "default": 71139,
+          "min": 0,
+          "max": 999999,
+          "step": 1,
+          "category": "Styling"
+        }
+      ],
+      "url": "/QuasicrystallineWickerwork/",
+      "folder": "QuasicrystallineWickerwork"
+    },
+    {
+      "id": "spaceFillingCurves",
+      "title": "Space Filling Curves",
+      "description": "Randomly pack rectangles until full coverage, then fill each with Hilbert or Peano curves at one shared detail scale.",
+      "params": [
+        {
+          "key": "curveMode",
+          "label": "curve mode",
+          "type": "select",
+          "default": "peano",
+          "options": [
+            "hilbert",
+            "peano"
+          ],
+          "category": "Curve"
+        },
+        {
+          "key": "curveScalingMode",
+          "label": "curve scaling",
+          "type": "select",
+          "default": "stretch",
+          "options": [
+            "stretch",
+            "globalClip"
+          ],
+          "category": "Curve",
+          "description": "Stretch maps one curve to each rectangle. Global clip draws one scene-wide curve and clips it per rectangle."
+        },
+        {
+          "key": "hilbertOrder",
+          "label": "hilbert order",
+          "type": "number",
+          "default": 5,
+          "min": 1,
+          "max": 12,
+          "step": 1,
+          "category": "Curve"
+        },
+        {
+          "key": "peanoOrder",
+          "label": "peano order",
+          "type": "number",
+          "default": 3,
+          "min": 1,
+          "max": 8,
+          "step": 1,
+          "category": "Curve"
+        },
+        {
+          "key": "detailStepPx",
+          "label": "detail step px",
+          "type": "number",
+          "default": 6,
+          "min": 1,
+          "max": 30,
+          "step": 0.5,
+          "category": "Curve",
+          "description": "Global spacing for sampled curve points, shared by every rectangle."
+        },
+        {
+          "key": "curveCellPx",
+          "label": "curve cell px",
+          "type": "number",
+          "default": 96,
+          "min": 8,
+          "max": 800,
+          "step": 1,
+          "category": "Curve",
+          "description": "Used by the invariant-scale mode elsewhere; retained here for compatibility."
+        },
+        {
+          "key": "lineInsetPx",
+          "label": "line inset px",
+          "type": "number",
+          "default": 2,
+          "min": 0,
+          "max": 40,
+          "step": 0.5,
+          "category": "Curve",
+          "description": "Inset from rectangle edges before drawing curves."
+        },
+        {
+          "key": "minRectSize",
+          "label": "min rect size",
+          "type": "number",
+          "default": 80,
+          "min": 8,
+          "max": 1200,
+          "step": 1,
+          "category": "Rectangles"
+        },
+        {
+          "key": "maxRectSize",
+          "label": "max rect size",
+          "type": "number",
+          "default": 280,
+          "min": 8,
+          "max": 1600,
+          "step": 1,
+          "category": "Rectangles"
+        },
+        {
+          "key": "minRectAspect",
+          "label": "min rect aspect",
+          "type": "number",
+          "default": 0.5,
+          "min": 0.2,
+          "max": 8,
+          "step": 0.05,
+          "category": "Rectangles"
+        },
+        {
+          "key": "maxRectAspect",
+          "label": "max rect aspect",
+          "type": "number",
+          "default": 2.2,
+          "min": 0.2,
+          "max": 8,
+          "step": 0.05,
+          "category": "Rectangles"
+        },
+        {
+          "key": "maxRectangles",
+          "label": "max rectangles",
+          "type": "number",
+          "default": 10,
+          "min": 1,
+          "max": 2400,
+          "step": 1,
+          "category": "Rectangles"
+        },
+        {
+          "key": "palette",
+          "type": "select",
+          "default": "blueprint",
+          "options": [
+            "blueprint",
+            "paperInk",
+            "monoBright"
+          ],
+          "category": "Style"
+        },
+        {
+          "key": "lineWidth",
+          "label": "line width",
+          "type": "number",
+          "default": 1.25,
+          "min": 0.1,
+          "max": 10,
+          "step": 0.1,
+          "category": "Style"
+        },
+        {
+          "key": "lineOpacity",
+          "label": "line opacity",
+          "type": "number",
+          "default": 0.9,
+          "min": 0.05,
+          "max": 1,
+          "step": 0.01,
+          "category": "Style"
+        },
+        {
+          "key": "showRectFill",
+          "label": "show rect fill",
+          "type": "boolean",
+          "default": false,
+          "category": "Style"
+        },
+        {
+          "key": "rectFillOpacity",
+          "label": "rect fill opacity",
+          "type": "number",
+          "default": 0.28,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Style"
+        },
+        {
+          "key": "showOutlines",
+          "label": "show outlines",
+          "type": "boolean",
+          "default": false,
+          "category": "Style"
+        },
+        {
+          "key": "outlineWidth",
+          "label": "outline width",
+          "type": "number",
+          "default": 1,
+          "min": 0,
+          "max": 10,
+          "step": 0.1,
+          "category": "Style"
+        },
+        {
+          "key": "seed",
+          "type": "number",
+          "default": 307271,
+          "min": 0,
+          "max": 999999,
+          "step": 1,
+          "category": "System"
+        },
+        {
+          "type": "button",
+          "key": "newSeed",
+          "label": "New Seed",
+          "category": "System"
+        }
+      ],
+      "url": "/SpaceFillingCurves/",
+      "folder": "SpaceFillingCurves"
+    },
+    {
+      "id": "stepSplineLab",
+      "title": "Step Spline Lab",
+      "description": "Edit a scene made of multiple splines. Click a rendered line to activate it, then tweak its own settings and shared variables.",
+      "params": [
+        {
+          "key": "backgroundColor",
+          "label": "background",
+          "type": "text",
+          "default": "#ffeeee",
+          "category": "Scene"
+        },
+        {
+          "key": "showGuides",
+          "label": "show guides",
+          "type": "boolean",
+          "default": true,
+          "category": "Scene"
+        },
+        {
+          "key": "controlPointRadius",
+          "label": "handle size",
+          "type": "number",
+          "default": 7,
+          "min": 3,
+          "max": 24,
+          "step": 0.5,
+          "category": "Scene"
+        },
+        {
+          "key": "scene.generator.minLines",
+          "label": "min lines",
+          "type": "number",
+          "default": 3,
+          "min": 1,
+          "max": 24,
+          "step": 1,
+          "category": "Generator"
+        },
+        {
+          "key": "scene.generator.maxLines",
+          "label": "max lines",
+          "type": "number",
+          "default": 8,
+          "min": 1,
+          "max": 24,
+          "step": 1,
+          "category": "Generator"
+        },
+        {
+          "key": "scene.generator.minPointsPerLine",
+          "label": "min points per line",
+          "type": "number",
+          "default": 3,
+          "min": 2,
+          "max": 16,
+          "step": 1,
+          "category": "Generator"
+        },
+        {
+          "key": "scene.generator.maxPointsPerLine",
+          "label": "max points per line",
+          "type": "number",
+          "default": 8,
+          "min": 2,
+          "max": 16,
+          "step": 1,
+          "category": "Generator"
+        },
+        {
+          "key": "scene.generator.seed",
+          "label": "generator seed",
+          "type": "number",
+          "default": 1803,
+          "min": 0,
+          "max": 999999,
+          "step": 1,
+          "category": "Generator"
+        },
+        {
+          "key": "scene.generator.edgePadding",
+          "label": "edge padding",
+          "type": "number",
+          "default": 0.04,
+          "min": 0,
+          "max": 0.2,
+          "step": 0.01,
+          "category": "Generator"
+        },
+        {
+          "key": "scene.generator.jitter",
+          "label": "generator jitter",
+          "type": "number",
+          "default": 0.12,
+          "min": 0,
+          "max": 0.35,
+          "step": 0.01,
+          "category": "Generator"
+        },
+        {
+          "key": "scene.generator.minPointStep",
+          "label": "min next-point distance",
+          "type": "number",
+          "default": 0.05,
+          "min": 0.01,
+          "max": 0.45,
+          "step": 0.01,
+          "category": "Generator"
+        },
+        {
+          "key": "scene.generator.maxPointStep",
+          "label": "max next-point distance",
+          "type": "number",
+          "default": 0.14,
+          "min": 0.01,
+          "max": 0.55,
+          "step": 0.01,
+          "category": "Generator"
+        },
+        {
+          "key": "scene.generator.closedChance",
+          "label": "closed loop chance",
+          "type": "number",
+          "default": 0.45,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Generator"
+        },
+        {
+          "key": "scene.generator.pointSampler",
+          "label": "point sampler",
+          "type": "select",
+          "default": "mixed",
+          "category": "Generator",
+          "options": [
+            "mixed",
+            "random",
+            "halton",
+            "r2",
+            "curlicue"
+          ]
+        },
+        {
+          "key": "scene.generator.allowLine",
+          "label": "allow line mode",
+          "type": "boolean",
+          "default": true,
+          "category": "Generator"
+        },
+        {
+          "key": "scene.generator.allowDot",
+          "label": "allow dot mode",
+          "type": "boolean",
+          "default": true,
+          "category": "Generator"
+        },
+        {
+          "key": "scene.generator.allowContinuous",
+          "label": "allow continuous mode",
+          "type": "boolean",
+          "default": true,
+          "category": "Generator"
+        },
+        {
+          "type": "button",
+          "key": "generateScene",
+          "label": "Generate Fresh Scene",
+          "category": "Generator"
+        }
+      ],
+      "url": "/StepSplineLab/",
+      "folder": "StepSplineLab"
+    },
+    {
+      "id": "surferGalleryBiancaViolet",
+      "title": "SURFER Gallery (Bianca Violet)",
+      "description": "Implicit algebraic surfaces traced as contour slices.",
+      "params": [
+        {
+          "key": "equation",
+          "type": "select",
+          "default": "violet",
+          "options": [
+            "violet",
+            "whorl",
+            "lemniscate",
+            "orchid"
+          ],
+          "category": "Surface"
+        },
+        {
+          "key": "gridSize",
+          "type": "number",
+          "default": 90,
+          "min": 30,
+          "max": 160,
+          "step": 5,
+          "category": "Surface"
+        },
+        {
+          "key": "isoCount",
+          "type": "number",
+          "default": 6,
+          "min": 2,
+          "max": 12,
+          "step": 1,
+          "category": "Surface"
+        },
+        {
+          "key": "isoSelection",
+          "type": "text",
+          "default": "",
+          "category": "Surface",
+          "description": "ISO indices (comma or range, e.g. \"0,2,4\" or \"0-5\"). Blank = all."
+        },
+        {
+          "key": "isoSpan",
+          "type": "number",
+          "default": 1,
+          "min": 0.2,
+          "max": 2.2,
+          "step": 0.05,
+          "category": "Surface"
+        },
+        {
+          "key": "isoCenter",
+          "type": "number",
+          "default": 0,
+          "min": -1,
+          "max": 1,
+          "step": 0.05,
+          "category": "Surface"
+        },
+        {
+          "key": "warp",
+          "type": "number",
+          "default": 1,
+          "min": -3,
+          "max": 3,
+          "step": 0.05,
+          "category": "Surface"
+        },
+        {
+          "key": "rotation",
+          "type": "number",
+          "default": -0.4,
+          "min": -1.5,
+          "max": 1.5,
+          "step": 0.05,
+          "category": "Surface"
+        },
+        {
+          "key": "fitMode",
+          "type": "select",
+          "default": "stretch",
+          "options": [
+            "contain",
+            "cover",
+            "stretch"
+          ],
+          "category": "Layout"
+        },
+        {
+          "key": "padding",
+          "type": "number",
+          "default": 36,
+          "min": 0,
+          "max": 200,
+          "step": 2,
+          "category": "Layout"
+        },
+        {
+          "key": "strokeWidth",
+          "type": "number",
+          "default": 1.2,
+          "min": 0.4,
+          "max": 4,
+          "step": 0.1,
+          "category": "Styling"
+        },
+        {
+          "key": "toggleContinuousPaths",
+          "type": "button",
+          "label": "Toggle Continuous Paths",
+          "category": "Styling",
+          "description": "Switch between line segments and joined paths."
+        }
+      ],
+      "url": "/SurferGalleryBiancaViolet/",
+      "folder": "SurferGalleryBiancaViolet"
+    },
+    {
+      "id": "svgGallery",
+      "title": "SVG Wall",
+      "description": "Browse local artwork with lightweight previews and infinite scrolling.",
+      "params": [
+        {
+          "key": "gallery.tileSize",
+          "type": "number",
+          "default": 220,
+          "min": 140,
+          "max": 360,
+          "step": 10,
+          "label": "Tile size",
+          "category": "Gallery"
+        }
+      ],
+      "url": "/ART/",
+      "folder": "ART",
+      "captureWarning": "SVG Wall displays image previews; it does not expose a generated SVG for capture."
+    },
+    {
+      "id": "voronoiFluid",
+      "title": "Voronoi (Fluid)",
+      "description": "Interactive Voronoi diagram. Click to add points; tweak density + min spacing.",
+      "params": [
+        {
+          "key": "pointCount",
+          "label": "number of points",
+          "type": "number",
+          "default": 60,
+          "category": "Points",
+          "min": 2,
+          "max": 500,
+          "step": 1
+        },
+        {
+          "key": "density",
+          "label": "randomness density",
+          "type": "number",
+          "default": 0.55,
+          "category": "Points",
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "description": "0 = uniform; 1 = strongly noise-biased clustering."
+        },
+        {
+          "key": "minDist",
+          "label": "minimum width between points",
+          "type": "number",
+          "default": 14,
+          "category": "Points",
+          "min": 0,
+          "max": 200,
+          "step": 1
+        },
+        {
+          "key": "seed",
+          "type": "number",
+          "default": 887694,
+          "category": "Points",
+          "min": 0,
+          "max": 999999,
+          "step": 1,
+          "description": "Deterministic seed for random generation."
+        },
+        {
+          "key": "noiseScale",
+          "label": "density noise scale",
+          "type": "number",
+          "default": 120,
+          "category": "Points",
+          "min": 8,
+          "max": 600,
+          "step": 1
+        },
+        {
+          "key": "strokeWidth",
+          "type": "number",
+          "default": 0,
+          "category": "Styling",
+          "min": 0,
+          "max": 6,
+          "step": 0.1
+        },
+        {
+          "key": "strokeOpacity",
+          "type": "number",
+          "default": 0.8,
+          "category": "Styling",
+          "min": 0,
+          "max": 1,
+          "step": 0.01
+        },
+        {
+          "key": "fillOpacity",
+          "type": "number",
+          "default": 0.7,
+          "category": "Styling",
+          "min": 0,
+          "max": 1,
+          "step": 0.01
+        },
+        {
+          "key": "palette",
+          "type": "select",
+          "default": "turbo",
+          "category": "Styling",
+          "options": [
+            "turbo",
+            "viridis",
+            "plasma",
+            "magma",
+            "cividis",
+            "spectral",
+            "greys"
+          ]
+        },
+        {
+          "key": "showSites",
+          "type": "boolean",
+          "default": true,
+          "category": "Styling",
+          "description": "Render the point sites as dots."
+        },
+        {
+          "type": "button",
+          "key": "regenerate",
+          "label": "Regenerate (clear manual points)",
+          "category": "Actions"
+        }
+      ],
+      "url": "/Voronoi/",
+      "folder": "Voronoi"
+    },
+    {
+      "id": "voxelHatching",
+      "title": "Voxel Hatching",
+      "description": "Preset voxel primitives + iterative transforms rendered in Three.js, then exported to editable SVG.",
+      "params": [
+        {
+          "key": "seed",
+          "type": "number",
+          "default": 41680039,
+          "min": 0,
+          "max": 999999999,
+          "step": 1,
+          "category": "Scene",
+          "description": "Deterministic seed for voxel generation."
+        },
+        {
+          "key": "gridSize",
+          "label": "grid size",
+          "type": "number",
+          "default": 40,
+          "min": 12,
+          "max": 500,
+          "step": 1,
+          "category": "Scene"
+        },
+        {
+          "key": "voxelSize",
+          "label": "voxel size",
+          "type": "number",
+          "default": 100,
+          "min": 2,
+          "max": 24,
+          "step": 1,
+          "category": "Scene"
+        },
+        {
+          "key": "voxelGapRatio",
+          "label": "voxel gap",
+          "type": "number",
+          "default": 0.3,
+          "min": 0,
+          "max": 0.5,
+          "step": 0.01,
+          "category": "Scene",
+          "description": "Gap between voxel cubes as a fraction of voxel size (0 = touching, 0.04 matches prior default)."
+        },
+        {
+          "key": "materialMode",
+          "label": "material mode",
+          "type": "select",
+          "default": "lambert",
+          "options": [
+            "standard",
+            "lambert",
+            "basic"
+          ],
+          "category": "Scene",
+          "description": "Material type for voxel preview (affects lighting)."
+        },
+        {
+          "key": "presetCount",
+          "label": "preset shapes",
+          "type": "number",
+          "default": 6,
+          "min": 1,
+          "max": 24,
+          "step": 1,
+          "category": "Primitives"
+        },
+        {
+          "key": "placementMode",
+          "label": "placement mode",
+          "type": "select",
+          "default": "allow",
+          "options": [
+            "allow",
+            "no-overlap",
+            "spacing"
+          ],
+          "category": "Primitives",
+          "description": "Controls whether primitive shapes can intersect."
+        },
+        {
+          "key": "shapeSpacing",
+          "label": "shape spacing",
+          "type": "number",
+          "default": 2,
+          "min": 0,
+          "max": 24,
+          "step": 1,
+          "category": "Primitives",
+          "description": "Extra voxel padding between shapes when spacing mode is enabled."
+        },
+        {
+          "key": "presetScale",
+          "label": "preset scale",
+          "type": "number",
+          "default": 1.5,
+          "min": 0.25,
+          "max": 4,
+          "step": 0.01,
+          "category": "Primitives"
+        },
+        {
+          "key": "shapeBoxTallChance",
+          "label": "tall box %",
+          "type": "number",
+          "default": 24,
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "category": "Primitives"
+        },
+        {
+          "key": "shapeBoxTallScaleRange",
+          "label": "tall box scale range",
+          "type": "vector2D",
+          "default": {
+            "x": 0.8,
+            "y": 1.4
+          },
+          "min": 0.1,
+          "max": 4,
+          "step": 0.01,
+          "category": "Primitives",
+          "description": "x=min, y=max"
+        },
+        {
+          "key": "shapeSlabChance",
+          "label": "slab %",
+          "type": "number",
+          "default": 22,
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "category": "Primitives"
+        },
+        {
+          "key": "shapeSlabScaleRange",
+          "label": "slab scale range",
+          "type": "vector2D",
+          "default": {
+            "x": 0.8,
+            "y": 1.35
+          },
+          "min": 0.1,
+          "max": 4,
+          "step": 0.01,
+          "category": "Primitives",
+          "description": "x=min, y=max"
+        },
+        {
+          "key": "shapeCylinderChance",
+          "label": "cylinder %",
+          "type": "number",
+          "default": 18,
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "category": "Primitives"
+        },
+        {
+          "key": "shapeCylinderScaleRange",
+          "label": "cylinder scale range",
+          "type": "vector2D",
+          "default": {
+            "x": 0.75,
+            "y": 1.35
+          },
+          "min": 0.1,
+          "max": 4,
+          "step": 0.01,
+          "category": "Primitives",
+          "description": "x=min, y=max"
+        },
+        {
+          "key": "shapePyramidChance",
+          "label": "pyramid %",
+          "type": "number",
+          "default": 12,
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "category": "Primitives"
+        },
+        {
+          "key": "shapePyramidScaleRange",
+          "label": "pyramid scale range",
+          "type": "vector2D",
+          "default": {
+            "x": 0.75,
+            "y": 1.3
+          },
+          "min": 0.1,
+          "max": 4,
+          "step": 0.01,
+          "category": "Primitives",
+          "description": "x=min, y=max"
+        },
+        {
+          "key": "shapeSphereChance",
+          "label": "sphere %",
+          "type": "number",
+          "default": 10,
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "category": "Primitives"
+        },
+        {
+          "key": "shapeSphereScaleRange",
+          "label": "sphere scale range",
+          "type": "vector2D",
+          "default": {
+            "x": 0.7,
+            "y": 1.3
+          },
+          "min": 0.1,
+          "max": 4,
+          "step": 0.01,
+          "category": "Primitives",
+          "description": "x=min, y=max"
+        },
+        {
+          "key": "shapeConeChance",
+          "label": "cone %",
+          "type": "number",
+          "default": 8,
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "category": "Primitives"
+        },
+        {
+          "key": "shapeConeScaleRange",
+          "label": "cone scale range",
+          "type": "vector2D",
+          "default": {
+            "x": 0.7,
+            "y": 1.35
+          },
+          "min": 0.1,
+          "max": 4,
+          "step": 0.01,
+          "category": "Primitives",
+          "description": "x=min, y=max"
+        },
+        {
+          "key": "shapePolyChance",
+          "label": "polyhedron %",
+          "type": "number",
+          "default": 6,
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "category": "Primitives"
+        },
+        {
+          "key": "shapePolyScaleRange",
+          "label": "poly scale range",
+          "type": "vector2D",
+          "default": {
+            "x": 0.65,
+            "y": 1.25
+          },
+          "min": 0.1,
+          "max": 4,
+          "step": 0.01,
+          "category": "Primitives",
+          "description": "x=min, y=max"
+        },
+        {
+          "key": "spawnSpread",
+          "label": "spawn spread",
+          "type": "number",
+          "default": 1,
+          "min": 0.2,
+          "max": 1,
+          "step": 0.01,
+          "category": "Primitives",
+          "description": "Controls how far from center shapes can spawn (as a fraction of grid size)."
+        },
+        {
+          "key": "spawnBaseRatio",
+          "label": "spawn base height",
+          "type": "number",
+          "default": 0.05,
+          "min": 0,
+          "max": 0.5,
+          "step": 0.01,
+          "category": "Primitives",
+          "description": "Base height offset as a fraction of grid size."
+        },
+        {
+          "key": "shapeYawSteps",
+          "label": "shape yaw steps",
+          "type": "number",
+          "default": 2,
+          "min": 0,
+          "max": 4,
+          "step": 1,
+          "category": "Primitives",
+          "description": "Randomly rotate shapes around Y in 90° steps (0 = disabled)."
+        },
+        {
+          "key": "erosionSteps",
+          "label": "erosion steps",
+          "type": "number",
+          "default": 6,
+          "min": 0,
+          "max": 6,
+          "step": 1,
+          "category": "Transforms"
+        },
+        {
+          "key": "erosionNeighbors",
+          "label": "erosion min neighbors",
+          "type": "number",
+          "default": 4,
+          "min": 0,
+          "max": 6,
+          "step": 1,
+          "category": "Transforms"
+        },
+        {
+          "key": "dilationSteps",
+          "label": "dilation steps",
+          "type": "number",
+          "default": 5,
+          "min": 0,
+          "max": 6,
+          "step": 1,
+          "category": "Transforms"
+        },
+        {
+          "key": "dilationNeighbors",
+          "label": "dilation min neighbors",
+          "type": "number",
+          "default": 6,
+          "min": 0,
+          "max": 6,
+          "step": 1,
+          "category": "Transforms"
+        },
+        {
+          "key": "surfaceNoise",
+          "label": "surface noise",
+          "type": "number",
+          "default": 1,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Transforms"
+        },
+        {
+          "key": "mirrorX",
+          "label": "mirror X",
+          "type": "boolean",
+          "default": false,
+          "category": "Transforms"
+        },
+        {
+          "key": "mirrorZ",
+          "label": "mirror Z",
+          "type": "boolean",
+          "default": false,
+          "category": "Transforms"
+        },
+        {
+          "key": "rotateQuarterTurns",
+          "label": "rotate (90° steps)",
+          "type": "number",
+          "default": 0,
+          "min": -4,
+          "max": 4,
+          "step": 1,
+          "category": "Transforms"
+        },
+        {
+          "key": "randomSliceCount",
+          "label": "random slice count",
+          "type": "number",
+          "default": 0,
+          "min": 0,
+          "max": 12,
+          "step": 1,
+          "category": "Transforms",
+          "description": "Number of random slicing planes applied after transforms."
+        },
+        {
+          "key": "randomSliceThickness",
+          "label": "slice thickness",
+          "type": "number",
+          "default": 5,
+          "min": 1,
+          "max": 40,
+          "step": 1,
+          "category": "Transforms",
+          "description": "Thickness of each slicing volume in voxel units."
+        },
+        {
+          "key": "sliceRotX",
+          "label": "slice rot X",
+          "type": "number",
+          "default": 35,
+          "min": 0,
+          "max": 180,
+          "step": 1,
+          "category": "Transforms",
+          "description": "Max random rotation around X for slice planes (degrees)."
+        },
+        {
+          "key": "sliceRotY",
+          "label": "slice rot Y",
+          "type": "number",
+          "default": 35,
+          "min": 0,
+          "max": 180,
+          "step": 1,
+          "category": "Transforms",
+          "description": "Max random rotation around Y for slice planes (degrees)."
+        },
+        {
+          "key": "sliceRotZ",
+          "label": "slice rot Z",
+          "type": "number",
+          "default": 35,
+          "min": 0,
+          "max": 180,
+          "step": 1,
+          "category": "Transforms",
+          "description": "Max random rotation around Z for slice planes (degrees)."
+        },
+        {
+          "key": "showSliceVolumes",
+          "label": "show slice volumes",
+          "type": "boolean",
+          "default": false,
+          "category": "Transforms",
+          "description": "Display the slicing volumes in the 3D preview."
+        },
+        {
+          "key": "cameraDistance",
+          "label": "camera distance",
+          "type": "number",
+          "default": 820,
+          "min": 200,
+          "max": 200000,
+          "step": 10,
+          "category": "Camera"
+        },
+        {
+          "key": "cameraAzimuth",
+          "label": "camera azimuth",
+          "type": "number",
+          "default": 38,
+          "min": -180,
+          "max": 180,
+          "step": 1,
+          "category": "Camera"
+        },
+        {
+          "key": "cameraElevation",
+          "label": "camera elevation",
+          "type": "number",
+          "default": 32,
+          "min": 5,
+          "max": 85,
+          "step": 1,
+          "category": "Camera"
+        },
+        {
+          "key": "groundEnabled",
+          "label": "ground plane",
+          "type": "boolean",
+          "default": true,
+          "category": "Scene"
+        },
+        {
+          "key": "groundScale",
+          "label": "ground scale",
+          "type": "number",
+          "default": 2.8,
+          "min": 1,
+          "max": 6,
+          "step": 0.1,
+          "category": "Scene"
+        },
+        {
+          "key": "groundYOffset",
+          "label": "ground Y offset",
+          "type": "number",
+          "default": 0,
+          "min": -400,
+          "max": 400,
+          "step": 1,
+          "category": "Scene"
+        },
+        {
+          "key": "groundOpacity",
+          "label": "ground opacity",
+          "type": "number",
+          "default": 1,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Scene"
+        },
+        {
+          "key": "groundColor",
+          "label": "ground color",
+          "type": "text",
+          "default": "#e2e5f0",
+          "category": "Scene"
+        },
+        {
+          "key": "backgroundColor",
+          "label": "background color",
+          "type": "text",
+          "default": "#f7f8fb",
+          "category": "Scene"
+        },
+        {
+          "key": "lightAzimuth",
+          "label": "light azimuth",
+          "type": "number",
+          "default": 35,
+          "min": -180,
+          "max": 180,
+          "step": 1,
+          "category": "Light"
+        },
+        {
+          "key": "lightElevation",
+          "label": "light elevation",
+          "type": "number",
+          "default": 48,
+          "min": 0,
+          "max": 90,
+          "step": 1,
+          "category": "Light"
+        },
+        {
+          "key": "lightDistance",
+          "label": "light distance",
+          "type": "number",
+          "default": 2000,
+          "step": 10,
+          "category": "Light"
+        },
+        {
+          "key": "lightIntensity",
+          "label": "light intensity",
+          "type": "number",
+          "default": 2.65,
+          "min": 0,
+          "max": 4,
+          "step": 0.05,
+          "category": "Light"
+        },
+        {
+          "key": "ambientIntensity",
+          "label": "ambient intensity",
+          "type": "number",
+          "default": 0,
+          "min": 0,
+          "max": 3,
+          "step": 0.05,
+          "category": "Light"
+        },
+        {
+          "key": "shadowExtent",
+          "label": "shadow extent",
+          "type": "number",
+          "default": 1200,
+          "step": 10,
+          "category": "Light",
+          "description": "Half-size of the orthographic shadow camera."
+        },
+        {
+          "key": "shadowNear",
+          "label": "shadow near",
+          "type": "number",
+          "default": 1,
+          "step": 1,
+          "category": "Light"
+        },
+        {
+          "key": "shadowFar",
+          "label": "shadow far",
+          "type": "number",
+          "default": 6000,
+          "step": 10,
+          "category": "Light"
+        },
+        {
+          "key": "shadowMapSize",
+          "label": "shadow map size",
+          "type": "number",
+          "default": 2048,
+          "step": 1,
+          "category": "Light"
+        },
+        {
+          "key": "shadowBias",
+          "label": "shadow bias",
+          "type": "number",
+          "default": -0.0006,
+          "step": 0.0001,
+          "category": "Light"
+        },
+        {
+          "key": "shadowNormalBias",
+          "label": "shadow normal bias",
+          "type": "number",
+          "default": 0,
+          "step": 0.0001,
+          "category": "Light"
+        },
+        {
+          "key": "svgStrokeWidth",
+          "label": "stroke width",
+          "type": "number",
+          "default": 2.7,
+          "min": 0.1,
+          "max": 4,
+          "step": 0.1,
+          "category": "SVG"
+        },
+        {
+          "key": "svgFillOpacity",
+          "label": "fill opacity",
+          "type": "number",
+          "default": 1,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "SVG"
+        },
+        {
+          "key": "svgStroke",
+          "label": "stroke color",
+          "type": "text",
+          "default": "auto",
+          "category": "SVG"
+        },
+        {
+          "key": "svgLineMode",
+          "label": "line mode",
+          "type": "select",
+          "default": "solid",
+          "options": [
+            "solid",
+            "wireframe"
+          ],
+          "category": "SVG",
+          "description": "solid = source line colors, wireframe = monochrome linework."
+        },
+        {
+          "key": "svgCullInvisible",
+          "label": "cull invisible SVG",
+          "type": "boolean",
+          "default": true,
+          "category": "SVG",
+          "description": "Remove hidden, zero-size, and out-of-frame SVG elements."
+        },
+        {
+          "key": "svgCullMinSize",
+          "label": "cull min size",
+          "type": "number",
+          "default": 0,
+          "min": 0,
+          "max": 20,
+          "step": 0.1,
+          "category": "SVG",
+          "description": "Remove SVG elements smaller than this bbox size (0 disables size culling)."
+        },
+        {
+          "key": "svgShadowEnabled",
+          "label": "shadow overlay",
+          "type": "boolean",
+          "default": false,
+          "category": "SVG",
+          "description": "Project a simple shadow onto the ground."
+        },
+        {
+          "key": "svgShadowStrokeWidth",
+          "label": "shadow stroke width",
+          "type": "number",
+          "default": 2.2,
+          "min": 0.1,
+          "max": 4,
+          "step": 0.1,
+          "category": "SVG"
+        },
+        {
+          "key": "svgShadowStroke",
+          "label": "shadow stroke color",
+          "type": "text",
+          "default": "#101010",
+          "category": "SVG"
+        },
+        {
+          "key": "svgMergePaths",
+          "label": "merge SVG paths",
+          "type": "boolean",
+          "default": false,
+          "category": "SVG",
+          "description": "Combine paths by stroke color into fewer paths (approximate)."
+        },
+        {
+          "key": "showSvgOverlay",
+          "label": "show SVG overlay",
+          "type": "boolean",
+          "default": false,
+          "category": "SVG",
+          "description": "Show the SVG export on top of the WebGL preview."
+        },
+        {
+          "key": "exportSvg",
+          "label": "export SVG to tabs",
+          "type": "button",
+          "category": "SVG"
+        },
+        {
+          "key": "clearSvgOverlay",
+          "label": "hide SVG overlay",
+          "type": "button",
+          "category": "SVG"
+        }
+      ],
+      "url": "/VoxelHatching/",
+      "folder": "VoxelHatching"
+    },
+    {
+      "id": "voxelHatchingShadows",
+      "title": "Voxel Hatching Shadows",
+      "description": "Voxel primitives exported to SVG as camera-visible closed face loops with line-hatched ground shadows.",
+      "params": [
+        {
+          "key": "seed",
+          "type": "number",
+          "default": 41680039,
+          "min": 0,
+          "max": 999999999,
+          "step": 1,
+          "category": "Scene",
+          "description": "Deterministic seed for voxel generation."
+        },
+        {
+          "key": "gridSize",
+          "label": "grid size",
+          "type": "number",
+          "default": 40,
+          "min": 12,
+          "max": 500,
+          "step": 1,
+          "category": "Scene"
+        },
+        {
+          "key": "voxelSize",
+          "label": "voxel size",
+          "type": "number",
+          "default": 100,
+          "min": 2,
+          "max": 24,
+          "step": 1,
+          "category": "Scene"
+        },
+        {
+          "key": "voxelGapRatio",
+          "label": "voxel gap",
+          "type": "number",
+          "default": 0.3,
+          "min": 0,
+          "max": 0.5,
+          "step": 0.01,
+          "category": "Scene",
+          "description": "Gap between voxel cubes as a fraction of voxel size (0 = touching, 0.04 matches prior default)."
+        },
+        {
+          "key": "materialMode",
+          "label": "material mode",
+          "type": "select",
+          "default": "lambert",
+          "options": [
+            "standard",
+            "lambert",
+            "basic"
+          ],
+          "category": "Scene",
+          "description": "Material type for voxel preview (affects lighting)."
+        },
+        {
+          "key": "placementMode",
+          "label": "placement mode",
+          "type": "select",
+          "default": "allow",
+          "options": [
+            "allow",
+            "no-overlap",
+            "spacing"
+          ],
+          "category": "Primitives",
+          "description": "Controls whether primitive shapes can intersect."
+        },
+        {
+          "key": "shapeSpacing",
+          "label": "shape spacing",
+          "type": "number",
+          "default": 2,
+          "min": 0,
+          "max": 24,
+          "step": 1,
+          "category": "Primitives",
+          "description": "Extra voxel padding between shapes when spacing mode is enabled."
+        },
+        {
+          "key": "autoProceduralShapes",
+          "label": "auto procedural shapes",
+          "type": "boolean",
+          "default": true,
+          "category": "Primitives",
+          "description": "Automatically seed random shape instances from the current seed."
+        },
+        {
+          "key": "proceduralShapeCount",
+          "label": "procedural count",
+          "type": "number",
+          "default": 12,
+          "min": 0,
+          "max": 80,
+          "step": 1,
+          "category": "Primitives"
+        },
+        {
+          "key": "proceduralScale",
+          "label": "procedural scale",
+          "type": "number",
+          "default": 1,
+          "min": 0.2,
+          "max": 3,
+          "step": 0.01,
+          "category": "Primitives"
+        },
+        {
+          "key": "proceduralSpread",
+          "label": "procedural spread",
+          "type": "number",
+          "default": 1,
+          "min": 0.2,
+          "max": 1,
+          "step": 0.01,
+          "category": "Primitives"
+        },
+        {
+          "key": "proceduralBaseRatio",
+          "label": "procedural base height",
+          "type": "number",
+          "default": 0.05,
+          "min": 0,
+          "max": 0.5,
+          "step": 0.01,
+          "category": "Primitives"
+        },
+        {
+          "key": "proceduralYawSteps",
+          "label": "procedural yaw steps",
+          "type": "number",
+          "default": 2,
+          "min": 0,
+          "max": 4,
+          "step": 1,
+          "category": "Primitives",
+          "description": "Rotate procedural shapes around Y in 90 degree increments."
+        },
+        {
+          "key": "erosionSteps",
+          "label": "erosion steps",
+          "type": "number",
+          "default": 6,
+          "min": 0,
+          "max": 6,
+          "step": 1,
+          "category": "Transforms"
+        },
+        {
+          "key": "erosionNeighbors",
+          "label": "erosion min neighbors",
+          "type": "number",
+          "default": 4,
+          "min": 0,
+          "max": 6,
+          "step": 1,
+          "category": "Transforms"
+        },
+        {
+          "key": "dilationSteps",
+          "label": "dilation steps",
+          "type": "number",
+          "default": 5,
+          "min": 0,
+          "max": 6,
+          "step": 1,
+          "category": "Transforms"
+        },
+        {
+          "key": "dilationNeighbors",
+          "label": "dilation min neighbors",
+          "type": "number",
+          "default": 6,
+          "min": 0,
+          "max": 6,
+          "step": 1,
+          "category": "Transforms"
+        },
+        {
+          "key": "surfaceNoise",
+          "label": "surface noise",
+          "type": "number",
+          "default": 1,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Transforms"
+        },
+        {
+          "key": "mirrorX",
+          "label": "mirror X",
+          "type": "boolean",
+          "default": false,
+          "category": "Transforms"
+        },
+        {
+          "key": "mirrorZ",
+          "label": "mirror Z",
+          "type": "boolean",
+          "default": false,
+          "category": "Transforms"
+        },
+        {
+          "key": "rotateQuarterTurns",
+          "label": "rotate (90° steps)",
+          "type": "number",
+          "default": 0,
+          "min": -4,
+          "max": 4,
+          "step": 1,
+          "category": "Transforms"
+        },
+        {
+          "key": "randomSliceCount",
+          "label": "random slice count",
+          "type": "number",
+          "default": 0,
+          "min": 0,
+          "max": 12,
+          "step": 1,
+          "category": "Transforms",
+          "description": "Number of random slicing planes applied after transforms."
+        },
+        {
+          "key": "randomSliceThickness",
+          "label": "slice thickness",
+          "type": "number",
+          "default": 5,
+          "min": 1,
+          "max": 40,
+          "step": 1,
+          "category": "Transforms",
+          "description": "Thickness of each slicing volume in voxel units."
+        },
+        {
+          "key": "sliceRotX",
+          "label": "slice rot X",
+          "type": "number",
+          "default": 35,
+          "min": 0,
+          "max": 180,
+          "step": 1,
+          "category": "Transforms",
+          "description": "Max random rotation around X for slice planes (degrees)."
+        },
+        {
+          "key": "sliceRotY",
+          "label": "slice rot Y",
+          "type": "number",
+          "default": 35,
+          "min": 0,
+          "max": 180,
+          "step": 1,
+          "category": "Transforms",
+          "description": "Max random rotation around Y for slice planes (degrees)."
+        },
+        {
+          "key": "sliceRotZ",
+          "label": "slice rot Z",
+          "type": "number",
+          "default": 35,
+          "min": 0,
+          "max": 180,
+          "step": 1,
+          "category": "Transforms",
+          "description": "Max random rotation around Z for slice planes (degrees)."
+        },
+        {
+          "key": "showSliceVolumes",
+          "label": "show slice volumes",
+          "type": "boolean",
+          "default": false,
+          "category": "Transforms",
+          "description": "Display the slicing volumes in the 3D preview."
+        },
+        {
+          "key": "cameraDistance",
+          "label": "camera distance",
+          "type": "number",
+          "default": 820,
+          "min": 200,
+          "max": 200000,
+          "step": 10,
+          "category": "Camera"
+        },
+        {
+          "key": "cameraAzimuth",
+          "label": "camera azimuth",
+          "type": "number",
+          "default": 38,
+          "min": -180,
+          "max": 180,
+          "step": 1,
+          "category": "Camera"
+        },
+        {
+          "key": "cameraElevation",
+          "label": "camera elevation",
+          "type": "number",
+          "default": 32,
+          "min": 5,
+          "max": 85,
+          "step": 1,
+          "category": "Camera"
+        },
+        {
+          "key": "groundEnabled",
+          "label": "ground plane",
+          "type": "boolean",
+          "default": true,
+          "category": "Scene"
+        },
+        {
+          "key": "groundScale",
+          "label": "ground scale",
+          "type": "number",
+          "default": 2.8,
+          "min": 1,
+          "max": 6,
+          "step": 0.1,
+          "category": "Scene"
+        },
+        {
+          "key": "groundYOffset",
+          "label": "ground Y offset",
+          "type": "number",
+          "default": 20,
+          "min": -400,
+          "max": 400,
+          "step": 1,
+          "category": "Scene"
+        },
+        {
+          "key": "groundOpacity",
+          "label": "ground opacity",
+          "type": "number",
+          "default": 1,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "Scene"
+        },
+        {
+          "key": "groundColor",
+          "label": "ground color",
+          "type": "text",
+          "default": "#e2e5f0",
+          "category": "Scene"
+        },
+        {
+          "key": "backgroundColor",
+          "label": "background color",
+          "type": "text",
+          "default": "#f7f8fb",
+          "category": "Scene"
+        },
+        {
+          "key": "lightAzimuth",
+          "label": "light azimuth",
+          "type": "number",
+          "default": 35,
+          "min": -180,
+          "max": 180,
+          "step": 1,
+          "category": "Light"
+        },
+        {
+          "key": "lightElevation",
+          "label": "light elevation",
+          "type": "number",
+          "default": 48,
+          "min": 0,
+          "max": 90,
+          "step": 1,
+          "category": "Light"
+        },
+        {
+          "key": "lightDistance",
+          "label": "light distance",
+          "type": "number",
+          "default": 2000,
+          "step": 10,
+          "category": "Light"
+        },
+        {
+          "key": "lightIntensity",
+          "label": "light intensity",
+          "type": "number",
+          "default": 2.65,
+          "min": 0,
+          "max": 4,
+          "step": 0.05,
+          "category": "Light"
+        },
+        {
+          "key": "ambientIntensity",
+          "label": "ambient intensity",
+          "type": "number",
+          "default": 0,
+          "min": 0,
+          "max": 3,
+          "step": 0.05,
+          "category": "Light"
+        },
+        {
+          "key": "shadowExtent",
+          "label": "shadow extent",
+          "type": "number",
+          "default": 1200,
+          "step": 10,
+          "category": "Light",
+          "description": "Half-size of the orthographic shadow camera."
+        },
+        {
+          "key": "shadowNear",
+          "label": "shadow near",
+          "type": "number",
+          "default": 1,
+          "step": 1,
+          "category": "Light"
+        },
+        {
+          "key": "shadowFar",
+          "label": "shadow far",
+          "type": "number",
+          "default": 6000,
+          "step": 10,
+          "category": "Light"
+        },
+        {
+          "key": "shadowMapSize",
+          "label": "shadow map size",
+          "type": "number",
+          "default": 2048,
+          "step": 1,
+          "category": "Light"
+        },
+        {
+          "key": "shadowBias",
+          "label": "shadow bias",
+          "type": "number",
+          "default": -0.0006,
+          "step": 0.0001,
+          "category": "Light"
+        },
+        {
+          "key": "shadowNormalBias",
+          "label": "shadow normal bias",
+          "type": "number",
+          "default": 0,
+          "step": 0.0001,
+          "category": "Light"
+        },
+        {
+          "key": "svgStrokeWidth",
+          "label": "stroke width",
+          "type": "number",
+          "default": 2.7,
+          "min": 0.1,
+          "max": 4,
+          "step": 0.1,
+          "category": "SVG"
+        },
+        {
+          "key": "svgFillOpacity",
+          "label": "fill opacity",
+          "type": "number",
+          "default": 1,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "category": "SVG"
+        },
+        {
+          "key": "svgStroke",
+          "label": "stroke color",
+          "type": "text",
+          "default": "auto",
+          "category": "SVG"
+        },
+        {
+          "key": "svgLineMode",
+          "label": "line mode",
+          "type": "select",
+          "default": "solid",
+          "options": [
+            "solid",
+            "wireframe"
+          ],
+          "category": "SVG",
+          "description": "solid = source line colors, wireframe = monochrome linework."
+        },
+        {
+          "key": "svgCullInvisible",
+          "label": "cull invisible SVG",
+          "type": "boolean",
+          "default": true,
+          "category": "SVG",
+          "description": "Remove hidden, zero-size, and out-of-frame SVG elements."
+        },
+        {
+          "key": "svgCullMinSize",
+          "label": "cull min size",
+          "type": "number",
+          "default": 0,
+          "min": 0,
+          "max": 20,
+          "step": 0.1,
+          "category": "SVG",
+          "description": "Remove SVG elements smaller than this bbox size (0 disables size culling)."
+        },
+        {
+          "key": "svgShadowEnabled",
+          "label": "shadow overlay",
+          "type": "boolean",
+          "default": false,
+          "category": "SVG",
+          "description": "Project a simple shadow onto the ground."
+        },
+        {
+          "key": "svgShadowStrokeWidth",
+          "label": "shadow stroke width",
+          "type": "number",
+          "default": 2.2,
+          "min": 0.1,
+          "max": 4,
+          "step": 0.1,
+          "category": "SVG"
+        },
+        {
+          "key": "svgShadowStroke",
+          "label": "shadow stroke color",
+          "type": "text",
+          "default": "#101010",
+          "category": "SVG"
+        },
+        {
+          "key": "svgShadowHatchSpacingRatio",
+          "label": "shadow hatch spacing",
+          "type": "number",
+          "default": 0.22,
+          "min": 0.05,
+          "max": 0.9,
+          "step": 0.01,
+          "category": "SVG",
+          "description": "Line spacing as a fraction of projected voxel width."
+        },
+        {
+          "key": "svgShadowHatchAngle",
+          "label": "shadow hatch angle",
+          "type": "number",
+          "default": 35,
+          "min": -90,
+          "max": 90,
+          "step": 1,
+          "category": "SVG"
+        },
+        {
+          "key": "svgMergePaths",
+          "label": "merge SVG paths",
+          "type": "boolean",
+          "default": false,
+          "category": "SVG",
+          "description": "Combine paths by stroke color into fewer paths (approximate)."
+        },
+        {
+          "key": "showSvgOverlay",
+          "label": "show SVG overlay",
+          "type": "boolean",
+          "default": false,
+          "category": "SVG",
+          "description": "Show the SVG export on top of the WebGL preview."
+        },
+        {
+          "key": "exportSvg",
+          "label": "export SVG to tabs",
+          "type": "button",
+          "category": "SVG"
+        },
+        {
+          "key": "clearSvgOverlay",
+          "label": "hide SVG overlay",
+          "type": "button",
+          "category": "SVG"
+        }
+      ],
+      "url": "/voxelhatchingShadows/",
+      "folder": "voxelhatchingShadows"
+    }
+  ],
+  "failures": []
+}

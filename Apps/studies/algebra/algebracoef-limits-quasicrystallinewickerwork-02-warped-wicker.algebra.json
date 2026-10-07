@@ -1,0 +1,89 @@
+{
+  "title": "Warped Wicker",
+  "source": "QuasicrystallineWickerwork/QuasicrystallineWickerwork_visual.js",
+  "visualId": "quasicrystallineWickerwork",
+  "seed": 2026092568,
+  "frames": 0,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o color o splineLines o convert o scale (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "radialWarp",
+      "baseline": 4.1,
+      "value": 35,
+      "direction": "max"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        0,
+        37.163
+      ],
+      "event": "X >= threshold",
+      "threshold": 35,
+      "value": 0.05820305142211331,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "Aperiodic rings pull apart",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-quasicrystallinewickerwork-02-warped-wicker.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-quasicrystallinewickerwork-02-warped-wicker.json",
+  "observedStages": [
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 92,
+      "afterShapes": 207,
+      "messages": [
+        "scale applied: 23 groups, 138 clones."
+      ]
+    },
+    {
+      "label": "Q: convert",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 207,
+      "afterShapes": 207,
+      "messages": [
+        "convert applied: 9 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 207,
+      "afterShapes": 666,
+      "messages": [
+        "spline lines applied: 9 shapes, 468 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 666,
+      "afterShapes": 666,
+      "messages": [
+        "color applied: 666 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 666,
+      "afterShapes": 3330,
+      "messages": []
+    }
+  ]
+}

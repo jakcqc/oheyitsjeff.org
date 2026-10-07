@@ -1,0 +1,67 @@
+{
+  "title": "Reverse Step Field",
+  "source": "StepSplineLab/StepSplineLab_visual.js",
+  "visualId": "stepSplineLab",
+  "seed": 2026092572,
+  "frames": 0,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o color o splineLines (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "sceneMagnitude",
+      "baseline": 91,
+      "value": -900,
+      "direction": "min"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        -969.37,
+        91
+      ],
+      "event": "X <= threshold",
+      "threshold": -900,
+      "value": 0.06542056074766356,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "Reverse steps invert line direction",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-stepsplinelab-02-reverse-step-field.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-stepsplinelab-02-reverse-step-field.json",
+  "observedStages": [
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 2156,
+      "afterShapes": 2840,
+      "messages": [
+        "spline lines applied: 57 shapes, 741 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 2840,
+      "afterShapes": 2840,
+      "messages": [
+        "color applied: 2840 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 2840,
+      "afterShapes": 2840,
+      "messages": []
+    }
+  ]
+}

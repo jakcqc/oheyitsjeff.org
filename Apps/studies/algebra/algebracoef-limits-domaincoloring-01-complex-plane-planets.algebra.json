@@ -1,0 +1,89 @@
+{
+  "title": "Complex Plane Planets",
+  "source": "DomainColoring/domainColoring.js",
+  "visualId": "domainColoring",
+  "seed": 2026092518,
+  "frames": 0,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o color o splineLines o convert o paint (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "dotMaxRadius",
+      "baseline": 6.7,
+      "value": 90,
+      "direction": "max"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        0,
+        95.831
+      ],
+      "event": "X >= threshold",
+      "threshold": 90,
+      "value": 0.06084669887614658,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "Large dots hide local phase",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-domaincoloring-01-complex-plane-planets.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-domaincoloring-01-complex-plane-planets.json",
+  "observedStages": [
+    {
+      "label": "P: paint",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 7830,
+      "afterShapes": 7830,
+      "messages": [
+        "paint applied: 7778 elements."
+      ]
+    },
+    {
+      "label": "Q: convert",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 7830,
+      "afterShapes": 7830,
+      "messages": [
+        "convert applied: 1111 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 7830,
+      "afterShapes": 31161,
+      "messages": [
+        "spline lines applied: 1111 shapes, 24442 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 31161,
+      "afterShapes": 31161,
+      "messages": [
+        "color applied: 31161 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 31161,
+      "afterShapes": 31161,
+      "messages": []
+    }
+  ]
+}

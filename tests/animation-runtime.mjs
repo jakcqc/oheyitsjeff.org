@@ -11,11 +11,18 @@ import { readFile } from 'node:fs/promises';
 import vm from 'node:vm';
 
 // Isolate the real runtime from the shared UI module's browser bootstrap. The
-// small DOM below only covers transport bindings; layout is browser-tested in
+// small DOM below only covers transport/target bindings; layout is browser-tested in
 // panel-regressions.js.
 const source = (await readFile(new URL('../helper/animationHelp.js', import.meta.url), 'utf8'))
   .replace(/^import .*;\r?\n/gm, '')
   .replace(/^export /gm, '');
+
+// Exercise the real parameter metadata, while leaving the searchable picker DOM
+// to browser tests. The runtime only needs its selected-key/lifecycle contract.
+const pickerSource = await readFile(new URL('../helper/animationParamPicker.js', import.meta.url), 'utf8');
+const { numericAnimationParameters } = await import(
+  `data:text/javascript;base64,${Buffer.from(pickerSource).toString('base64')}`,
+);
 
 class TestElement {
   constructor(tag, attrs = {}, children = []) {
@@ -41,11 +48,14 @@ const labelled = (root, label) => descendants(root).find(node => node['aria-labe
 const button = (root, title) => descendants(root).find(node => node.tagName === 'BUTTON' && node.textContent === title);
 const input = (node, value) => { node.value = String(value); node.oninput(); };
 
-function fixture(ui = {}, values = {}) {
+function fixture(ui = {}, values = {}, params = [
+  { key: 'amount', type: 'number' }, { key: 'position', type: 'vector3D' },
+]) {
   let now = 0;
   let nextId = 0;
   const frames = new Map();
   const changes = [];
+  const pickers = [];
   const state = {
     amount: 72, untouched: 123, position: { x: 9, y: 8, z: 7 }, ...values,
     __anim: { ui: {
@@ -66,6 +76,20 @@ function fixture(ui = {}, values = {}) {
       object[last] = value;
     },
     el: element,
+    buildAnimationRenderPanel: () => element('div'),
+    numericAnimationParameters,
+    createAnimationParamPicker({ parameters, onCommit }) {
+      const input = element('input', { 'aria-label': 'Add animation parameter' });
+      const picker = {
+        parameters, onCommit, input, root: element('div', {}, [input]), key: '',
+        getKey() { return this.key; },
+        clear() { this.key = ''; input.value = ''; },
+        close() {},
+        destroy() {},
+      };
+      pickers.push(picker);
+      return picker;
+    },
     createSubTabs({ options, value, onChange }) {
       const tabs = { root: element('div'), setValue(next, notify = false) {
         options.forEach(option => { option.panel.hidden = option.value !== next; });
@@ -81,12 +105,10 @@ function fixture(ui = {}, values = {}) {
   const api = vm.runInNewContext(source + '\n({ controlAnimation, ensureAnimateState, buildAnimatePanel })', context);
   const ctx = { state, onChange: (key) => changes.push(key) };
   return {
-    state, changes, ctx,
+    state, changes, ctx, pickers,
     command: (command) => api.controlAnimation(ctx, command),
     ensure: () => api.ensureAnimateState(state),
-    panel: () => api.buildAnimatePanel({ ...ctx, spec: { params: [
-      { key: 'amount', type: 'number' }, { key: 'position', type: 'vector3D' },
-    ] } }),
+    panel: () => api.buildAnimatePanel({ ...ctx, spec: { params } }),
     advance(ms, frameTimestamp) {
       now += ms;
       const pending = [...frames.values()];
@@ -224,13 +246,46 @@ test('Flow lists vector components and clearing Start uses current state on play
   const f = fixture();
   const panel = f.panel();
   assert.equal(button(panel, 'Edit'), undefined);
-  const options = descendants(panel).filter(node => node.tagName === 'OPTION').map(node => node.value);
+  const options = f.pickers[0].parameters.map(parameter => parameter.key);
   assert.deepEqual(options, ['amount', 'position.x', 'position.y', 'position.z']);
   input(labelled(panel, 'amount start'), '');
   f.command('play');
   assert.equal(f.state.amount, 72);
   f.advance(500);
   assert.equal(f.state.amount, 51);
+});
+
+test('Flow forwards display metadata to its picker and preserves stored parameter keys', () => {
+  const f = fixture({}, {}, [
+    { key: 'amount', type: 'number', label: 'Amount', description: 'How much of the effect to apply.' },
+    { key: 'position', type: 'vector3D', label: 'Position', description: 'Location in the scene.' },
+  ]);
+  const panel = f.panel();
+  const picker = f.pickers[0];
+  assert.deepEqual(picker.parameters, [
+    { key: 'amount', label: 'Amount', description: 'How much of the effect to apply.' },
+    { key: 'position.x', label: 'Position · X', description: 'Location in the scene.' },
+    { key: 'position.y', label: 'Position · Y', description: 'Location in the scene.' },
+    { key: 'position.z', label: 'Position · Z', description: 'Location in the scene.' },
+  ]);
+  const title = descendants(panel).find(node =>
+    node.className?.split(' ').includes('anim-param-target')
+    && node.children.some(child => child.className === 'anim-param-target-label' && child.textContent === 'Amount'));
+  assert.ok(title, 'Existing saved targets display the parameter label');
+  assert.match(title.title, /How much of the effect to apply\./);
+  picker.key = 'position.x';
+  picker.input.value = 'Position · X';
+  button(panel, 'Add').onclick();
+  assert.equal(f.state.__anim.ui.paramTargets[1].key, 'position.x');
+  assert.equal(f.state.__anim.ui.paramTargets[1].from, 9);
+  assert.equal(f.state.__anim.ui.paramTargets[1].to, 19);
+  assert.equal(picker.input.value, '', 'Successful addition clears the picker');
+  assert.ok(labelled(panel, 'Position · X start'), 'Endpoint inputs use the display label');
+  const vectorTitle = descendants(panel).find(node =>
+    node.className?.split(' ').includes('anim-param-target')
+    && node.children.some(child => child.className === 'anim-param-target-label' && child.textContent === 'Position · X'));
+  assert.ok(vectorTitle);
+  assert.match(vectorTitle.title, /Location in the scene\./);
 });
 
 test('repeated scrubbing with an omitted Start keeps the captured baseline', () => {

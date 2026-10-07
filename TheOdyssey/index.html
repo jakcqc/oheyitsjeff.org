@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<!-- Copyright (c) 2026 Jeffrey Kerley. See ../LICENSE.md. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>The odyssey</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="/assets/icon/jAsset.png">
+  <link rel="stylesheet" href="../helper/uiHelper.css">
+  <link rel="stylesheet" href="./odyssey.css">
+  <script type="module" src="./index.js"></script>
+</head>
+<body>
+  <div id="infoBar"><button id="button-exit" onclick="location.href='/Apps/'" aria-label="Back to apps">X</button><button id="button-info">INFO</button>The odyssey</div>
+  <div id="config"></div>
+  <main id="background">
+    <div id="vis" aria-label="Saved SVG preview"></div>
+    <div id="preview-caption"><span id="preview-title">A field guide to the unexpected.</span><span id="preview-detail">Choose your bounds. Follow the variations.</span></div>
+    <div id="frame-bar" hidden role="group" aria-label="Run and frame navigation">
+      <div class="ody-view-selectors">
+        <label class="ody-visual-filter" for="inspect-visual">Visual
+          <select id="inspect-visual" aria-label="Visual to inspect"><option value="">All visuals</option></select>
+        </label>
+        <form id="run-jump" class="ody-view-nav" novalidate>
+          <label for="run-number">Run number</label>
+          <input id="run-number" type="number" min="1" step="1" inputmode="numeric" aria-describedby="run-jump-message">
+          <button id="go-to-run" type="submit">Go to run</button>
+        </form>
+        <span id="run-jump-message" role="alert"></span>
+      </div>
+      <div class="ody-view-nav" role="group" aria-label="Generated runs">
+        <button id="previous-run" aria-label="Previous run" title="Previous run with saved frames">&larr; Run</button>
+        <span id="run-label" aria-live="polite"></span>
+        <button id="next-run" aria-label="Next run" title="Next run with saved frames">Run &rarr;</button>
+      </div>
+      <div class="ody-view-nav" role="group" aria-label="Frames in this run">
+        <button id="previous-frame" aria-label="Previous saved frame">&larr;</button>
+        <span id="frame-label" aria-live="polite"></span>
+        <button id="next-frame" aria-label="Next saved frame">&rarr;</button>
+      </div>
+      <button id="delete-run" class="ody-delete-run" aria-label="Delete selected run" title="Remove this failed or pending run" hidden>&times; Run</button>
+      <button id="export-video" type="button">Render video</button>
+      <a id="download-frame" download>Download SVG</a>
+      <a id="download-state" download>Frame settings</a>
+    </div>
+  </main>
+</body>
+</html>
+

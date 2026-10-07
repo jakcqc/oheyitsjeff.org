@@ -13,6 +13,7 @@
 
 import { el, registerTab } from "./visualHelp.js";
 import { runEffectsFromUI } from "./effectsHelp.js";
+import { applyPropOpsToSubtree } from "./svgEditor.js";
 
 const STORAGE_KEY = "visualHelp.toolFlows.v1";
 const FLOW_SCHEMA_VERSION = 1;
@@ -41,6 +42,25 @@ const BUILTIN_FLOWS = [
     name: "Grayscale",
     builtin: true,
     stages: [{ kind: "effect", label: "grayscale palette", config: { effectType: "color", color: GRAYSCALE_COLOR } }],
+  },
+  {
+    id: "builtin-grayscale-no-fill",
+    name: "No fills + Grayscale",
+    builtin: true,
+    stages: [
+      { kind: "effect", label: "grayscale outlines from fills", config: { effectType: "color", color: {
+        ...GRAYSCALE_COLOR, selector: "path,rect,circle,line,ellipse,polygon,polyline,text,tspan,use", sourceProp: "fill", targetProp: "stroke", useComputed: true, includeDefinitions: true, paletteText: "#000000, #ffffff", paletteSteps: 256,
+      } } },
+      { kind: "effect", label: "grayscale all strokes", config: { effectType: "color", color: {
+        ...GRAYSCALE_COLOR, selector: "path,rect,circle,line,ellipse,polygon,polyline,text,tspan,use", sourceProp: "stroke", targetProp: "stroke", useComputed: true, includeDefinitions: true, paletteText: "#000000, #ffffff", paletteSteps: 256,
+      } } },
+      { kind: "property", label: "remove artwork fills", config: {
+        excludeSelector: "clipPath,mask,pattern,marker",
+        stack: [{ kind: "propRule", selector: Object.fromEntries(
+          ["path", "rect", "circle", "line", "ellipse", "polygon", "polyline", "text", "tspan", "use"].map(tag => [tag, {}])
+        ), apply: { fill: "none", "style.fill": "none !important" } }],
+      } },
+    ],
   },
   {
     id: "builtin-mirrored-noir",
@@ -101,7 +121,7 @@ function makeId(prefix = "flow") {
 }
 
 function normalizeStage(stage) {
-  if (!stage || !["transform", "effect", "color"].includes(stage.kind)) return null;
+  if (!stage || !["transform", "effect", "property", "color"].includes(stage.kind)) return null;
   return {
     id: String(stage.id || makeId("stage")),
     kind: stage.kind === "color" ? "effect" : stage.kind,
@@ -152,7 +172,13 @@ function writeSavedFlows(flows) {
   }
 }
 
-function getFlowLibrary() {
+// Return an isolated preset so callers can run it without changing the library.
+export function getBuiltinToolFlow(id) {
+  const flow = BUILTIN_FLOWS.find(flow => flow.id === id);
+  return flow ? normalizeFlow(clone(flow)) : null;
+}
+
+export function getFlowLibrary() {
   return [...BUILTIN_FLOWS.map(normalizeFlow), ...readSavedFlows()];
 }
 
@@ -172,7 +198,7 @@ export function ensureToolFlowState(state) {
     state.__toolFlows.ui.groupsOpen = {};
   }
   if (!Array.isArray(state.__toolFlows.stages)) state.__toolFlows.stages = [];
-  if (state.__toolFlows.stages.some((stage) => !stage?.id || !["transform", "effect"].includes(stage.kind))) {
+  if (state.__toolFlows.stages.some((stage) => !stage?.id || !["transform", "effect", "property"].includes(stage.kind))) {
     state.__toolFlows.stages = state.__toolFlows.stages.map(normalizeStage).filter(Boolean);
   }
   return state.__toolFlows;
@@ -227,6 +253,7 @@ function stageDescription(stage) {
     return `${count} transform op${count === 1 ? "" : "s"}`;
   }
   if (stage.kind === "effect") return String(stage.config?.effectType || "effect");
+  if (stage.kind === "property") return `${stage.config?.stack?.length || 0} property rules`;
   return "effect";
 }
 
@@ -250,6 +277,13 @@ export function applyToolFlow({ mountEl, state, xfRuntime, statusEl, stages } = 
         Object.assign(state.__xf.ui || (state.__xf.ui = {}), clone(stage.config.ui));
       }
       xfRuntime?.rebuildNow?.();
+    } else if (stage.kind === "property") {
+      const run = () => {
+        const roots = mountEl?.matches?.("svg") ? [mountEl] : Array.from(mountEl?.querySelectorAll?.("svg") || []);
+        for (const svg of roots) applyPropOpsToSubtree(svg, stage.config?.stack, { excludeSelector: stage.config?.excludeSelector });
+      };
+      if (xfRuntime?.withSourceUpdatesSuspended) xfRuntime.withSourceUpdatesSuspended(run);
+      else run();
     } else if (stage.kind === "effect") {
       // Run snapshots in isolated tool state so cached editors retain their live objects.
       const effectState = { ...state, __effects: { ui: { ...clone(stage.config || {}), autoRun: false } } };
@@ -332,13 +366,15 @@ function buildToolFlowPanel({ mountEl, state, xfRuntime, onStateChange }) {
       const config = snapshotCurrentEffect(state);
       addStage("effect", `${config.effectType || "effect"} snapshot`, config);
     };
-    addRow.append(addTransform, addEffect);
+    const addProperties = el("button", { type: "button", textContent: "+ property rules" });
+    addProperties.onclick = () => addStage("property", "property rules", { stack: clone(state.__propOps?.stack || []) });
+    addRow.append(addTransform, addEffect, addProperties);
 
     const stageList = el("div", { className: "tool-flow-stage-list" });
     if (!flowState.stages.length) {
       stageList.appendChild(el("div", {
         className: "vr-help",
-        textContent: "Build a chain from the current Transforms and Effects tabs, including the Color effect.",
+        textContent: "Build a chain from the current Transforms, Effects, and Property Ops tabs, including the Color effect.",
       }));
     }
     flowState.stages.forEach((stage, index) => {

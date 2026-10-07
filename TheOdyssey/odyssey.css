@@ -1,0 +1,100 @@
+/* Copyright (c) 2026 Jeffrey Kerley. See ../LICENSE.md. */
+html, body { height: 100%; }
+body { margin: 0; background: #101715; color: #ebefe3; }
+#background { position: relative; height: calc(100dvh - var(--ui-top-offset, 64px)); min-height: 300px; }
+#vis { height: 100%; width: 100%; display: grid; place-items: center; overflow: hidden; }
+#vis > svg { width: 100%; height: 100%; max-height: 100%; }
+#preview-caption { position: absolute; left: 28px; bottom: calc(var(--odyssey-controls-height, 50px) + 30px); display: grid; gap: 8px; pointer-events: none; max-width: calc(100% - 50px); text-shadow: 0 1px 4px #000; }
+#preview-title { font-size: clamp(18px, 2.6vw, 32px); }
+#preview-detail { color: #c4d1bd; font-size: 13px; }
+#frame-bar { position: absolute; bottom: 18px; left: 20px; right: 20px; align-items: center; gap: 10px; flex-wrap: wrap; background: #101715ed; padding: 10px; border: 1px solid #465344; border-radius: 10px; }
+#frame-bar:not([hidden]) { display: flex; }
+#frame-bar a { color: #d6ebbc; font-size: 12px; }
+.odyssey-panel { color: #e8ebdf; padding: 12px; font-size: 13px; }
+.odyssey-panel h2 { font-size: 22px; margin: 5px 0 8px; font-weight: normal; }
+.odyssey-panel h3 { font-size: 15px; margin: 0 0 12px; }
+.odyssey-panel p { line-height: 1.55; margin: 8px 0; }
+.ody-eyebrow { letter-spacing: .18em; color: #c5dca6; font-size: 10px; text-transform: uppercase; }
+.ody-muted { color: #a9b6aa; font-size: 12px; }
+.ody-status { padding: 11px; margin: 12px 0; border: 1px solid #485143; background: #1c261d; border-radius: 7px; line-height: 1.5; overflow-wrap: anywhere; }
+.ody-status[data-error="true"] { border-color: #e6947e; color: #ffc9b7; }
+.ody-section { margin-top: 16px; padding-top: 16px; border-top: 1px solid #455044; }
+.ody-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.ody-field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.odyssey-panel input:not([type="checkbox"]), .odyssey-panel select, .odyssey-panel textarea { width: 100%; min-width: 0; box-sizing: border-box; background: #101713; color: #f0f1e9; border: 1px solid #596151; border-radius: 5px; padding: 7px; font-size: 12px; }
+.odyssey-panel input[type="checkbox"] { accent-color: #c8e39f; margin-right: 8px; }
+.ody-actions { display: flex; flex-wrap: wrap; gap: 7px; margin: 10px 0; }
+.odyssey-panel button, #frame-bar button { padding: 7px 10px; border: 1px solid #66725a; border-radius: 5px; background: #253024; color: #ecf3df; cursor: pointer; }
+.odyssey-panel button:disabled { opacity: .45; cursor: default; }
+.odyssey-panel .ody-primary { background: #c8e39f; color: #152110; border-color: #c8e39f; }
+.odyssey-panel details { border: 1px solid #475043; border-radius: 7px; margin: 8px 0; padding: 10px; }
+.odyssey-panel summary { cursor: pointer; display: flex; align-items: center; gap: 7px; }
+.ody-param { border-top: 1px solid #3c453b; padding: 13px 0; }
+.ody-param:first-child { border: 0; }
+.ody-param-title { font-size: 13px; overflow-wrap: anywhere; }
+.ody-key { font: 11px monospace !important; color: #afc59a; overflow-wrap: anywhere; }
+.ody-bounds { color: #d5e9b7; font: 11px monospace !important; margin-top: 8px; }
+.ody-apps { max-height: 58vh; overflow: auto; padding-right: 3px; }
+.ody-run { display: block; text-align: left; width: 100%; margin: 5px 0; }
+.ody-run[aria-pressed="true"] { border-color: #d4efab; background: #394532; }
+.ody-run small { display: block; margin-top: 5px; color: #c5cbbb; }
+.ody-runs { max-height: 300px; overflow: auto; }
+.ody-progress { width: 100%; accent-color: #c8e39f; }
+.ody-code { white-space: pre-wrap; word-break: break-all; font: 11px monospace !important; max-height: 250px; overflow: auto; }
+@media (max-width: 700px) { #preview-caption { left: 16px; bottom: calc(var(--odyssey-controls-height, 65px) + 30px); } .ody-grid { gap: 8px; } .odyssey-panel { padding: 7px; } #frame-bar { left: 8px; right: 8px; } }
+
+
+@media (max-width: 700px) {
+  #config, #config.open, #config.pinned { width: auto !important; max-width: calc(100vw - 16px); box-sizing: border-box; }
+  .odyssey-panel, .ody-section, .ody-apps { min-width: 0; overflow-wrap: anywhere; }
+  .ody-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+.odyssey-panel input:disabled { opacity: .5; }
+
+.ody-view-nav { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.ody-view-nav span { font-size: 12px; white-space: nowrap; }
+#frame-bar button:disabled { opacity: .45; cursor: default; }
+.ody-run-row { display: flex; align-items: stretch; gap: 6px; margin: 5px 0; }
+.ody-run-row .ody-run { flex: 1; min-width: 0; margin: 0; overflow-wrap: anywhere; }
+.ody-run-row .ody-delete-run { flex: 0 0 36px; }
+.odyssey-panel .ody-delete-run, #frame-bar .ody-delete-run { color: #ffd0c2; border-color: #926b60; }
+
+@media (max-width: 700px) {
+  body.ui-pinned #background { right: 0; }
+  #frame-bar { position: fixed; bottom: 8px; z-index: 101; }
+  #config, #config.open, #config.pinned {
+    max-height: calc(100dvh - var(--ui-top-offset, 56px) - var(--odyssey-controls-height, 0px) - 32px);
+  }
+}
+
+.ody-view-selectors { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; width: 100%; min-width: 0; }
+.ody-view-selectors label { font-size: 12px; }
+.ody-visual-filter { display: flex; align-items: center; gap: 8px; flex: 1 1 220px; min-width: 0; }
+#inspect-visual, #run-number { box-sizing: border-box; padding: 7px; border: 1px solid #66725a; border-radius: 5px; background: #101713; color: #ecf3df; font-size: 12px; min-width: 0; }
+#inspect-visual { width: 100%; max-width: 400px; }
+#run-number { width: 85px; }
+#run-jump { margin: 0; }
+#run-jump-message { flex-basis: 100%; color: #ffc9b7; font-size: 12px; overflow-wrap: anywhere; }
+#run-jump-message:empty { display: none; }
+
+#video-export { box-sizing: border-box; width: min(620px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); overflow: auto; padding: 20px; border: 1px solid #66725a; border-radius: 10px; color: #ecf3df; background: #101715; font: 14px system-ui, sans-serif; }
+#video-export::backdrop { background: #000a; }
+#video-export h2 { margin-top: 0; }
+#video-export p { font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; }
+#video-export fieldset { min-width: 0; border: 1px solid #465344; border-radius: 6px; }
+#video-export input:not([type=checkbox]) { width: 100%; box-sizing: border-box; padding: 8px; background: #1c261d; color: #ecf3df; border: 1px solid #66725a; border-radius: 5px; }
+#video-export button { padding: 8px 12px; background: #253024; color: #ecf3df; border: 1px solid #66725a; border-radius: 5px; cursor: pointer; }
+#video-export button:disabled { opacity: .5; cursor: default; }
+#video-export button[type=submit] { background: #c8e39f; color: #152110; }
+#video-export a { color: #c8e39f; }
+#video-apps { display: grid; gap: 7px; max-height: 180px; overflow: auto; margin: 12px 0; }
+#video-apps label { display: flex; gap: 7px; align-items: baseline; }
+#video-export progress { width: 100%; accent-color: #c8e39f; }
+
+#video-skipped-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 180px; overflow: auto; font-size: 12px; }
+
+#video-style { width: 100%; box-sizing: border-box; padding: 8px; background: #1c261d; color: #ecf3df; border: 1px solid #66725a; border-radius: 5px; }
+#video-preview { margin: 14px 0; padding: 10px; border: 1px solid #465344; border-radius: 6px; background: #090d0b; }
+#video-preview-canvas { display: block; width: 100%; max-height: 260px; object-fit: contain; }
+#video-preview-caption { margin-top: 8px; color: #c4d1bd; font-size: 12px; line-height: 1.4; overflow-wrap: anywhere; }

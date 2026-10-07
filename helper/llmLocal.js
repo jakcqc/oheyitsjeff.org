@@ -8,17 +8,7 @@
  * See LICENSE.md at the repository root for the full terms.
  */
 
-// Snapshot of prebuiltAppConfig in @mlc-ai/web-llm@0.2.85, for a 4096-token
-// context. Listing models does not import the runtime or download any weights.
-// Values are estimates, not measurements of available GPU memory.
-const MODEL_FAMILIES = [
-  ['Qwen2.5-0.5B-Instruct', 'Qwen 2.5 0.5B · smallest', 944.62, 1060.2],
-  ['Llama-3.2-1B-Instruct', 'Llama 3.2 1B', 879.04, 1128.82],
-  ['Qwen2.5-1.5B-Instruct', 'Qwen 2.5 1.5B', 1629.75, 1888.97],
-  ['Llama-3.2-3B-Instruct', 'Llama 3.2 3B', 2263.69, 2951.51],
-  ['Qwen2.5-3B-Instruct', 'Qwen 2.5 3B', 2504.76, 2893.64],
-  ['Qwen2.5-7B-Instruct', 'Qwen 2.5 7B · more capable', 5106.67, 5900.09],
-];
+import { LOCAL_MODELS, MAX_MODEL_VRAM_MB, isModelWithinBudget } from './llmModels.js';
 const GPU_NOTE = 'Free GPU memory is not exposed. Model estimates include a 4096-token context; memory is reserved for the visual. Other apps and driver limits can still prevent a model from loading.';
 const FALLBACK_BUDGET_MB = 4096;
 const LOCAL_FAILURE = 'Local model failed. Try a smaller model, free GPU memory, or check WebGPU and the model download connection.';
@@ -92,7 +82,7 @@ export class LocalLLMClient {
     const memory = readMemoryHeap(info, this._heapProperties);
     const budget = Math.min(override ?? memory?.capacityMB ?? FALLBACK_BUDGET_MB, memory?.capacityMB ?? Infinity, 196608);
     const reservedMB = Math.min(budget, Math.max(1024, Math.ceil(budget * (memory?.shared ? 0.5 : 0.25))));
-    const availableMB = Math.max(0, budget - reservedMB);
+    const availableMB = Math.min(MAX_MODEL_VRAM_MB, Math.max(0, budget - reservedMB));
     const memorySource = override !== null ? 'manual' : memory ? 'detected' : 'fallback';
     const capacityNote = memory
       ? `Browser reports ${(memory.capacityMB / 1024).toFixed(1)} GB in its largest ${memory.shared ? 'shared GPU' : 'device-local GPU'} memory heap.`
@@ -103,23 +93,30 @@ export class LocalLLMClient {
         : 'Using a conservative 4 GB fallback budget, not a memory measurement. Adjust the budget if you know your GPU capacity.';
     const gpu = {
       supported: Boolean(adapter), label: 'WebGPU unavailable',
-      note: [capacityNote, budgetNote, GPU_NOTE].join(' '), memorySource,
+      note: [capacityNote, budgetNote, `Model allowance is capped at ${MAX_MODEL_VRAM_MB / 1024} GB.`, GPU_NOTE].join(' '), memorySource,
       capacityMB: memory?.capacityMB ?? null, sharedMemory: memory?.shared ?? null,
     };
-    if (!adapter) return { models: [], gpu, budgetMB: budget, reservedMB, availableMB };
+    if (!adapter) return { models: [], variants: [], gpu, budgetMB: budget, reservedMB, availableMB };
     gpu.label = info.description || [info.vendor, info.architecture].filter(Boolean).join(' ') || 'WebGPU adapter';
-    const f16 = Boolean(adapter.features?.has('shader-f16'));
     // WebLLM requires at least the standard WebGPU storage-buffer allowance.
     // These limits are per buffer; they must never be presented as total VRAM.
     const bufferLimit = Math.min(adapter.limits?.maxStorageBufferBindingSize || 0, adapter.limits?.maxBufferSize || 0);
-    const models = bufferLimit < 128 * 1024 * 1024 ? [] : MODEL_FAMILIES.map(([base, label, half, full]) => ({
-      id: `${base}-q4f${f16 ? '16' : '32'}_1-MLC`,
-      label,
-      vramMB: Math.ceil(f16 ? half : full),
-      contextTokens: 4096,
-    })).filter(model => model.vramMB <= availableMB);
+    // Include unavailable variants in the comparison, but only compatible
+    // variants in the loadable list. Quantization never bypasses GPU checks.
+    const variants = LOCAL_MODELS.filter(model => isModelWithinBudget(model.vramMB)).map(model => {
+      let unavailableReason = '';
+      if (!model.requiredFeatures.every(feature => adapter.features?.has(feature))) {
+        unavailableReason = 'FP16 compute is unavailable on this GPU.';
+      } else if (bufferLimit < model.requiredBufferBytes) {
+        unavailableReason = `Needs a ${Math.ceil(model.requiredBufferBytes / 2 ** 20)} MB GPU buffer; this GPU allows ${Math.floor(bufferLimit / 2 ** 20)} MB.`;
+      } else if (!isModelWithinBudget(model.vramMB, availableMB)) {
+        unavailableReason = `Exceeds the ${(availableMB / 1024).toFixed(2)} GB model budget.`;
+      }
+      return { ...model, compatible: !unavailableReason, unavailableReason };
+    });
+    const models = variants.filter(model => model.compatible);
     if (!models.length && bufferLimit < 128 * 1024 * 1024) gpu.note = 'This adapter has insufficient WebGPU buffer limits. ' + gpu.note;
-    return { models, gpu, budgetMB: budget, reservedMB, availableMB };
+    return { models, variants, gpu, budgetMB: budget, reservedMB, availableMB };
   }
 
   _stopWorker(reason = abortError()) {
@@ -153,11 +150,21 @@ export class LocalLLMClient {
     this._worker = worker;
     worker.onmessage = event => {
       if (this._worker !== worker) return;
-      const { id, kind, result, progress, error } = event.data || {};
+      const { id, kind, result, progress, delta, error } = event.data || {};
       const pending = this._pending.get(id);
       if (!pending) return;
       if (kind === 'progress') {
         try { pending.onProgress?.(progress); } catch { /* UI callbacks cannot break the worker protocol. */ }
+        return;
+      }
+      if (kind === 'token') {
+        if (pending.kind !== 'complete' || typeof delta !== 'string' || !delta) return;
+        pending.streamedChars += delta.length;
+        if (pending.streamedChars > 65536) {
+          this._stopWorker(new Error('The model response was too large. Ask for fewer changes.'));
+          return;
+        }
+        try { pending.onToken?.(delta); } catch { /* A display callback cannot interrupt generation. */ }
         return;
       }
       this._pending.delete(id);
@@ -165,8 +172,9 @@ export class LocalLLMClient {
         // Only fixed worker error codes cross the trust boundary, never raw errors.
         const failure = new Error(error === 'incomplete'
           ? 'The local model ran out of response tokens. Ask for fewer changes.'
+          : error === 'invalid' ? 'The local model returned an invalid structured response. No changes were applied.'
           : LOCAL_FAILURE);
-        if (error !== 'incomplete') this._stopWorker(failure);
+        if (!['incomplete', 'invalid'].includes(error)) this._stopWorker(failure);
         pending.reject(failure);
       } else pending.resolve(result);
     };
@@ -179,11 +187,11 @@ export class LocalLLMClient {
     };
   }
 
-  _workerRequest(kind, payload, onProgress) {
+  _workerRequest(kind, payload, { onProgress, onToken } = {}) {
     return new Promise((resolve, reject) => {
       if (!this._worker) { reject(new Error('Load a local model first.')); return; }
       const id = ++this._nextId;
-      this._pending.set(id, { resolve, reject, onProgress });
+      this._pending.set(id, { kind, resolve, reject, onProgress, onToken, streamedChars: 0 });
       try { this._worker.postMessage({ id, kind, ...payload }); }
       catch { this._pending.delete(id); reject(new Error(LOCAL_FAILURE)); }
     });
@@ -198,7 +206,7 @@ export class LocalLLMClient {
     if (!models.some(model => model.id === modelId)) throw new Error('Choose a compatible model within your selected GPU budget.');
     try {
       this._createWorker();
-      await this._workerRequest('load', { modelId }, onProgress);
+      await this._workerRequest('load', { modelId }, { onProgress });
       if (generation !== this._generation) throw abortError();
       this._loadedModel = modelId;
     } catch (error) {
@@ -208,7 +216,7 @@ export class LocalLLMClient {
     }
   }
 
-  async complete({ model, messages, schema, maxTokens = 768, signal } = {}) {
+  async complete({ model, messages, schema, maxTokens = 768, signal, onToken } = {}) {
     if (signal?.aborted) throw abortError();
     if (this._active) throw new Error('Wait for the current request to finish or stop it first.');
     if (!Array.isArray(messages) || !messages.length || messages.some(message =>
@@ -226,7 +234,7 @@ export class LocalLLMClient {
     };
     signal?.addEventListener('abort', onAbort, { once: true });
     try {
-      const result = await this._workerRequest('complete', { messages, schema, maxTokens });
+      const result = await this._workerRequest('complete', { messages, schema, maxTokens }, { onToken });
       if (controller.signal.aborted) throw abortError();
       return { content: checkedContent(result?.content), usage: result?.usage || null };
     } finally {

@@ -1,0 +1,78 @@
+{
+  "title": "Counter Twist",
+  "source": "HerwigHauserClassicCollection/HerwigHauserClassicCollection_visual.js",
+  "visualId": "herwigHauserClassicCollection",
+  "seed": 2026092534,
+  "frames": 0,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o color o scale o splineLines (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "twist",
+      "baseline": 13.9,
+      "value": -720,
+      "direction": "min"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        -771.373,
+        13.9
+      ],
+      "event": "X <= threshold",
+      "threshold": -720,
+      "value": 0.06542056074766361,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "Reverse turns reorder the petals",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-herwighauserclassiccollection-02-counter-twist.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-herwighauserclassiccollection-02-counter-twist.json",
+  "observedStages": [
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 9,
+      "afterShapes": 381,
+      "messages": [
+        "spline lines applied: 4 shapes, 376 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 381,
+      "afterShapes": 401,
+      "messages": [
+        "scale applied: 5 groups, 25 clones."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 401,
+      "afterShapes": 401,
+      "messages": [
+        "color applied: 401 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 401,
+      "afterShapes": 401,
+      "messages": []
+    }
+  ]
+}

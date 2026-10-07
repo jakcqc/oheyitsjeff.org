@@ -437,7 +437,7 @@ export function runColorEffect({ mountEl, ui, statusEl } = {}) {
   let errorText = "";
   for (const svg of roots) {
     const nodes = Array.from(svg.querySelectorAll(selector))
-      .filter((el) => !el.closest("defs, clipPath, mask, symbol") && !["svg", "g", "title", "desc", "metadata", "style", "script"].includes(el.localName));
+      .filter((el) => !el.closest(ui.includeDefinitions ? "clipPath,mask,pattern,marker" : "defs, clipPath, mask, symbol") && !["svg", "g", "title", "desc", "metadata", "style", "script"].includes(el.localName));
     const stats = applyPaletteToElements(nodes, palette, ui);
     if (stats.error && !errorText) errorText = stats.error;
     totalTouched += stats.touched;

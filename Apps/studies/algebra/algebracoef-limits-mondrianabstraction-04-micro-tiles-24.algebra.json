@@ -1,0 +1,111 @@
+{
+  "title": "Micro Tiles 24",
+  "source": "MondrianAbstraction/mondrian.js",
+  "visualId": "mondrianAbstraction",
+  "seed": 2026092556,
+  "frames": 0,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o splineLines o splineLines o color o scale o paint o convert (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "grid.cellSize",
+      "baseline": 100,
+      "value": 24,
+      "direction": "min"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        18.68,
+        100
+      ],
+      "event": "X <= threshold",
+      "threshold": 24,
+      "value": 0.06542056074766356,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "Small tiles expose many local divisions",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-mondrianabstraction-04-micro-tiles-24.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-mondrianabstraction-04-micro-tiles-24.json",
+  "observedStages": [
+    {
+      "label": "rect becomes circle",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 1344,
+      "afterShapes": 1344,
+      "messages": [
+        "convert applied: 1344 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "choose ink on circle",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 1344,
+      "afterShapes": 1344,
+      "messages": [
+        "paint applied: 1344 elements."
+      ]
+    },
+    {
+      "label": "E: 2 echoes, scale 0.62 to 1.25",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 1344,
+      "afterShapes": 2688,
+      "messages": [
+        "scale applied: 1344 groups, 2688 clones."
+      ]
+    },
+    {
+      "label": "C: enumerate current marks through four colors",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 2688,
+      "afterShapes": 2688,
+      "messages": [
+        "color applied: 2688 elements, 4 mapped colors."
+      ]
+    },
+    {
+      "label": "N1: normal vectors, coefficient 0.65",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 2688,
+      "afterShapes": 34944,
+      "messages": [
+        "spline lines applied: 1344 shapes, 33600 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "N2: tangent vectors, coefficient 1.35",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 34944,
+      "afterShapes": 67200,
+      "messages": [
+        "spline lines applied: 1344 shapes, 33600 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "A^2: repeated rotation and contraction",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 67200,
+      "afterShapes": 67200,
+      "messages": []
+    }
+  ]
+}

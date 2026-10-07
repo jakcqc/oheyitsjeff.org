@@ -1,0 +1,56 @@
+{
+  "title": "Cell Dust",
+  "source": "GameOfLife_aug/gameOfLife.js",
+  "visualId": "gameOfLifeSVG",
+  "seed": 2026092523,
+  "frames": 12,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o scale (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "cellPx",
+      "baseline": 48,
+      "value": 11,
+      "direction": "min"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        8.41,
+        48
+      ],
+      "event": "X <= threshold",
+      "threshold": 11,
+      "value": 0.06542056074766354,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "Small cells make a granular life field",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-gameoflife-aug-01-cell-dust.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-gameoflife-aug-01-cell-dust.json",
+  "observedStages": [
+    {
+      "label": "E: sparse cell echoes",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 9810,
+      "afterShapes": 11211,
+      "messages": [
+        "scale applied: 1401 groups, 2802 clones."
+      ]
+    },
+    {
+      "label": "A^2: repeated rotation and contraction",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 11211,
+      "afterShapes": 11211,
+      "messages": []
+    }
+  ]
+}

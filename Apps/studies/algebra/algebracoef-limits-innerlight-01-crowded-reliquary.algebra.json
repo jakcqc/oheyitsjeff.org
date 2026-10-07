@@ -1,0 +1,78 @@
+{
+  "title": "Crowded Reliquary",
+  "source": "InnerLight/index.js",
+  "visualId": "innerLight",
+  "seed": 2026092535,
+  "frames": 0,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o color o splineLines o scale (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "custom.numElements",
+      "baseline": 37,
+      "value": 180,
+      "direction": "max"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        0,
+        190.01
+      ],
+      "event": "X >= threshold",
+      "threshold": 180,
+      "value": 0.05268143781906211,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "Many elements overlap",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-innerlight-01-crowded-reliquary.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-innerlight-01-crowded-reliquary.json",
+  "observedStages": [
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 180,
+      "afterShapes": 480,
+      "messages": [
+        "scale applied: 60 groups, 360 clones."
+      ]
+    },
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 480,
+      "afterShapes": 8400,
+      "messages": [
+        "spline lines applied: 240 shapes, 8160 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 8400,
+      "afterShapes": 8400,
+      "messages": [
+        "color applied: 8400 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 8400,
+      "afterShapes": 8400,
+      "messages": []
+    }
+  ]
+}

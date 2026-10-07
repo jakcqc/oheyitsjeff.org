@@ -1,0 +1,78 @@
+{
+  "title": "Seven Hundred Unit Needle",
+  "source": "kakeya/collatz.js",
+  "visualId": "kakeyaBesicovitchNeedle",
+  "seed": 2026092577,
+  "frames": 0,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o color o functionRects o scale (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "needleLen",
+      "baseline": 6.3,
+      "value": 700,
+      "direction": "max"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        0,
+        748.559
+      ],
+      "event": "X >= threshold",
+      "threshold": 700,
+      "value": 0.064869970169352,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "An enormous fitted needle dominates the Perron footprint",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-kakeya-01-seven-hundred-unit-needle.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-kakeya-01-seven-hundred-unit-needle.json",
+  "observedStages": [
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 2106,
+      "afterShapes": 2349,
+      "messages": [
+        "scale applied: 81 groups, 324 clones."
+      ]
+    },
+    {
+      "label": "F: functionRects",
+      "kind": "effect",
+      "effect": "functionRects",
+      "changed": true,
+      "beforeShapes": 2349,
+      "afterShapes": 2726,
+      "messages": [
+        "function rects applied: 377 rects."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 2726,
+      "afterShapes": 2726,
+      "messages": [
+        "color applied: 1430 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 2726,
+      "afterShapes": 2726,
+      "messages": []
+    }
+  ]
+}

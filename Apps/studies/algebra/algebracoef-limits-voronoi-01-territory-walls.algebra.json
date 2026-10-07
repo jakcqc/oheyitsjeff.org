@@ -1,0 +1,100 @@
+{
+  "title": "Territory Walls",
+  "source": "Voronoi/voronoi_visual.js",
+  "visualId": "voronoiFluid",
+  "seed": 2026092575,
+  "frames": 0,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o color o scale o splineLines o convert o paint (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "strokeWidth",
+      "baseline": 0.85,
+      "value": 70,
+      "direction": "max"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        0,
+        74.8405
+      ],
+      "event": "X >= threshold",
+      "threshold": 70,
+      "value": 0.06467754758452984,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "Thick borders compete with cells",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-voronoi-01-territory-walls.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-voronoi-01-territory-walls.json",
+  "observedStages": [
+    {
+      "label": "P: paint",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 450,
+      "afterShapes": 450,
+      "messages": [
+        "paint applied: 450 elements."
+      ]
+    },
+    {
+      "label": "Q: convert",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 450,
+      "afterShapes": 450,
+      "messages": [
+        "convert applied: 90 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 450,
+      "afterShapes": 2880,
+      "messages": [
+        "spline lines applied: 90 shapes, 2520 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 2880,
+      "afterShapes": 3033,
+      "messages": [
+        "scale applied: 51 groups, 204 clones."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 3033,
+      "afterShapes": 3033,
+      "messages": [
+        "color applied: 3033 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 3033,
+      "afterShapes": 9099,
+      "messages": []
+    }
+  ]
+}

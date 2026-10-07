@@ -1,0 +1,78 @@
+{
+  "title": "Four Turn Crystal",
+  "source": "FractalPolyhedra/FractalPolyhedra_visual.js",
+  "visualId": "fractalPolyhedra",
+  "seed": 2026092521,
+  "frames": 0,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o color o splineLines o scale (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "spin",
+      "baseline": -17.8,
+      "value": 1440,
+      "direction": "max"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        -17.8,
+        1542.046
+      ],
+      "event": "X >= threshold",
+      "threshold": 1440,
+      "value": 0.06542056074766359,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "Repeated turns rotate recursive faces",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-fractalpolyhedra-01-four-turn-crystal.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-fractalpolyhedra-01-four-turn-crystal.json",
+  "observedStages": [
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 1023,
+      "afterShapes": 1203,
+      "messages": [
+        "scale applied: 60 groups, 240 clones."
+      ]
+    },
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 1203,
+      "afterShapes": 1575,
+      "messages": [
+        "spline lines applied: 31 shapes, 403 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 1575,
+      "afterShapes": 1575,
+      "messages": [
+        "color applied: 403 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 1575,
+      "afterShapes": 7875,
+      "messages": []
+    }
+  ]
+}

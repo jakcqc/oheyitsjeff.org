@@ -1,0 +1,78 @@
+{
+  "title": "Sixty Fold Escape",
+  "source": "Generic/mandel_visual.js",
+  "visualId": "mandelTilingZoomable",
+  "seed": 2026092531,
+  "frames": 0,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o color o convert o splineLines (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "multibrot.Power",
+      "baseline": -3.375,
+      "value": 60,
+      "direction": "max"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        -3.375,
+        64.43625
+      ],
+      "event": "X >= threshold",
+      "threshold": 60,
+      "value": 0.06542056074766357,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "High exponent packs escape lobes",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-generic-01-sixty-fold-escape.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-generic-01-sixty-fold-escape.json",
+  "observedStages": [
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 1706,
+      "afterShapes": 3876,
+      "messages": [
+        "spline lines applied: 155 shapes, 2325 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "Q: convert",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 3876,
+      "afterShapes": 3876,
+      "messages": [
+        "convert applied: 53 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 3876,
+      "afterShapes": 3876,
+      "messages": [
+        "color applied: 3876 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 3876,
+      "afterShapes": 19380,
+      "messages": []
+    }
+  ]
+}

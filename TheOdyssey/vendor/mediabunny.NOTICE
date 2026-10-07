@@ -1,0 +1,9 @@
+﻿Mediabunny 1.60.0, by Vanilagy and contributors.
+Unmodified browser bundle from npm package mediabunny@1.60.0.
+License: Mozilla Public License 2.0 (mediabunny.LICENSE).
+Source: https://github.com/Vanilagy/mediabunny/tree/v1.60.0
+Docs: https://mediabunny.dev/guide/writing-media-files
+
+To refresh: npm install --prefix TheOdyssey --save-dev --save-exact mediabunny@VERSION
+Copy dist/bundles/mediabunny.min.mjs and LICENSE from that package here.
+The app loads this bundle locally only when exporting video.

@@ -41,6 +41,7 @@
 .studies-viewer .study h2 a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .studies-viewer .study-meta { margin: 0; font-size: 11px; line-height: 1.7; opacity: .7; }
 .studies-viewer .study-complexity { display: block; font-size: 10px; }
+.studies-viewer .study-rate { display: block; font-size: 10px; font-weight: 700; letter-spacing: .02em; }
 .studies-viewer .study-tag { display: inline-block; padding: 0 5px; margin-left: 6px; border: 1px solid currentColor; border-radius: 6px; font-size: 9px; }
 .studies-viewer .study-actions { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 6px 14px; margin-top: 7px; font-size: 11px; }
 .studies-viewer .study-actions a { padding: 5px 0; text-decoration: none; text-underline-offset: 3px; }

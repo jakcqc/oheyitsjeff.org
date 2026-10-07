@@ -1,0 +1,78 @@
+{
+  "title": "Rapid Expansion",
+  "source": "InnerLight/index.js",
+  "visualId": "innerLight",
+  "seed": 2026092541,
+  "frames": 0,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o color o splineLines o scale (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "custom.incrementSize",
+      "baseline": 8.7,
+      "value": 120,
+      "direction": "max"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        0,
+        127.791
+      ],
+      "event": "X >= threshold",
+      "threshold": 120,
+      "value": 0.06096673474657838,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "Successive elements rush outward",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-innerlight-07-rapid-expansion.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-innerlight-07-rapid-expansion.json",
+  "observedStages": [
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 37,
+      "afterShapes": 97,
+      "messages": [
+        "scale applied: 12 groups, 72 clones."
+      ]
+    },
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 97,
+      "afterShapes": 1681,
+      "messages": [
+        "spline lines applied: 48 shapes, 1632 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 1681,
+      "afterShapes": 1681,
+      "messages": [
+        "color applied: 1681 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 1681,
+      "afterShapes": 1681,
+      "messages": []
+    }
+  ]
+}

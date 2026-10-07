@@ -1,0 +1,100 @@
+{
+  "title": "Frequency B Skyline",
+  "source": "LissajousFigures/LissajousFigures_visual.js",
+  "visualId": "lissajousFigures",
+  "seed": 2026092546,
+  "frames": 0,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o splineLines o splineLines o color o scale o convert (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "freqB",
+      "baseline": 8.414213562,
+      "value": 233,
+      "direction": "max"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        0,
+        248.72100505066
+      ],
+      "event": "X >= threshold",
+      "threshold": 233,
+      "value": 0.0632073879222944,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "Second frequency creates competing folds",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-lissajousfigures-02-frequency-b-skyline.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-lissajousfigures-02-frequency-b-skyline.json",
+  "observedStages": [
+    {
+      "label": "Every third survivor becomes a polygon",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 15,
+      "afterShapes": 15,
+      "messages": [
+        "convert applied: 5 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "E: 2 echoes, scale 0.62 to 1.25",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 15,
+      "afterShapes": 20,
+      "messages": [
+        "scale applied: 5 groups, 10 clones."
+      ]
+    },
+    {
+      "label": "C: enumerate current marks through four colors",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 20,
+      "afterShapes": 20,
+      "messages": [
+        "color applied: 10 elements, 4 mapped colors."
+      ]
+    },
+    {
+      "label": "N1: normal vectors, coefficient 0.65",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 20,
+      "afterShapes": 140,
+      "messages": [
+        "spline lines applied: 5 shapes, 125 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "N2: tangent vectors, coefficient 1.35",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 140,
+      "afterShapes": 260,
+      "messages": [
+        "spline lines applied: 5 shapes, 125 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "A^2: repeated rotation and contraction",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 260,
+      "afterShapes": 260,
+      "messages": []
+    }
+  ]
+}

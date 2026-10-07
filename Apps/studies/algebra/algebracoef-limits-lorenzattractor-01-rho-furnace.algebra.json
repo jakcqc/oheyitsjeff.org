@@ -1,0 +1,89 @@
+{
+  "title": "Rho Furnace",
+  "source": "LorenzAttractor/LorenzAttractor_visual.js",
+  "visualId": "lorenzAttractor",
+  "seed": 2026092548,
+  "frames": 0,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o splineLines o convert o color o scale (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "rho",
+      "baseline": 173,
+      "value": 400,
+      "direction": "max"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        0,
+        415.89
+      ],
+      "event": "X >= threshold",
+      "threshold": 400,
+      "value": 0.038207218254826966,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "The orbit leaves its familiar wings",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-lorenzattractor-01-rho-furnace.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-lorenzattractor-01-rho-furnace.json",
+  "observedStages": [
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 48,
+      "afterShapes": 112,
+      "messages": [
+        "scale applied: 16 groups, 80 clones."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 112,
+      "afterShapes": 112,
+      "messages": [
+        "color applied: 112 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "Q: convert",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 112,
+      "afterShapes": 112,
+      "messages": [
+        "convert applied: 4 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 112,
+      "afterShapes": 340,
+      "messages": [
+        "spline lines applied: 4 shapes, 232 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 340,
+      "afterShapes": 2040,
+      "messages": []
+    }
+  ]
+}

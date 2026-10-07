@@ -1,0 +1,89 @@
+{
+  "title": "Four Turn Weave",
+  "source": "QuasicrystallineWickerwork/QuasicrystallineWickerwork_visual.js",
+  "visualId": "quasicrystallineWickerwork",
+  "seed": 2026092567,
+  "frames": 0,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o color o splineLines o convert o scale (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "twist",
+      "baseline": -27.4,
+      "value": 1440,
+      "direction": "max"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        -27.4,
+        1542.718
+      ],
+      "event": "X >= threshold",
+      "threshold": 1440,
+      "value": 0.06542056074766359,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "Strands cross competing directions",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-quasicrystallinewickerwork-01-four-turn-weave.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-quasicrystallinewickerwork-01-four-turn-weave.json",
+  "observedStages": [
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 92,
+      "afterShapes": 207,
+      "messages": [
+        "scale applied: 23 groups, 138 clones."
+      ]
+    },
+    {
+      "label": "Q: convert",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 207,
+      "afterShapes": 207,
+      "messages": [
+        "convert applied: 9 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 207,
+      "afterShapes": 666,
+      "messages": [
+        "spline lines applied: 9 shapes, 468 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 666,
+      "afterShapes": 666,
+      "messages": [
+        "color applied: 666 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 666,
+      "afterShapes": 3330,
+      "messages": []
+    }
+  ]
+}

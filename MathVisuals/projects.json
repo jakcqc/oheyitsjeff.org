@@ -52,6 +52,12 @@
     "link": "/QuasicrystallineWickerwork/"
   },
   {
+    "title": "Pure Attractors",
+    "image": "/PureAttractors/preview.svg",
+    "description": "Explore Dₙ symmetric chaotic attractors of the generalized Field–Golubitsky map in D3/SVG, as a single orbit or a bestiary of disks.",
+    "link": "/PureAttractors/"
+  },
+  {
     "title": "Lorenz Attractor",
     "image": "/MathVisuals/assets/math3.png",
     "description": "Chaotic butterfly trajectories traced through phase space.",

@@ -119,7 +119,7 @@ try {
   await page.waitForFunction(() => !document.getElementById('study-sort').disabled);
   assert.equal(await page.locator('#study-collection-filter').inputValue(), 'algebraCOEF');
   const coefficients = catalog.filter(record => record.collection === 'algebraCOEF');
-  assert.equal(coefficients.length, 41);
+  assert.equal(coefficients.length, 121);
   for (const [order, direction] of [['complexity-asc', 1], ['complexity-desc', -1]]) {
     await page.locator('#study-sort').selectOption(order);
     const slugs = await page.locator('.study').evaluateAll(cards => cards.map(card => card.dataset.slug));
@@ -131,7 +131,7 @@ try {
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
   await page.screenshot({path:path.join(review,'algebracoef-studies-mobile.png'),fullPage:false});
   await page.setViewportSize({width:1440,height:1000});
-  note('algebraCOEF links select all 41 studies; complexity sorts the full result set and the controls fit mobile.');
+  note('algebraCOEF links select all 121 studies; complexity sorts the full result set and the controls fit mobile.');
   await page.goto(origin + '/Apps/?collection=algebraCOEF&search=wild');
   await page.waitForFunction(() => document.querySelectorAll('.study').length === 17);
   assert.equal(await page.locator('#study-search').inputValue(), 'wild');
@@ -140,6 +140,11 @@ try {
   await page.waitForFunction(() => [...document.querySelectorAll('.study img')].slice(0,4).every(img => img.complete && img.naturalWidth > 0));
   await page.screenshot({path:path.join(review,'algebracoef-wild-desktop.png'),fullPage:false});
   note('Wild deep link loads exactly 17 studies from 17 different apps.');
+  await page.goto(origin + '/Apps/?collection=algebraCOEF&search=limits');
+  await page.waitForFunction(() => document.querySelector('#study-result-count')?.textContent.includes('80 studies'));
+  assert.equal(await page.locator('.study').count(), 20);
+  assert.match(await page.locator('.study-rate').first().textContent(), /rho [0-9.]+%/);
+  note('Limits deep link selects 80 balanced studies and displays the rate coefficient.');
   await page.goto(origin + '/Apps/algebra/');
   await page.waitForSelector('#stage-image');
   assert.equal(await page.locator('iframe').count(), 0);

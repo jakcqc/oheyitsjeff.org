@@ -9,6 +9,10 @@ import { conversionParams } from '../imageToSVG/conversionControls.js';
 import { FILTERS, preprocessImage } from '../imageToSVG/preprocess.js';
 import { METHODS, convertToSVG } from '../imageToSVG/converters.js';
 
+const pickerSource = await readFile(new URL('../helper/animationParamPicker.js', import.meta.url), 'utf8');
+const { numericAnimationParameters } = await import(
+  `data:text/javascript;base64,${Buffer.from(pickerSource).toString('base64')}`,
+);
 const stripImports = source => source.replace(/^import .*;\r?\n/gm, '').replace(/^export /gm, '');
 const visualSource = stripImports(await readFile(new URL('../imageToSVG/imageToSVG_visual.js', import.meta.url), 'utf8'))
   .replaceAll('import.meta.url', JSON.stringify(import.meta.url));
@@ -84,7 +88,7 @@ function fixture({ workerDelay = 120, autoConvert = true } = {}) {
   session.setSource(raster, 'Uploaded fixture.png');
   const mountEl = new Element('div'), instance = spec.create({ mountEl }, state);
   state.__anim = { ui: { paramTargets: [{ key: 'mosaicInset', from: 0, to: .4 }], durationSec: 1, fps: 20 } };
-  const animation = vm.runInNewContext(animationSource + '\n({ controlAnimation, getOrMakeRuntime, numericParamKeys })', {
+  const animation = vm.runInNewContext(animationSource + '\n({ controlAnimation, getOrMakeRuntime })', {
     ...timing, Element, getByPath, setByPath,
   });
   const ctx = { mountEl, state, onChange: () => instance.render() };
@@ -92,7 +96,8 @@ function fixture({ workerDelay = 120, autoConvert = true } = {}) {
     state, session, instance, mountEl, workers, save, advance, raster,
     command: command => animation.controlAnimation(ctx, command),
     scrub: progress => animation.getOrMakeRuntime(ctx).scrubTo(progress),
-    keys: () => animation.numericParamKeys(spec),
+    keys: () => numericAnimationParameters(spec).map(parameter => parameter.key),
+    parameters: () => numericAnimationParameters(spec),
   };
 }
 
@@ -188,6 +193,9 @@ test('manual conversion stays manual and numeric preparation/method controls are
   assert.equal(f.session.finishedOptions.mosaicInset, .4);
   assert.equal(f.session.valid, true);
   for (const key of ['mosaicInset', 'complexity', 'colors', 'crop.x', 'hatchAngle', 'maxDimension']) assert.ok(f.keys().includes(key), key);
+  const inset = f.parameters().find(parameter => parameter.key === 'mosaicInset');
+  assert.equal(inset.label, 'Tile inset');
+  assert.equal(inset.description, 'Shrinks each tile inward by this fraction, leaving gaps between tiles.');
 });
 
 test('new continuous-line and Voronoi controls animate through the conversion worker', () => {

@@ -1,0 +1,78 @@
+{
+  "title": "Implicit Warp",
+  "source": "SurferGalleryBiancaViolet/SurferGalleryBiancaViolet_visual.js",
+  "visualId": "surferGalleryBiancaViolet",
+  "seed": 2026092573,
+  "frames": 0,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o color o splineLines o scale (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "warp",
+      "baseline": -15.3,
+      "value": 240,
+      "direction": "max"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        -15.3,
+        257.871
+      ],
+      "event": "X >= threshold",
+      "threshold": 240,
+      "value": 0.06542056074766349,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "Implicit contours fracture",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-surfergallerybiancaviolet-01-implicit-warp.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-surfergallerybiancaviolet-01-implicit-warp.json",
+  "observedStages": [
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 10616,
+      "afterShapes": 11760,
+      "messages": [
+        "scale applied: 286 groups, 1430 clones."
+      ]
+    },
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 11760,
+      "afterShapes": 45288,
+      "messages": [
+        "spline lines applied: 939 shapes, 34467 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 45288,
+      "afterShapes": 45288,
+      "messages": [
+        "color applied: 45288 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 45288,
+      "afterShapes": 45288,
+      "messages": []
+    }
+  ]
+}

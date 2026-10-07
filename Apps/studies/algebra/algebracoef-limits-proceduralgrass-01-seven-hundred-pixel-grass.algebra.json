@@ -1,0 +1,100 @@
+{
+  "title": "Seven Hundred Pixel Grass",
+  "source": "ProceduralGrass/ProceduralGrass_visual.js",
+  "visualId": "proceduralGrassField",
+  "seed": 2026092565,
+  "frames": 0,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o splineLines o splineLines o color o scale o paint (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "bladeHeight",
+      "baseline": 150,
+      "value": 700,
+      "direction": "max"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        0,
+        738.5
+      ],
+      "event": "X >= threshold",
+      "threshold": 700,
+      "value": 0.052132701421800945,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "Blades tower over the ground",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-proceduralgrass-01-seven-hundred-pixel-grass.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-proceduralgrass-01-seven-hundred-pixel-grass.json",
+  "observedStages": [
+    {
+      "label": "Suppress ground and shadow support",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 279,
+      "afterShapes": 279,
+      "messages": [
+        "paint applied: 80 elements."
+      ]
+    },
+    {
+      "label": "E: 2 echoes, scale 0.62 to 1.25",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 279,
+      "afterShapes": 439,
+      "messages": [
+        "scale applied: 160 groups, 320 clones."
+      ]
+    },
+    {
+      "label": "C: enumerate current marks through four colors",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 439,
+      "afterShapes": 439,
+      "messages": [
+        "color applied: 320 elements, 4 mapped colors."
+      ]
+    },
+    {
+      "label": "N1: normal vectors, coefficient 0.65",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 439,
+      "afterShapes": 4279,
+      "messages": [
+        "spline lines applied: 160 shapes, 4000 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "N2: tangent vectors, coefficient 1.35",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 4279,
+      "afterShapes": 8119,
+      "messages": [
+        "spline lines applied: 160 shapes, 4000 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "A^2: repeated rotation and contraction",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 8119,
+      "afterShapes": 8119,
+      "messages": []
+    }
+  ]
+}

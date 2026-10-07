@@ -1,0 +1,56 @@
+{
+  "title": "Giant Cells",
+  "source": "GameOfLife_aug/gameOfLife.js",
+  "visualId": "gameOfLifeSVG",
+  "seed": 2026092524,
+  "frames": 12,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o scale (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "cellPx",
+      "baseline": 48,
+      "value": 170,
+      "direction": "max"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        0,
+        178.54
+      ],
+      "event": "X >= threshold",
+      "threshold": 170,
+      "value": 0.047832418505656955,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "Large cells turn the field into a few blocks",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-gameoflife-aug-02-giant-cells.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-gameoflife-aug-02-giant-cells.json",
+  "observedStages": [
+    {
+      "label": "E: sparse cell echoes",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 100,
+      "afterShapes": 114,
+      "messages": [
+        "scale applied: 14 groups, 28 clones."
+      ]
+    },
+    {
+      "label": "A^2: repeated rotation and contraction",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 114,
+      "afterShapes": 114,
+      "messages": []
+    }
+  ]
+}

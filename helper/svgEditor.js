@@ -370,7 +370,7 @@ function applyPatch(el, patchObj) {
 }
 
 // This is the hook you’ll call from the clone loop:
-export function applyPropOpsToSubtree(rootEl, propStack) {
+export function applyPropOpsToSubtree(rootEl, propStack, { excludeSelector } = {}) {
   // realm-safe: works for SVG elements coming from iframes/other documents
   if (!rootEl || rootEl.nodeType !== 1) return;
 
@@ -379,6 +379,7 @@ export function applyPropOpsToSubtree(rootEl, propStack) {
 
   const all = [rootEl, ...Array.from(rootEl.querySelectorAll("*"))];
   for (const el of all) {
+    if (excludeSelector && el.closest(excludeSelector)) continue;
     for (const op of stack) {
       if (!op || op.kind !== "propRule") continue;
       if (selectorMatches(el, op.selector)) applyPatch(el, op.apply);

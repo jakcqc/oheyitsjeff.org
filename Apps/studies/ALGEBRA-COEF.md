@@ -6,6 +6,10 @@ This extension adds **24 studies in 12 controlled pairs across six native apps**
 
 [algebraCOEF Wild](ALGEBRA-COEF-WILD.md) adds 17 one-off studies from the 17 remaining apps, bringing algebraCOEF to 41 works. It adds native logarithmic echo spacing, opt-in extrapolated tension, and angular spline vectors, alongside signed scales, opacity recurrences, Fourier placement and depth layers. [Browse only Wild](/Apps/?collection=algebraCOEF&search=wild). The original 24-study paired experiment is documented below.
 
+## Limits extension
+
+[algebraCOEF Limits](ALGEBRA-COEF-LIMITS.md) adds 80 extreme native simulations across all 23 apps, balanced between main and math visuals. Its rate coefficient records the exact tail probability of each stressed parameter under a stated uniform proposal. The three coefficient batches now contain 121 studies.
+
 ## Parameterized composition
 
 Read compositions right to left:

@@ -1,0 +1,18 @@
+{
+  "name": "the-odyssey",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node ../tests/odyssey.mjs && node ../tests/odyssey-source.mjs && node ../tests/odyssey-defaults.mjs && node ../tests/odyssey-video.mjs",
+    "test:browser": "node ../tests/odyssey-integration.mjs",
+    "test:runs": "node ../tests/odyssey-runs.mjs",
+    "test:timeouts": "node ../tests/odyssey-timeouts.mjs",
+    "test:toolbar": "node ../tests/odyssey-toolbar.mjs",
+    "test:video": "node ../tests/odyssey-video-browser.mjs && node ../tests/odyssey-video-retries.mjs"
+  },
+  "devDependencies": {
+    "acorn": "^8.18.0",
+    "mediabunny": "1.60.0",
+    "playwright": "^1.55.0"
+  }
+}

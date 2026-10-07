@@ -1,0 +1,118 @@
+/* Copyright (c) 2026 Jeffrey Kerley. SPDX-License-Identifier: LicenseRef-Jeffrey-Kerley-NC-NoAI-1.0 */
+
+.anim-property-add {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+}
+.anim-property-add > button {
+  flex: 0 0 auto;
+}
+.anim-param-picker {
+  flex: 1 1 180px;
+  min-width: 0;
+  max-width: 100%;
+  color: #eee;
+  font-size: 12px;
+}
+.anim-param-picker > input.anim-param-input[type="text"] {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 34px;
+  padding: 7px 8px;
+  border: 1px solid #666;
+  border-radius: 4px;
+  background: #1f1f1f;
+  color: #f3f3f3;
+  font: inherit;
+}
+.anim-param-picker > .anim-param-input:focus-visible {
+  outline: 2px solid #8dc9ff;
+  outline-offset: 1px;
+}
+.anim-param-dropdown {
+  margin-top: 4px;
+  border: 1px solid #606060;
+  border-radius: 5px;
+  background: #202020;
+  overflow: hidden;
+}
+.anim-param-list {
+  max-height: min(260px, 45vh);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+.anim-param-option {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  padding: 8px 10px;
+  cursor: pointer;
+  text-align: left;
+  line-height: 1.4;
+}
+.anim-param-option + .anim-param-option {
+  border-top: 1px solid #353535;
+}
+.anim-param-option[aria-selected="true"],
+.anim-param-option:hover {
+  background: #343a3f;
+  box-shadow: inset 2px 0 #fffeb4;
+}
+.anim-param-label {
+  color: #f0f0f0;
+  font-weight: 600;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.anim-param-key {
+  color: #b7b7b7;
+  font-size: 11px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.anim-param-help {
+  margin-top: 6px;
+  padding: 7px 9px;
+  border-left: 2px solid #fffeb4;
+  background: #252526;
+  color: #ddd;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.anim-param-empty {
+  padding: 9px;
+  color: #b9b9b9;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.anim-param-picker[hidden],
+.anim-param-picker [hidden] {
+  display: none !important;
+}
+.anim-param-target.tool-flow-stage-title {
+  min-width: 0;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+.anim-param-target-label {
+  display: block;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.anim-param-target-key {
+  display: block;
+  margin-top: 3px;
+  color: #b7b7b7;
+  font-size: 11px;
+  font-weight: 400;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}

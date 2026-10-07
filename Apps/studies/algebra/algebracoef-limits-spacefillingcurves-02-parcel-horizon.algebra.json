@@ -1,0 +1,89 @@
+{
+  "title": "Parcel Horizon",
+  "source": "SpaceFillingCurves/SpaceFillingCurves_visual.js",
+  "visualId": "spaceFillingCurves",
+  "seed": 2026092570,
+  "frames": 0,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o paint o convert o color o scale (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "maxRectSize",
+      "baseline": 550,
+      "value": 3000,
+      "direction": "max"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        0,
+        3171.5
+      ],
+      "event": "X >= threshold",
+      "threshold": 3000,
+      "value": 0.054075358663093175,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "Huge parcels swallow nearby curves",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-spacefillingcurves-02-parcel-horizon.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-spacefillingcurves-02-parcel-horizon.json",
+  "observedStages": [
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 15,
+      "afterShapes": 35,
+      "messages": [
+        "scale applied: 5 groups, 25 clones."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 35,
+      "afterShapes": 35,
+      "messages": [
+        "color applied: 35 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "Q: convert",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 35,
+      "afterShapes": 35,
+      "messages": [
+        "convert applied: 7 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "P: paint",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 35,
+      "afterShapes": 35,
+      "messages": [
+        "paint applied: 7 elements."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 35,
+      "afterShapes": 175,
+      "messages": []
+    }
+  ]
+}

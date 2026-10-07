@@ -17,6 +17,8 @@
 import { el, getByPath, setByPath } from "./visualHelp.js";
 import { registerTab } from "./visualHelp.js";
 import { createSubTabs } from "./subTabs.js";
+import { buildAnimationRenderPanel } from "./animationRenderUI.js";
+import { numericAnimationParameters, createAnimationParamPicker } from "./animationParamPicker.js";
 
 const RUNTIMES = new WeakMap();
 
@@ -74,7 +76,7 @@ export function ensureAnimateState(state) {
   const ui = state.__anim.ui;
   if (!Array.isArray(ui.paramTargets)) ui.paramTargets = [];
   if (ui.autoPlay == null) ui.autoPlay = false;
-  if (!["flow", "json"].includes(ui.view)) ui.view = "flow";
+  if (!["flow", "json", "render"].includes(ui.view)) ui.view = "flow";
 
   const legacyKey = String(ui.paramKey || "").trim();
   const hasLegacy = legacyKey.length > 0;
@@ -124,10 +126,27 @@ export function controlAnimation(ctx, command) {
   return { playing: rt.playing, paused: rt.paused, progress01: ctx.state.__anim.ui.progress01 };
 }
 
+// Lifecycle observers are independent of the Animate panel, so shared tools can
+// observe playback even when their own tab is open. Frame events run after the
+// visual and SVG animation values have been applied.
+export function subscribeAnimation(ctx, listener) {
+  if (typeof listener !== "function") throw new TypeError("An animation listener is required.");
+  ensureAnimateState(ctx.state);
+  const rt = getOrMakeRuntime(ctx);
+  rt.lifecycleSubs.add(listener);
+  return () => rt.lifecycleSubs.delete(listener);
+}
+
 export function registerAnimateTab() {
   registerTab("animate", ({ mountEl, state, spec, xfRuntime, onChange, onStateChange }) =>
     buildAnimatePanel({ mountEl, state, spec, xfRuntime, onChange, onStateChange })
   );
+}
+
+// Exact seeking is also used by the isolated animation capture renderer.
+export function seekAnimation(ctx, progress) {
+  ensureAnimateState(ctx.state);
+  getOrMakeRuntime(ctx).scrubTo(progress);
 }
 
 function ease(t, kind) {
@@ -194,6 +213,33 @@ function getOrMakeRuntime({ mountEl, state, onChange }) {
     raf: 0,
     lastFrameAt: 0,
     startAt: 0,
+    runId: 0,
+    runActive: false,
+    elapsedSec: 0,
+    frameProgress: 0,
+    lifecycleSubs: new Set(),
+
+    emitLifecycle(type) {
+      const event = {
+        type,
+        state,
+        mountEl: rt.mountEl,
+        runId: rt.runId,
+        elapsedSec: rt.elapsedSec,
+        progress01: clampNum(state.__anim?.ui?.progress01, 0),
+      };
+      for (const listener of rt.lifecycleSubs) {
+        // An observer must never interrupt rendering or another observer.
+        try { listener(event); } catch {}
+      }
+    },
+
+    cancelFrames() {
+      if (rt.raf) cancelAnimationFrame(rt.raf);
+      rt.raf = 0;
+      rt.playing = false;
+      rt.lastFrameAt = 0;
+    },
 
     // multi-target tween state
     froms: [],
@@ -295,12 +341,9 @@ function getOrMakeRuntime({ mountEl, state, onChange }) {
       rt.onChange?.("__anim.progress01", v, state);
     },
 
-    stop({ snap = false } = {}) {
-      if (rt.raf) cancelAnimationFrame(rt.raf);
-      rt.raf = 0;
-      rt.playing = false;
+    stop({ snap = false, reason = "stop" } = {}) {
+      rt.cancelFrames();
       rt.paused = false;
-      rt.lastFrameAt = 0;
 
       const ui = state.__anim?.ui || {};
       if (snap) {
@@ -316,15 +359,18 @@ function getOrMakeRuntime({ mountEl, state, onChange }) {
         }
       }
 
+      if (rt.runActive) {
+        rt.runActive = false;
+        rt.emitLifecycle(reason);
+      }
       rt.notify();
     },
 
     pause() {
       if (!rt.playing) return;
-      const progress = state.__anim.ui.progress01;
-      rt.stop({ snap: false });
+      rt.cancelFrames();
       rt.paused = true;
-      state.__anim.ui.progress01 = progress;
+      rt.emitLifecycle("pause");
       rt.notify();
     },
 
@@ -338,7 +384,16 @@ function getOrMakeRuntime({ mountEl, state, onChange }) {
 
       const resume = !!rt.paused && ui.progress01 < 1;
       const startProgress = resume ? clampNum(ui.progress01, 0) : 0;
-      rt.stop({ snap: false });
+      const continuingRun = resume && rt.runActive;
+      // Starting and resuming must not emit a synthetic stop event.
+      rt.cancelFrames();
+      rt.paused = false;
+      if (!continuingRun) {
+        rt.runId += 1;
+        rt.runActive = true;
+        rt.elapsedSec = 0;
+      }
+      rt.frameProgress = startProgress;
 
       rt.playing = true;
       rt.startAt = performance.now() - startProgress * durMs;
@@ -347,8 +402,10 @@ function getOrMakeRuntime({ mountEl, state, onChange }) {
       ui.progress01 = startProgress;
 
       if (!resume) rt.resolveEndpoints();
+      rt.emitLifecycle(continuingRun ? "resume" : "start");
       // Starting/restarting applies only listed properties, immediately.
       rt.applyProgress(startProgress);
+      rt.emitLifecycle("frame");
 
       const tick = (now) => {
         if (!rt.playing) return;
@@ -366,7 +423,10 @@ function getOrMakeRuntime({ mountEl, state, onChange }) {
         // Preserve the scrubbed/paused position until the frame clock catches up.
         t = Math.max(clampNum(ui.progress01, 0), Math.max(0, Math.min(1, t)));
 
+        rt.elapsedSec += Math.max(0, t - rt.frameProgress) * durMs / 1000;
+        rt.frameProgress = t;
         rt.applyProgress(t);
+        rt.emitLifecycle("frame");
 
         rt.notify();
 
@@ -387,12 +447,13 @@ function getOrMakeRuntime({ mountEl, state, onChange }) {
               }
             }
             rt.startAt = now;
+            rt.frameProgress = 0;
             ui.progress01 = 0;
             rt.notify();
             rt.raf = requestAnimationFrame(tick);
             return;
           } else {
-            rt.stop({ snap: false });
+            rt.stop({ snap: false, reason: "complete" });
             return;
           }
         }
@@ -434,17 +495,6 @@ function getOrMakeRuntime({ mountEl, state, onChange }) {
   return rt;
 }
 
-function numericParamKeys(spec) {
-  const out = [];
-  for (const p of (spec?.params || [])) {
-    if (p?.type === "number" && p?.key) out.push(p.key);
-    if ((p?.type === "vector2D" || p?.type === "vector3D") && p?.key) {
-      for (const axis of p.type === "vector3D" ? ["x", "y", "z"] : ["x", "y"]) out.push(`${p.key}.${axis}`);
-    }
-  }
-  return out;
-}
-
 export function buildAnimatePanel({ mountEl, state, spec, onChange, onStateChange, xfRuntime }) {
   ensureAnimateState(state);
   const ui = state.__anim.ui;
@@ -454,10 +504,10 @@ export function buildAnimatePanel({ mountEl, state, spec, onChange, onStateChang
   const root = el("div", { className: "anim-panel" });
   const flowPanel = el("div", { className: "anim-flow" });
   const jsonPanel = el("div", { className: "anim-json" });
+  const renderPanel = buildAnimationRenderPanel({ mountEl, state, spec, onStateChange });
   const status = el("div", { className: "anim-status", role: "status" });
-  const keys = numericParamKeys(spec);
-  const dl = el("datalist", { id: "anim-keys-" + Math.random().toString(16).slice(2) });
-  keys.forEach((key) => dl.appendChild(el("option", { value: key })));
+  const parameters = numericAnimationParameters(spec);
+  const parameterByKey = new Map(parameters.map((parameter) => [parameter.key, parameter]));
   const bindings = [];
   const editor = state.__anim.editor || (state.__anim.editor = {});
 
@@ -505,10 +555,10 @@ export function buildAnimatePanel({ mountEl, state, spec, onChange, onStateChang
     return el("label", { className: "anim-check" }, [input, el("span", { textContent: label })]);
   };
 
-  const addKey = el("input", { type: "text", placeholder: "Choose or type a numeric property", list: dl.id, "aria-label": "Add animation parameter" });
+  const propertyPicker = createAnimationParamPicker({ parameters, onCommit: () => addTarget() });
   const addMessage = el("div", { className: "anim-help", role: "status" });
   const addTarget = () => {
-    const key = addKey.value.trim();
+    const key = propertyPicker.getKey();
     if (!key) return;
     if (ui.paramTargets.some((target) => target.key === key)) {
       addMessage.textContent = "That property is already in the flow.";
@@ -521,19 +571,21 @@ export function buildAnimatePanel({ mountEl, state, spec, onChange, onStateChang
     }
     ui.targetType = "params";
     ui.paramTargets.push({ key, from: current, to: current + 10 });
-    addKey.value = "";
+    propertyPicker.clear();
     addMessage.textContent = "";
     edited();
     refreshEditors();
   };
-  addKey.onkeydown = (event) => { if (event.key === "Enter") { event.preventDefault(); addTarget(); } };
   const targetsList = el("div", { className: "anim-targets tool-flow-stage-list" });
   flowPanel.append(
     el("p", { className: "anim-help", textContent: "Animate these properties together. Other parameters keep their current values." }),
     row("Duration (seconds)", numericSetting("durationSec", "Duration in seconds", 3, 0.01, "0.01")),
     row("Frames per second", numericSetting("fps", "Frames per second", 20, 1, "1")),
     el("div", { className: "anim-checks" }, [checkSetting("loop", "Loop"), checkSetting("yoyo", "Yoyo")]),
-    row("Add property", el("div", { className: "tool-flow-actions" }, [addKey, button("Add", addTarget)])),
+    el("div", { className: "anim-row" }, [
+      el("span", { className: "anim-label", textContent: "Add property" }),
+      el("div", { className: "anim-property-add" }, [propertyPicker.root, button("Add", addTarget)]),
+    ]),
     addMessage,
     targetsList,
   );
@@ -559,15 +611,21 @@ export function buildAnimatePanel({ mountEl, state, spec, onChange, onStateChang
       return;
     }
     ui.paramTargets.forEach((target, index) => {
-      const name = el("div", { className: "tool-flow-stage-title", textContent: target.key, title: target.key });
+      const parameter = parameterByKey.get(target.key);
+      const label = parameter?.label || target.key;
+      const title = [label, parameter?.description, label !== target.key ? target.key : ""].filter(Boolean).join("\n");
+      const name = el("div", { className: "tool-flow-stage-title anim-param-target", title }, [
+        el("span", { className: "anim-param-target-label", textContent: label }),
+      ]);
+      if (label !== target.key) name.appendChild(el("span", { className: "anim-param-target-key", textContent: target.key }));
       const remove = button("\u00d7", () => {
         ui.paramTargets.splice(index, 1);
         edited();
         refreshEditors();
       }, "Remove animation property");
-      remove.setAttribute("aria-label", "Remove " + target.key);
+      remove.setAttribute("aria-label", "Remove " + label);
       targetsList.appendChild(el("div", { className: "tool-flow-stage anim-flow-card" }, [
-        name, endpoints(target, target.key), remove,
+        name, endpoints(target, label), remove,
       ]));
     });
     if (!ui.paramTargets.length) targetsList.appendChild(el("p", {
@@ -631,6 +689,7 @@ export function buildAnimatePanel({ mountEl, state, spec, onChange, onStateChang
     options: [
       { value: "flow", label: "Flow", panel: flowPanel },
       { value: "json", label: "JSON", panel: jsonPanel },
+      { value: "render", label: "Render", panel: renderPanel },
     ],
     onChange: (value) => { ui.view = value; markDirty(); refreshEditors(); },
   });
@@ -659,6 +718,7 @@ export function buildAnimatePanel({ mountEl, state, spec, onChange, onStateChang
     el("p", { className: "anim-help", textContent: "P: play/pause animation \u00b7 R: restart animation \u00b7 Space: pause/resume simulation" }),
   ]);
   const refreshTransport = () => {
+    transport.hidden = ui.view === "render";
     progress.value = String(ui.progress01 ?? 0);
     play.textContent = rt.paused && ui.progress01 < 1 ? "Resume" : "Play";
     play.disabled = rt.playing;
@@ -667,14 +727,18 @@ export function buildAnimatePanel({ mountEl, state, spec, onChange, onStateChang
     status.textContent = (rt.playing ? "Playing" : rt.paused ? "Paused" : "Stopped") + " \u00b7 " + (clampNum(ui.progress01, 0) * 100).toFixed(1) + "%";
   };
   function refreshEditors() {
+    if (ui.view !== "flow") propertyPicker.close();
     bindings.forEach((sync) => sync());
     renderTargets();
     if (ui.view === "json" && editor.draft == null) syncJson();
+    if (ui.view === "render") renderPanel._onShow?.();
     refreshTransport();
   }
-  root.append(viewTabs.root, flowPanel, jsonPanel, transport, dl);
-  root._onShow = refreshTransport;
-  root._destroy = rt.subscribe(refreshTransport);
+  root.append(viewTabs.root, flowPanel, jsonPanel, renderPanel, transport);
+  root._onShow = () => { refreshTransport(); if (ui.view === "render") renderPanel._onShow?.(); };
+  root._onHide = () => propertyPicker.close();
+  const unsubscribe = rt.subscribe(refreshTransport);
+  root._destroy = () => { unsubscribe(); propertyPicker.destroy(); renderPanel._destroy?.(); };
   refreshEditors();
   return root;
 }

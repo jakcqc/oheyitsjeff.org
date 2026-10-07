@@ -155,16 +155,21 @@ export async function runInnerLightRegressions() {
     set('motionEnabled', false);
 
     tab('transforms');
-    click('rotate');
+    const arrangeAction = ui.querySelector('.xf-panel [data-xf-key="arrangeAction"]');
+    arrangeAction.value = 'rotate';
+    arrangeAction.dispatchEvent(new win.Event('change', { bubbles: true }));
+    click('apply');
     assert(source().getAttribute('transform')?.includes('rotate('), 'Shared rotation transforms the Inner Light scene');
     tab('params');
     set('custom.numElements', 9);
     assert(source() === originalSource && source().getAttribute('transform')?.includes('rotate('), 'Transforms survive Inner Light parameter redraws');
     tab('transforms');
-    const split = rowFor('split copies').querySelector('input[type="number"]');
+    arrangeAction.value = 'split';
+    arrangeAction.dispatchEvent(new win.Event('change', { bubbles: true }));
+    const split = ui.querySelector('.xf-panel [data-xf-key="splitCount"]');
     split.value = '4';
     split.dispatchEvent(new win.Event('change', { bubbles: true }));
-    click('apply split');
+    click('apply');
     assert(mount.querySelector('[data-xf-layer="1"]').children.length === 4, 'Shared split creates four live copies');
     tab('params');
     set('custom.numElements', 5);

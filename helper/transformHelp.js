@@ -9,10 +9,28 @@
  */
 
 /* --------------------------- Transforms tab --------------------------- */
-import { el, getByPath, setByPath, buildControl } from "./visualHelp.js";
+import { el, getByPath, setByPath } from "./visualHelp.js";
 import { registerTab } from "./visualHelp.js";
+import { createSubTabs } from "./subTabs.js";
+import { normalizeKaleidoscope, buildKaleidoscopeGeometry } from "./kaleidoscopeMath.js";
+import { MATH_TRANSFORM_TYPES, normalizeMathTransform } from "./mathTransformMath.js";
+import { applyMathTransforms } from "./mathTransformGeometry.js";
 import { ensurePropOpsState, applyPropOpsToSubtree, ensureScriptOpsState, applyScriptOpsToSubtree } from "./svgEditor.js";
 let isFirst = false;
+let nextTransformRuntimeId = 0;
+const ARRANGE_TOOLS = [
+  { value: "split", label: "Tile layout" },
+  { value: "rotate", label: "Rotate" },
+  { value: "zoomIn", label: "Zoom in" },
+  { value: "zoomOut", label: "Zoom out" },
+  { value: "translate", label: "Translate" },
+  { value: "preset", label: "Presets" },
+];
+const SYMMETRY_TOOLS = [
+  { value: "kaleidoscope", label: "Kaleidoscope" },
+  { value: "flipX", label: "Flip X" },
+  { value: "flipY", label: "Flip Y" },
+];
 /* ------------------------ helpers ------------------------ */
 function resolveCenterAxis(val, size, fallback) {
   const n = Number(val);
@@ -26,6 +44,7 @@ function resolveCenterAxis(val, size, fallback) {
 }
 
 function resolveCenterAxisWithOrigin(val, origin, size, fallback) {
+  if (val == null || val === "") return fallback;
   const n = Number(val);
   if (!Number.isFinite(n)) return fallback;
   if (n >= 0 && n <= 1) return origin + n * size;
@@ -111,15 +130,30 @@ function formatXfStack(stack) {
     .map((op, i) => {
       if (op.kind === "split") return `${i}: split(${op.count})`;
       const tgt = op.targets == null ? "all" : `[${op.targets.join(",")}]`;
+      if (op.kind === "warp") {
+        const cfg = normalizeMathTransform(op);
+        const values = {
+          vortex: `strength=${cfg.strength}, radius=${cfg.radius}`,
+          mobius: `a=${cfg.mobiusRe}+${cfg.mobiusIm}i`,
+          power: `N=${cfg.power}`,
+          root: `N=${cfg.power}, branch=${cfg.allBranches ? "all" : cfg.branch}`,
+          wrap: `${cfg.topology}, offset=(${cfg.wrapX},${cfg.wrapY}), repeats=${cfg.wrapScale}`,
+          annulus: `radii=(${cfg.innerRadius},${cfg.outerRadius}), turns=${cfg.turns}`,
+          joukowski: `lambda=${cfg.lambda}`,
+        };
+        return `${i}: ${cfg.type}(targets=${tgt}, ${values[cfg.type]})`;
+      }
+      if (op.kind === "kaleidoscope") {
+        const cfg = normalizeKaleidoscope(op);
+        return `${i}: kaleidoscope(targets=${tgt}, N=${cfg.count}, ${cfg.mirror ? 2 * cfg.count + " mirrored" : cfg.count + " rotated"} wedges, angle=${cfg.rotationDeg})`;
+      }
       if (op.kind === "rotate") return `${i}: rotate(targets=${tgt}, deg=${op.deg})`;
       if (op.kind === "flipX") return `${i}: flipX(targets=${tgt})`;
       if (op.kind === "flipY") return `${i}: flipY(targets=${tgt})`;
       if (op.kind === "zoom") {
         const c = op.center;
-        const cStr =
-          c && (Number.isFinite(+c.x) || Number.isFinite(+c.y))
-            ? `, center=(${fmtNum(+c.x)},${fmtNum(+c.y)})`
-            : "";
+        const centerAxis = (value) => value == null || value === "" || !Number.isFinite(+value) ? "auto" : fmtNum(+value);
+        const cStr = c ? `, center=(${centerAxis(c.x)},${centerAxis(c.y)})` : "";
         return `${i}: zoom(targets=${tgt}, factor=${op.factor}${cStr})`;
       }
       if (op.kind === "translate") {
@@ -152,6 +186,11 @@ export function ensureTransformState(state) {
   if (!state.__xf.ui || typeof state.__xf.ui !== "object") state.__xf.ui = {};
 
   const ui = state.__xf.ui;
+  if (ui.activeTab == null) ui.activeTab = "arrange";
+  if (!ARRANGE_TOOLS.some((tool) => tool.value === ui.arrangeAction)) ui.arrangeAction = "split";
+  if (!SYMMETRY_TOOLS.some((tool) => tool.value === ui.symmetryAction)) ui.symmetryAction = "kaleidoscope";
+  ui.kaleidoscope = normalizeKaleidoscope(ui.kaleidoscope);
+  ui.math = normalizeMathTransform(ui.math);
 
   if (ui.preset == null) ui.preset = "";
   if (ui.splitMode == null) ui.splitMode = "screen";
@@ -180,7 +219,7 @@ export function ensureTransformState(state) {
   if (!Array.isArray(state.__xf.stack)) state.__xf.stack = [];
 }
 
-function buildTransformPresetStack(presetName) {
+export function buildTransformPresetStack(presetName) {
   const name = String(presetName || "").trim();
   if (!name) return null;
 
@@ -212,497 +251,599 @@ function buildTransformPresetStack(presetName) {
 
 export function buildTransformPanel({ mountEl, state, xfRuntime, onStateChange }) {
   ensureTransformState(state);
+  const root = el("div", { className: "xf-panel" });
   const markDirty = () => onStateChange?.();
+  const bindings = [];
+  const kaleidoscopeBindings = [];
+  const uiPath = (key) => "__xf.ui." + key;
+  const read = (key) => getByPath(state, uiPath(key));
+  let refreshOverview = () => {};
+  let historySignature = "";
+  let kaleidoscopeEdit = null;
 
-  const root = document.createElement("div");
-  root.className = "xf-panel";
-
-  const buildVector2Control = ({
-    key,
-    label,
-    description,
-    blankIsNaN = false,
-    step = 1,
-  }) => {
-    const wrap = el("div", { className: "vr-row" });
-    wrap.appendChild(el("label", { className: "vr-label", textContent: label }));
-    if (description) wrap.appendChild(el("div", { className: "vr-help", textContent: description }));
-
-    const row = el("div", { className: "vr-rangeRow" });
-
-    const makeBox = (axis) => {
-      const input = el("input", { type: "number", step: String(step) });
-      const v = getByPath(state, key)?.[axis];
-      input.value = Number.isFinite(+v) ? String(+v) : "";
-
-      input.addEventListener("change", () => {
-        const raw = input.value.trim();
-        const n =
-          raw === ""
-            ? (blankIsNaN ? NaN : 0)
-            : Number(raw);
-
-        const cur = ensureVector2(getByPath(state, key), { x: blankIsNaN ? NaN : 0, y: blankIsNaN ? NaN : 0 });
-        const next = { ...cur, [axis]: Number.isFinite(n) ? n : (blankIsNaN ? NaN : 0) };
-        setByPath(state, key, next);
-        markDirty();
-        render();
-      });
-
-      return input;
-    };
-
-    row.appendChild(el("div", { className: "vr-help", textContent: "x" }));
-    row.appendChild(makeBox("x"));
-    row.appendChild(el("div", { className: "vr-help", textContent: "y" }));
-    row.appendChild(makeBox("y"));
-
-    wrap.appendChild(row);
-    return wrap;
-  };
-
-  const buildMatrixControl = () => {
-    const wrap = el("div", { className: "vr-row" });
-    wrap.appendChild(el("label", { className: "vr-label", textContent: "matrix (a b c d e f)" }));
-    wrap.appendChild(el("div", { className: "vr-help", textContent: "SVG transform matrix; leave blank to keep defaults." }));
-
-    const row = el("div", { className: "vr-rangeRow" });
-    const keys = ["a", "b", "c", "d", "e", "f"];
-
-    const syncVal = (axis, raw) => {
-      const next = ensureMatrix6(getByPath(state, "__xf.ui.matrix"));
-      const n = raw.trim() === "" ? DEFAULT_MATRIX[axis] : Number(raw);
-      next[axis] = Number.isFinite(n) ? n : next[axis];
-      setByPath(state, "__xf.ui.matrix", next);
-    };
-
-    for (const axis of keys) {
-      const box = el("input", { type: "number", step: "0.01" });
-      const cur = ensureMatrix6(getByPath(state, "__xf.ui.matrix"));
-      box.value = Number.isFinite(cur[axis]) ? String(cur[axis]) : "";
-      box.addEventListener("change", () => {
-        syncVal(axis, box.value || "");
-        markDirty();
-        render();
-      });
-
-      const wrapAxis = el("div", { className: "vr-vecField" });
-      wrapAxis.appendChild(el("div", { className: "vr-vecLabel", textContent: axis }));
-      wrapAxis.appendChild(box);
-      row.appendChild(wrapAxis);
-    }
-
-    wrap.appendChild(row);
-    return wrap;
-  };
-
-  const render = () => {
-    root.innerHTML = "";
-
-    const effectiveSplit = getEffectiveSplitCount(state.__xf.stack);
-    const uiSplit = clampInt(getByPath(state, "__xf.ui.splitCount") ?? 1, 1, 64);
-    const tileCountForUI = Math.max(1, uiSplit, effectiveSplit);
-
-    const tileOptions = ["all", ...Array.from({ length: tileCountForUI }, (_, i) => String(i))];
-
-    const xfParams = [
-      {
-        key: "__xf.ui.preset",
-        label: "preset",
-        type: "select",
-        default: "",
-        category: "Presets",
-        options: ["", "split4", "kaleidoscope4"],
-        description: "Choose a transform preset, then press Apply preset.",
-      },
-      {
-        key: "__xf.ui.splitMode",
-        label: "split mode",
-        type: "select",
-        default: "screen",
-        category: "Split",
-        options: ["screen", "fit"],
-        description: 'screen = uniform downscale; fit = fill viewport per tile (e.g. split(2) => half width, full height).',
-      },
-      {
-        key: "__xf.ui.splitCount",
-        label: "split copies",
-        type: "number",
-        default: 1,
-        category: "Split",
-        min: 1,
-        max: 64,
-        step: 1,
-        description: "2=side-by-side, 4=2×2, 9=3×3 ...",
-      },
-
-      // {
-      //   key: "__xf.ui.applyToAll",
-      //   label: "apply transforms to all tiles",
-      //   type: "boolean",
-      //   default: false,
-      // },
-
-      // {
-      //   key: "__xf.ui.activeTile",
-      //   label: "quick pick tile",
-      //   type: "select",
-      //   default: "0",
-      //   options: tileOptions,
-      //   description: "Select a tile (or all) and it will populate tile targets.",
-      // },
-
-      {
-        key: "__xf.ui.tileTargets",
-        label: "tile targets",
-        type: "text",
-        default: "0",
-        category: "Targets",
-        description: "Examples: all | 0 | 0,2,5 | 1-4",
-      },
-
-      {
-        key: "__xf.ui.rotateDeg",
-        label: "rotate (deg)",
-        type: "number",
-        default: 90,
-        category: "Rotate/Zoom",
-        min: -180,
-        max: 180,
-        step: 1,
-      },
-
-      {
-        key: "__xf.ui.zoomFactor",
-        label: "zoom factor",
-        type: "number",
-        default: 1.25,
-        category: "Rotate/Zoom",
-        min: 0.1,
-        max: 20,
-        step: 0.05,
-        description: "Zoom in uses this; zoom out uses 1 / this.",
-      },
-      {
-        key: "__xf.ui.planeCount",
-        label: "3D plane count",
-        type: "number",
-        default: 3,
-        category: "3D Planes",
-        min: 0,
-        max: 32,
-        step: 1,
-        description: "0 disables planes; >1 stacks the SVG into multiple layers.",
-      },
-      {
-        key: "__xf.ui.planeBaseScale",
-        label: "plane base scale",
-        type: "number",
-        default: 1,
-        category: "3D Planes",
-        min: 0.01,
-        max: 10,
-        step: 0.01,
-      },
-      {
-        key: "__xf.ui.planeScaleStep",
-        label: "plane scale step",
-        type: "number",
-        default: -0.12,
-        category: "3D Planes",
-        min: -5,
-        max: 5,
-        step: 0.01,
-        description: "Added per depth (negative shrinks deeper planes).",
-      },
-      {
-        key: "__xf.ui.planeOpacity",
-        label: "plane opacity",
-        type: "number",
-        default: 0.7,
-        category: "3D Planes",
-        min: 0,
-        max: 1,
-        step: 0.05,
-      },
-      {
-        key: "__xf.ui.planeOpacityFalloff",
-        label: "opacity falloff",
-        type: "number",
-        default: 0.12,
-        category: "3D Planes",
-        min: 0,
-        max: 1,
-        step: 0.02,
-        description: "Opacity reduction per depth step (clamped to 0-1).",
-      },
-    ];
-
-    const controls = document.createElement("div");
-    const groups = new Map();
-    const groupOpen = state.__xf.ui.groupOpen;
-    const getGroup = (name) => {
-      if (!groups.has(name)) {
-        const storedOpen = groupOpen[name];
-        const isOpen = typeof storedOpen === "boolean" ? storedOpen : false;
-        const wrap = el("details", { className: "vr-paramGroup", open: isOpen });
-        const summary = el("summary", { className: "vr-paramGroupTitle", textContent: name });
-        const body = el("div", { className: "vr-paramGroupBody" });
-        wrap.addEventListener("toggle", () => {
-          groupOpen[name] = wrap.open;
-          markDirty();
-        });
-        wrap.appendChild(summary);
-        wrap.appendChild(body);
-        groups.set(name, { wrap, body });
+  // Keep the editors mounted: changes must not remove focused inputs or tabs.
+  const field = (key, label, {
+    type = "number", step = "any", min, max, fallback = 0,
+    blankIsAuto = false, integer = false, options, description, onEdit,
+  } = {}) => {
+    const wrap = el("label", { className: "xf-field" });
+    wrap.appendChild(el("span", { className: "xf-label", textContent: label }));
+    const input = options ? el("select") : el("input", { type });
+    const numeric = !options && (type === "number" || type === "range");
+    const rangeValue = type === "range" ? el("output", { className: "xf-rangeValue" }) : null;
+    if (rangeValue) rangeValue.setAttribute("data-xf-range-value", key);
+    input.setAttribute("aria-label", label);
+    input.setAttribute("data-xf-key", key);
+    if (options) {
+      for (const option of options) {
+        input.appendChild(el("option", { value: option.value, textContent: option.label }));
       }
-      return groups.get(name);
+    } else if (numeric) {
+      input.step = String(step);
+      if (min != null) input.min = String(min);
+      if (max != null) input.max = String(max);
+      if (blankIsAuto) input.placeholder = "Auto";
+    }
+    const syncRangeValue = () => {
+      if (!rangeValue) return;
+      rangeValue.textContent = input.value + "\u00b0";
+      input.setAttribute("aria-valuetext", input.value + " degrees");
     };
-
-    for (const p of xfParams) {
-      const node = buildControl({
-        param: p,
-        state,
-        onChange: () => {
-          markDirty();
-          render();
-        },
-      });
-
-      // If you re-enable activeTile, keep this sync behavior:
-      if (p.key === "__xf.ui.activeTile") {
-        const sel = node.querySelector("select");
-        if (sel) {
-          sel.addEventListener("change", () => {
-            setByPath(state, "__xf.ui.tileTargets", sel.value);
-            render();
-          });
+    const sync = () => {
+      const value = read(key);
+      if (type === "checkbox") input.checked = !!value;
+      else if (numeric) {
+        input.value = value == null || !Number.isFinite(Number(value)) ? "" : String(value);
+      } else input.value = String(value ?? "");
+      syncRangeValue();
+    };
+    const edit = (event) => {
+      const final = event.type === "change";
+      let value = options ? input.value : type === "checkbox" ? input.checked : input.value;
+      if (numeric) {
+        // Leave incomplete live number edits alone until they form a valid value.
+        if (onEdit && !final && (input.validity.badInput ||
+          (input.value.trim() === "" && !blankIsAuto))) return;
+        value = input.value.trim() === "" && blankIsAuto ? null : Number(input.value);
+        if (value !== null) {
+          if (onEdit && !final && (!Number.isFinite(value) ||
+            (min != null && value < min) || (max != null && value > max))) return;
+          if (!Number.isFinite(value) || input.value.trim() === "") value = fallback;
+          if (integer) value = Math.trunc(value);
+          if (min != null) value = Math.max(min, value);
+          if (max != null) value = Math.min(max, value);
         }
       }
-
-      const group = getGroup(p.category || "General");
-      group.body.appendChild(node);
-    }
-
-    getGroup("Matrix").body.appendChild(buildMatrixControl());
-
-    getGroup("Rotate/Zoom").body.appendChild(
-      buildVector2Control({
-        key: "__xf.ui.zoomCenter",
-        label: "zoom center",
-        description: "SVG coords. Leave blank for SVG center.",
-        blankIsNaN: true,
-        step: 1,
-      })
-    );
-
-    getGroup("Translate").body.appendChild(
-      buildVector2Control({
-        key: "__xf.ui.translateVec",
-        label: "translate (x,y)",
-        description: "Moves targeted tiles by (x,y) in SVG coords.",
-        blankIsNaN: false,
-        step: 1,
-      })
-    );
-
-    getGroup("3D Planes").body.appendChild(
-      buildVector2Control({
-        key: "__xf.ui.planeCenter",
-        label: "plane center",
-        description: "Scale planes about this point; blank = SVG center.",
-        blankIsNaN: true,
-        step: 1,
-      })
-    );
-
-    getGroup("3D Planes").body.appendChild(
-      buildVector2Control({
-        key: "__xf.ui.planeOffset",
-        label: "plane offset per depth",
-        description: "Translate each plane by (dx,dy) * depth index.",
-        blankIsNaN: false,
-        step: 1,
-      })
-    );
-
-    for (const { wrap } of groups.values()) controls.appendChild(wrap);
-    root.appendChild(controls);
-
-    const btnRow = document.createElement("div");
-    btnRow.className = "xf-btnRow";
-    root.appendChild(btnRow);
-
-    const mkBtn = (label, onClick) => {
-      const b = document.createElement("button");
-      b.type = "button";
-      b.textContent = label;
-      b.onclick = onClick;
-      return b;
+      setByPath(state, uiPath(key), value);
+      if (key === "math.power" || key === "math.branch") {
+        state.__xf.ui.math.branch = normalizeMathTransform(read("math")).branch;
+      }
+      if (!onEdit || final) sync();
+      else syncRangeValue();
+      if (onEdit) onEdit({ key, final });
+      else kaleidoscopeEdit = null;
+      // Render live, but persist a single completed edit rather than every drag tick.
+      if (!onEdit || final) markDirty();
+      refreshOverview();
+      if (key === "splitMode") xfRuntime?.rebuildNow?.();
     };
-
-    const rotateDeg = Number(getByPath(state, "__xf.ui.rotateDeg") ?? 0);
-    const zoomFactor = Number(getByPath(state, "__xf.ui.zoomFactor") ?? 1.25);
-    const splitCount = clampInt(Number(getByPath(state, "__xf.ui.splitCount") ?? 1), 1, 64);
-    const readPlaneUi = () => ({
-      count: clampInt(Number(getByPath(state, "__xf.ui.planeCount") ?? 0), 0, 64),
-      baseScale: toFiniteNumber(getByPath(state, "__xf.ui.planeBaseScale"), 1),
-      scaleStep: toFiniteNumber(getByPath(state, "__xf.ui.planeScaleStep"), 0),
-      opacity: clampNumber(toFiniteNumber(getByPath(state, "__xf.ui.planeOpacity"), 0.7), 0, 1),
-      opacityFalloff: clampNumber(toFiniteNumber(getByPath(state, "__xf.ui.planeOpacityFalloff"), 0.12), 0, 1),
-      offset: ensureVector2(getByPath(state, "__xf.ui.planeOffset"), { x: 0, y: 0 }),
-      center: ensureVector2(getByPath(state, "__xf.ui.planeCenter"), { x: NaN, y: NaN }),
+    input.addEventListener("change", edit);
+    if (onEdit) {
+      input.addEventListener("input", edit);
+      input.addEventListener("blur", () => {
+        if (kaleidoscopeEdit) markDirty();
+        kaleidoscopeEdit = null;
+      });
+    }
+    if (type === "checkbox") wrap.classList.add("xf-check");
+    wrap.appendChild(input);
+    if (rangeValue) wrap.appendChild(rangeValue);
+    if (description) wrap.appendChild(el("span", { className: "xf-help", textContent: description }));
+    bindings.push(sync);
+    if (key.startsWith("kaleidoscope.")) kaleidoscopeBindings.push(sync);
+    sync();
+    return wrap;
+  };
+  const grid = (...children) => {
+    const node = el("div", { className: "xf-fields" });
+    node.append(...children);
+    return node;
+  };
+  const vector = (key, label, blankIsAuto = false, onEdit) => grid(
+    field(key + ".x", label + " X", { blankIsAuto, onEdit }),
+    field(key + ".y", label + " Y", { blankIsAuto, onEdit })
+  );
+  const section = (panel, title, description) => {
+    const node = el("section", { className: "xf-section" });
+    node.appendChild(el("h3", { className: "xf-heading", textContent: title }));
+    if (description) node.appendChild(el("p", { className: "xf-help", textContent: description }));
+    panel.appendChild(node);
+    return node;
+  };
+  const button = (label, onClick, primary = false) => {
+    const node = el("button", {
+      type: "button", className: primary ? "xf-action xf-primary" : "xf-action", textContent: label,
     });
-
-    const targets = resolveUiTargets({
-      applyToAll: !!getByPath(state, "__xf.ui.applyToAll"),
-      tileTargetsText: String(getByPath(state, "__xf.ui.tileTargets") ?? ""),
-      tileCount: tileCountForUI,
-    }); // targets: null => all, or number[]
-
-    btnRow.appendChild(
-      mkBtn("apply split", () => {
-        state.__xf.stack.push({ kind: "split", count: splitCount });
-        xfRuntime?.rebuildNow?.();
-        render();
-      })
-    );
-
-    btnRow.appendChild(
-      mkBtn("apply preset", () => {
-        const preset = String(getByPath(state, "__xf.ui.preset") ?? "");
-        const next = buildTransformPresetStack(preset);
-        if (!next) return;
-        state.__xf.stack = next;
-        xfRuntime?.rebuildNow?.();
-        render();
-      })
-    );
-
-    btnRow.appendChild(
-      mkBtn("rotate", () => {
-        state.__xf.stack.push({ kind: "rotate", targets, deg: rotateDeg });
-        xfRuntime?.rebuildNow?.();
-        render();
-      })
-    );
-
-    btnRow.appendChild(
-      mkBtn("flip X", () => {
-        state.__xf.stack.push({ kind: "flipX", targets });
-        xfRuntime?.rebuildNow?.();
-        render();
-      })
-    );
-
-    btnRow.appendChild(
-      mkBtn("flip Y", () => {
-        state.__xf.stack.push({ kind: "flipY", targets });
-        xfRuntime?.rebuildNow?.();
-        render();
-      })
-    );
-
-    // NEW: zoom (with center)
-    btnRow.appendChild(
-      mkBtn("zoom in", () => {
-        const f = isFinite(zoomFactor) && zoomFactor > 0 ? zoomFactor : 1.25;
-        const c = ensureVector2(getByPath(state, "__xf.ui.zoomCenter"), { x: NaN, y: NaN });
-        // copy so stack op doesn't mutate when UI changes
-        state.__xf.stack.push({ kind: "zoom", targets, factor: f, center: { x: +c.x, y: +c.y } });
-        xfRuntime?.rebuildNow?.();
-        render();
-      })
-    );
-
-    btnRow.appendChild(
-      mkBtn("zoom out", () => {
-        const f = isFinite(zoomFactor) && zoomFactor > 0 ? 1 / zoomFactor : 1 / 1.25;
-        const c = ensureVector2(getByPath(state, "__xf.ui.zoomCenter"), { x: NaN, y: NaN });
-        state.__xf.stack.push({ kind: "zoom", targets, factor: f, center: { x: +c.x, y: +c.y } });
-        xfRuntime?.rebuildNow?.();
-        render();
-      })
-    );
-
-    // NEW: translate
-    btnRow.appendChild(
-      mkBtn("translate", () => {
-        const v = ensureVector2(getByPath(state, "__xf.ui.translateVec"), { x: 0, y: 0 });
-        state.__xf.stack.push({ kind: "translate", targets, v: { x: +v.x, y: +v.y } });
-        xfRuntime?.rebuildNow?.();
-        render();
-      })
-    );
-
-    btnRow.appendChild(
-      mkBtn("apply matrix", () => {
-        const m = ensureMatrix6(getByPath(state, "__xf.ui.matrix"));
-        state.__xf.stack.push({ kind: "matrix", targets, m: [m.a, m.b, m.c, m.d, m.e, m.f] });
-        xfRuntime?.rebuildNow?.();
-        render();
-      })
-    );
-
-    btnRow.appendChild(
-      mkBtn("undo", () => {
-        state.__xf.stack.pop();
-        xfRuntime?.rebuildNow?.();
-        render();
-      })
-    );
-
-    btnRow.appendChild(
-      mkBtn("reset", () => {
-        state.__xf.stack.length = 0;
-        xfRuntime?.resetToInitial?.();
-        render();
-      })
-    );
-
-    btnRow.appendChild(
-      mkBtn("apply 3D planes", () => {
-        const cfg = readPlaneUi();
-        if (!cfg.count) return;
-        state.__xf.stack.push({
-          kind: "planes3d",
-          targets,
-          count: cfg.count,
-          baseScale: cfg.baseScale,
-          scaleStep: cfg.scaleStep,
-          offset: { x: +cfg.offset.x, y: +cfg.offset.y },
-          center: { x: +cfg.center.x, y: +cfg.center.y },
-          opacity: cfg.opacity,
-          opacityFalloff: cfg.opacityFalloff,
-        });
-        xfRuntime?.rebuildNow?.();
-        render();
-      })
-    );
-
-    const stackBox = document.createElement("pre");
-    stackBox.className = "xf-stack";
-    stackBox.textContent = formatXfStack(state.__xf.stack);
-    root.appendChild(stackBox);
-
-    const status = document.createElement("div");
-    status.className = "xf-status";
-    status.textContent =
-      `effective split: ${effectiveSplit} | stack ops: ${state.__xf.stack.length} | ` +
-      (targets == null ? "targets: all" : `targets: ${targets.join(",") || "(none)"}`);
-    root.appendChild(status);
+    node.addEventListener("click", onClick);
+    return node;
+  };
+  const actions = (container, ...buttons) => {
+    const node = el("div", { className: "xf-actions" });
+    node.append(...buttons);
+    container.appendChild(node);
+  };
+  const tileCountForUI = () => Math.max(
+    1, clampInt(read("splitCount"), 1, 64), getEffectiveSplitCount(state.__xf.stack)
+  );
+  const targets = () => resolveUiTargets({
+    applyToAll: !!read("applyToAll"),
+    tileTargetsText: String(read("tileTargets") ?? ""),
+    tileCount: tileCountForUI(),
+  });
+  const commit = (op) => {
+    kaleidoscopeEdit = null;
+    state.__xf.stack.push(op);
+    xfRuntime?.rebuildNow?.();
     markDirty();
+    refreshOverview();
+  };
+  const copyVector = (key, auto = false) => {
+    const value = ensureVector2(read(key), { x: auto ? null : 0, y: auto ? null : 0 });
+    const axis = (v) => auto && (v == null || v === "" || !Number.isFinite(Number(v)))
+      ? null : toFiniteNumber(v, 0);
+    return { x: axis(value.x), y: axis(value.y) };
   };
 
-  render();
-  let lastState = JSON.stringify(state.__xf);
-  root._onHide = () => { lastState = JSON.stringify(state.__xf); };
-  root._onShow = () => {
-    // A flow can change transforms while this editor is cached.
-    if (JSON.stringify(state.__xf) !== lastState) {
-      render();
-      lastState = JSON.stringify(state.__xf);
+  const options = [
+    { value: "arrange", label: "Arrange" },
+    { value: "symmetry", label: "Symmetry" },
+    { value: "math", label: "Math" },
+    { value: "matrix", label: "Matrix" },
+    { value: "layers", label: "Layers" },
+    { value: "history", label: "History" },
+  ].map((option) => ({ ...option, panel: el("div", { className: "xf-tabPanel" }) }));
+  const panels = Object.fromEntries(options.map((option) => [option.value, option.panel]));
+  const tabs = createSubTabs({
+    label: "Transform tools",
+    options,
+    value: read("activeTab"),
+    onChange: (value) => {
+      kaleidoscopeEdit = null;
+      state.__xf.ui.activeTab = value;
+      markDirty();
+      refreshOverview();
+    },
+  });
+  state.__xf.ui.activeTab = tabs.value;
+  root.appendChild(tabs.root);
+
+  const targetBar = el("div", { className: "xf-targets" });
+  targetBar.appendChild(field("tileTargets", "Tile targets", {
+    type: "text", description: "Use all, a tile number, a list (0,2), or a range (1-4).",
+  }));
+  targetBar.appendChild(field("applyToAll", "All tiles", { type: "checkbox" }));
+  const targetHint = el("p", { className: "xf-help" });
+  targetBar.appendChild(targetHint);
+  root.appendChild(targetBar);
+  for (const option of options) root.appendChild(option.panel);
+
+  panels.arrange.appendChild(field("arrangeAction", "Arrange tool", { options: ARRANGE_TOOLS }));
+  const presets = section(panels.arrange, "Presets", "Applying a preset replaces the current transform history.");
+  presets.appendChild(field("preset", "Preset", {
+    options: [
+      { value: "", label: "Choose a preset" },
+      { value: "split4", label: "Four tiles" },
+      { value: "kaleidoscope4", label: "Four-tile mirror grid" },
+    ],
+  }));
+  const applyPreset = () => {
+    const next = buildTransformPresetStack(read("preset"));
+    if (!next) return;
+    kaleidoscopeEdit = null;
+    state.__xf.stack = next;
+    xfRuntime?.rebuildNow?.();
+    markDirty();
+    refreshOverview();
+  };
+
+  const split = section(panels.arrange, "Tile layout", "Create a grid of copies, then target individual tiles.");
+  split.appendChild(grid(
+    field("splitCount", "Split copies", { min: 1, max: 64, step: 1, integer: true, fallback: 1 }),
+    field("splitMode", "Split mode", {
+      options: [
+        { value: "screen", label: "Preserve proportions" },
+        { value: "fit", label: "Fill each tile" },
+      ],
+    })
+  ));
+  const applySplit = () => commit({
+    kind: "split", count: clampInt(read("splitCount"), 1, 64),
+  });
+
+  const rotate = section(panels.arrange, "Rotate");
+  rotate.appendChild(field("rotateDeg", "Rotation (degrees)", { step: 1, fallback: 90 }));
+  const applyRotate = () => commit({
+    kind: "rotate", targets: targets(), deg: toFiniteNumber(read("rotateDeg"), 90),
+  });
+
+  const zoom = section(panels.arrange, "Zoom", "Blank center uses the SVG center. Values from 0 to 1 are fractions of its size.");
+  zoom.appendChild(field("zoomFactor", "Zoom factor", { min: 0.1, max: 20, step: 0.05, fallback: 1.25 }));
+  zoom.appendChild(vector("zoomCenter", "Zoom center", true));
+  const applyZoom = (out) => {
+    const value = toFiniteNumber(read("zoomFactor"), 1.25);
+    const factor = value > 0 ? value : 1.25;
+    commit({
+      kind: "zoom", targets: targets(), factor: out ? 1 / factor : factor,
+      center: copyVector("zoomCenter", true),
+    });
+  };
+
+  const translate = section(panels.arrange, "Translate", "Move the selected tiles in SVG coordinates.");
+  translate.appendChild(vector("translateVec", "Translate"));
+  const applyTranslate = () => commit({
+    kind: "translate", targets: targets(), v: copyVector("translateVec"),
+  });
+
+  panels.symmetry.appendChild(field("symmetryAction", "Symmetry tool", { options: SYMMETRY_TOOLS }));
+  const updateKaleidoscope = ({ key, final }) => {
+    const config = normalizeKaleidoscope(read("kaleidoscope"));
+    const op = { kind: "kaleidoscope", targets: targets(), ...config };
+    const stack = state.__xf.stack;
+    const previous = stack.at(-1);
+    if (JSON.stringify(previous) !== JSON.stringify(op)) {
+      // One drag or typed edit is one undo step; completed history stays intact.
+      if (kaleidoscopeEdit?.key === key && kaleidoscopeEdit.stack === stack &&
+        kaleidoscopeEdit.op === previous &&
+        JSON.stringify(previous.targets) === JSON.stringify(op.targets)) {
+        stack[stack.length - 1] = op;
+      } else stack.push(op);
+      kaleidoscopeEdit = { key, stack, op };
+      xfRuntime?.rebuildNow?.();
     }
+    if (final) kaleidoscopeEdit = null;
+  };
+  const kaleidoscope = section(panels.symmetry, "Kaleidoscope", "Changes apply automatically. Repeat one sector around a center; undo restores the previous setting. Arrange tools transform the source inside the wedges.");
+  kaleidoscope.appendChild(field("kaleidoscope.count", "Kaleidoscope repeats (N)", {
+    min: 2, max: 64, step: 1, integer: true, fallback: 6, onEdit: updateKaleidoscope,
+  }));
+  kaleidoscope.appendChild(field("kaleidoscope.rotationDeg", "Sector angle (degrees)", {
+    type: "range", min: 0, max: 360, step: 1, onEdit: updateKaleidoscope,
+  }));
+  kaleidoscope.appendChild(field("kaleidoscope.mirror", "Mirror alternating wedges", {
+    type: "checkbox", onEdit: updateKaleidoscope,
+  }));
+  kaleidoscope.appendChild(vector("kaleidoscope.center", "Kaleidoscope center", true, updateKaleidoscope));
+  kaleidoscope.appendChild(el("p", {
+    className: "xf-help", textContent: "Blank center uses the SVG center. Values from 0 to 1 are fractions of its size.",
+  }));
+  const symmetryMath = el("p", { className: "xf-formula" });
+  kaleidoscope.appendChild(symmetryMath);
+  const mirrors = section(panels.symmetry, "Flip", "Reflect the selected tiles about their center.");
+
+  const mathDescriptions = {
+    vortex: {
+      label: "Hamiltonian vortex",
+      description: "Rotate each point by a radius-dependent angle. The continuous map preserves area and curls trajectories around the center.",
+      formula: "r′ = r · θ′ = θ − strength × exp(−r² / radius²)",
+    },
+    mobius: {
+      label: "Möbius lens",
+      description: "Bend the complex plane with a conformal lens. Local angles are preserved away from the pole; paths break at singularities.",
+      formula: "w = (z − a) / (1 − conjugate(a) × z)",
+    },
+    power: {
+      label: "Complex power",
+      description: "Multiply each point’s angle by N and raise its radius to N, folding the drawing around the center.",
+      formula: "w = zᴺ · |w| = |z|ᴺ · arg(w) = N × arg(z)",
+    },
+    root: {
+      label: "Cyclic root cover",
+      description: "Unfold the plane into N root branches. Select one branch or display every sheet; paths break at the branch cut.",
+      formula: "wₖ = |z|¹⁄ᴺ exp(i × (arg(z) + 2πk) / N)",
+    },
+    wrap: {
+      label: "Topological wrap",
+      description: "Display a rectangle with identified edges. Torus wraps preserve orientation; twisted charts reflect coordinates at the seam. This changes the displayed chart, not the simulation’s topology.",
+      formula: "Torus: opposite edges repeat · Möbius: one twisted seam · Klein: one twisted and one periodic seam",
+    },
+    annulus: {
+      label: "Logarithmic annulus",
+      description: "Map the viewport into a ring with a central hole. Horizontal position controls logarithmic radius; vertical position winds around the ring.",
+      formula: "r = inner × (outer / inner)ᵘ · θ = 2π × turns × v",
+    },
+    joukowski: {
+      label: "Joukowski map",
+      description: "Combine the complex plane with its reciprocal to create lenses and lobes. Paths break at the pole at the center.",
+      formula: "w = z + λ / z",
+    },
+  };
+  const math = section(panels.math, "Mathematical transforms", "Warp the displayed SVG geometry while the original visual keeps running. Math transforms stack in history order, before Arrange and Symmetry. Undo removes the last operation.");
+  math.appendChild(field("math.type", "Math transform", {
+    options: MATH_TRANSFORM_TYPES.map((type) => ({ value: type, label: mathDescriptions[type].label })),
+  }));
+  const mathDescription = el("p", { className: "xf-help" });
+  const mathFormula = el("p", { className: "xf-formula" });
+  math.append(mathDescription, mathFormula);
+
+  const mathModeGroups = [];
+  const mathGroup = (types, ...children) => {
+    const node = el("div", { className: "xf-tabPanel" });
+    node.setAttribute("data-xf-math-modes", types.join(" "));
+    node.append(...children);
+    mathModeGroups.push({ node, types });
+    math.appendChild(node);
+    return node;
+  };
+  const mathNumber = (key, label, min, max, step, fallback, integer = false) =>
+    field("math." + key, label, { min, max, step, fallback, integer });
+  mathGroup(["vortex"], grid(
+    mathNumber("strength", "Vortex strength (radians)", -20, 20, 0.1, 1),
+    mathNumber("radius", "Vortex radius", 0.05, 4, 0.05, 0.8)
+  ));
+  mathGroup(["mobius"], grid(
+    mathNumber("mobiusRe", "Lens a · real", -0.9, 0.9, 0.05, 0.35),
+    mathNumber("mobiusIm", "Lens a · imaginary", -0.9, 0.9, 0.05, 0)
+  ), el("p", { className: "xf-help", textContent: "The lens coefficient’s magnitude is limited to 0.9. Zero gives the identity map." }));
+  mathGroup(["power", "root"], mathNumber("power", "Power / root degree (N)", 2, 12, 1, 2, true));
+  const branchField = mathNumber("branch", "Root branch (k)", 0, 11, 1, 0, true);
+  const branchInput = branchField.querySelector("input");
+  mathGroup(["root"], branchField,
+    field("math.allBranches", "Show all N root branches", { type: "checkbox" })
+  );
+  mathGroup(["wrap"], field("math.topology", "Edge identification", {
+    options: [
+      { value: "torus", label: "Torus · periodic X and Y" },
+      { value: "mobius", label: "Möbius strip · twisted X" },
+      { value: "klein", label: "Klein bottle · twisted X, periodic Y" },
+    ],
+  }), grid(
+    mathNumber("wrapX", "Wrap offset X (viewports)", -10, 10, 0.05, 0.25),
+    mathNumber("wrapY", "Wrap offset Y (viewports)", -10, 10, 0.05, 0)
+  ), mathNumber("wrapScale", "Wrap scale", 0.25, 4, 0.05, 1),
+  el("p", { className: "xf-help", textContent: "Paths split at identified edges so separate chart boundaries are not joined by diagonal lines." }));
+  mathGroup(["annulus"], grid(
+    mathNumber("innerRadius", "Inner radius (hole)", 0.02, 2, 0.01, 0.2),
+    mathNumber("outerRadius", "Outer radius", 0.03, 4, 0.01, 0.95)
+  ), mathNumber("turns", "Turns around the ring", 1, 8, 1, 1, true));
+  mathGroup(["joukowski"], mathNumber("lambda", "Reciprocal weight (λ)", -2, 2, 0.05, 0.3));
+  mathGroup(MATH_TRANSFORM_TYPES.filter((type) => type !== "wrap"),
+    vector("math.center", "Map center", true),
+    mathNumber("scale", "Map scale", 0.1, 4, 0.05, 1),
+    el("p", {
+      className: "xf-help",
+      textContent: "Blank center uses the SVG center; 0–1 are fractions of its size. One map unit is half the shorter SVG dimension, multiplied by map scale.",
+    })
+  );
+  const applyMath = () => {
+    const config = normalizeMathTransform(read("math"));
+    state.__xf.ui.math = config;
+    bindings.forEach((sync) => sync());
+    commit({ kind: "warp", targets: targets(), ...config });
+  };
+  const mathStatus = el("p", { className: "xf-help", role: "status" });
+  mathStatus.setAttribute("aria-live", "polite");
+  math.appendChild(mathStatus);
+  const refreshMath = () => {
+    const config = normalizeMathTransform(read("math"));
+    const info = mathDescriptions[config.type];
+    mathDescription.textContent = info.description;
+    mathFormula.textContent = info.formula;
+    for (const { node, types } of mathModeGroups) node.hidden = !types.includes(config.type);
+    branchInput.max = String(config.power - 1);
+    branchInput.value = String(config.branch);
+    branchInput.disabled = config.allBranches;
+    const report = xfRuntime?.getMathStatus?.();
+    const messages = [];
+    if (report?.transformed) messages.push(report.transformed + " SVG shapes mapped.");
+    if (report?.skipped && !report.limited) messages.push(report.skipped + " shapes kept at their previous geometry.");
+    if (report?.limited) messages.push("The last complete result is shown. Lower the visual detail or use fewer stacked transforms.");
+    if (Array.isArray(report?.warnings)) messages.push(...report.warnings);
+    mathStatus.textContent = messages.join(" ");
+    mathStatus.hidden = messages.length === 0;
+  };
+
+  const matrix = section(panels.matrix, "Affine matrix", "Combine scale, shear, reflection, and translation.");
+  matrix.appendChild(el("p", {
+    className: "xf-formula", textContent: "x\u2032 = ax + cy + e   \u00b7   y\u2032 = bx + dy + f",
+  }));
+  matrix.appendChild(grid(...["a", "b", "c", "d", "e", "f"].map((key) => field(
+    "matrix." + key, "Matrix " + key, { step: 0.01, fallback: DEFAULT_MATRIX[key] }
+  ))));
+  matrix.appendChild(el("p", {
+    className: "xf-help", textContent: "a and d scale; b and c shear; e and f translate. Identity is 1, 0, 0, 1, 0, 0.",
+  }));
+  const applyMatrix = () => {
+    const m = ensureMatrix6(read("matrix"));
+    commit({ kind: "matrix", targets: targets(), m: [m.a, m.b, m.c, m.d, m.e, m.f] });
+  };
+
+  const planes = section(panels.layers, "Stacked planes", "Add depth with scaled, offset copies. A count of 0 disables planes on the selected tiles.");
+  planes.appendChild(grid(
+    field("planeCount", "Plane count", { min: 0, max: 32, step: 1, integer: true, fallback: 3 }),
+    field("planeBaseScale", "Base scale", { min: 0.01, max: 10, step: 0.01, fallback: 1 }),
+    field("planeScaleStep", "Scale per depth", { min: -5, max: 5, step: 0.01, fallback: -0.12 }),
+    field("planeOpacity", "Opacity", { min: 0, max: 1, step: 0.05, fallback: 0.7 }),
+    field("planeOpacityFalloff", "Opacity falloff", { min: 0, max: 1, step: 0.02, fallback: 0.12 })
+  ));
+  planes.appendChild(vector("planeOffset", "Offset per depth"));
+  planes.appendChild(vector("planeCenter", "Plane center", true));
+  planes.appendChild(el("p", {
+    className: "xf-help", textContent: "Blank center uses the SVG center. A negative scale step shrinks each deeper layer.",
+  }));
+  const applyPlanes = () => commit({
+    kind: "planes3d", targets: targets(),
+    count: clampInt(read("planeCount"), 0, 32),
+    baseScale: toFiniteNumber(read("planeBaseScale"), 1),
+    scaleStep: toFiniteNumber(read("planeScaleStep"), -0.12),
+    offset: copyVector("planeOffset"),
+    center: copyVector("planeCenter", true),
+    opacity: clampNumber(read("planeOpacity"), 0, 1),
+    opacityFalloff: clampNumber(read("planeOpacityFalloff"), 0, 1),
+  });
+
+  const history = section(panels.history, "Transform history", "Operations are stored in order. Undo removes the most recent operation.");
+  const emptyHistory = el("p", {
+    className: "xf-help", textContent: "No transforms applied yet. Choose a tool to get started.",
+  });
+  const stackBox = el("ol", { className: "xf-stack", "aria-label": "Applied transforms" });
+  history.append(emptyHistory, stackBox);
+
+  const footer = el("div", { className: "xf-footer" });
+  const status = el("p", { className: "xf-status" });
+  status.setAttribute("role", "status");
+  const applyHint = el("p", { className: "xf-help xf-applyHint" });
+  applyHint.setAttribute("aria-live", "polite");
+  const arrangeActions = {
+    preset: { panel: presets, run: applyPreset },
+    split: { panel: split, run: applySplit },
+    rotate: { panel: rotate, run: applyRotate },
+    zoomIn: { panel: zoom, run: () => applyZoom(false) },
+    zoomOut: { panel: zoom, run: () => applyZoom(true) },
+    translate: { panel: translate, run: applyTranslate },
+  };
+  const symmetryActions = {
+    kaleidoscope: { panel: kaleidoscope, automatic: true },
+    flipX: { panel: mirrors, run: () => commit({ kind: "flipX", targets: targets() }) },
+    flipY: { panel: mirrors, run: () => commit({ kind: "flipY", targets: targets() }) },
+  };
+  const activeAction = () => {
+    if (tabs.value === "arrange") {
+      const tool = ARRANGE_TOOLS.find((item) => item.value === read("arrangeAction"));
+      if (!tool) return null;
+      return {
+        ...arrangeActions[tool.value], label: tool.label,
+        disabled: tool.value === "preset" && !buildTransformPresetStack(read("preset")),
+      };
+    }
+    if (tabs.value === "symmetry") {
+      const tool = SYMMETRY_TOOLS.find((item) => item.value === read("symmetryAction"));
+      return tool ? { ...symmetryActions[tool.value], label: tool.label } : null;
+    }
+    if (tabs.value === "math") return {
+      label: mathDescriptions[normalizeMathTransform(read("math")).type].label, run: applyMath,
+    };
+    if (tabs.value === "matrix") return { label: "Affine matrix", run: applyMatrix };
+    if (tabs.value === "layers") return { label: "Stacked planes", run: applyPlanes };
+    return null;
+  };
+  const apply = button("apply", () => {
+    // Resolve at click time so tab/tool changes cannot leave a stale action.
+    const action = activeAction();
+    if (action && !action.disabled && !action.automatic) action.run();
+  }, true);
+  apply.setAttribute("data-xf-action", "apply");
+  const restoreKaleidoscopeControls = () => {
+    const stack = state.__xf.stack;
+    const selectedTiles = targets() ?? Array.from({ length: getEffectiveSplitCount(stack) }, (_, i) => i);
+    let restored;
+    for (const tile of selectedTiles) {
+      const op = stack.findLast((item) => item?.kind === "kaleidoscope" && opAppliesToTile(item, tile));
+      // Mixed settings across tiles cannot be represented by one set of controls.
+      if (!op) return;
+      const config = normalizeKaleidoscope(op);
+      if (restored && JSON.stringify(restored) !== JSON.stringify(config)) return;
+      restored = config;
+    }
+    if (restored) {
+      state.__xf.ui.kaleidoscope = restored;
+      kaleidoscopeBindings.forEach((sync) => sync());
+    }
+  };
+  const undo = button("undo", () => {
+    kaleidoscopeEdit = null;
+    if (!state.__xf.stack.length) return;
+    const removed = state.__xf.stack.pop();
+    if (removed?.kind === "kaleidoscope") restoreKaleidoscopeControls();
+    xfRuntime?.rebuildNow?.();
+    markDirty();
+    refreshOverview();
+  });
+  const reset = button("reset", () => {
+    kaleidoscopeEdit = null;
+    if (!state.__xf.stack.length) return;
+    state.__xf.stack.length = 0;
+    xfRuntime?.resetToInitial?.();
+    markDirty();
+    refreshOverview();
+  });
+  footer.append(status, applyHint);
+  actions(footer, apply, undo, reset);
+  root.appendChild(footer);
+
+  refreshOverview = () => {
+    refreshMath();
+    for (const { panel } of Object.values(arrangeActions)) {
+      panel.hidden = panel !== arrangeActions[read("arrangeAction")]?.panel;
+    }
+    for (const { panel } of Object.values(symmetryActions)) {
+      panel.hidden = panel !== symmetryActions[read("symmetryAction")]?.panel;
+    }
+    const action = activeAction();
+    apply.disabled = !action || !!action.disabled || !!action.automatic;
+    applyHint.textContent = !action ? "Choose a transform tab to apply a tool."
+      : action.automatic ? "Changes apply automatically."
+      : action.disabled ? "Choose a preset to apply." : "Apply: " + action.label;
+    apply.title = applyHint.textContent;
+    const stack = state.__xf.stack;
+    const targetList = targets();
+    const effectiveSplit = getEffectiveSplitCount(stack);
+    const lastTile = tileCountForUI() - 1;
+    targetHint.textContent = lastTile
+      ? "Tile indices: 0\u2013" + lastTile + ". Current layout: " + effectiveSplit + " tiles."
+      : "Tile 0 is the full view. Split the layout to target more tiles.";
+    const cfg = normalizeKaleidoscope(read("kaleidoscope"));
+    const wedgeCount = cfg.count * (cfg.mirror ? 2 : 1);
+    symmetryMath.textContent = cfg.count + " rotational repeats \u00b7 " + wedgeCount +
+      (cfg.mirror ? " mirrored wedges" : " wedges") + " \u00b7 " +
+      Number((360 / wedgeCount).toFixed(2)) + "\u00b0 per wedge";
+    status.textContent = stack.length + (stack.length === 1 ? " operation" : " operations") +
+      " \u00b7 " + effectiveSplit + (effectiveSplit === 1 ? " tile" : " tiles") +
+      " \u00b7 targets: " + (targetList == null ? "all" : targetList.join(", "));
+    undo.disabled = reset.disabled = stack.length === 0;
+    const targetInput = targetBar.querySelector('[data-xf-key="tileTargets"]');
+    targetInput.disabled = !!read("applyToAll");
+    const signature = JSON.stringify(stack);
+    if (signature !== historySignature) {
+      historySignature = signature;
+      stackBox.replaceChildren();
+      const names = {
+        split: "Tile layout", rotate: "Rotate", flipX: "Flip X", flipY: "Flip Y",
+        zoom: "Zoom", translate: "Translate", matrix: "Affine matrix",
+        planes3d: "Stacked planes", kaleidoscope: "Kaleidoscope",
+      };
+      stack.forEach((op) => {
+        const item = el("li", { className: "xf-historyItem" });
+        item.appendChild(el("strong", {
+          textContent: op.kind === "warp" ? mathDescriptions[normalizeMathTransform(op).type].label : names[op.kind] || op.kind || "Transform",
+        }));
+        item.appendChild(el("span", {
+          className: "xf-help", textContent: formatXfStack([op]).replace(/^\d+:\s*/, ""),
+        }));
+        stackBox.appendChild(item);
+      });
+      emptyHistory.hidden = stack.length > 0;
+      stackBox.hidden = stack.length === 0;
+    }
+  };
+  const syncFromState = () => {
+    kaleidoscopeEdit = null;
+    ensureTransformState(state);
+    bindings.forEach((sync) => sync());
+    tabs.setValue(state.__xf.ui.activeTab);
+    state.__xf.ui.activeTab = tabs.value;
+    refreshOverview();
+  };
+  syncFromState();
+  let lastState = JSON.stringify(state.__xf);
+  root._onHide = () => {
+    if (kaleidoscopeEdit) markDirty();
+    kaleidoscopeEdit = null;
+    lastState = JSON.stringify(state.__xf);
+  };
+  root._onShow = () => {
+    if (JSON.stringify(state.__xf) !== lastState) syncFromState();
+    else refreshOverview();
+    lastState = JSON.stringify(state.__xf);
   };
   return root;
 }
@@ -761,6 +902,7 @@ export function initTransformRuntime({ mountEl, state }) {
     })();
 
   sourceG.setAttribute("data-xf-source", "1");
+  const runtimeId = ++nextTransformRuntimeId;
 
   // Remember initial source transform so reset is “true reset”
   const initialSourceTransform = sourceG.getAttribute("transform");
@@ -778,6 +920,18 @@ export function initTransformRuntime({ mountEl, state }) {
   let suspended = 0;
   let destroyed = false;
   let sourceChangeHandler = null;
+  let mathStatus = { transformed: 0, skipped: 0, limited: false, warnings: [] };
+  const getMathStatus = () => ({ ...mathStatus, warnings: [...mathStatus.warnings] });
+  const hiddenSceneNodes = new Map();
+  const restoreSceneNodes = () => {
+    for (const [node, display] of hiddenSceneNodes) {
+      if (node.style.display === "none") {
+        if (display.value) node.style.setProperty("display", display.value, display.priority);
+        else node.style.removeProperty("display");
+      }
+    }
+    hiddenSceneNodes.clear();
+  };
   const observerOptions = { childList: true, subtree: true, attributes: true };
   const isGeneratedLayer = (node) => node === layerG || layerG.contains(node);
   const hasSourceChanges = (records) => records.some((record) => {
@@ -829,7 +983,9 @@ export function initTransformRuntime({ mountEl, state }) {
 
   function resetToInitial() {
     return withSourceUpdatesSuspended(() => {
+      mathStatus = { transformed: 0, skipped: 0, limited: false, warnings: [] };
       layerG.replaceChildren();
+      restoreSceneNodes();
       sourceG.style.display = "";
       if (initialSourceTransform == null) sourceG.removeAttribute("transform");
       else sourceG.setAttribute("transform", initialSourceTransform);
@@ -841,6 +997,8 @@ export function initTransformRuntime({ mountEl, state }) {
   }
 
   function rebuildTransforms() {
+    restoreSceneNodes();
+    mathStatus = { transformed: 0, skipped: 0, limited: false, warnings: [] };
     const stack = state.__xf.stack || [];
     const propStack = state.__propOps?.stack || [];
     const hasProps = Array.isArray(propStack) && propStack.length > 0;
@@ -860,6 +1018,13 @@ export function initTransformRuntime({ mountEl, state }) {
       if (typeof op.tile === "number") return op.tile >= 0 && op.tile < totalTiles;
       return Array.isArray(op.targets) && op.targets.some(t => Number.isInteger(t) && t >= 0 && t < totalTiles);
     });
+    const kaleidoscopes = Array.from({ length: totalTiles }, (_, tile) => {
+      for (let i = stack.length - 1; i >= 0; i--) {
+        const op = stack[i];
+        if (op?.kind === "kaleidoscope" && opAppliesToTile(op, tile)) return normalizeKaleidoscope(op);
+      }
+      return null;
+    });
 
     // Nothing to do at all? true reset.
     if ((!stack || stack.length === 0) && !hasProps && !hasScripts) {
@@ -867,7 +1032,13 @@ export function initTransformRuntime({ mountEl, state }) {
       return;
     }
 
-    const needsCloneLayer = splitCount > 1 || planesApply;
+    const hasKaleidoscope = kaleidoscopes.some(Boolean);
+    const mathOps = Array.from({ length: totalTiles }, (_, tile) =>
+      stack.filter(op => op?.kind === "warp" && opAppliesToTile(op, tile)));
+    const hasMath = mathOps.some(ops => ops.length > 0);
+    const mathPointBudget = Math.max(4000, Math.floor(1600000 / Math.max(1, mathOps.filter(ops => ops.length).length)));
+    const wholeScene = hasKaleidoscope || hasMath;
+    const needsCloneLayer = splitCount > 1 || planesApply || wholeScene;
 
     if (!needsCloneLayer) {
       layerG.replaceChildren();
@@ -886,7 +1057,31 @@ export function initTransformRuntime({ mountEl, state }) {
       return;
     }
 
-    // split > 1 OR planes requested
+    // Math transforms include the full artwork, including sibling point/contour
+    // groups and direct SVG shapes. Do not reparent live nodes: D3 retains them.
+    let sceneTemplate = null;
+    if (wholeScene) {
+      sceneTemplate = document.createElementNS(svg.namespaceURI, "g");
+      sourceG.style.display = "";
+      for (const node of Array.from(svg.children)) {
+        if (node === layerG || /^(defs|metadata|title|desc|style|script)$/i.test(node.localName)) continue;
+        const cloned = node.cloneNode(true);
+        const sourceClone = node === sourceG ? cloned : cloned.querySelector('[data-xf-source="1"]');
+        if (sourceClone) {
+          sourceClone.removeAttribute("data-xf-source");
+          sourceClone.style.display = "";
+          if (initialSourceTransform == null) sourceClone.removeAttribute("transform");
+          else sourceClone.setAttribute("transform", initialSourceTransform);
+        }
+        sceneTemplate.appendChild(cloned);
+        hiddenSceneNodes.set(node, {
+          value: node.style.getPropertyValue("display"), priority: node.style.getPropertyPriority("display"),
+        });
+        node.style.setProperty("display", "none");
+      }
+    }
+
+    // split > 1, planes, or kaleidoscope requested
     sourceG.style.display = "none";
     layerG.replaceChildren();
 
@@ -913,7 +1108,7 @@ export function initTransformRuntime({ mountEl, state }) {
       }
     }
 
-    const kids = Array.from(sourceG.children);
+    const kids = Array.from((sceneTemplate || sourceG).children);
     const N = kids.length || 1;
     const tiles = splitCount > 1 ? splitCount : 1;
 
@@ -922,6 +1117,21 @@ export function initTransformRuntime({ mountEl, state }) {
       const row = splitCount > 1 ? Math.floor(tile / cols) : 0;
 
       const gTile = document.createElementNS(svg.namespaceURI, "g");
+      if (wholeScene) {
+        // A rotated wide scene can reach beyond its original height. Clip in
+        // tile-local coordinates, before grid placement, to avoid neighbor bleed.
+        const tileClipId = `xf-viewport-${runtimeId}-${tile}`;
+        const defs = document.createElementNS(svg.namespaceURI, "defs");
+        const clip = document.createElementNS(svg.namespaceURI, "clipPath");
+        clip.id = tileClipId;
+        clip.setAttribute("clipPathUnits", "userSpaceOnUse");
+        const rect = document.createElementNS(svg.namespaceURI, "rect");
+        for (const [attr, value] of Object.entries({ x, y, width: w, height: h })) rect.setAttribute(attr, value);
+        clip.appendChild(rect);
+        defs.appendChild(clip);
+        gTile.appendChild(defs);
+        gTile.setAttribute("clip-path", `url(#${tileClipId})`);
+      }
       if (splitCount > 1) {
         gTile.setAttribute(
           "transform",
@@ -935,15 +1145,81 @@ export function initTransformRuntime({ mountEl, state }) {
       const planeCfg = planesApply ? getPlaneConfigForTile(stack, tile) : null;
       const planeCount = planeCfg ? planeCfg.count : 1;
       const totalPerTile = planeCount * N;
+      const kaleidoscope = kaleidoscopes[tile];
+      // Warp original geometry once per tile. Plane layers and kaleidoscope
+      // instances reuse that result; the application's live geometry stays intact.
+      let tileScene = sceneTemplate;
+      if (mathOps[tile].length) {
+        tileScene = sceneTemplate.cloneNode(true);
+        const report = applyMathTransforms(tileScene, {
+          operations: mathOps[tile], viewBox: { x, y, w, h }, svg, maxPoints: mathPointBudget,
+        });
+        mathStatus.transformed += report.transformed;
+        mathStatus.skipped += report.skipped;
+        mathStatus.limited ||= report.limited;
+        mathStatus.warnings = [...new Set([...mathStatus.warnings, ...report.warnings])];
+      }
 
       for (let plane = 0; plane < planeCount; plane++) {
         const gPlane = document.createElementNS(svg.namespaceURI, "g");
         const planeTransform = planeCfg
           ? planeTransformFromConfig({ cfg: planeCfg, idx: plane, x, y, w, h })
           : "";
-        const combined = combineTransforms(planeTransform, baseTransform);
+        const combined = kaleidoscope ? planeTransform : combineTransforms(planeTransform, baseTransform);
         if (combined) gPlane.setAttribute("transform", combined);
         if (planeCfg) gPlane.style.opacity = String(planeOpacityForIndex(planeCfg, plane));
+
+        if (kaleidoscope) {
+          const geometry = buildKaleidoscopeGeometry(kaleidoscope, { x, y, w, h });
+          const prefix = `xf-kaleidoscope-${runtimeId}-${tile}-${plane}`;
+          const makeSvg = (tag, attrs = {}) => {
+            const node = document.createElementNS(svg.namespaceURI, tag);
+            for (const [name, value] of Object.entries(attrs)) node.setAttribute(name, value);
+            return node;
+          };
+          // One source copy per plane, instanced with <use>. N changes the small
+          // instance list, not the number of cloned attractor points/paths.
+          const defs = makeSvg("defs");
+          const clip = makeSvg("clipPath", { id: `${prefix}-clip`, clipPathUnits: "userSpaceOnUse" });
+          clip.appendChild(makeSvg("path", { d: geometry.clipPath }));
+          const template = makeSvg("g", { id: `${prefix}-wedge`, "clip-path": `url(#${prefix}-clip)` });
+          const content = makeSvg("g");
+          if (baseTransform) content.setAttribute("transform", baseTransform);
+          const cloned = tileScene.cloneNode(true);
+          // Rename as one subtree so references between sibling definitions and
+          // shapes remain connected after export and across tiles.
+          dedupeIdsInSubtree(cloned, `__${prefix}`);
+          Array.from(cloned.children).forEach((node, index) => {
+            tagCloneForMode(node, tile, index, N, plane, planeCount, tile * totalPerTile + plane * N + index);
+          });
+          content.appendChild(cloned);
+          template.appendChild(content);
+          defs.append(clip, template);
+          gPlane.appendChild(defs);
+          if (hasProps) applyPropOpsToSubtree(cloned, propStack);
+          if (hasScripts) applyScriptOpsToSubtree(cloned, scriptStack, { svg, state, mountEl });
+          for (const sector of geometry.sectors) {
+            gPlane.appendChild(makeSvg("use", {
+              href: `#${prefix}-wedge`, transform: sector.transform,
+              "data-xf-sector": sector.index, "data-xf-mode": tile, "data-xf-plane": plane,
+            }));
+          }
+          gTile.appendChild(gPlane);
+          continue;
+        }
+
+        if (wholeScene) {
+          const cloned = tileScene.cloneNode(true);
+          dedupeIdsInSubtree(cloned, `__xf_scene_${runtimeId}_${tile}_${plane}`);
+          Array.from(cloned.children).forEach((node, index) => {
+            tagCloneForMode(node, tile, index, N, plane, planeCount, tile * totalPerTile + plane * N + index);
+          });
+          if (hasProps) applyPropOpsToSubtree(cloned, propStack);
+          if (hasScripts) applyScriptOpsToSubtree(cloned, scriptStack, { svg, state, mountEl });
+          gPlane.appendChild(cloned);
+          gTile.appendChild(gPlane);
+          continue;
+        }
 
         let localIdx = 0;
         for (const n of kids) {
@@ -969,6 +1245,7 @@ export function initTransformRuntime({ mountEl, state }) {
     cancelPendingFrame();
     sourceChangeHandler = null;
     mo.disconnect();
+    resetToInitial();
   }
   if (!isFirst) {
     const preset = String(getByPath(state, "__xf.ui.preset") ?? "");
@@ -983,7 +1260,7 @@ export function initTransformRuntime({ mountEl, state }) {
   }
         //xfRuntime?.rebuildNow?.();
 
-  return { rebuildNow, resetToInitial, withSourceUpdatesSuspended, setSourceChangeHandler, destroy };
+  return { rebuildNow, resetToInitial, withSourceUpdatesSuspended, setSourceChangeHandler, getMathStatus, destroy };
 }
 
 export function getSvgViewBox(svg) {
@@ -1158,12 +1435,12 @@ export function dedupeIdsInSubtree(root, suffix) {
       const v = el.getAttribute(a);
       if (!v) continue;
 
-      let next = v;
-      for (const [oldId, newId] of idMap) {
-        next = next
-          .replaceAll(`url(#${oldId})`, `url(#${newId})`)
-          .replaceAll(`"#${oldId}"`, `"#${newId}"`)
-          .replaceAll(`#${oldId}`, `#${newId}`);
+      // Rewrite complete references once. Replacing bare ID prefixes after a
+      // url() replacement duplicated suffixes and broke gradients and clips.
+      let next = v.replace(/url\(\s*(['"]?)#([^'"\s)]+)\1\s*\)/g,
+        (match, quote, id) => idMap.has(id) ? `url(#${idMap.get(id)})` : match);
+      if ((a === "href" || a === "xlink:href") && v.startsWith("#") && idMap.has(v.slice(1))) {
+        next = `#${idMap.get(v.slice(1))}`;
       }
       if (next !== v) el.setAttribute(a, next);
     }

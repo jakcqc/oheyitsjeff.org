@@ -1,5 +1,12 @@
 [
   {
+    "title": "The odyssey",
+    "image": "/TheOdyssey/odyssey.svg",
+    "description": "Explore visual apps with bounded permutation searches, varied sampling, timed SVG captures, and saved runs.",
+    "link": "/TheOdyssey/",
+    "infoTitle": "The odyssey"
+  },
+  {
     "title": "Image to SVG",
     "image": "assets/Images/imageToSVG.png",
     "description": "Convert images into SVG with 22 tracing, mosaic, halftone, and continuous-line approaches. Control line counts, squiggle density, palette size, and up to 30,000 Voronoi cells.",

@@ -172,7 +172,7 @@ test('large algebra comparisons preserve detail within the 400 KiB budget', () =
 
 
 test('algebraCOEF includes at least 20 paired coefficient studies with effective repeated operations', () => {
-  const studies = catalog.filter(study => study.collection === 'algebraCOEF' && study.batch !== 'wild');
+  const studies = catalog.filter(study => study.collection === 'algebraCOEF' && !['wild', 'limits'].includes(study.batch));
   assert.ok(studies.length >= 20);
   assert.equal(studies.length % 2, 0);
   for (const study of studies) {
@@ -203,7 +203,7 @@ test('algebraCOEF includes at least 20 paired coefficient studies with effective
 
 test('Wild coefficient studies use exactly one composition per new app and preserve native coefficients', () => {
   const wild = catalog.filter(study => study.collection === 'algebraCOEF' && study.batch === 'wild');
-  const previousApps = new Set(catalog.filter(study => study.collection === 'algebraCOEF' && study.batch !== 'wild').map(study => study.app));
+  const previousApps = new Set(catalog.filter(study => study.collection === 'algebraCOEF' && !['wild', 'limits'].includes(study.batch)).map(study => study.app));
   assert.equal(wild.length, 17);
   assert.equal(new Set(wild.map(study => study.app)).size, wild.length);
   const capabilities = new Set();
@@ -229,8 +229,38 @@ test('Wild coefficient studies use exactly one composition per new app and prese
 });
 
 
+test('Limits batch balances visual families and records exact uniform tail rates', () => {
+  const limits = catalog.filter(study => study.collection === 'algebraCOEF' && study.batch === 'limits');
+  assert.equal(limits.length, 80);
+  const groups = { main: [], math: [] };
+  const apps = new Map();
+  for (const study of limits) {
+    groups[study.kind].push(study);
+    apps.set(study.app, (apps.get(study.app) || 0) + 1);
+    const recipe = json(path.join(publicRoot, 'algebra', `${study.slug}.algebra.json`));
+    const extreme = recipe.algebra.primaryExtreme;
+    const rate = recipe.algebra.rateCoefficient;
+    const [lo, hi] = rate.interval;
+    assert.equal(rate.distribution, 'Uniform');
+    assert.ok(lo < extreme.value && extreme.value < hi);
+    const expected = extreme.direction === 'max'
+      ? (hi - extreme.value) / (hi - lo)
+      : (extreme.value - lo) / (hi - lo);
+    assert.ok(Math.abs(rate.value - expected) < 1e-12, study.slug);
+    assert.equal(study.rateCoefficient, rate.value);
+    assert.equal(study.extremeParameter, extreme.parameter);
+    assert.equal(study.extremeValue, extreme.value);
+    assert.ok(recipe.observedStages.every(stage => stage.changed));
+  }
+  assert.equal(groups.main.length, 40);
+  assert.equal(groups.math.length, 40);
+  assert.equal(apps.size, 23);
+  for (const study of groups.main) assert.equal(apps.get(study.app), 8);
+  for (const study of groups.math) assert.ok([2, 3].includes(apps.get(study.app)));
+});
+
 test('the original coefficient batch saves distinct randomized sources and identical starts within pairs', () => {
-  const studies = catalog.filter(study => study.collection === 'algebraCOEF' && study.batch !== 'wild');
+  const studies = catalog.filter(study => study.collection === 'algebraCOEF' && !['wild', 'limits'].includes(study.batch));
   const pairs = new Map();
   for (const study of studies) {
     const recipe = json(path.join(publicRoot, 'algebra', `${study.slug}.algebra.json`));

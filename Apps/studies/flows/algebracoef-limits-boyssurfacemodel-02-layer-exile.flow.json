@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "name": "Layer Exile",
+  "stages": [
+    {
+      "id": "stage-mvc9wkbp-gbm0m2c",
+      "kind": "effect",
+      "label": "E: scale",
+      "enabled": true,
+      "config": {
+        "effectType": "scale",
+        "elementType": "path",
+        "selector": "path:nth-of-type(3n)",
+        "rangeMin": -1.6,
+        "rangeMax": 2.4,
+        "count": 5,
+        "spacing": "linear",
+        "opacityMode": "fixed",
+        "opacityFixed": 0.82,
+        "equation": "sum(backward):opacity *0.72"
+      }
+    },
+    {
+      "id": "stage-mvc9wkbp-yalgcw0",
+      "kind": "effect",
+      "label": "C: color",
+      "enabled": true,
+      "config": {
+        "effectType": "color",
+        "color": {
+          "selector": "path,polygon,circle,rect,line",
+          "sourceProp": "each",
+          "targetProp": "stroke",
+          "mode": "bySize",
+          "colorSort": "appearance",
+          "paletteText": "#50ffe0,#8485ff,#ff59c7,#fff0ac",
+          "paletteSteps": 7,
+          "useComputed": true,
+          "skipNone": true,
+          "sizeSource": "bboxArea",
+          "sizeAttr": "r"
+        }
+      }
+    },
+    {
+      "id": "stage-mvc9wkbp-5u3330a",
+      "kind": "transform",
+      "label": "A: folded presentation",
+      "enabled": true,
+      "config": {
+        "stack": [
+          {
+            "kind": "rotate",
+            "deg": 47
+          },
+          {
+            "kind": "zoom",
+            "factor": 0.64
+          },
+          {
+            "kind": "planes3d",
+            "count": 3,
+            "baseScale": 0.58,
+            "scaleStep": 0.19,
+            "offset": {
+              "x": 31,
+              "y": -19
+            },
+            "opacity": 0.8,
+            "opacityFalloff": 0.14
+          }
+        ]
+      }
+    }
+  ]
+}

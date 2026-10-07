@@ -1,0 +1,78 @@
+{
+  "title": "Rotating Level Sets",
+  "source": "SurferGalleryBiancaViolet/SurferGalleryBiancaViolet_visual.js",
+  "visualId": "surferGalleryBiancaViolet",
+  "seed": 2026092574,
+  "frames": 0,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o color o splineLines o scale (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "rotation",
+      "baseline": 4.4,
+      "value": 120,
+      "direction": "max"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        0,
+        128.092
+      ],
+      "event": "X >= threshold",
+      "threshold": 120,
+      "value": 0.0631733441588859,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "Level sets cross at steep angles",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-surfergallerybiancaviolet-02-rotating-level-sets.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-surfergallerybiancaviolet-02-rotating-level-sets.json",
+  "observedStages": [
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 17195,
+      "afterShapes": 19051,
+      "messages": [
+        "scale applied: 464 groups, 2320 clones."
+      ]
+    },
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 19051,
+      "afterShapes": 73462,
+      "messages": [
+        "spline lines applied: 1520 shapes, 55931 lines, 1 skipped."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 73462,
+      "afterShapes": 73462,
+      "messages": [
+        "color applied: 73462 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 73462,
+      "afterShapes": 73462,
+      "messages": []
+    }
+  ]
+}

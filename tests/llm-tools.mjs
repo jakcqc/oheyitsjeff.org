@@ -122,6 +122,7 @@ test('effect contract blocks unsafe selectors, code effects and URL paints', () 
     [{ key: 'selector', value: '[href]' }], [{ key: 'paintFill', value: 'url(https://example.com)' }],
     [{ key: 'effectType', value: 'functionRects' }], [{ key: 'fnCode', value: 'evil()' }],
     [{ key: 'count', value: 10000 }], [{ key: 'color.targetProp', value: 'onclick' }],
+    [{ key: 'constructor', value: 1 }],
   ]) assert.throws(() => applyAssistantActions(ctx, response({ op: 'effects_configure', config }), 'effects'));
   applyAssistantActions(ctx, response({ op: 'effects_configure', config: [{ key: 'selector', value: 'path:nth-of-type(3n), circle.dot' }] }), 'effects');
   assert.equal(ctx.state.__effects.ui.selector, 'path:nth-of-type(3n), circle.dot');
@@ -209,6 +210,196 @@ test('safe flow composes real transform stages and can be undone', () => {
   assert.equal(ctx.state.__xf, undefined);
 });
 
+test('transforms configure the toolbar, apply to the visual runtime, refresh panels and undo', () => {
+  const ctx = context(); const rebuilt = [];
+  ctx.xfRuntime = { rebuildNow: () => rebuilt.push(structuredClone(ctx.state.__xf?.stack)) };
+  const result = applyAssistantActions(ctx, response({ op: 'transforms_configure', config: [
+    { key: 'splitCount', value: 4 }, { key: 'splitMode', value: 'fit' },
+    { key: 'tileTargets', value: '1,3' }, { key: 'rotateDeg', value: 45 },
+  ] }, { op: 'transforms_apply', kind: 'split' }, { op: 'transforms_apply', kind: 'rotate' }), 'transforms');
+  assert.equal(ctx.state.__xf.ui.rotateDeg, 45);
+  assert.equal(ctx.state.__xf.ui.splitMode, 'fit');
+  assert.equal(ctx.state.__xf.ui.splitCount, 4);
+  assert.equal(ctx.state.__xf.ui.tileTargets, '1,3');
+  assert.deepEqual(rebuilt[0], [{ kind: 'split', count: 4 }, { kind: 'rotate', targets: [1, 3], deg: 45 }]);
+  assert.equal(ctx.calls.filter(call => call[0] === 'render').length, 1);
+  assert.equal(ctx.calls.filter(call => call[0] === 'refresh').length, 1);
+  result.undo();
+  assert.equal(ctx.state.__xf, undefined);
+  assert.equal(rebuilt.length, 2);
+  assert.equal(ctx.calls.filter(call => call[0] === 'refresh').length, 2);
+});
+
+test('one atomic transform action configures, applies, refreshes and undoes rotation', () => {
+  const ctx = context(); const rebuilt = [];
+  ctx.xfRuntime = { rebuildNow: () => rebuilt.push(structuredClone(ctx.state.__xf?.stack)) };
+  const before = structuredClone(ctx.state);
+  const result = applyAssistantActions(ctx, response({ op: 'transforms_update', kind: 'rotate', config: [
+    { key: 'rotateDeg', value: 30 }, { key: 'tileTargets', value: 'all' },
+  ] }), 'transforms');
+  assert.equal(ctx.state.__xf.ui.rotateDeg, 30);
+  assert.equal(ctx.state.__xf.ui.tileTargets, 'all');
+  assert.deepEqual(rebuilt, [[{ kind: 'rotate', targets: null, deg: 30 }]]);
+  assert.ok(result.summary.includes('Transform rotate applied.'));
+  assert.equal(ctx.calls.filter(call => call[0] === 'refresh').length, 1);
+  result.undo();
+  assert.deepEqual(ctx.state, before);
+  assert.equal(rebuilt.length, 2);
+  assert.equal(ctx.calls.filter(call => call[0] === 'refresh').length, 2);
+});
+
+test('invalid atomic transform configuration rolls back the whole response before rendering', () => {
+  const ctx = context(); ctx.xfRuntime = { rebuildNow() { assert.fail('Invalid transform must not render.'); } };
+  const before = structuredClone(ctx.state);
+  assert.throws(() => applyAssistantActions(ctx, response(set('size', 24), { op: 'transforms_update', kind: 'rotate', config: [
+    { key: 'rotateDeg', value: 30 }, { key: 'tileTargets', value: 'document' },
+  ] }), 'transforms'), /Tile targets/);
+  assert.deepEqual(ctx.state, before);
+  assert.equal(ctx.calls.length, 0);
+});
+
+test('atomic transform operations accept empty config to apply current toolbar settings', () => {
+  const ctx = context(); ctx.xfRuntime = { rebuildNow() {} };
+  ctx.state.__xf = { ui: { rotateDeg: 75, tileTargets: 'all' }, stack: [] };
+  applyAssistantActions(ctx, response({ op: 'transforms_update', kind: 'rotate', config: [] }), 'transforms');
+  assert.deepEqual(ctx.state.__xf.stack, [{ kind: 'rotate', targets: null, deg: 75 }]);
+});
+
+test('atomic configure kind updates controls without applying the visual operation', () => {
+  const ctx = context(); let rebuilt = 0;
+  ctx.xfRuntime = { rebuildNow: () => rebuilt++ };
+  ctx.state.__xf = { ui: { rotateDeg: 10 }, stack: [{ kind: 'rotate', deg: 10 }] };
+  const result = applyAssistantActions(ctx, response({ op: 'transforms_update', kind: 'configure', config: [{ key: 'rotateDeg', value: 50 }] }), 'transforms');
+  assert.equal(ctx.state.__xf.ui.rotateDeg, 50);
+  assert.deepEqual(ctx.state.__xf.stack, [{ kind: 'rotate', deg: 10 }]);
+  assert.equal(rebuilt, 0);
+  assert.ok(ctx.calls.some(call => call[0] === 'refresh'));
+  assert.ok(!result.summary.some(line => line.includes('applied')));
+});
+
+test('multiple atomic operations capture their own settings and rebuild the final stack once', () => {
+  const ctx = context(); let rebuilt = 0;
+  ctx.xfRuntime = { rebuildNow: () => rebuilt++ };
+  applyAssistantActions(ctx, response(
+    { op: 'transforms_update', kind: 'split', config: [{ key: 'splitCount', value: 4 }] },
+    { op: 'transforms_update', kind: 'rotate', config: [{ key: 'tileTargets', value: '1' }, { key: 'rotateDeg', value: 30 }] },
+    { op: 'transforms_update', kind: 'rotate', config: [{ key: 'tileTargets', value: '3' }, { key: 'rotateDeg', value: -60 }] },
+  ), 'transforms');
+  assert.deepEqual(ctx.state.__xf.stack, [
+    { kind: 'split', count: 4 }, { kind: 'rotate', targets: [1], deg: 30 }, { kind: 'rotate', targets: [3], deg: -60 },
+  ]);
+  assert.equal(ctx.state.__xf.ui.rotateDeg, -60);
+  assert.equal(rebuilt, 1);
+});
+
+test('transform configuration alone preserves the current stack and does not apply it', () => {
+  const ctx = context(); let applied = 0;
+  ctx.state.__xf = { ui: {}, stack: [{ kind: 'rotate', deg: 20 }] };
+  ctx.xfRuntime = { rebuildNow: () => applied++ };
+  applyAssistantActions(ctx, response({ op: 'transforms_configure', config: [{ key: 'rotateDeg', value: 60 }] }), 'transforms');
+  assert.equal(ctx.state.__xf.ui.rotateDeg, 60);
+  assert.deepEqual(ctx.state.__xf.stack, [{ kind: 'rotate', deg: 20 }]);
+  assert.equal(applied, 0);
+  assert.ok(ctx.calls.some(call => call[0] === 'refresh'));
+});
+
+test('all toolbar operations use current centers, matrix, translation and plane settings', () => {
+  const ctx = context(); ctx.xfRuntime = { rebuildNow() {} };
+  const defaultZoom = applyAssistantActions(ctx, response({ op: 'transforms_apply', kind: 'zoomIn' }), 'transforms');
+  assert.ok(Number.isNaN(ctx.state.__xf.stack[0].center.x));
+  assert.ok(Number.isNaN(ctx.state.__xf.stack[0].center.y));
+  defaultZoom.undo();
+  const entries = {
+    tileTargets: 'all', zoomFactor: 2, 'zoomCenter.x': null, 'zoomCenter.y': null,
+    'translateVec.x': 14, 'translateVec.y': -6,
+    'matrix.a': 1, 'matrix.b': 0.2, 'matrix.c': 0.4, 'matrix.d': 1, 'matrix.e': 4, 'matrix.f': 8,
+    planeCount: 3, planeBaseScale: 1.2, planeScaleStep: -0.2, planeOpacity: 0.8,
+    planeOpacityFalloff: 0.1, 'planeOffset.x': 5, 'planeOffset.y': 7,
+    'planeCenter.x': 0.5, 'planeCenter.y': 0.5,
+  };
+  applyAssistantActions(ctx, response(
+    { op: 'transforms_configure', config: Object.entries(entries).map(([key, value]) => ({ key, value })) },
+    ...['flipX', 'flipY', 'zoomIn', 'zoomOut', 'translate', 'matrix', 'planes3d'].map(kind => ({ op: 'transforms_apply', kind })),
+  ), 'transforms');
+  const stack = ctx.state.__xf.stack;
+  assert.deepEqual(stack.slice(0, 2), [{ kind: 'flipX', targets: null }, { kind: 'flipY', targets: null }]);
+  assert.equal(stack[2].factor, 2); assert.equal(stack[3].factor, 0.5);
+  assert.ok(Number.isNaN(stack[2].center.x));
+  assert.ok(Number.isNaN(ctx.state.__xf.ui.zoomCenter.y));
+  assert.deepEqual(stack[4].v, { x: 14, y: -6 });
+  assert.deepEqual(stack[5].m, [1, 0.2, 0.4, 1, 4, 8]);
+  assert.deepEqual(stack[6], { kind: 'planes3d', targets: null, count: 3, baseScale: 1.2, scaleStep: -0.2, offset: { x: 5, y: 7 }, center: { x: 0.5, y: 0.5 }, opacity: 0.8, opacityFalloff: 0.1 });
+  const undo = applyAssistantActions(ctx, response({ op: 'transforms_apply', kind: 'undo' }), 'transforms');
+  assert.equal(ctx.state.__xf.stack.length, 6);
+  undo.undo(); assert.equal(ctx.state.__xf.stack.length, 7);
+  assert.ok(Number.isNaN(ctx.state.__xf.stack[2].center.x));
+  applyAssistantActions(ctx, response({ op: 'transforms_apply', kind: 'reset' }), 'transforms');
+  assert.equal(ctx.state.__xf.stack.length, 0);
+  applyAssistantActions(ctx, response({ op: 'transforms_configure', config: [{ key: 'preset', value: 'kaleidoscope4' }] }, { op: 'transforms_apply', kind: 'preset' }), 'transforms');
+  assert.deepEqual(ctx.state.__xf.stack, [{ kind: 'split', count: 4 }, { kind: 'flipY', targets: [0] }, { kind: 'flipX', targets: [1] }, { kind: 'flipY', targets: [1] }, { kind: 'flipX', targets: [3] }]);
+  assert.equal(ctx.state.__xf.ui.splitCount, 4);
+});
+
+test('transform settings, tile targets, scope and runtime are checked before any changes', () => {
+  const ctx = context(); ctx.xfRuntime = { rebuildNow() { assert.fail('Invalid transforms must never run.'); } };
+  const initial = structuredClone(ctx.state);
+  const invalid = [
+    [{ op: 'transforms_configure', config: [{ key: 'fnCode', value: 'evil()' }] }],
+    [{ op: 'transforms_configure', config: [{ key: 'matrix.__proto__', value: 1 }] }],
+    [{ op: 'transforms_configure', config: [{ key: 'constructor', value: 1 }] }],
+    [{ op: 'transforms_configure', config: [{ key: 'rotateDeg', value: 181 }] }],
+    [{ op: 'transforms_configure', config: [{ key: 'splitCount', value: 2.5 }] }],
+    [{ op: 'transforms_configure', config: [{ key: 'planeOpacity', value: 2 }] }],
+    [{ op: 'transforms_configure', config: [{ key: 'zoomFactor', value: null }] }],
+    [{ op: 'transforms_configure', config: [{ key: 'rotateDeg', value: 20 }, { key: 'rotateDeg', value: 40 }] }],
+    [{ op: 'transforms_configure', config: [{ key: 'tileTargets', value: 'document' }] }],
+    [{ op: 'transforms_configure', config: [{ key: 'tileTargets', value: '1' }] }, { op: 'transforms_apply', kind: 'rotate' }],
+    [{ op: 'transforms_apply', kind: 'run_code' }],
+    [{ op: 'transforms_apply', kind: 'preset' }],
+    [{ op: 'transforms_apply', kind: 'rotate' }, set('size', 20)],
+  ];
+  for (const actions of invalid) assert.throws(() => applyAssistantActions(ctx, response(...actions), 'transforms'));
+  assert.throws(() => applyAssistantActions(ctx, response({ op: 'transforms_apply', kind: 'rotate' }), 'params'), /outside/);
+  assert.deepEqual(ctx.state, initial);
+  assert.equal(ctx.calls.length, 0);
+  delete ctx.xfRuntime;
+  assert.throws(() => applyAssistantActions(ctx, response({ op: 'transforms_apply', kind: 'rotate' }), 'transforms'), /runtime is unavailable/);
+  ctx.xfRuntime = { rebuildNow() {} }; ctx.mountEl.querySelector = () => null;
+  assert.throws(() => applyAssistantActions(ctx, response({ op: 'transforms_apply', kind: 'rotate' }), 'transforms'), /need an SVG/);
+});
+
+test('toolbar transforms pause a conflicting automatic flow and undo restores its settings', () => {
+  const ctx = context(); ctx.xfRuntime = { rebuildNow() {} };
+  ctx.state.__toolFlows = { ui: { autoRun: true }, stages: [{ kind: 'transform', config: { stack: [{ kind: 'split', count: 2 }] } }] };
+  const before = structuredClone(ctx.state.__toolFlows);
+  const result = applyAssistantActions(ctx, response({ op: 'transforms_apply', kind: 'rotate' }), 'transforms');
+  assert.equal(ctx.state.__toolFlows.ui.autoRun, false);
+  assert.ok(result.summary.includes('Paused automatic flow transforms to keep the toolbar changes.'));
+  result.undo(); assert.deepEqual(ctx.state.__toolFlows, before);
+});
+
+test('failed transform rebuild rolls back parameters, toolbar configuration and UI', () => {
+  const ctx = context(); const before = structuredClone(ctx.state); let rebuilds = 0;
+  ctx.xfRuntime = { rebuildNow() { if (++rebuilds === 1) throw new Error('GPU drawing failed'); } };
+  assert.throws(() => applyAssistantActions(ctx, response(set('size', 35), { op: 'transforms_configure', config: [{ key: 'rotateDeg', value: 25 }] }, { op: 'transforms_apply', kind: 'rotate' }), 'transforms'), /GPU drawing failed/);
+  assert.deepEqual(ctx.state, before);
+  assert.equal(rebuilds, 2);
+  assert.ok(ctx.calls.some(call => call[0] === 'refresh'));
+});
+
+test('automatic scope recognizes actual transforms and keeps explicit flows separate', () => {
+  const ctx = context(); ctx.state.__xf = { ui: { rotateDeg: 35 }, stack: [{ kind: 'split', count: 4 }] };
+  const request = buildAssistantRequest(ctx, { prompt: 'Rotate all tiles by 45 degrees' });
+  assert.equal(request.scope, 'transforms');
+  assert.ok(request.messages[0].content.includes('"rotateDeg":35'));
+  assert.ok(JSON.stringify(request.schema).includes('transforms_update'));
+  assert.ok(!JSON.stringify(request.schema).includes('transforms_configure'));
+  assert.ok(!JSON.stringify(request.schema).includes('transforms_apply'));
+  assert.ok(!JSON.stringify(request.schema).includes('flow_apply'));
+  assert.equal(buildAssistantRequest(ctx, { prompt: 'Create a flow that rotates all tiles' }).scope, 'flows');
+  assert.equal(buildAssistantRequest(ctx, { prompt: 'Animate the rotation parameter' }).scope, 'animation');
+});
+
 test('flow containing invalid later stage never runs its first transform', () => {
   const ctx = context(); let applied = 0;
   ctx.xfRuntime = { rebuildNow: () => applied++ };
@@ -237,7 +428,8 @@ test('each scope demonstrates executable edits including required apply or playb
   const ctx = context();
   ctx.spec.params = [{ key: 'detail', type: 'number', min: 0.5, max: 1, step: 0.25 }];
   ctx.state.detail = 1;
-  for (const scope of ['params', 'animation', 'effects', 'flows']) {
+  ctx.xfRuntime = { rebuildNow() {} };
+  for (const scope of ['params', 'animation', 'transforms', 'effects', 'flows']) {
     const request = buildAssistantRequest(ctx, { prompt: 'Change detail.', scope, maxContextChars: 9000 });
     const system = request.messages[0].content;
     assert.ok(system.includes('Requested edits REQUIRE matching actions'));
@@ -247,6 +439,11 @@ test('each scope demonstrates executable edits including required apply or playb
     if (scope === 'animation') {
       assert.deepEqual(example.actions.map(action => action.op), ['animation_configure', 'animation_play']);
       assert.deepEqual(example.actions[0].targets, [{ key: 'detail', from: 1, to: 0.75 }]);
+    }
+    if (scope === 'transforms') {
+      assert.deepEqual(example.actions.map(action => action.op), ['transforms_update']);
+      assert.equal(example.actions[0].kind, 'rotate');
+      assert.ok(system.includes('configure AND apply a toolbar operation in one action'));
     }
     if (scope === 'effects' || scope === 'flows') {
       assert.deepEqual(example.actions.map(action => action.op), scope === 'effects' ? ['effects_configure', 'effects_apply'] : ['flow_configure', 'flow_apply']);
@@ -268,7 +465,7 @@ test('all structured schemas are strict and fit a local budget', () => {
     }
     for (const value of Object.values(schema)) if (Array.isArray(value)) value.forEach(strict); else strict(value);
   }
-  for (const scope of ['params', 'animation', 'effects', 'flows']) {
+  for (const scope of ['params', 'animation', 'transforms', 'effects', 'flows']) {
     const request = buildAssistantRequest(context(), { prompt: 'Make this interesting', scope, maxContextChars: 9000 });
     strict(request.schema);
     const chars = JSON.stringify(request.schema).length + request.messages.reduce((sum, message) => sum + message.content.length, 0);

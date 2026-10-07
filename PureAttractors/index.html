@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<!-- Copyright (c) 2026 Jeffrey Kerley. SPDX-License-Identifier: LicenseRef-Jeffrey-Kerley-NC-NoAI-1.0 -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="Pure Attractors: explore dihedral symmetry and chaotic orbits of the generalized Field–Golubitsky map in D3 and SVG.">
+  <title>Pure Attractors</title>
+  <link rel="icon" type="image/png" href="/assets/icon/jAsset.png">
+  <link rel="stylesheet" href="../helper/uiHelper.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alata&amp;family=Courier+Prime:wght@700&amp;family=Kosugi+Maru&amp;family=Kumbh+Sans&amp;family=Scheherazade:wght@700&amp;display=swap">
+  <link rel="stylesheet" href="pure-attractors.css">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script type="module" src="index.js"></script>
+</head>
+<body>
+  <div id="infoBar">
+    <button id="button-exit" aria-label="Back to Math Visuals">X</button>
+    <button id="button-info" aria-label="Attractor settings" aria-controls="config" aria-expanded="false">INFO</button>
+    Pure Attractors
+  </div>
+  <div id="config"></div>
+  <div id="background"><div id="outer"><div id="vis"></div></div></div>
+  <div id="orbit-status" class="pa-sr-only" role="status" aria-live="polite"></div>
+  <noscript>Enable JavaScript to explore Pure Attractors.</noscript>
+</body>
+</html>

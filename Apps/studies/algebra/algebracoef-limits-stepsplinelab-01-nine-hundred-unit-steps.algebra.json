@@ -1,0 +1,67 @@
+{
+  "title": "Nine Hundred Unit Steps",
+  "source": "StepSplineLab/StepSplineLab_visual.js",
+  "visualId": "stepSplineLab",
+  "seed": 2026092571,
+  "frames": 0,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o color o splineLines (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "sceneMagnitude",
+      "baseline": 91,
+      "value": 900,
+      "direction": "max"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        0,
+        956.63
+      ],
+      "event": "X >= threshold",
+      "threshold": 900,
+      "value": 0.059197390840763926,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "Long signed steps fling fragments outward",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-stepsplinelab-01-nine-hundred-unit-steps.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-stepsplinelab-01-nine-hundred-unit-steps.json",
+  "observedStages": [
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 2155,
+      "afterShapes": 2839,
+      "messages": [
+        "spline lines applied: 57 shapes, 741 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 2839,
+      "afterShapes": 2839,
+      "messages": [
+        "color applied: 2839 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 2839,
+      "afterShapes": 2839,
+      "messages": []
+    }
+  ]
+}

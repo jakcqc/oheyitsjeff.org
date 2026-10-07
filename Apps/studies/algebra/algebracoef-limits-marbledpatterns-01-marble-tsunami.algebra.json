@@ -1,0 +1,89 @@
+{
+  "title": "Marble Tsunami",
+  "source": "MarbledPatterns/MarbledPatterns_visual.js",
+  "visualId": "marbledPatterns",
+  "seed": 2026092551,
+  "frames": 0,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o color o scale o splineLines o convert (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "amplitude",
+      "baseline": 670,
+      "value": 3200,
+      "direction": "max"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        0,
+        3377.1
+      ],
+      "event": "X >= threshold",
+      "threshold": 3200,
+      "value": 0.052441443842349916,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "High amplitude folds bands beyond the canvas",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-marbledpatterns-01-marble-tsunami.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-marbledpatterns-01-marble-tsunami.json",
+  "observedStages": [
+    {
+      "label": "Q: convert",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 17,
+      "afterShapes": 17,
+      "messages": [
+        "convert applied: 5 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 17,
+      "afterShapes": 277,
+      "messages": [
+        "spline lines applied: 5 shapes, 265 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 277,
+      "afterShapes": 295,
+      "messages": [
+        "scale applied: 6 groups, 24 clones."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 295,
+      "afterShapes": 295,
+      "messages": [
+        "color warning: No numeric size values found."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 295,
+      "afterShapes": 295,
+      "messages": []
+    }
+  ]
+}

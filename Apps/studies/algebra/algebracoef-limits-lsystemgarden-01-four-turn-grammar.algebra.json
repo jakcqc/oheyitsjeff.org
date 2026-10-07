@@ -1,0 +1,78 @@
+{
+  "title": "Four Turn Grammar",
+  "source": "LSystemGarden/lsystem_visual.js",
+  "visualId": "lsystemGarden",
+  "seed": 2026092543,
+  "frames": 0,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o color o splineLines o scale (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "angle",
+      "baseline": 311.7,
+      "value": 1440,
+      "direction": "max"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        0,
+        1518.981
+      ],
+      "event": "X >= threshold",
+      "threshold": 1440,
+      "value": 0.0519960420834757,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "Branches repeatedly retrace directions",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-lsystemgarden-01-four-turn-grammar.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-lsystemgarden-01-four-turn-grammar.json",
+  "observedStages": [
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 5,
+      "afterShapes": 9,
+      "messages": [
+        "scale applied: 1 groups, 5 clones."
+      ]
+    },
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 9,
+      "afterShapes": 1629,
+      "messages": [
+        "spline lines applied: 9 shapes, 1629 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 1629,
+      "afterShapes": 1629,
+      "messages": [
+        "color applied: 1629 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 1629,
+      "afterShapes": 6516,
+      "messages": []
+    }
+  ]
+}

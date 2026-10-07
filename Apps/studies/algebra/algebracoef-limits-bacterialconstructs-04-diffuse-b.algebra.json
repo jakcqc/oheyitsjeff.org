@@ -1,0 +1,100 @@
+{
+  "title": "Diffuse B",
+  "source": "BacterialConstructs/BacterialConstructs_visual.js",
+  "visualId": "bacterialConstructs",
+  "seed": 2026092511,
+  "frames": 0,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o splineLines o splineLines o color o scale o paint (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "diffusionB",
+      "baseline": 0.46,
+      "value": 8,
+      "direction": "max"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        0,
+        8.5278
+      ],
+      "event": "X >= threshold",
+      "threshold": 8,
+      "value": 0.061891695396233404,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "Inhibitor spreads broadly",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-bacterialconstructs-04-diffuse-b.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-bacterialconstructs-04-diffuse-b.json",
+  "observedStages": [
+    {
+      "label": "Extract contour boundaries from concentration bands",
+      "kind": "effect",
+      "effect": "paint",
+      "changed": true,
+      "beforeShapes": 12,
+      "afterShapes": 12,
+      "messages": [
+        "paint applied: 12 elements."
+      ]
+    },
+    {
+      "label": "E: 2 echoes, scale 0.62 to 1.25",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 12,
+      "afterShapes": 24,
+      "messages": [
+        "scale applied: 12 groups, 24 clones."
+      ]
+    },
+    {
+      "label": "C: enumerate current marks through four colors",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 24,
+      "afterShapes": 24,
+      "messages": [
+        "color applied: 24 elements, 4 mapped colors."
+      ]
+    },
+    {
+      "label": "N1: normal vectors, coefficient 0.65",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 24,
+      "afterShapes": 792,
+      "messages": [
+        "spline lines applied: 12 shapes, 780 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "N2: tangent vectors, coefficient 1.35",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 792,
+      "afterShapes": 1560,
+      "messages": [
+        "spline lines applied: 12 shapes, 780 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "A^2: repeated rotation and contraction",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 1560,
+      "afterShapes": 1560,
+      "messages": []
+    }
+  ]
+}

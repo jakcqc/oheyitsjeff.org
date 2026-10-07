@@ -1,0 +1,89 @@
+{
+  "title": "Surface Aliasing",
+  "source": "PinkallSchmittGunnHoffmannCollection/PinkallSchmittGunnHoffmannCollection_visual.js",
+  "visualId": "pinkallSchmittGunnHoffmannCollection",
+  "seed": 2026092563,
+  "frames": 0,
+  "algebra": {
+    "edition": "limits",
+    "expression": "A o color o scale o splineLines o convert (G)",
+    "convention": "Compose right to left. G is the native simulation at the recorded state and seed.",
+    "primaryExtreme": {
+      "parameter": "frequency",
+      "baseline": 31.73,
+      "value": 700,
+      "direction": "max"
+    },
+    "rateCoefficient": {
+      "symbol": "rho",
+      "distribution": "Uniform",
+      "interval": [
+        0,
+        746.7789
+      ],
+      "event": "X >= threshold",
+      "threshold": 700,
+      "value": 0.06264089679020125,
+      "meaning": "Probability of a parameter draw reaching this bound in the stressed direction; not a measured temporal or image frequency."
+    },
+    "interpretation": "Waves exceed lattice sampling rate",
+    "sampling": "Equal group allocation: 40 main and 40 math. Each of five main apps has eight works; each of 18 math apps has two or three. Stress values are deliberately selected."
+  },
+  "nativeFlow": "../flows/algebracoef-limits-pinkallschmittgunnhoffmanncollection-01-surface-aliasing.flow.json",
+  "nativeSettings": "../settings/algebracoef-limits-pinkallschmittgunnhoffmanncollection-01-surface-aliasing.json",
+  "observedStages": [
+    {
+      "label": "Q: convert",
+      "kind": "effect",
+      "effect": "convert",
+      "changed": true,
+      "beforeShapes": 54,
+      "afterShapes": 54,
+      "messages": [
+        "convert applied: 7 converted, 0 skipped."
+      ]
+    },
+    {
+      "label": "N: splineLines",
+      "kind": "effect",
+      "effect": "splineLines",
+      "changed": true,
+      "beforeShapes": 54,
+      "afterShapes": 306,
+      "messages": [
+        "spline lines applied: 7 shapes, 259 lines, 0 skipped."
+      ]
+    },
+    {
+      "label": "E: scale",
+      "kind": "effect",
+      "effect": "scale",
+      "changed": true,
+      "beforeShapes": 306,
+      "afterShapes": 322,
+      "messages": [
+        "scale applied: 4 groups, 20 clones."
+      ]
+    },
+    {
+      "label": "C: color",
+      "kind": "effect",
+      "effect": "color",
+      "changed": true,
+      "beforeShapes": 322,
+      "afterShapes": 322,
+      "messages": [
+        "color applied: 322 elements, 7 mapped colors."
+      ]
+    },
+    {
+      "label": "A: folded presentation",
+      "kind": "transform",
+      "effect": null,
+      "changed": true,
+      "beforeShapes": 322,
+      "afterShapes": 322,
+      "messages": []
+    }
+  ]
+}
